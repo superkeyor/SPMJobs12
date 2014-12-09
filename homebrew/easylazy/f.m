@@ -16,7 +16,7 @@ function f(v)
             % f(13); % recursive call
             spmsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'spms');
             vFolderNames = ez.lsd(spmsPath);
-            vFolderName = vFolderNames{end};
+            vFolderName = vFolderNames{end-1}; % vFolderNames{end} is spm8
             vPath = ez.joinpath(spmsPath, vFolderName);
             addpath(vPath);
             spm;
