@@ -1,7 +1,41 @@
-% bat_dicom2nifti('dicom_dir', 'c:\my_study\subj_1\dicom', 'subject_dir', 'c:\my_study\subj_1');
+% inputDir = 'd:\studyraw\s00001\dicom';
+% outputDir = 'e:\mystudy\s00001';
+% bat_dicom2nifti('dicom_dir', inputDir, 'subject_dir', outputDir, 'autodetect', 'yes', 'renumber_func_runs', 'yes');
+% a nifti-1 file is a 3D file (=1 single volume)
 %
+% from (search dicom_dir recursively, one subfolder by one)
+% %   - c:\studyraw
+%     - subj_1
+%       - dicom
+%         - 1.2.840...141
+%           - 1.2.840...424 ( 6016 *.dcm-files -> 188 functional images = run 1)
+%           - 1.2.840...522 ( 9664 *.dcm-files -> 302 functional images = run 2)
+%           - 1.2.840...620 ( 1008 *.dcm-files -> 24 DTI images, 42 slices each)
+%           - 1.2.840...718 ( 172 *.dcm-files -> 1 anatomical image, 172 slices)
+%      - subj_2
+%        - dicom ...
+%      - ... 
+% to (create subfolders/subsubfolders in subject_dir automatically if not existing)
+% - e:\mystudy
+%     - subj_1              ('subject_dir')
+%       - anat              ('anat_dir')
+%         - anatomy.nii     ('anat_fn')
+%       - dti               ('dti_dir')
+%         - dti_01.nii      ('dti_prefix', 'dti_digits')   
+%         - ...
+%         - dti_24.nii         
+%       - func              ('func_dir')
+%         - run_001         ('run_dir_naming', 'run_dir_prefix', 'run_dir_digits')
+%           - vol_001.nii   ('func_prefix', 'func_digits')
+%           - ...
+%           - vol_188.nii
+%         - run_002
+%           - vol_001.nii
+%           - ...
+%           - vol_302.nii
 % modified by Jerry December 09 2014, 03:33:35 PM CST
 % downloaded from http://www.aimfeld.ch/neurotools/neurotools.html
+% orignial author tested spm8, Jerry tested spm12 with matlab2012b, mac10.7.5 lion
 % +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 %
 %% dicom2nifti(varargin)
@@ -103,9 +137,8 @@
 %   - dicom2nifti depends on SPM functions, so SPM must be added to your
 %     matlab path: File -> Set Path... -> add with subfolders. Make sure SPM is
 %     properly updated (download latest updates from SPM homepage).
-%   - All arguments (also numbers) must be specified as strings!
-%     correct: dicom2nifti('func_imgs_threshold', '100'); 
-%     wrong: dicom2nifti('func_imgs_threshold', 100);
+%   - All arguments (also numbers) must be specified as strings! 
+%     i.e., should use '100' instead of 100
 %   - dicom2nifti has been tested on WinXP and Linux with Matlab 7.0, 7.1
 %     7.2, and 7.5. Other platforms (e.g.) MacOSX should work as well. Using
 %     older Matlab versions than 7.0 may work, but is not recommended.
