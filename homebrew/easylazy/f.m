@@ -1,0 +1,58 @@
+% launch a particular version of spm
+% 
+% you might be warned that there are at least two spm versions existing in the searchpath (note: December 08 2014, 07:34:33 PM CST, fixed this issue, will automatcially remove the path from previously launched version)
+% the old spm window, if any, will be closed automatically. when you type spm again, always launch the last called version.
+% function call: f, f(), f(12)[if there are several v12s, launch the latest one]
+% exact version: f('12.6225'), f('12_6225'), f('spm12_6225')
+% note: when no spm path in the searchpath, f, f() launches the latest version; 
+%       when spm path exists in searchpath, f, f() luanches the last version
+
+function f(v)
+    close all;   % close all figures
+    
+    if nargin < 1
+        % no spm ever launched
+        if isempty(which('spm'))
+            % f(13); % recursive call
+            spmsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'spms');
+            vFolderNames = ez.lsd(spmsPath);
+            vFolderName = vFolderNames{end};
+            vPath = ez.joinpath(spmsPath, vFolderName);
+            addpath(vPath);
+            spm;
+        % otherwise, simply launch the last called version
+        else
+            spm;  % same version, no need to clear base workspace
+            return
+        end
+    else
+        spmsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'spms');
+        v = strrep(ez.str(v),'.', '_');
+        vFolderNames = ez.lsd(spmsPath, sprintf('%s',ez.str(v)));
+        if isempty(vFolderNames), error(['Specified spm version not found. Install it to ', spmsPath]); end
+        vFolderName = vFolderNames{end};
+        vPath = ez.joinpath(spmsPath, vFolderName);
+        % no spm ever launched
+        if isempty(which('spm'))
+            addpath(vPath);
+            spm;
+        else
+            % previous launched spm path
+            preVPath = fileparts(which('spm'));
+            % same version
+            if strcmp(vPath, preVPath)
+                spm;
+            else
+                evalin('base','ez.clean'); % not the same version, clean everything otherwise report error
+                % spm('Quit'); % not the same version, call spm quit 
+                ez.pprint('Switching to a different version...');
+                % warning if to be removed path does not exist
+                warning('off','MATLAB:rmpath:DirNotFound');
+                rmpath(genpath(preVPath));
+                warning('on','MATLAB:rmpath:DirNotFound');
+                addpath(vPath);
+                spm;
+            end
+        end
+    end
+end % end fucntion

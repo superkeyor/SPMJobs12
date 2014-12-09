@@ -1,0 +1,18 @@
+Sub-directories:
+ /spms - different versions of spm 
+
+ /homebrew   - homemade functions
+      /batches    functions that can process many files at a time
+      /easylazy   stop being a clicking monkey when using spm gui
+      /junctions  general matlab functions (independent of spm)
+
+To use spm: 
+1. add path of this folder (without adding subfolders) to search path
+2. then every time use, type 'ignite' to initialize
+
+Alternatively,
+1. in startup.m automatically run 'ignite'
+
+
+author: Jerry, jerryzhujian9@gmail.com
+December 08 2014, 06:37:52 PM CST

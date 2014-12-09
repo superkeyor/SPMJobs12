@@ -1,0 +1,27 @@
+
+Note that if you download a full version of SPM (through the web form),
+these updates will already have been incorporated in the spm*.zip archive.
+
+so maybe always download the full package, which is easier.
+http://www.fil.ion.ucl.ac.uk/spm/software/download.html
+
+
+===========================================================
+just unpack the update archive over your SPM installation so that newer files overwrite existing files. (merge folders)
+
+http://www.fil.ion.ucl.ac.uk/spm/software/spm*/#Updates
+
+ftp://ftp.fil.ion.ucl.ac.uk/spm/spm*_updates
+
+A MATLAB script (spm_update.m) is available to detect when a new SPM8 update is available, and possibly install it automatically.
+
+The command line syntax to install the updates on Unix systems (Linux, Mac) is:
+
+unzip spm*.zip
+unzip -o spm*_updates_rxxxx.zip -d spm*
+
+
+
+
+
+
