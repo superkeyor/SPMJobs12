@@ -7,7 +7,7 @@
 % note: when no spm path in the searchpath, f, f() launches the latest version; 
 %       when spm path exists in searchpath, f, f() luanches the last version
 
-function f(v)
+function main(v)
     close all;   % close all figures
     
     if nargin < 1
