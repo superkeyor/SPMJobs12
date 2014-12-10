@@ -19,10 +19,10 @@ function f(v)
             vFolderName = vFolderNames{end-1}; % vFolderNames{end} is spm8
             vPath = ez.joinpath(spmsPath, vFolderName);
             addpath(vPath);
-            spm;
+            spm('fmri');
         % otherwise, simply launch the last called version
         else
-            spm;  % same version, no need to clear base workspace
+            spm('fmri');  % same version, no need to clear base workspace
             return
         end
     else
@@ -35,13 +35,13 @@ function f(v)
         % no spm ever launched
         if isempty(which('spm'))
             addpath(vPath);
-            spm;
+            spm('fmri');
         else
             % previous launched spm path
             preVPath = fileparts(which('spm'));
             % same version
             if strcmp(vPath, preVPath)
-                spm;
+                spm('fmri');
             else
                 evalin('base','ez.clean'); % not the same version, clean everything otherwise report error
                 % spm('Quit'); % not the same version, call spm quit 
@@ -51,7 +51,7 @@ function f(v)
                 rmpath(genpath(preVPath));
                 warning('on','MATLAB:rmpath:DirNotFound');
                 addpath(vPath);
-                spm;
+                spm('fmri');
             end
         end
     end
