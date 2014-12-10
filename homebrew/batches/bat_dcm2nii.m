@@ -1,7 +1,8 @@
 % inputDir = 'd:\studyraw\s00001\dicom';
 % outputDir = 'e:\mystudy\s00001';
-% bat_dicom2nifti('dicom_dir', inputDir, 'subject_dir', outputDir, 'autodetect', 'yes', 'renumber_func_runs', 'yes');
-% a nifti-1 file is a 3D file (=1 single volume)
+% bat_dcm2nii('dicom_dir', inputDir, 'subject_dir', outputDir, 'autodetect', 'yes', 'renumber_func_runs', 'yes');
+% this is for one subject, for multiple subjects, repeat bat_dcm2nii() for another subject
+% after conversion, a nifti-1 file is a 3D file (=1 single volume)
 %
 % from (search dicom_dir recursively, one subfolder by one)
 % %   - c:\studyraw
@@ -16,6 +17,7 @@
 %        - dicom ...
 %      - ... 
 % to (create subfolders/subsubfolders in subject_dir automatically if not existing)
+% anat, dti, func, loc are basically guessed from # of nii files
 % - e:\mystudy
 %     - subj_1              ('subject_dir')
 %       - anat              ('anat_dir')
