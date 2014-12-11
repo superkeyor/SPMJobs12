@@ -6,8 +6,11 @@
 % autodetect = 1 (default 1); 
     % autodetect func, dti, localizer, anatomical, and renumber func runs
     % if you skip a certain folder, this might not work correctly
-% thresholds = {65, 6, 8} % func volumes>=65, 65>dti volumes>=6, localizer slices<=8
-% see below for details
+% thresholds = {65, 6, 8} % func volumes>=65, 65>dti volumes>=6, localizer min slices<=8
+% typically,
+% functional dim: 64*64*26  many volumes
+% scout dim: 256*256*3 or 256*256*1  few slices, several volumes
+% structual dim: 256*256*200 many slices, but only one volume
 %
 % bat_dcm2nii(inputDir, outputDir, autodetect);
 % after conversion, a nifti-1 file is a 3D file (1 nii = 1 single volume)
@@ -28,7 +31,7 @@
 %     -0299 (subject00n)
 % notice: if the subfolder is 101 as run number, will be converted to 0101 as run number
 %
-% outputDir if autodetect (anat, dti, func, loc are guessed from # of nii files and header info)
+% outputDir if autodetect (anat, dti, func, loc are guessed from # of nii files/volume info)
 % -01Import  (I made the folder structure flat, folders will be auto created)
 %     -S0215_loc (from run 0101)
 %     -S0215_anat (from run 0201)
@@ -61,14 +64,14 @@
 function [output1,output2] = main(inputDir, outputDir, autodetect, thresholds, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
-spm('fmri')
+% spm('fmri')
 [dummy, subID] = ez.splitpath(inputDir);
 subID = regexp(subID,'\d+','match'); subID = ez.num(subID{1}); subID = sprintf('S%0.4d',subID);
 if ~exist('autodetect','var'), autodetect = 1; end
 if ~exist('thresholds','var'), thresholds = {65, 6, 8}; end
 % func volumes>=65, 65>dti volumes>=6, localizer slices<=8    
-func_imgs_threshold = thresholds{1};
-dti_imgs_threshold = thresholds{2};   
+func_volumes_threshold = thresholds{1};
+dti_volumes_threshold = thresholds{2};   
 loc_slices_threshold = thresholds{3};
 
 startTime = ez.moment();
@@ -82,21 +85,25 @@ if dcm_converted == 0, error('No *.dcm files found in the specified input direct
 % 2) rename each nii folder
 if autodetect
 subDirs = ez.lsd(outputDir,['^' subID '_']);
+% track how many functiona runs
+funcRun = 1;
 for i = 1:ez.len(subDirs)
-    % track how many functiona runs
-    funcRun = 1;
     subDir = ez.joinpath(outputDir, subDirs{i});
-    volumes = ez.len(ez.ls(subDir,'\.nii$')); % assume 1 nii = 1 volume
+    % volumes = ez.len(ez.ls(subDir,'\.nii$')); % assume 1 nii = 1 volume
+    P = ez.ls(subDir, '\.nii$'); P = char(P); V = spm_vol(P);
+    % V is a structure array, each row has info for one nii file
+    volumes = size(V,1);
 
-    if volumes >= func_imgs_threshold % functional
+    if volumes >= func_volumes_threshold % functional
         ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_R%0.2d', subID, funcRun)));
         funcRun = funcRun + 1;
-    elseif volumes >= dti_imgs_threshold % DTI
+    elseif volumes >= dti_volumes_threshold % DTI
         ez.mv(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
-    elseif min(subID) <= loc_slices_threshold % localizer
-        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_R%0.2d', subID, funcRun)));
+    % min number of slices across all volumes
+    elseif min([V.dim]) <= loc_slices_threshold % localizer
+        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_loc', subID)));
     elseif volumes == 1 % anatomical
-        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_anat', subID, funcRun)));
+        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_anat', subID)));
     else
         % unknown, retain the folder name
     end % end if
@@ -104,7 +111,7 @@ end % end for
 end % end if autodetec
 
 % 3) Done message
-ez.print(sprintf('Converted %d DICOM-files for %s.', dcm_converted, subID));
+ez.print(sprintf('\nConverted %d DICOM-files for %s.', dcm_converted, subID));
 ez.pprint('****************************************'); % pretty colorful print
 finishTime = ez.moment();
 if exist('email','var'), try, batmail(mfilename, startTime, finishTime); end; end;
