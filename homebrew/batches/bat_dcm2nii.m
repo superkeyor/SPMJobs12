@@ -1,6 +1,9 @@
-% inputDir = '.../00ScannerBackup/0215/'; % trailing filesep does not matter
+% inputDirs = {'.../00ScannerBackup/0215/';
+%              '.../00ScannerBackup/0216/';}; 
+%                                           trailing filesep does not matter
 %                                           the last part, e.g., 0215 is used for subject ID
 %                                           if it is 's215', will be converted to 0215
+%                                           each inputDir for one subject
 % outputDir = '.../01Import/'; % trailing filesep does not matter
 % optional inputs:
 % autodetect = 1 (default 1); 
@@ -15,7 +18,6 @@
 % bat_dcm2nii(inputDir, outputDir, autodetect);
 % after conversion, a nifti-1 file is a 3D file (1 nii = 1 single volume)
 % if nii files exist with same name, overwrite without any prompt
-% this is for one subject; for multiple subjects, repeat bat_dcm2nii() for another subject
 %
 % inputDir (search recursively, one subfolder by one)
 % -00ScannerBackup
@@ -26,7 +28,7 @@
 %             -0301 (6016 *.dcm-files -> 188 functional images = run 1)
 %             -0401 (9664 *.dcm-files -> 302 functional images = run 2)
 %             -0501 (1008 *.dcm-files -> 24 DTI images, 42 slices each)
-%             -0601_corrupt (9664 *.dcm-files, skip this folder)
+%             -0601_corrupt (9664 *.dcm-files, detect '_\w' to skip this folder)
 %         -other subfolders but do not have dcm files
 %     -0299 (subject00n)
 % notice: if the subfolder is 101 as run number, will be converted to 0101 as run number
@@ -61,12 +63,10 @@
 %
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDir, outputDir, autodetect, thresholds, email)
+function [output1,output2] = main(inputDirs, outputDir, autodetect, thresholds, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
-% spm('fmri')
-[dummy, subID] = ez.splitpath(inputDir);
-subID = regexp(subID,'\d+','match'); subID = ez.num(subID{1}); subID = sprintf('S%0.4d',subID);
+spm('fmri')
 if ~exist('autodetect','var'), autodetect = 1; end
 if ~exist('thresholds','var'), thresholds = {65, 6, 8}; end
 % func volumes>=65, 65>dti volumes>=6, localizer slices<=8    
@@ -75,44 +75,48 @@ dti_volumes_threshold = thresholds{2};
 loc_slices_threshold = thresholds{3};
 
 startTime = ez.moment();
-ez.print(['Processing ' subID ' ...']);
-% 1) convert
-% Find DICOM-files and convert them using SPM
-cd(outputDir);
-dcm_converted = recursive_convert(inputDir, subID, outputDir);
-if dcm_converted == 0, error('No *.dcm files found in the specified input directory.'); end
+for n = 1:ez.len(inputDirs)
+    inputDir = inputDirs{n};
+    [dummy, subID] = ez.splitpath(inputDir);
+    subID = regexp(subID,'\d+','match'); subID = ez.num(subID{1}); subID = sprintf('S%04d',subID);
+    ez.print(['Processing ' subID ' ...']);
+    % 1) convert
+    % Find DICOM-files and convert them using SPM
+    cd(outputDir);
+    dcm_converted = recursive_convert(inputDir, subID, outputDir);
+    if dcm_converted == 0, error('No *.dcm files found in the specified input directory.'); end
 
-% 2) rename each nii folder
-if autodetect
-subDirs = ez.lsd(outputDir,['^' subID '_']);
-% track how many functiona runs
-funcRun = 1;
-for i = 1:ez.len(subDirs)
-    subDir = ez.joinpath(outputDir, subDirs{i});
-    % volumes = ez.len(ez.ls(subDir,'\.nii$')); % assume 1 nii = 1 volume
-    P = ez.ls(subDir, '\.nii$'); P = char(P); V = spm_vol(P);
-    % V is a structure array, each row has info for one nii file
-    volumes = size(V,1);
+    % 2) rename each nii folder
+    if autodetect
+        subDirs = ez.lsd(outputDir,['^' subID '_']);
+        % track how many functiona runs
+        funcRun = 1;
+        for i = 1:ez.len(subDirs)
+            subDir = ez.joinpath(outputDir, subDirs{i});
+            % volumes = ez.len(ez.ls(subDir,'\.nii$')); % assume 1 nii = 1 volume
+            P = ez.ls(subDir, '\.nii$'); P = char(P); V = spm_vol(P);
+            % V is a structure array, each row has info for one nii file
+            volumes = size(V,1);
+            if volumes >= func_volumes_threshold % functional
+                ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_R%02d', subID, funcRun)));
+                funcRun = funcRun + 1;
+            elseif volumes >= dti_volumes_threshold % DTI
+                ez.mv(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
+            % min number of slices across all volumes
+            elseif min([V.dim]) <= loc_slices_threshold % localizer
+                ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_loc', subID)));
+            elseif volumes == 1 % anatomical
+                ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_anat', subID)));
+            else
+                % unknown, retain the folder name
+            end % end if
+        end % end for
+    end % end if autodetec
 
-    if volumes >= func_volumes_threshold % functional
-        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_R%0.2d', subID, funcRun)));
-        funcRun = funcRun + 1;
-    elseif volumes >= dti_volumes_threshold % DTI
-        ez.mv(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
-    % min number of slices across all volumes
-    elseif min([V.dim]) <= loc_slices_threshold % localizer
-        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_loc', subID)));
-    elseif volumes == 1 % anatomical
-        ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_anat', subID)));
-    else
-        % unknown, retain the folder name
-    end % end if
-end % end for
-end % end if autodetec
-
-% 3) Done message
-ez.print(sprintf('\nConverted %d DICOM-files for %s.', dcm_converted, subID));
-ez.pprint('****************************************'); % pretty colorful print
+    % 3) Done message
+    ez.print(sprintf('\nConverted %d DICOM-files for %s.', dcm_converted, subID));
+    ez.pprint('****************************************'); % pretty colorful print
+end % end for inputDirs
 finishTime = ez.moment();
 if exist('email','var'), try, batmail(mfilename, startTime, finishTime); end; end;
 end % of main function
@@ -128,7 +132,7 @@ function dcm_converted = recursive_convert(inputDir, subID, outputDir)
             ez.pprint(sprintf('\nSkipping dicom files in subfolder %s', runNr),'blue');
         else
             ez.print(sprintf('\nFound dicom files in subfolder %s', runNr));
-            runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('R%0.4d',runNr);
+            runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('R%04d',runNr);
             P = char(dcm_files); % convert to char required by spm function
             % Open headers
             ez.print(sprintf('Opening %d DICOM-headers (can take some time) ...', length(dcm_files)));
