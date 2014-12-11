@@ -3,7 +3,9 @@
 %                                           if it is 's215', will be converted to 0215
 % outputDir = '.../01Import/'; % trailing filesep does not matter
 % optional inputs:
-% autodetect = 1 (default 1); % autodetect func, dti, localizer, anatomical, and renumber func runs
+% autodetect = 1 (default 1); 
+    % autodetect func, dti, localizer, anatomical, and renumber func runs
+    % if you skip a certain folder, this might not work correctly
 % thresholds = {65, 6, 8} % func volumes>=65, 65>dti volumes>=6, localizer slices<=8
 % see below for details
 %
@@ -21,6 +23,7 @@
 %             -0301 (6016 *.dcm-files -> 188 functional images = run 1)
 %             -0401 (9664 *.dcm-files -> 302 functional images = run 2)
 %             -0501 (1008 *.dcm-files -> 24 DTI images, 42 slices each)
+%             -0601_corrupt (9664 *.dcm-files, skip this folder)
 %         -other subfolders but do not have dcm files
 %     -0299 (subject00n)
 % notice: if the subfolder is 101 as run number, will be converted to 0101 as run number
@@ -114,22 +117,26 @@ function dcm_converted = recursive_convert(inputDir, subID, outputDir)
     if ~isempty(dcm_files)
         % the name of the immediate folder that has dcm files
         [dummy runNr] = ez.splitpath(inputDir);
-        ez.print(sprintf('\nFound dicom files in subfolder %s', runNr));
-        runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('R%0.4d',runNr);
-        P = char(dcm_files); % convert to char required by spm function
-        % Open headers
-        ez.print(sprintf('Opening %d DICOM-headers (can take some time) ...', length(dcm_files)));
-        hdrs = spm_dicom_headers(P);
-        % Convert
-        ez.print(sprintf('Converting %d DICOM-files (can also take some time) ...', length(dcm_files)));
-        niiFolder = ez.joinpath(outputDir, [subID '_' runNr]);
-        ez.mkdir(niiFolder);
-        cd(niiFolder);
-        % save in the working directory
-        % if nii files exist with same name, overwrite without any prompt
-        spm_dicom_convert(hdrs, 'all', 'flat', 'nii');
-        dcm_converted = length(dcm_files);
-        cd(outputDir);
+        if ~isempty(regexp(runNr, '_\w'))  % skip a dcm files folder with name like '501_corrupt'
+            ez.pprint(sprintf('\nSkipping dicom files in subfolder %s', runNr),'magenta');
+        else
+            ez.print(sprintf('\nFound dicom files in subfolder %s', runNr));
+            runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('R%0.4d',runNr);
+            P = char(dcm_files); % convert to char required by spm function
+            % Open headers
+            ez.print(sprintf('Opening %d DICOM-headers (can take some time) ...', length(dcm_files)));
+            hdrs = spm_dicom_headers(P);
+            % Convert
+            ez.print(sprintf('Converting %d DICOM-files (can also take some time) ...', length(dcm_files)));
+            niiFolder = ez.joinpath(outputDir, [subID '_' runNr]);
+            ez.mkdir(niiFolder);
+            cd(niiFolder);
+            % save in the working directory
+            % if nii files exist with same name, overwrite without any prompt
+            spm_dicom_convert(hdrs, 'all', 'flat', 'nii');
+            dcm_converted = length(dcm_files);
+            cd(outputDir);
+        end
     end
     
     %% Recursive call for subdirectories of inputDir
