@@ -86,7 +86,7 @@ for i = 1:ez.len(subDirs)
     % track how many functiona runs
     funcRun = 1;
     subDir = ez.joinpath(outputDir, subDirs{i});
-    volumes = ez.len(ez.ls(subDir,'\.nii$')) % assume 1 nii = 1 volume
+    volumes = ez.len(ez.ls(subDir,'\.nii$')); % assume 1 nii = 1 volume
 
     if volumes >= func_imgs_threshold % functional
         ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_R%0.2d', subID, funcRun)));
@@ -104,7 +104,7 @@ end % end for
 end % end if autodetec
 
 % 3) Done message
-ez.print(sprintf('Converted %d DICOM-files.\n', dcm_converted));
+ez.print(sprintf('Converted %d DICOM-files for %s.', dcm_converted, subID));
 ez.pprint('****************************************'); % pretty colorful print
 finishTime = ez.moment();
 if exist('email','var'), try, batmail(mfilename, startTime, finishTime); end; end;
@@ -118,7 +118,7 @@ function dcm_converted = recursive_convert(inputDir, subID, outputDir)
         % the name of the immediate folder that has dcm files
         [dummy runNr] = ez.splitpath(inputDir);
         if ~isempty(regexp(runNr, '_\w'))  % skip a dcm files folder with name like '501_corrupt'
-            ez.pprint(sprintf('\nSkipping dicom files in subfolder %s', runNr),'magenta');
+            ez.pprint(sprintf('\nSkipping dicom files in subfolder %s', runNr),'blue');
         else
             ez.print(sprintf('\nFound dicom files in subfolder %s', runNr));
             runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('R%0.4d',runNr);
