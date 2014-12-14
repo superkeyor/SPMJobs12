@@ -35,21 +35,21 @@
 %
 % outputDir if autodetect (anat, dti, func, loc are guessed from # of nii files/volume info)
 % -01Import  (I made the folder structure flat, folders will be auto created)
-%     -S0215_loc (from run 0101)
-%     -S0215_anat (from run 0201)
-%     -S0215_dti (from run 0501)
-%     -S0215_R0001 (func run 1, from 0301)
-%     -S0215_R0002 (func run 2, from 0401)
-%     -Sxxxs_xxxx (another subject)
+%     -s0215_loc (from run 0101)
+%     -s0215_anat (from run 0201)
+%     -s0215_dti (from run 0501)
+%     -s0215_r01 (func run 1, from 0301)
+%     -s0215_r02 (func run 2, from 0401)
+%     -sxxxs_xxxx (another subject)
 %
 % outputDir if not autodetect
 % -01Import
-%     -S0215_R0101
-%     -S0215_R0201
-%     -S0215_R0301
-%     -S0215_R0401
-%     -S0215_R0501
-%     -Sxxxx_Rxxxx (another subject)
+%     -s0215_r0101
+%     -s0215_r0201
+%     -s0215_r0301
+%     -s0215_r0401
+%     -s0215_r0501
+%     -sxxxx_rxxxx (another subject)
 % 
 % note: 
 %   conversion uses SPM functions; SPM must be added to your matlab path: File -> Set Path... -> add with subfolders. 
@@ -78,7 +78,7 @@ startTime = ez.moment();
 for n = 1:ez.len(inputDirs)
     inputDir = inputDirs{n};
     [dummy, subID] = ez.splitpath(inputDir);
-    subID = regexp(subID,'\d+','match'); subID = ez.num(subID{1}); subID = sprintf('S%04d',subID);
+    subID = regexp(subID,'\d+','match'); subID = ez.num(subID{1}); subID = sprintf('s%04d',subID);
     ez.print(['Processing ' subID ' ...']);
     % 1) convert
     % Find DICOM-files and convert them using SPM
@@ -132,7 +132,7 @@ function dcm_converted = recursive_convert(inputDir, subID, outputDir)
             ez.pprint(sprintf('\nSkipping dicom files in subfolder %s', runNr),'blue');
         else
             ez.print(sprintf('\nFound dicom files in subfolder %s', runNr));
-            runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('R%04d',runNr);
+            runNr = regexp(runNr,'\d+','match'); runNr = ez.num(runNr{1}); runNr = sprintf('r%04d',runNr);
             P = char(dcm_files); % convert to char required by spm function
             % Open headers
             ez.print(sprintf('Opening %d DICOM-headers (can take some time) ...', length(dcm_files)));
