@@ -1,8 +1,6 @@
-% inputDir ='.../01Import/';
-%       trailing filesep does not matter
-%       each inputDir for one run of a subject
+% inputDir ='.../01Import/'; trailing filesep does not matter
 % outputDir = '.../024D/'; % trailing filesep does not matter
-%       generates _s0215_r01.nii (which is 4d as file name)
+% generates _s0215_r01.nii (which is 4d as file name, prepending _ now, because later on spm atuo add prefix for each step)
 %
 % bat_3dto4d(inputDir, outputDir);
 % after conversion, a nifti-1 file is a 4D file (1 nii = xxx volumes)
@@ -49,7 +47,7 @@ for n = 1:ez.len(subDirs)
     subDir = subDirs{n};
     ez.print(['Processing ' subDir ' ...']);
 
-    outputFile = ez.joinpath(outputDir,subDir);
+    outputFile = ez.joinpath(outputDir,['_' subDir]);
     subDir = ez.joinpath(inputDir,subDir);
     load('mod_3dto4d.mat');
     matlabbatch{1}.spm.util.cat.vols = ez.ls(subDir,'\.nii$');
@@ -61,7 +59,7 @@ for n = 1:ez.len(subDirs)
     ez.pprint('****************************************'); % pretty colorful print
 end
 
-% print out volume numbers for each 4d file
+% print out a report of volume numbers for each 4d file
 outputFiles = ez.ls(outputDir,'\.nii$');
 for n = 1:ez.len(outputFiles)
     outputFile = char(outputFiles{n});
