@@ -4,7 +4,8 @@
 %         then align the first volume in other runs to it
 % step 2) within each run, align the rest volumes to the first run
 % generated in outputDir:
-%       motion corrected nii files, mean resliced volume, motion correction parameters, motion graph
+%       motion corrected nii files, mean resliced volume(this nii file only has one volume)
+%       motion correction parameters, motion graph
 % if output nii files exist with same name, overwrite without any prompt
 %
 % inputDir ='.../xxx/'; trailing filesep does not matter
