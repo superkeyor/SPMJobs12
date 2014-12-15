@@ -43,7 +43,6 @@ for n = 1:ez.len(runFiles)
     matlabbatch{1}.spm.temporal.st.refslice = refslice;
     prefix = matlabbatch{1}.spm.temporal.st.prefix;
     spm_jobman('run',matlabbatch);
-    % ez.rm([outputFile '.mat']); % jobman generates a mat file for each concat, not informative
     ez.mv(ez.joinpath(inputDir,[prefix runFileName '.nii']), outputDir);
     clear matlabbatch;
 
