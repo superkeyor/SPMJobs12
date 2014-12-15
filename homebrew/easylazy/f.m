@@ -43,8 +43,9 @@ function main(v)
             if strcmp(vPath, preVPath)
                 spm('fmri');
             else
-                evalin('base','ez.clean'); % not the same version, clean everything otherwise report error
                 % spm('Quit'); % not the same version, call spm quit 
+                % not the same version, clean everything otherwise report error
+                evalin('base','ez.clean'); evalin('base','clear classes');
                 ez.pprint('Switching to a different version...');
                 % warning if to be removed path does not exist
                 warning('off','MATLAB:rmpath:DirNotFound');
