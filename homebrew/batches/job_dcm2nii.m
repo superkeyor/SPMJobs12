@@ -102,12 +102,12 @@ for n = 1:ez.len(inputDirs)
             volumes = size(V,1);
             if volumes >= func_volumes_threshold % functional
                 % discard the first few volumes
-                ez.print(sprintf('Discarding the first %d volumes in functional run', discards));
+                ez.print(sprintf('Discarding the first %d volumes in functional run %s', discards, subDirs{i}));
                 P = cellstr(P); % convert to cell
                 for j = 1:discards
                     ez.rm(P{j});
                 end
-                ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_R%02d', subID, funcRun)));
+                ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_r%02d', subID, funcRun)));
                 funcRun = funcRun + 1;
             elseif volumes >= dti_volumes_threshold % DTI
                 ez.mv(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
