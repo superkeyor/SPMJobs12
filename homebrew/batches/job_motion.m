@@ -64,12 +64,13 @@ for n = 1:ez.len(subjects)
     % move motion corrected files
     cellfun(@(e) ez.mv(ez.joinpath(inputDir,[prefix e '.nii']), outputDir),runFileNames,'UniformOutput',false);
     % move mean file
-    ez.mv(ez.joinpath(inputDir,'mean*'), outputDir);
+    ez.mkdir(ez.joinpath(outputDir,'mean'));
+    ez.mv(ez.joinpath(inputDir,'mean*'), ez.joinpath(outputDir,'mean'));
     % move motion parameter files
-    cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['m' e '.txt'])),runFileNames,'UniformOutput',false);
+    cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['para' e '.txt'])),runFileNames,'UniformOutput',false);
     % process motion graph
     psFile = ez.ls(outputDir,'\.ps$'){1};
-    eps2pdf(psFile,ez.joinpath(outputDir,[subject '.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
+    eps2pdf(psFile,ez.joinpath(outputDir,[subject '_motion.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
     ez.rm(psFile);
     save(['job_motion_' subject '.mat'], 'matlabbatch');
     clear matlabbatch;
