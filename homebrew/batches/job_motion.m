@@ -28,7 +28,7 @@ function [output1,output2] = main(inputDir, outputDir, email)
 spm('fmri')
 
 startTime = ez.moment();
-runFiles = ez.ls(inputDir,'_r\d\d.nii$'); % runFiles across all subjects
+runFiles = ez.ls(inputDir,'s\d\d\d\d_r\d\d\.nii$'); % runFiles across all subjects
 [dummy runFileNames] = cellfun(@(e) ez.splitpath(e),runFiles,'UniformOutput',false);
 runFileNames = cellfun(@(e) regexp(e,'_', 'split'),runFileNames,'UniformOutput',false);
 subjects = cellfun(@(e) e{end-1},runFileNames,'UniformOutput',false);  
@@ -38,7 +38,7 @@ for n = 1:ez.len(subjects)
     subject = subjects{n};
     ez.print(['Processing ' subject ' ...']);
 
-    runFiles = ez.ls(inputDir, [subject '.*\.nii$']);  % runFiles for each subject
+    runFiles = ez.ls(inputDir, [subject '_r\d\d\.nii$']);  % runFiles for each subject
     refRun = floor((ez.len(runFiles)/2)+1); % e.g., floor((3/2+1)) = 2, floor((4/2+1)) = 3
     % reorder runFiles for input to motion correction module
     ind = [refRun,1:refRun-1,refRun+1:ez.len(runFiles)];
@@ -71,7 +71,7 @@ for n = 1:ez.len(subjects)
     psFile = ez.ls(outputDir,'\.ps$'){1};
     eps2pdf(psFile,ez.joinpath(outputDir,[subject '.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
     ez.rm(psFile);
-    save(['mod_motion_' subject '.mat'], 'matlabbatch');
+    save(['job_motion_' subject '.mat'], 'matlabbatch');
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print

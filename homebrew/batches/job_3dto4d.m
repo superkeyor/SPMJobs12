@@ -56,7 +56,7 @@ for n = 1:ez.len(subDirs)
     spm_jobman('run',matlabbatch);
     ez.rm([outputFile '.mat']); % jobman generates a mat file for each concat, not informative
     [dummy subDir] = ez.splitpath(subDir);
-    save(['mod_3dto4d_' subDir '.mat'], 'matlabbatch');
+    save(['job_3dto4d_' subDir '.mat'], 'matlabbatch');
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print

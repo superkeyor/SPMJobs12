@@ -26,7 +26,7 @@ spm('fmri')
 
 startTime = ez.moment();
 
-runFiles = ez.ls(inputDir,'_r\d\d.nii$');
+runFiles = ez.ls(inputDir,'s\d\d\d\d_r\d\d\.nii$');
 for n = 1:ez.len(runFiles)
     runFile = runFiles{n};
     [dummy runFileName] = ez.splitpath(runFile);
@@ -46,7 +46,7 @@ for n = 1:ez.len(runFiles)
     cd(outputDir);
     spm_jobman('run',matlabbatch);
     ez.mv(ez.joinpath(inputDir,[prefix runFileName '.nii']), outputDir);
-    save(['mod_slicetiming_' runFileName '.mat'], 'matlabbatch');
+    save(['job_slicetiming_' runFileName '.mat'], 'matlabbatch');
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print
