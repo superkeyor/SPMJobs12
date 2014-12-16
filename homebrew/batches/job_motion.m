@@ -71,6 +71,7 @@ for n = 1:ez.len(subjects)
     psFile = ez.ls(outputDir,'\.ps$'){1};
     eps2pdf(psFile,ez.joinpath(outputDir,[subject '.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
     ez.rm(psFile);
+    save(['mod_motion_' subject '.mat'], 'matlabbatch');
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print

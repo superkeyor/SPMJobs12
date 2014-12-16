@@ -25,7 +25,6 @@ spm('fmri')
 [nslices, tr, sliceorder, refslice] = parameters{:};
 
 startTime = ez.moment();
-cd(outputDir);
 runFiles = ez.ls(inputDir,'_r\d\d.nii$');
 for n = 1:ez.len(runFiles)
     runFile = runFiles{n};
@@ -42,9 +41,11 @@ for n = 1:ez.len(runFiles)
     matlabbatch{1}.spm.temporal.st.so = sliceorder;
     matlabbatch{1}.spm.temporal.st.refslice = refslice;
     prefix = matlabbatch{1}.spm.temporal.st.prefix;
+    cd(outputDir);
     spm_jobman('run',matlabbatch);
     ez.rm([outputFile '.mat']); % jobman generates a mat file, not informative
     ez.mv(ez.joinpath(inputDir,[prefix runFileName '.nii']), outputDir);
+    save(['mod_slicetiming_' runFileName '.mat'], 'matlabbatch');
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print

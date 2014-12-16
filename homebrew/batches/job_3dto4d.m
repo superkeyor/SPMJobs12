@@ -41,7 +41,6 @@ function [output1,output2] = main(inputDir, outputDir, email)
 spm('fmri')
 
 startTime = ez.moment();
-cd(outputDir);
 subDirs = ez.lsd(inputDir,'anat|dti|r\d\d'); % skip loc
 for n = 1:ez.len(subDirs)
     subDir = subDirs{n};
@@ -49,11 +48,15 @@ for n = 1:ez.len(subDirs)
 
     outputFile = ez.joinpath(outputDir,['_' subDir]);
     subDir = ez.joinpath(inputDir,subDir);
+    
     load('mod_3dto4d.mat');
     matlabbatch{1}.spm.util.cat.vols = ez.ls(subDir,'\.nii$');
     matlabbatch{1}.spm.util.cat.name = [outputFile '.nii'];
+    cd(outputDir);
     spm_jobman('run',matlabbatch);
     ez.rm([outputFile '.mat']); % jobman generates a mat file for each concat, not informative
+    [dummy subDir] = ez.splitpath(subDir);
+    save(['mod_3dto4d_' subDir '.mat'], 'matlabbatch');
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print
