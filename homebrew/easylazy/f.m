@@ -1,4 +1,4 @@
-% launch a particular version of spm
+% launch a particular version of spm and check for updates
 % 
 % you might be warned that there are at least two spm versions existing in the searchpath (note: December 08 2014, 07:34:33 PM CST, fixed this issue, will automatcially remove the path from previously launched version)
 % the old spm window, if any, will be closed automatically. when you type spm again, always launch the last called version.
@@ -20,6 +20,7 @@ function main(v)
             vPath = ez.joinpath(spmsPath, vFolderName);
             addpath(vPath);
             spm('fmri');
+            spm_update;
         % otherwise, simply launch the last called version
         else
             spm('fmri');  % same version, no need to clear base workspace
@@ -36,6 +37,7 @@ function main(v)
         if isempty(which('spm'))
             addpath(vPath);
             spm('fmri');
+            spm_update;
         else
             % previous launched spm path
             preVPath = fileparts(which('spm'));
@@ -53,6 +55,7 @@ function main(v)
                 warning('on','MATLAB:rmpath:DirNotFound');
                 addpath(vPath);
                 spm('fmri');
+                spm_update;
             end
         end
     end
