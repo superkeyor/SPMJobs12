@@ -65,7 +65,7 @@ for n = 1:ez.len(subjects)
 
     % fill out normalise
     resampleImages = {};
-    % all volumes across run for each subject
+    % all volumes across runs for one subject
     runVolumes = cellstr(spm_select('ExtList',inputDir,['^(?!mean).*' subject '.*\.nii'],[1:1000]));
     runVolumes = cellfun(@(e) ez.joinpath(inputDir,e),runVolumes,'UniformOutput',false);
     % also warp anat to normalised space
