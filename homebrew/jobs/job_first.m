@@ -93,7 +93,7 @@ for n = 1:ez.len(subjects)
         matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).scans = runVolumes;
         % match s0215_r01_multicond.mat
         runNr = sprintf('%02d', m);
-        matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).multi = ez.ls(outputDir,[subject '_' runNr '.*mat$']);
+        matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).multi = ez.ls(outputDir,[subject '_' runNr '_multiconds.mat$']);
     end
     cd(outputDir);
     save(['job_first_' subject '.mat'], 'matlabbatch');
