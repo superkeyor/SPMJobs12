@@ -1,8 +1,9 @@
 % inputDir ='.../01Import/'; trailing filesep does not matter
 % outputDir = '.../024D/'; % trailing filesep does not matter
+% optional input: together = 0/1 (default 1) if 0 only generates job_.mat files, 1 run the jobs and clean up afterwards
 % generates _s0215_r01.nii (which is 4d as file name, prepending _ now, because later on spm atuo add prefix for each step)
 %
-% bat_3dto4d(inputDir, outputDir);
+% bat_3dto4d(inputDir, outputDir, together);
 % after conversion, a nifti-1 file is a 4D file (1 nii = xxx volumes)
 % if nii files exist with same name, overwrite without any prompt
 %
@@ -35,10 +36,11 @@
 %
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDir, outputDir, email)
+function [output1,output2] = main(inputDir, outputDir, together, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
-spm('fmri')
+spm('fmri');
+if ~exist('together','var'), together = 1; end
 
 startTime = ez.moment();
 subDirs = ez.lsd(inputDir,'anat|dti|r\d\d'); % skip loc
@@ -53,24 +55,28 @@ for n = 1:ez.len(subDirs)
     matlabbatch{1}.spm.util.cat.vols = ez.ls(subDir,'\.nii$');
     matlabbatch{1}.spm.util.cat.name = [outputFile '.nii'];
     cd(outputDir);
-    spm_jobman('run',matlabbatch);
-    ez.rm([outputFile '.mat']); % jobman generates a mat file for each concat, not informative
     [dummy subDir] = ez.splitpath(subDir);
     save(['job_3dto4d_' subDir '.mat'], 'matlabbatch');
+    if together
+        spm_jobman('run',matlabbatch);
+        ez.rm([outputFile '.mat']); % jobman generates a mat file for each concat, not informative
+    end
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print
 end
 
-% print out a report of volume numbers for each 4d file
-outputFiles = ez.ls(outputDir,'\.nii$');
-for n = 1:ez.len(outputFiles)
-    outputFile = char(outputFiles{n});
-    V = spm_vol(outputFile);
-    % V is a structure array, each row has info for one volume
-    volumes = size(V,1);
-    [dummy outputFile] = ez.splitpath(outputFile);
-    ez.print(sprintf('%s has %d volumes',outputFile,volumes));
+if together
+    % print out a report of volume numbers for each 4d file
+    outputFiles = ez.ls(outputDir,'\.nii$');
+    for n = 1:ez.len(outputFiles)
+        outputFile = char(outputFiles{n});
+        V = spm_vol(outputFile);
+        % V is a structure array, each row has info for one volume
+        volumes = size(V,1);
+        [dummy outputFile] = ez.splitpath(outputFile);
+        ez.print(sprintf('%s has %d volumes',outputFile,volumes));
+    end
 end
 ez.pprint('Done!');
 

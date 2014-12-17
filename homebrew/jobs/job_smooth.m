@@ -6,6 +6,7 @@
 % outputDir = '.../xxx/'; % trailing filesep does not matter
 % parameters = {FWHM};
 %       e.g.,  {[8 8 8]}
+% optional input: together = 0/1 (default 1) if 0 only generates job_.mat files, 1 run the jobs and clean up afterwards
 % 
 % note: 
 %   uses SPM functions; SPM must be added to your matlab path: File -> Set Path... -> add with subfolders. 
@@ -18,10 +19,11 @@
 % https://www.youtube.com/playlist?list=PLcNEqVlhR3BtA_tBf8dJHG2eEcqitNJtw
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDir, outputDir, parameters, email)
+function [output1,output2] = main(inputDir, outputDir, parameters, together, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
-spm('fmri')
+spm('fmri');
+if ~exist('together','var'), together = 1; end
 [FWHM] = parameters{:};
 
 startTime = ez.moment();
@@ -44,20 +46,23 @@ for n = 1:ez.len(subjects)
     matlabbatch{1}.spm.spatial.smooth.fwhm = FWHM;
 
     cd(outputDir);
-    spm_jobman('run',matlabbatch);
-
-    % check smoothed
-    files = cellstr(spm_select('ExtList',inputDir,['^(w|sw).*' subject '_r01\.nii'],[1]));
-    files = cellfun(@(e) ez.joinpath(inputDir,e),files,'UniformOutput',false);
-    spm_check_registration(char(files));
-    fig = spm_figure('FindWin','Graphics');
-    ez.export(ez.joinpath(outputDir,[subject '_r01_smoothed.pdf']),fig);
-
-    % move smoothed files
-    files = ez.ls(inputDir,['^s.*' subject '_r\d\d\.nii$']);
-    cellfun(@(e) ez.mv(e,outputDir),files,'UniformOutput',false);
-
     save(['job_smooth_' subject '.mat'], 'matlabbatch');
+
+    if together
+        spm_jobman('run',matlabbatch);
+
+        % check smoothed
+        files = cellstr(spm_select('ExtList',inputDir,['^(w|sw).*' subject '_r01\.nii'],[1]));
+        files = cellfun(@(e) ez.joinpath(inputDir,e),files,'UniformOutput',false);
+        spm_check_registration(char(files));
+        fig = spm_figure('FindWin','Graphics');
+        ez.export(ez.joinpath(outputDir,[subject '_r01_smoothed.pdf']),fig);
+
+        % move smoothed files
+        files = ez.ls(inputDir,['^s.*' subject '_r\d\d\.nii$']);
+        cellfun(@(e) ez.mv(e,outputDir),files,'UniformOutput',false);
+    end
+
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print

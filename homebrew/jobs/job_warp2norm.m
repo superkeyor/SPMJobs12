@@ -16,6 +16,7 @@
 % outputDir = '.../xxx/'; % trailing filesep does not matter
 % inputDir2 = folder for functional_mean_ref images
 % inputDir3 = folder for anat_source images
+% optional input: together = 0/1 (default 1) if 0 only generates job_.mat files, 1 run the jobs and clean up afterwards
 % 
 % note: 
 %   uses SPM functions; SPM must be added to your matlab path: File -> Set Path... -> add with subfolders. 
@@ -28,10 +29,11 @@
 % https://www.youtube.com/playlist?list=PLcNEqVlhR3BtA_tBf8dJHG2eEcqitNJtw
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDir, outputDir, inputDir2, inputDir3, email)
+function [output1,output2] = main(inputDir, outputDir, inputDir2, inputDir3, together, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
-spm('fmri')
+spm('fmri');
+if ~exist('together','var'), together = 1; end
 
 startTime = ez.moment();
 % 1) copy anat files to the inputDir
@@ -79,42 +81,45 @@ for n = 1:ez.len(subjects)
     matlabbatch{3}.spm.spatial.normalise.write.subj.resample = resampleImages;    
 
     cd(outputDir);
-    spm_jobman('run',matlabbatch);
-
-    % move stuff to hallway
-    hallway = ez.joinpath(outputDir,'hallway'); ez.mkdir(hallway);
-    % jobman generates a mat file, not sure informative
-    ez.mv(ez.joinpath(outputDir,'*seg8.mat'),hallway);
-    % segments
-    segs = ez.ls(outputDir,'^c\d.*nii$');
-    spm_check_registration(char(segs));
-    fig = spm_figure('FindWin','Graphics');
-    ez.export(ez.joinpath(outputDir,[subject '_segs.pdf']),fig);
-    cellfun(@(e) ez.mv(e,hallway),segs,'UniformOutput',false);
-    % inverse/forward matrices
-    files = ez.ls(outputDir,'^(y|iy)_.*nii$');
-    cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
-    % bias corrected file
-    files = ez.ls(outputDir,'^m.*anat\.nii$');
-    cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
-    % process graph
-    psFile = ez.ls(outputDir,'\.ps$'){1};
-    eps2pdf(psFile,ez.joinpath(outputDir,[subject '_coreg.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
-    ez.rm(psFile);
-    % move warped files
-    files = ez.ls(inputDir,['^w.*' subject '_r\d\d\.nii$']);
-    cellfun(@(e) ez.mv(e,outputDir),files,'UniformOutput',false);
-    % check warped
-    files = cellstr(spm_select('ExtList',outputDir,['^w.*' subject '.*\.nii'],[1]));
-    files = cellfun(@(e) ez.joinpath(outputDir,e),files,'UniformOutput',false);
-    spm_check_registration(char(files));
-    fig = spm_figure('FindWin','Graphics');
-    ez.export(ez.joinpath(outputDir,[subject '_warped.pdf']),fig);
-    % finally anat with header changed
-    files = ez.ls(outputDir,['^_' subject '_anat\.nii$']);
-    cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
-
     save(['job_warp2norm_' subject '.mat'], 'matlabbatch');
+
+    if together
+        spm_jobman('run',matlabbatch);
+
+        % move stuff to hallway
+        hallway = ez.joinpath(outputDir,'hallway'); ez.mkdir(hallway);
+        % jobman generates a mat file, not sure informative
+        ez.mv(ez.joinpath(outputDir,'*seg8.mat'),hallway);
+        % segments
+        segs = ez.ls(outputDir,'^c\d.*nii$');
+        spm_check_registration(char(segs));
+        fig = spm_figure('FindWin','Graphics');
+        ez.export(ez.joinpath(outputDir,[subject '_segs.pdf']),fig);
+        cellfun(@(e) ez.mv(e,hallway),segs,'UniformOutput',false);
+        % inverse/forward matrices
+        files = ez.ls(outputDir,'^(y|iy)_.*nii$');
+        cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
+        % bias corrected file
+        files = ez.ls(outputDir,'^m.*anat\.nii$');
+        cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
+        % process graph
+        psFile = ez.ls(outputDir,'\.ps$'){1};
+        eps2pdf(psFile,ez.joinpath(outputDir,[subject '_coreg.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
+        ez.rm(psFile);
+        % move warped files
+        files = ez.ls(inputDir,['^w.*' subject '_r\d\d\.nii$']);
+        cellfun(@(e) ez.mv(e,outputDir),files,'UniformOutput',false);
+        % check warped
+        files = cellstr(spm_select('ExtList',outputDir,['^w.*' subject '.*\.nii'],[1]));
+        files = cellfun(@(e) ez.joinpath(outputDir,e),files,'UniformOutput',false);
+        spm_check_registration(char(files));
+        fig = spm_figure('FindWin','Graphics');
+        ez.export(ez.joinpath(outputDir,[subject '_warped.pdf']),fig);
+        % finally anat with header changed
+        files = ez.ls(outputDir,['^_' subject '_anat\.nii$']);
+        cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
+    end
+
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print

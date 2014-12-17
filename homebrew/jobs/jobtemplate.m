@@ -1,11 +1,12 @@
-% (inputDir, outputDir, parameters);
-% generates 4d file
+% (inputDir, outputDir, parameters, together);
+% 
 % if output nii files exist with same name, overwrite without any prompt
 %
 % inputDir ='.../xxx/'; trailing filesep does not matter
 % outputDir = '.../xxx/'; % trailing filesep does not matter
 % parameters = {nslices, tr(seconds), sliceorder, refslice};
 %       e.g.,  {26, 2.5, [1:2:26 2:2:26], 25}
+% optional input: together = 0/1 (default 1) if 0 only generates job_.mat files, 1 run the jobs and clean up afterwards
 % 
 % note: 
 %   uses SPM functions; SPM must be added to your matlab path: File -> Set Path... -> add with subfolders. 
@@ -18,10 +19,11 @@
 % https://www.youtube.com/playlist?list=PLcNEqVlhR3BtA_tBf8dJHG2eEcqitNJtw
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDir, outputDir, parameters, email)
+function [output1,output2] = main(inputDir, outputDir, parameters, together, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
-spm('fmri')
+spm('fmri');
+if ~exist('together','var'), together = 1; end
 [nslices, tr, sliceorder, refslice] = parameters{:};
 
 startTime = ez.moment();
@@ -54,21 +56,24 @@ for n = 1:ez.len(subjects)
     end
     prefix = matlabbatch{1}.spm.spatial.realign.estwrite.roptions.prefix;
     cd(outputDir);
-    spm_jobman('run',matlabbatch);
-
-    % jobman generates a mat file, not informative
-    cellfun(@(e) ez.rm(ez.joinpath(inputDir,[e '.mat'])),runFileNames,'UniformOutput',false); 
-    % move motion corrected files
-    cellfun(@(e) ez.mv(ez.joinpath(inputDir,[prefix e '.nii']), outputDir),runFileNames,'UniformOutput',false);
-    % move mean file
-    ez.mv(ez.joinpath(inputDir,'mean*'), outputDir);
-    % move motion parameter files
-    cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['m' e '.txt'])),runFileNames,'UniformOutput',false);
-    % process graph
-    psFile = ez.ls(outputDir,'\.ps$'){1};
-    eps2pdf(psFile,ez.joinpath(outputDir,[subject '_.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
-    ez.rm(psFile);
     save(['job_motion_' subject '.mat'], 'matlabbatch');
+
+    if together
+        spm_jobman('run',matlabbatch);
+        % jobman generates a mat file, not informative
+        cellfun(@(e) ez.rm(ez.joinpath(inputDir,[e '.mat'])),runFileNames,'UniformOutput',false); 
+        % move motion corrected files
+        cellfun(@(e) ez.mv(ez.joinpath(inputDir,[prefix e '.nii']), outputDir),runFileNames,'UniformOutput',false);
+        % move mean file
+        ez.mv(ez.joinpath(inputDir,'mean*'), outputDir);
+        % move motion parameter files
+        cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['m' e '.txt'])),runFileNames,'UniformOutput',false);
+        % process graph
+        psFile = ez.ls(outputDir,'\.ps$'){1};
+        eps2pdf(psFile,ez.joinpath(outputDir,[subject '_.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
+        ez.rm(psFile);
+    end
+
     clear matlabbatch;
 
     ez.pprint('****************************************'); % pretty colorful print
