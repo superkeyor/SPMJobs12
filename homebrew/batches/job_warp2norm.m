@@ -9,7 +9,7 @@
 %       y_ forward (used for warp to standard space); iy_ inverse
 %       seg8.mat, not sure what it is
 %       c1-c5 segmented
-%       wxxx.nii  warped files
+%       wxxx.nii  warped files (during normalization step also down/up-resample functional and anat to 2*2*2 mm)
 % if output nii files exist with same name, overwrite without any prompt
 %
 % inputDir ='.../xxx/'; trailing filesep does not matter
