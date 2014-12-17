@@ -37,7 +37,7 @@ for n = 1:ez.len(subjects)
     subject = subjects{n};
     ez.print(['Processing ' subject ' ...']);
 
-    runFiles = ez.ls(inputDir, [subject '_r\d\d\.nii$']);  % runFiles for each subject
+    runFiles = ez.ls(inputDir, [subject '_r\d\d\.nii$']);  % runFiles for one subject
     refRun = floor((ez.len(runFiles)/2)+1); % e.g., floor((3/2+1)) = 2, floor((4/2+1)) = 3
     % reorder runFiles for input to motion correction module
     ind = [refRun,1:refRun-1,refRun+1:ez.len(runFiles)];

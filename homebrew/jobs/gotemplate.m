@@ -11,9 +11,10 @@ inputDir = ez.joinpath(projDir,prevStep);
 outputDir = ez.csd();
 %----------------------------------
 parameters = {nslices, tr, sliceorder, refslice};
+together = 1;
 %----------------------------------
 email = 'jerryzhu@siu.edu';
 dbstop if error;  % enter matlab debug mode in case of run-time error
 %----------------------------------
-job_(inputDir, outputDir, parameters, email);
+job_(inputDir, outputDir, parameters, together, email);
 dbclear if error;
