@@ -3,25 +3,21 @@
 %   call the function from another script, which is put in the same folder where new files are generated.
 %
 % Args:
-%   a full path to the folder where all .set files are (folder not recursive)
-%   a full path to the folder where all output .set files will be saved
-%   additional info (e.g. full path to a csv file, [2 5], 5.5, {4,3,70})
+%   a full path to the folder where all .nii files are (folder not recursive)
+%   a full path to the folder where all output .nii files will be saved
+%   additional parameters
 %
 % Returns:
 %   print out the name of the file being processed
-%   save the new (.set) files in the output dir
+%   save the new (nii) files in the output dir
 %   Attention: if the folder has the same file names, they will be overwritten without prompt
-%   As long as a new EEG file is generated, the function automatically generates an new EEG report and keep the old report
 %   email notification when done if email provided
 %
 % Example: 
 %   None
 %
-% Special Note:
-%   This script does not care about ALLEEG. 
-%   Script commands are not saved in EEG.history internally by EEGLAB (otherwise could be saved if done with GUI)
-%
-% Software version tested: eeglab12_0_2_5b, eeglab13_3_2b(recommended), matlab2012b(mac,lion,10.7.5), matlab2014a(win7)
+% Software version tested: spm12-6225, matlab2012b(mac,lion,10.7.5)
+
 % Other m-files required: ez.m
 % Subfunctions: none
 % MAT-files required: none
@@ -32,14 +28,14 @@
 % SIUC
 % email: jerryzhujian9@gmail.com
 % Website: http://zhupsy.com
-% June 2014; Last revision: June 18 2014, 06:37:07 PM CDT
+% December 16 2014, 09:42:13 PM CST
 
 function main()
 ez.pprint('****************************************');
-fprintf(['Enhanced eeglab functions which can handel batch processing.\n\n' ...
+fprintf(['Enhanced spm functions which can handel multiple subjects processing.\n\n' ...
         'These are general functions. If one needs to customize a function for a project,\n' ...
-        'It is better to first make a copy to the project folder itself and then change there.\n\n' ...
-        'File name convention in general: bat_eeglabfunc.m\n\n'...
+        'It is better to first make a copy of the mod_.mat to the project folder itself and then change there.\n\n' ...
+        'File name convention in general: job_func.m\n\n'...
         'Here are all functions and their inputs.\n\n']);
 scripts = ez.ls(ez.csd(),'\.m$');
 for n = 1:ez.len(scripts)
@@ -58,7 +54,7 @@ fprintf('\nHere are some general function help information.\n\n');
 % help(ez.csf());
 help(mfilename);
 
-fprintf('Again, here are all functions and their inputs. Type "help bat_eeglabfunc" for individual function help.\n\n');
+fprintf('Again, here are all functions and their inputs. Type "help job_func" for individual function help.\n\n');
 for n = 1:ez.len(scripts)
     script = scripts{n};
     [filePath,fileName,fileExt] = ez.splitpath(script);
