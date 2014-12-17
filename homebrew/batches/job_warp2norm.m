@@ -86,7 +86,7 @@ for n = 1:ez.len(subjects)
     ez.export(ez.joinpath(outputDir,[subject '_segs.pdf']),fig);
     cellfun(@(e) ez.mv(e,hallway),segs,'UniformOutput',false);
     % inverse/forward matrices
-    files = ez.ls(outputDir,'^[iy]_.*nii$');
+    files = ez.ls(outputDir,'^(y|iy)_.*nii$');
     cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
     % bias corrected file
     files = ez.ls(outputDir,'^m.*anat\.nii$');
