@@ -20,6 +20,8 @@ function main(v)
             vPath = ez.joinpath(spmsPath, vFolderName);
             addpath(vPath);
             spm('fmri');
+            commandwindow;                
+            ez.pprint('Checking update...');
             spm_update;
         % otherwise, simply launch the last called version
         else
@@ -37,6 +39,8 @@ function main(v)
         if isempty(which('spm'))
             addpath(vPath);
             spm('fmri');
+            commandwindow;                
+            ez.pprint('Checking update...');
             spm_update;
         else
             % previous launched spm path
@@ -55,6 +59,8 @@ function main(v)
                 warning('on','MATLAB:rmpath:DirNotFound');
                 addpath(vPath);
                 spm('fmri');
+                commandwindow;                
+                ez.pprint('Checking update...');
                 spm_update;
             end
         end
