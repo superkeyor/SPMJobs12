@@ -66,7 +66,7 @@ for n = 1:ez.len(subjects)
     cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['m' e '.txt'])),runFileNames,'UniformOutput',false);
     % process motion graph
     psFile = ez.ls(outputDir,'\.ps$'){1};
-    eps2pdf(psFile,ez.joinpath(outputDir,[subject '.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
+    eps2pdf(psFile,ez.joinpath(outputDir,[subject '_.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
     ez.rm(psFile);
     save(['job_motion_' subject '.mat'], 'matlabbatch');
     clear matlabbatch;
