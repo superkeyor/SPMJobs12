@@ -13,7 +13,7 @@
 % 
 % note: 
 %   uses SPM functions; SPM must be added to your matlab path: File -> Set Path... -> add with subfolders. 
-%   tested under SPM 12 (with mac lion 10.7.5 and matlab 2012b)
+%   tested under SPM 12-6225 (with mac lion 10.7.5 and matlab 2012b)
 %   if you use this job_function for the first time, consider running only one subject and check the results before processing all 
 %
 % author = jerryzhujian9@gmail.com
