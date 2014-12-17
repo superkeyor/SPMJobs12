@@ -64,7 +64,7 @@ for n = 1:ez.len(subjects)
     ez.mv(ez.joinpath(inputDir,'mean*'), outputDir);
     % move motion parameter files
     cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['m' e '.txt'])),runFileNames,'UniformOutput',false);
-    % process motion graph
+    % process graph
     psFile = ez.ls(outputDir,'\.ps$'){1};
     eps2pdf(psFile,ez.joinpath(outputDir,[subject '_.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
     ez.rm(psFile);
