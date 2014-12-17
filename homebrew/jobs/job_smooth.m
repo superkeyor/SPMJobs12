@@ -46,6 +46,17 @@ for n = 1:ez.len(subjects)
     cd(outputDir);
     spm_jobman('run',matlabbatch);
 
+    % check smoothed
+    files = cellstr(spm_select('ExtList',inputDir,['^(w|sw).*' subject '_r01\.nii'],[1]));
+    files = cellfun(@(e) ez.joinpath(inputDir,e),files,'UniformOutput',false);
+    spm_check_registration(char(files));
+    fig = spm_figure('FindWin','Graphics');
+    ez.export(ez.joinpath(outputDir,[subject '_r01_smoothed.pdf']),fig);
+
+    % move smoothed files
+    files = ez.ls(inputDir,['^s.*' subject '_r\d\d\.nii$']);
+    cellfun(@(e) ez.mv(e,outputDir),files,'UniformOutput',false);
+
     save(['job_smooth_' subject '.mat'], 'matlabbatch');
     clear matlabbatch;
 
