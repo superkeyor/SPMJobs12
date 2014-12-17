@@ -2,7 +2,7 @@ Sub-directories:
  /spms - different versions of spm 
 
  /homebrew   - homemade functions
-      /batches    functions that can process many files at a time
+      /jobs    functions that can process many files at a time
       /easylazy   stop being a clicking monkey when using spm gui
       /junctions  general matlab functions (independent of spm)
 
