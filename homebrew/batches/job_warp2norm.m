@@ -4,6 +4,12 @@
 % step 2) segment updated anat file to grey(c1), white(c2), csf(c3), bone(c4), soft-tissue(c5), air/background(c6), 
 %         get the deformation info, involves linear transformation and nonlinear warp
 % step 3) combine parameters from step 1 & 2, apply to functional and anat images
+% output a lot of files: 
+%       mxxx.nii -bias corrected
+%       y_ forward (used for warp to standard space); iy_ inverse
+%       seg8.mat, not sure what it is
+%       c1-c5 segmented
+%       wxxx.nii  warped files
 % if output nii files exist with same name, overwrite without any prompt
 %
 % inputDir ='.../xxx/'; trailing filesep does not matter
