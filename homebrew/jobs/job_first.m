@@ -86,32 +86,23 @@ for n = 1:ez.len(subjects)
     runFiles = ez.ls(inputDir, [subject '_r\d\d\.nii$']);  % runFiles for one subject
     sess = matlabbatch{1}.spm.stats.fmri_spec.sess; % sess structure
     matlabbatch{1}.spm.stats.fmri_spec.sess = repmat([sess], 1, ez.len(runFiles)); % create certain number of sessions
-    for m = 1:ez.len(runFileNames)
-        runFileName = runFileNames{m};
-        runVolumes = cellstr(spm_select('ExtList',inputDir,runFileName,[1:1000]));
+    for m = 1:ez.len(runFiles)
+        runFile = runFiles{m};
+        [dummy runFileName] = ez.splitpath(runFile);
+        runVolumes = cellstr(spm_select('ExtList',inputDir,[runFileName '\.nii$'],[1:1000]));
         runVolumes = cellfun(@(e) ez.joinpath(inputDir,e),runVolumes,'UniformOutput',false);
         matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).scans = runVolumes;
         % match s0215_r01_multicond.mat
         runNr = sprintf('%02d', m);
-        matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).multi = ez.ls(outputDir,[subject '_' runNr '_multiconds.mat$']);
+        matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).multi = ez.ls(outputDir,[subject '_r' runNr '_multiconds.mat$']);
     end
     cd(outputDir);
     save(['job_first_' subject '.mat'], 'matlabbatch');
 
     if together
         spm_jobman('run',matlabbatch);
-        % jobman generates a mat file, not informative
-        cellfun(@(e) ez.rm(ez.joinpath(inputDir,[e '.mat'])),runFileNames,'UniformOutput',false); 
-        % move motion corrected files
-        cellfun(@(e) ez.mv(ez.joinpath(inputDir,[prefix e '.nii']), outputDir),runFileNames,'UniformOutput',false);
-        % move mean file
-        ez.mv(ez.joinpath(inputDir,'mean*'), outputDir);
-        % move motion parameter files
-        cellfun(@(e) ez.mv(ez.joinpath(inputDir,['rp_' e '.txt']), ez.joinpath(outputDir,['m' e '.txt'])),runFileNames,'UniformOutput',false);
-        % process graph
-        psFile = ez.ls(outputDir,'\.ps$'){1};
-        eps2pdf(psFile,ez.joinpath(outputDir,[subject '_.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
-        ez.rm(psFile);
+        fig = spm_figure('FindWin','Graphics');
+        ez.export(ez.joinpath(outputDir,[subject '_design.pdf']),fig);
     end
 
     clear matlabbatch;
