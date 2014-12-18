@@ -1,4 +1,14 @@
 % (inputDir, outputDir, parameters, together);
+% build first level model and estimate with classic ReML
+% output files:
+%   for each subject, generates beta weights = (conditions + 1 constant)*runs.  The beta weights are averaged amplitudes (across time) for each condition at each voxel.
+%   model specification generates SPM.mat which is then overwritten by estimation, finally SPM.mat has both specification and estimated parameters
+%   ResMS, variance of error
+%   mask, voxels included in the analysis
+%   RPV, estimated resels per voxel
+%
+%   SPM.mat can be used by Reviewed, Result
+% 
 % inputDir
     % swmt_s0215_r01.nii
     % swmt_s0215_r02.nii
