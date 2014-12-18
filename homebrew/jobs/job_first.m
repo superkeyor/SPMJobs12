@@ -45,8 +45,8 @@
     % ...
     % 
     % autocreate folders
-    % s0215_SPM -> SPM.mat
-    % s0216_SPM -> SPM.mat
+    % s0215_SPM -> SPM.mat, betas
+    % s0216_SPM -> SPM.mat, betas
     % ...
 % parameters = {tr(seconds), nslices, refslice};
 %       e.g.,  {2.5, 26, 25}  nslices for microtime resolution, refslice for microtime onset
