@@ -1,7 +1,7 @@
-% inputDirs = {'.../00ScannerBackup/0215/';
-%              '.../00ScannerBackup/0216/';}; 
+% inputDirs = {'.../00ScannerBackup/00215/';
+%              '.../00ScannerBackup/00216/';}; 
 %                                           trailing filesep does not matter
-%                                           the last part, e.g., 0215 is used for subject ID
+%                                           the last part, e.g., 00215 is used for subject ID (00215-->0215)
 %                                           if it is 's215', will be converted to 0215
 %                                           each inputDir for one subject
 % outputDir = '.../01Import/'; % trailing filesep does not matter
