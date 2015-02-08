@@ -110,7 +110,7 @@ for n = 1:ez.len(inputDirs)
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_r%02d', subID, funcRun)));
                 funcRun = funcRun + 1;
             elseif volumes >= dti_volumes_threshold % DTI
-                ez.mv(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
+                ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
             % min number of slices across all volumes
             elseif min([V.dim]) <= loc_slices_threshold % localizer
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_loc', subID)));
