@@ -101,7 +101,7 @@ for n = 1:ez.len(subjects)
     [dummy onsetFileNames] = cellfun(@(e) ez.splitpath(e),onsetFiles,'UniformOutput',false);
     onsetFileNames = cellfun(@(e) regexp(e,'_', 'split'),onsetFileNames,'UniformOutput',false);
     runs = cellfun(@(e) e{end-1},onsetFileNames,'UniformOutput',false);
-    runsString = sprintf('%s|', runs{:}); runsString = runsString(1:end-1);  % construct a regular expression |
+    runsString = sprintf('%s|', runs{:}); runsString = ['(', runsString(1:end-1) ')'];  % construct a regular expression |
     runFiles = ez.ls(inputDir, [subject, '_', runsString, '.nii$']); 
     sess = matlabbatch{1}.spm.stats.fmri_spec.sess; % sess structure
     matlabbatch{1}.spm.stats.fmri_spec.sess = repmat([sess], 1, ez.len(runFiles)); % create certain number of sessions
