@@ -43,18 +43,6 @@ names{12}='Arrow';
 onsets{12}=[120, 20];
 durations{12}=[30, 30];
 save s0215_r01_multiconds
-save s0215_r02_multiconds
-save s0215_r03_multiconds
-save s0215_r04_multiconds
-save s0215_r05_multiconds
-save s0215_r06_multiconds
-save s0216_r01_multiconds
-save s0216_r02_multiconds
-save s0216_r03_multiconds
-save s0216_r04_multiconds
-save s0216_r05_multiconds
-save s0216_r06_multiconds
-save s0216_r07_multiconds
 clear
 
 % next subject-run
