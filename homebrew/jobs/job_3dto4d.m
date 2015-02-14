@@ -67,16 +67,19 @@ for n = 1:ez.len(subDirs)
 end
 
 if together
-    % print out a report of volume numbers for each 4d file
-    outputFiles = ez.ls(outputDir,'\.nii$');
-    for n = 1:ez.len(outputFiles)
-        outputFile = char(outputFiles{n});
-        V = spm_vol(outputFile);
-        % V is a structure array, each row has info for one volume
-        volumes = size(V,1);
-        [dummy outputFile] = ez.splitpath(outputFile);
-        ez.print(sprintf('%s has %d volumes',outputFile,volumes));
-    end
+    % % print out a report of volume numbers for each 4d file
+    % outputFiles = ez.ls(outputDir,'\.nii$');
+    % for n = 1:ez.len(outputFiles)
+    %     outputFile = char(outputFiles{n});
+    %     V = spm_vol(outputFile);
+    %     % V is a structure array, each row has info for one volume
+    %     volumes = size(V,1);
+    %     [dummy outputFile] = ez.splitpath(outputFile);
+    %     ez.print(sprintf('%s has %d volumes',outputFile,volumes));
+    % end
+
+    % generate the csv report
+    job_report(outputDir);
 end
 ez.pprint('Done!');
 
