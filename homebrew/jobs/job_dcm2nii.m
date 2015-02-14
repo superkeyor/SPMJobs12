@@ -109,8 +109,10 @@ for n = 1:ez.len(inputDirs)
                     P = cellstr(P); % convert to cell
                     whole = [1:ez.len(P)]; % all volumes index
                     discards = ez.setdiff(whole,keep);
-                    ez.print(sprintf('Discarding volumes in functional run %s: %s', subDirs{i}, ez.join(' ', discards)));
-                    ez.rm(P(discards)); % P(discards) returns a cell
+                    if ~isempty(discards)
+                        ez.print(sprintf('Discarding volumes in functional run %s: %s', subDirs{i}, ez.join(' ', discards)));
+                        ez.rm(P(discards)); % P(discards) returns a cell
+                    end
                 end
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_r%02d', subID, funcRun)));
                 funcRun = funcRun + 1;
