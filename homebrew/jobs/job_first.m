@@ -107,15 +107,16 @@ for n = 1:ez.len(subjects)
     matlabbatch{1}.spm.stats.fmri_spec.sess = repmat([sess], 1, ez.len(runFiles)); % create certain number of sessions
     % now onsetFiles, runFiles, runs have same matched length
     runs = cellfun(@(e) e(2:end),runs,'UniformOutput',false);  % tranform 'r02' --> '02'
-    for m = 1:ez.len(runFiles)
-        runFile = runFiles{m};
+    % session = spm analysis GUI session, may or may not be the same as fmri run number
+    for session = 1:ez.len(runFiles)
+        runFile = runFiles{session};
         [dummy runFileName] = ez.splitpath(runFile);
         runVolumes = cellstr(spm_select('ExtList',inputDir,[runFileName '\.nii$'],[1:1000]));
         runVolumes = cellfun(@(e) ez.joinpath(inputDir,e),runVolumes,'UniformOutput',false);
-        matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).scans = runVolumes;
+        matlabbatch{1}.spm.stats.fmri_spec.sess(1,session).scans = runVolumes;
         % match s0215_r02_multicond.mat
-        runNr = sprintf('%02d', ez.num(runs{m}));
-        matlabbatch{1}.spm.stats.fmri_spec.sess(1,m).multi = ez.ls(outputDir,[subject '_r' runNr '_multiconds.mat$']);
+        runNr = sprintf('%02d', ez.num(runs{session}));
+        matlabbatch{1}.spm.stats.fmri_spec.sess(1,session).multi = ez.ls(outputDir,[subject '_r' runNr '_multiconds.mat$']);
     end
     cd(outputDir);
     save(['job_first_' subject '.mat'], 'matlabbatch');

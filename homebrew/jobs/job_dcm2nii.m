@@ -9,8 +9,10 @@
 % autodetect = 1 or 0 (default 1); 
 %   autodetect func, dti, localizer, anatomical, and renumber func runs
 %   if you skip converting a certain (corrupted) dicom folder, this might not work correctly
-% discards = 0 or integer (default 0)
-%   discards the first few volumes in functional run (!auto discarding only works when autodetect=1 because has to guess which run is functional run)
+% keep = [], an array
+%   e.g., [9:96], keeps volumes from 9 to 96 in functional runs, discards others, say 1:8 and 97:104 if there are any
+%   default [], keep all volumes
+%   only works when autodetect=1 because has to guess which run is functional run
 % thresholds = {65, 6, 8} % func volumes>=65, 65>dti volumes>=6, localizer min slices<=8
 % typically,
 % functional dim: 64*64*26  many volumes
@@ -65,12 +67,12 @@
 %
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDirs, outputDir, autodetect, discards, thresholds, email)
+function [output1,output2] = main(inputDirs, outputDir, autodetect, keep, thresholds, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
 spm('fmri')
 if ~exist('autodetect','var'), autodetect = 1; end
-if ~exist('discards','var'), discards = 0; end
+if ~exist('keep','var'), keep = []; end
 if ~exist('thresholds','var'), thresholds = {65, 6, 8}; end
 % func volumes>=65, 65>dti volumes>=6, localizer slices<=8    
 func_volumes_threshold = thresholds{1};
@@ -101,11 +103,15 @@ for n = 1:ez.len(inputDirs)
             % V is a structure array, each row has info for one nii file
             volumes = size(V,1);
             if volumes >= func_volumes_threshold % functional
-                % discard the first few volumes
-                ez.print(sprintf('Discarding the first %d volumes in functional run %s', discards, subDirs{i}));
-                P = cellstr(P); % convert to cell
-                for j = 1:discards
-                    ez.rm(P{j});
+                % keep=[], keep all
+                if ~isempty(keep)
+                    % trim volumes
+                    P = cellstr(P); % convert to cell
+                    whole = [1:ez.len(P)] % all volumes index
+                    discards = ez.setdiff(whole,keep);
+                    ez.print(sprintf('Discarding volumes in functional run %s', subDirs{i}));
+                    discards
+                    ez.rm(P(discards)); % P(discards) returns a cell
                 end
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_r%02d', subID, funcRun)));
                 funcRun = funcRun + 1;
