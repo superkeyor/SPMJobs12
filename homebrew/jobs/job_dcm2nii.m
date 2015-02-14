@@ -107,7 +107,7 @@ for n = 1:ez.len(inputDirs)
                 if ~isempty(keep)
                     % trim volumes
                     P = cellstr(P); % convert to cell
-                    whole = [1:ez.len(P)] % all volumes index
+                    whole = [1:ez.len(P)]; % all volumes index
                     discards = ez.setdiff(whole,keep);
                     ez.print(sprintf('Discarding volumes in functional run %s', subDirs{i}));
                     discards
