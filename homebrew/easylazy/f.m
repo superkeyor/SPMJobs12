@@ -22,7 +22,11 @@ function main(v)
             spm('fmri');
             commandwindow;                
             ez.pprint('Checking update...');
-            spm_update;
+            try
+                spm_update;
+            catch
+                ez.print('could not check updates at this moment, please try again later.');
+            end
         % otherwise, simply launch the last called version
         else
             spm('fmri');  % same version, no need to clear base workspace
@@ -41,7 +45,11 @@ function main(v)
             spm('fmri');
             commandwindow;                
             ez.pprint('Checking update...');
-            spm_update;
+            try
+                spm_update;
+            catch
+                ez.print('could not check updates at this moment, please try again later.');
+            end
         else
             % previous launched spm path
             preVPath = fileparts(which('spm'));
@@ -61,7 +69,11 @@ function main(v)
                 spm('fmri');
                 commandwindow;                
                 ez.pprint('Checking update...');
-                spm_update;
+                try
+                    spm_update;
+                catch
+                    ez.print('could not check updates at this moment, please try again later.');
+                end
             end
         end
     end

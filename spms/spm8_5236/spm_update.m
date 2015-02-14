@@ -14,7 +14,8 @@ function spm_update(update)
 % Guillaume Flandin
 % $Id: spm_update.m 5235 2013-02-04 15:30:21Z guillaume $
 
-url = 'ftp://ftp.fil.ion.ucl.ac.uk/spm/spm8_updates/';
+% url = 'ftp://ftp.fil.ion.ucl.ac.uk/spm/spm8_updates/';
+url = 'http://www.fil.ion.ucl.ac.uk/spm/download/spm8_updates/';
 
 if ~nargin
     update = false;
