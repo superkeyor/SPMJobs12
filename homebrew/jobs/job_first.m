@@ -90,7 +90,7 @@ if ~exist('together','var'), together = 1; end
 [tr, nslices, refslice] = parameters{:};
 
 startTime = ez.moment();
-onsetFiles = ez.ls(outputDir,'s\d\d\d\d_r\d\d_multiconds\.mat$'); % runFiles across all subjects
+onsetFiles = ez.ls(outputDir,'s\d\d\d\d_r\d\d_multiconds\.mat$'); % onsetFiles across all subjects
 [dummy onsetFileNames] = cellfun(@(e) ez.splitpath(e),onsetFiles,'UniformOutput',false);
 onsetFileNames = cellfun(@(e) regexp(e,'_', 'split'),onsetFileNames,'UniformOutput',false);
 subjects = cellfun(@(e) e{end-2},onsetFileNames,'UniformOutput',false);  
