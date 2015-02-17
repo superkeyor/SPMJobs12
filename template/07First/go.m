@@ -11,10 +11,14 @@ inputDir = ez.joinpath(projDir,prevStep);
 outputDir = ez.csd();
 %----------------------------------
 parameters = {2.5, 26, 25};  % parameters = {tr(seconds), nslices, refslice};
-together = 0;
+together = 1;
 %----------------------------------
 email = 'jerryzhu@siu.edu';
 dbstop if error;  % enter matlab debug mode in case of run-time error
 %----------------------------------
 job_first(inputDir, outputDir, parameters, together, email);
+
+outputDir = ez.csd();
+preclean = 1; together = 1;
+job_contrastT(outputDir,preclean,together);
 dbclear if error;
