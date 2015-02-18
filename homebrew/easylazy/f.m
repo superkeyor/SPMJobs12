@@ -16,7 +16,7 @@ function main(v)
             % f(13); % recursive call
             spmsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'spms');
             vFolderNames = ez.lsd(spmsPath);
-            vFolderName = vFolderNames{end-1}; % vFolderNames{end} is spm8
+            vFolderName = vFolderNames{end-2}; % vFolderNames: spm12, spm5, spm8
             vPath = ez.joinpath(spmsPath, vFolderName);
             addpath(vPath);
             spm('fmri');
@@ -35,7 +35,7 @@ function main(v)
     else
         spmsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'spms');
         v = strrep(ez.str(v),'.', '_');
-        vFolderNames = ez.lsd(spmsPath, sprintf('%s',ez.str(v)));
+        vFolderNames = ez.lsd(spmsPath, sprintf('spm%s',ez.str(v)));
         if isempty(vFolderNames), error(['Specified spm version not found. Install it to ', spmsPath]); end
         vFolderName = vFolderNames{end};
         vPath = ez.joinpath(spmsPath, vFolderName);
