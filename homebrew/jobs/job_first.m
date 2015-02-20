@@ -1,4 +1,4 @@
-% (inputDir, outputDir, parameters, together);
+% (inputDir, inputDir2, outputDir, parameters, together);
 % build first level model and estimate with classic ReML
 % output files:
 %   for each subject, generates beta weights = (conditions + 1 constant)*runs.  
@@ -20,6 +20,11 @@
     % swmt_s0216_r02.nii
     % swmt_s0216_r03.nii
     % swmt_s0216_r04.nii
+% inputDir2 (where the estimated motion parameters are)
+    % parat_s0215_r01.txt
+    % parat_s0215_r02.txt
+    % parat_s0215_r03.txt
+    % ...
 % outputDir
     % generate_multiconds.m --> to generate the following mat files for each subject_run
     % s0215_r01_multiconds.mat
@@ -82,7 +87,7 @@
 % https://www.youtube.com/playlist?list=PLcNEqVlhR3BtA_tBf8dJHG2eEcqitNJtw
 
 %------------- BEGIN CODE --------------
-function [output1,output2] = main(inputDir, outputDir, parameters, together, email)
+function [output1,output2] = main(inputDir, inputDir2, outputDir, parameters, together, email)
 % email is optional, if not provided, no email sent
 % (re)start spm
 spm('fmri');
@@ -131,6 +136,7 @@ for n = 1:ez.len(subjects)
         % match s0215_r02_multicond.mat
         runNr = sprintf('%02d', ez.num(runs{session}));
         matlabbatch{1}.spm.stats.fmri_spec.sess(1,session).multi = ez.ls(outputDir,[subject '_r' runNr '_multiconds.mat$']);
+        matlabbatch{1}.spm.stats.fmri_spec.sess(1,session).multi_reg = ez.ls(inputDir2, [subject '_r' runNr '\.txt$']);
     end
     cd(outputDir);
     save(['job_first_' subject '.mat'], 'matlabbatch');
