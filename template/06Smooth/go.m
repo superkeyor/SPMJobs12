@@ -10,7 +10,7 @@ inputDir = ez.joinpath(projDir,prevStep);
 %----------------------------------
 outputDir = ez.csd();
 %----------------------------------
-parameters = {[8 8 8]};
+parameters = {[10 10 10]};
 together = 1;
 %----------------------------------
 email = 'jerryzhu@siu.edu';
