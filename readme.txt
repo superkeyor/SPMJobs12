@@ -42,3 +42,30 @@ Note:
         go to jobs folder, open mod_xxx.mat file with spm batch editor, modify it, save as in processing step folder
 2) to be able to use email notification when a job is done
         go to jobs folder, configure batmail.m
+
+
+
+
+
+
+Requires:
+    ez  general matlab functions (independent of spm)
+
+Sub-directories:
+    /spms - different versions of spm 
+
+    /homebrew   - homemade functions
+        /jobs    functions that can process many files at a time
+        /easylazy   stop being a clicking monkey when using spm gui
+
+To use spm: 
+1. add path of this folder (without adding subfolders) to search path
+2. then every time use, type 'ignite' to initialize
+
+Alternatively,
+1. in startup.m automatically run 'ignite'
+2. That's it.
+
+
+author: Jerry, jerryzhujian9@gmail.com
+December 08 2014, 06:37:52 PM CST        
