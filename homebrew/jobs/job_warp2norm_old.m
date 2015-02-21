@@ -1,16 +1,15 @@
 % (inputDir, outputDir, inputDir2, inputDir3);
 % warp anatomical and functional images into normalized/standard space
 % step 1) coregister anat to functional mean ref, write the transformation matrix to anat file header, involves only linear transformation
-% step 2) segment updated anat file to grey(c1), white(c2), csf(c3), bone(c4), soft-tissue(c5), air/background(c6), 
+% step 2) segment updated anat file to grey(c1), white(c2), csf(c3)
 %         get the deformation info, involves linear transformation and nonlinear warp
 % step 3) combine parameters from step 1 & 2, apply to functional and anat images
 % output a lot of files: 
 %       mxxx.nii -bias corrected
-%       y_ forward (used for warp to standard space); iy_ inverse
-%       seg8.mat, not sure what it is
-%       c1-c5 segmented
+%       anat_seg_inv_sn.mat;    anat_seg_sn.mat
+%       c1-c3 segmented
 %       wxxx.nii  warped files (during normalization step also down/up-resample functional and anat to 2*2*2 mm)
-%       
+%
 %       sxxxx_coreg.pdf   <-- function coreg anat
 %       sxxxx_segs.pdf    <-- c1-c6 of anat
 %       sxxxx_warped.pdf  <-- warped anat plus the first volume of each run
@@ -56,7 +55,7 @@ for n = 1:ez.len(subjects)
     subject = subjects{n};
     ez.print(['Processing ' subject ' ...']);
 
-    load('mod_warp2norm.mat');
+    load('mod_warp2norm_old.mat');
 
     % fill out coreg
     refImage = cellstr(spm_select('ExtList',inputDir2,['^mean.*' subject '.*\.nii'],[1]));
@@ -68,12 +67,11 @@ for n = 1:ez.len(subjects)
     matlabbatch{1}.spm.spatial.coreg.estimate.source = sourceImage;
 
     % fill out segment
-    matlabbatch{2}.spm.spatial.preproc.channel.vols = sourceImage;
     spmFolder = ez.splitpath(which('spm'));
-    tpmFile = ez.joinpath(spmFolder,'tpm','TPM.nii');
-    for m = 1:6
-        matlabbatch{2}.spm.spatial.preproc.tissue(m).tpm = cellstr([tpmFile ',' ez.str(m)]);
-    end
+    tpmFile = ez.joinpath(spmFolder,'toolbox','OldSeg');
+    matlabbatch{2}.spm.tools.oldseg.opts.tpm = {ez.joinpath(tpmFile,'grey.nii,1');
+                                                ez.joinpath(tpmFile,'white.nii,1');
+                                                ez.joinpath(tpmFile,'csf.nii,1');};
 
     % fill out normalise
     resampleImages = {};
@@ -82,7 +80,7 @@ for n = 1:ez.len(subjects)
     runVolumes = cellfun(@(e) ez.joinpath(inputDir,e),runVolumes,'UniformOutput',false);
     % also warp anat to normalised space
     resampleImages = [sourceImage;runVolumes];
-    matlabbatch{3}.spm.spatial.normalise.write.subj.resample = resampleImages;    
+    matlabbatch{3}.spm.tools.oldnorm.write.subj.resample = resampleImages;
 
     cd(outputDir);
     save(['job_warp2norm_' subject '.mat'], 'matlabbatch');
@@ -92,17 +90,14 @@ for n = 1:ez.len(subjects)
 
         % move stuff to hallway
         hallway = ez.joinpath(outputDir,'hallway'); ez.mkdir(hallway);
-        % jobman generates a mat file, not sure informative
-        ez.mv(ez.joinpath(outputDir,'*seg8.mat'),hallway);
+        % inverse/forward matrices
+        ez.mv(ez.joinpath(outputDir,'*seg*.mat'),hallway);
         % segments
         segs = ez.ls(outputDir,'^c\d.*nii$');
         spm_check_registration(char(segs));
         fig = spm_figure('FindWin','Graphics');
         ez.export(ez.joinpath(outputDir,[subject '_segs.pdf']),fig);
         cellfun(@(e) ez.mv(e,hallway),segs,'UniformOutput',false);
-        % inverse/forward matrices
-        files = ez.ls(outputDir,'^(y|iy)_.*nii$');
-        cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
         % bias corrected file
         files = ez.ls(outputDir,'^m.*anat\.nii$');
         cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
