@@ -8,7 +8,7 @@ currentStepNum = find(strcmp(steps,currentStep));
 if ~isempty(currentStepNum), prevStep = steps{currentStepNum-1}; else prevStep = currentStep; end
 inputDir = ez.joinpath(projDir,prevStep);
 %----------------------------------
-inputDir2 = ''; % where estimated motion parameters .txt are.
+inputDir2 = ez.joinpath(projDir, '04Motion'); % where estimated motion parameters .txt are.
 outputDir = ez.csd();
 %----------------------------------
 parameters = {2.5, 26, 25};  % parameters = {tr(seconds), nslices, refslice};
