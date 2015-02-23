@@ -1,6 +1,7 @@
 % (inputDir, outputDir, parameters);
 % smooth
 % if output nii files exist with same name, overwrite without any prompt
+% also take a snapshot of first volume of first run after and before smoothing
 %
 % inputDir ='.../xxx/'; trailing filesep does not matter
 % outputDir = '.../xxx/'; % trailing filesep does not matter
@@ -69,6 +70,6 @@ for n = 1:ez.len(subjects)
 end
 ez.pprint('Done!');
 finishTime = ez.moment();
-if exist('email','var'), try, batmail(mfilename, startTime, finishTime); end; end;
+if exist('email','var'), try, jobmail(mfilename, startTime, finishTime); end; end;
 end % of main function
 %------------- END OF CODE --------------

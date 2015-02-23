@@ -84,6 +84,6 @@ end
 ez.pprint('Done!');
 
 finishTime = ez.moment();
-if exist('email','var'), try, batmail(mfilename, startTime, finishTime); end; end;
+if exist('email','var'), try, jobmail(mfilename, startTime, finishTime); end; end;
 end % of main function
 %------------- END OF CODE --------------

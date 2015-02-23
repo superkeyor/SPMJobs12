@@ -6,3 +6,4 @@ run(ez.joinpath(projDir, '04Motion', 'go.m'));
 run(ez.joinpath(projDir, '05Warp2Norm', 'go.m'));
 run(ez.joinpath(projDir, '06Smooth', 'go.m'));
 run(ez.joinpath(projDir, '07First', 'go.m'));
+run(ez.joinpath(projDir, '08Second', 'go.m'));
