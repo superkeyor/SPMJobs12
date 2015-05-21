@@ -26,6 +26,7 @@
 %      output p, r, z maps, e.g., s0215_mapName1_p.nii, s0215_mapName1_r.nii, s0215_mapName1_z.nii
 %      if output nii files exist with same name, overwrite without any prompt
 %      a pdf with these r, p, z maps for each subject
+%      the output files are organized by subFolder in outputDir with mapName
 % seedROINII = '.../.../xxx.nii';  
 %               a path to the ROI in nifti format (cannot accept .mat format)
 %               can be exported from MARSBAR, can be a voxel roi, a sphere roi
@@ -85,23 +86,31 @@ for n = 1:ez.len(subjects)
     % http://www.nemotos.net/?p=890
     % https://www.jiscmail.ac.uk/cgi-bin/webadmin?A2=spm;3671aad3.1110
     ez.cd(ez.joinpath(inputDir,subjectDir));
-    imgs = ez.ls('.', '\.img$');
-    for iii = 1:ez.len(imgs)
-        img = imgs{iii};
-        V = spm_vol(img);
-        ima = spm_read_vols(V);
-        [pathstr, filename] = ez.splitpath(img);
-        V.fname = [subject '_' filename '.nii'];
-        spm_write_vol(V,ima);
+    for iii = 1:ez.len(MapNames)
+        mapName = MapNames{iii};
+        imgs = ez.ls('.', [mapName '_(p|r|z)\.img$']);
+        for jjj = 1:ez.len(imgs)
+            img = imgs{jjj};
+            V = spm_vol(img);
+            ima = spm_read_vols(V);
+            [pathstr, filename] = ez.splitpath(img);
+            V.fname = [subject '_' filename '.nii'];
+            spm_write_vol(V,ima);
+        end
+        % delete hrd/img
+        files = ez.ls('.',[mapName '_(p|r|z)\.(img|hdr)$']);
+        ez.rm(files);
+        % plot files
+        files = ez.ls('.',[mapName '_(p|r|z)\.nii$']);
+        spm_check_registration(char(files));
+        fig = spm_figure('FindWin','Graphics');
+        % ready dir
+        outputSubDir = ez.joinpath(outputDir, mapName);
+        ez.mkdir(outputSubDir);
+        % save pdf and move files
+        ez.export(ez.joinpath(outputSubDir,[subject '_' mapName '_bs.pdf']),fig);
+        ez.mv(files, outputSubDir);
     end
-    % delete hrd/img
-    files = ez.ls('.','_(p|r|z)\.(img|hdr)$');
-    ez.rm(files);
-    files = ez.ls('.','_(p|r|z)\.nii$');
-    spm_check_registration(char(files));
-    fig = spm_figure('FindWin','Graphics');
-    ez.export(ez.joinpath(outputDir,[subject '_bs_corr.pdf']),fig);
-    ez.mv(files, outputDir);
 
     ez.pprint('****************************************'); % pretty colorful print
 end
@@ -188,98 +197,98 @@ for i = 1:length(subjects)
         end
               
 
-    %Extract beta series time course from ROI
-    %This will be correlated with every other voxel in the brain
-    if ischar(Betas)
-        P = spm_vol(Betas);
-    end
+        %Extract beta series time course from ROI
+        %This will be correlated with every other voxel in the brain
+        if ischar(Betas)
+            P = spm_vol(Betas);
+        end
 
-    est = spm_get_data(P,XYZ);
-    est = nanmean(est,2);
+        est = spm_get_data(P,XYZ);
+        est = nanmean(est,2);
 
         
         
         %----Do beta series correlation between ROI and rest of brain---%
 
-            MapName = MapNames{cond};
-            disp(['Performing beta series correlation for ' MapName]);
-            
-            Vin = spm_vol(Betas);
-            nimgo = size(Vin,1);
-            nslices = Vin(1).dim(3);
+        MapName = MapNames{cond};
+        disp(['Performing beta series correlation for ' MapName]);
 
-            % create new header files
-            Vout_r = Vin(1);   
-            Vout_p = Vin(1);
-            [pth,nm,xt] = fileparts(deblank(Vin(1).fname));
-            Vout_r.fname = fullfile(pth,[MapNames{cond} '_r.img']);
-            Vout_p.fname = fullfile(pth,[MapNames{cond} '_p.img']);
+        Vin = spm_vol(Betas);
+        nimgo = size(Vin,1);
+        nslices = Vin(1).dim(3);
 
-            Vout_r.descrip = ['correlation map'];
-            Vout_p.descrip = ['p-value map'];
+        % create new header files
+        Vout_r = Vin(1);   
+        Vout_p = Vin(1);
+        [pth,nm,xt] = fileparts(deblank(Vin(1).fname));
+        Vout_r.fname = fullfile(pth,[MapNames{cond} '_r.img']);
+        Vout_p.fname = fullfile(pth,[MapNames{cond} '_p.img']);
 
-            Vout_r.dt(1) = 16;
-            Vout_p.dt(1) = 16;
+        Vout_r.descrip = ['correlation map'];
+        Vout_p.descrip = ['p-value map'];
 
-            Vout_r = spm_create_vol(Vout_r);
-            Vout_p = spm_create_vol(Vout_p);
+        Vout_r.dt(1) = 16;
+        Vout_p.dt(1) = 16;
 
-            % Set up large matrix for holding image info
-            % Organization is time by voxels
-            slices = zeros([Vin(1).dim(1:2) nimgo]);
-            stack = zeros([nimgo Vin(1).dim(1)]);
-            out_r = zeros(Vin(1).dim);
-            out_p = zeros(Vin(1).dim);
+        Vout_r = spm_create_vol(Vout_r);
+        Vout_p = spm_create_vol(Vout_p);
+
+        % Set up large matrix for holding image info
+        % Organization is time by voxels
+        slices = zeros([Vin(1).dim(1:2) nimgo]);
+        stack = zeros([nimgo Vin(1).dim(1)]);
+        out_r = zeros(Vin(1).dim);
+        out_p = zeros(Vin(1).dim);
 
 
-            for i = 1:nslices
-                B = spm_matrix([0 0 i]);
-                %creates plane x time
-                for j = 1:nimgo
-                    slices(:,:,j) = spm_slice_vol(Vin(j),B,Vin(1).dim(1:2),1);
-                end
+        for i = 1:nslices
+            B = spm_matrix([0 0 i]);
+            %creates plane x time
+            for j = 1:nimgo
+                slices(:,:,j) = spm_slice_vol(Vin(j),B,Vin(1).dim(1:2),1);
+            end
 
-                for j = 1:Vin(1).dim(2)
-                    stack = reshape(slices(:,j,:),[Vin(1).dim(1) nimgo])';
-                    [r p] = corr(stack,est);
-                    out_r(:,j,i) = r;
-                    out_p(:,j,i) = p;
-
-                end
-
-                Vout_r = spm_write_plane(Vout_r,out_r(:,:,i),i);
-                Vout_p = spm_write_plane(Vout_p,out_p(:,:,i),i);
+            for j = 1:Vin(1).dim(2)
+                stack = reshape(slices(:,j,:),[Vin(1).dim(1) nimgo])';
+                [r p] = corr(stack,est);
+                out_r(:,j,i) = r;
+                out_p(:,j,i) = p;
 
             end
 
-                
-            %Convert correlation maps to z-scores
-            %NOTE: If uneven number of trials in conditions you are
-            %comparing, leave out the "./(1/sqrt(n-3)" term in the zdata
-            %variable assignment, as this can bias towards conditions which
-            %have more trials
-            
-                % disp(['Converting correlation maps for subject ' subj ', condition ' MapNames{cond} ' to z-scores'])
-                disp(['Converting correlation maps to z-scores for condition ' MapNames{cond}])
-                P = [MapNames{cond} '_r.img'];
-                n = size(Betas,1);
-                Q = MapNames{cond};
-                Vin = spm_vol([MapNames{cond} '_r.img']);
+            Vout_r = spm_write_plane(Vout_r,out_r(:,:,i),i);
+            Vout_p = spm_write_plane(Vout_p,out_p(:,:,i),i);
 
-                % create new header files
-                Vout = Vin;   
+        end
 
-                [pth,nm,xt] = fileparts(deblank(Vin(1).fname));
-                Vout.fname = fullfile(pth,[Q '_z.img']);
 
-                Vout.descrip = ['z map'];
+        %Convert correlation maps to z-scores
+        %NOTE: If uneven number of trials in conditions you are
+        %comparing, leave out the "./(1/sqrt(n-3)" term in the zdata
+        %variable assignment, as this can bias towards conditions which
+        %have more trials
 
-                Vout = spm_create_vol(Vout);
+        % disp(['Converting correlation maps for subject ' subj ', condition ' MapNames{cond} ' to z-scores']) % jerry commented out
+        disp(['Converting correlation maps to z-scores for condition ' MapNames{cond}])
+        P = [MapNames{cond} '_r.img'];
+        n = size(Betas,1);
+        Q = MapNames{cond};
+        Vin = spm_vol([MapNames{cond} '_r.img']);
 
-                data = spm_read_vols(Vin);
-                zdata = atanh(data)./(1/sqrt(n-3));
+        % create new header files
+        Vout = Vin;   
 
-                spm_write_vol(Vout,zdata);
+        [pth,nm,xt] = fileparts(deblank(Vin(1).fname));
+        Vout.fname = fullfile(pth,[Q '_z.img']);
+
+        Vout.descrip = ['z map'];
+
+        Vout = spm_create_vol(Vout);
+
+        data = spm_read_vols(Vin);
+        zdata = atanh(data)./(1/sqrt(n-3));
+
+        spm_write_vol(Vout,zdata);
 
     end
 end
