@@ -1,5 +1,5 @@
 function xjview(varargin)
-% xjview, version 8.12
+% xjview, version 8.13
 %
 % usage 1: xjview (no argument)
 %           for displaying a result img file, or multiple image files,
@@ -27,6 +27,7 @@ function xjview(varargin)
 % http://www.alivelearn.net/xjview
 %
 % by Xu Cui, Jian Li and Xiaowei Song
+% last modified: 11/09/2015 at 11:09AM (allow to change the minimum of color bar range, allow to resize window)
 % last modified: 03/31/2014 (fix setting F-test df bug)
 % last modified: 10/23/2012 (fix colorbar max bug)
 % last modified: 7/4/2012 (fix overylay bug)
@@ -194,7 +195,8 @@ infoTextBoxPosition =               stretchMatrix*[0.000,   8*heightUnit,    1, 
 sectionViewListboxPosition =        [sectionViewPosition(1)+0.4, sectionViewPosition(2)+0.02, 0.1, 0.14];
 sectionViewMoreTargetPushPosition = [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.02,0.10,0.02];
 xHairCheckPosition =                [sectionViewListboxPosition(1),sectionViewListboxPosition(2)+0.14,0.15,0.02];
-setTRangeEditPosition =             [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.06,0.10,0.02];
+setTRangeEditPosition =             [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.06,0.05,0.02];
+setTRangeEditPosition2 =             [sectionViewListboxPosition(1)+0.05,sectionViewListboxPosition(2)-0.06,0.05,0.02];
 setTRangeTextPosition =             [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.04,0.10,0.02];
 
 getStructurePushPosition =          [glassViewAxesPosition(1), glassViewAxesPosition(2)-0.06, editBoxWidth/2, editBoxHeight/2];
@@ -205,7 +207,7 @@ framePosition =                     (controlPanelPosition - controlPanelOffset')
 figureBKcolor=[176/255 252/255 188/255];
 figureBKcolor=get(0,'Defaultuicontrolbackgroundcolor');
 f = figure('unit','normalized','position',figurePosition,'Color',figureBKcolor,'defaultuicontrolBackgroundColor', figureBKcolor,...
-        'Name','xjView', 'NumberTitle','off','resize','off','CloseRequestFcn', {@CallBack_quit, warnstate(1).state}, 'visible','off', 'DoubleBuffer','on');
+        'Name','xjView', 'NumberTitle','off','resize','on','CloseRequestFcn', {@CallBack_quit, warnstate(1).state}, 'visible','off', 'DoubleBuffer','on');
 handles = guihandles(f);
  
 % databases
@@ -393,9 +395,12 @@ handles.sectionViewMoreTargetPush = uicontrol(handles.figure,'style','push',...
 handles.setTRangeEdit = uicontrol(handles.figure,'style','edit',...
         'unit','normalized','position',setTRangeEditPosition,'BackgroundColor', 'w',...
         'string','auto','callback',@CallBack_setTRangeEdit);
+handles.setTRangeEdit = uicontrol(handles.figure,'style','edit',...
+        'unit','normalized','position',setTRangeEditPosition2,'BackgroundColor', 'w',...
+        'string','auto','callback',@CallBack_setTRangeEdit2);    
 handles.setTRangeText = uicontrol(handles.figure,'style','text',...
         'unit','normalized','position',setTRangeTextPosition,...
-        'string','colorbar max');    
+        'string','colorbar max&min');    
 handles.hideControlPush = uicontrol(handles.figure, 'style', 'push',...
         'unit','normalized',...
         'String', '<', 'position', hideControlPushPosition,...
@@ -661,6 +666,7 @@ global DIM_;
 global TR_;
 global LEFTRIGHTFLIP_;
 global TMAX_; % colorbar max to display in section view
+global TMIN_; % colorbar min to display in section view
 global XJVIEWURL_;
 
 M_ = M;
@@ -668,6 +674,7 @@ DIM_ = DIM;
 TR_ = TR;
 LEFTRIGHTFLIP_ = leftrightflip;
 TMAX_ = 'auto';
+TMIN_ = 'auto';
 XJVIEWURL_ = XJVIEWURL;
 
 % check input arguments
@@ -3838,6 +3845,19 @@ global TMAX_;
 handles = guidata(hObject);
 TMAX_ = get(hObject, 'String');
 if isempty(str2num(TMAX_)) && ~strcmp(TMAX_, 'auto')
+    return;
+end
+guidata(hObject, handles);
+CallBack_allIntensityRadio(hObject, eventdata, 'c');
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%% set colorbar range (min)
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function CallBack_setTRangeEdit2(hObject, eventdata)    
+global TMIN_;
+handles = guidata(hObject);
+TMIN_ = get(hObject, 'String');
+if isempty(str2num(TMIN_)) && ~strcmp(TMIN_, 'auto')
     return;
 end
 guidata(hObject, handles);
@@ -9808,6 +9828,7 @@ return;
 function addblobs(handle, xyz, t, mat)
 global st
 global TMAX_
+global TMIN_
 for i=valid_handles(handle),
 	if ~isempty(xyz),
 		rcp      = round(xyz);
@@ -9827,6 +9848,9 @@ for i=valid_handles(handle),
         if ~strcmp(TMAX_, 'auto')
             mx = str2num(TMAX_);
             %mn = -str2num(TMAX_);
+        end
+        if ~strcmp(TMIN_, 'auto')
+            mn = str2num(TMIN_);
         end
 		st.vols{i}.blobs{1} = struct('vol',vol,'mat',mat,'max',mx, 'min',mn);
 		addcolourbar(handle,1);
