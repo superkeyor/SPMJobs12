@@ -1,6 +1,9 @@
 function main()
     homebrewPath = fullfile(fileparts(mfilename('fullpath')), 'homebrew');
     addpath(genpath_exclude(homebrewPath,{'^\..*'}));
+
+    extensionsPath = fullfile(fileparts(mfilename('fullpath')), 'extensions');
+    addpath(genpath_exclude(extensionsPath,{'^\..*'}));
 end
 
 function p = genpath_exclude(d,excludeDirs)
