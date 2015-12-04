@@ -1,0 +1,141 @@
+===============================
+The Decoding Toolbox (TDT) beta
+===============================
+
+2009-2015 Martin N. Hebart and Kai Goergen
+
+The Decoding Toolbox is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public Licence 
+as published by the Free Software Foundation.
+
+This program is distributed in the hope that it will be useful, 
+but WITHOUT ANY WARRANTY; without even the implied warranty of 
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the 
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License 
+along with this program (GPLv2.0.txt); if not, write to the Free Software 
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA.
+
+If you use this software in a publication, please acknowledge its use by 
+adding the following (or similar) to your manuscript:
+
+"Multivariate classification analyses were performed using The Decoding 
+Toolbox (Hebart, Goergen, & Haynes, 2015)."
+
+The reference for citation is:
+Martin N Hebart*, Kai Goergen* and John-Dylan Haynes (2015). The Decoding 
+Toolbox (TDT): A versatile software package for multivariate analyses of 
+functional imaging data. Front. Neuroinform. 8:88. doi: 10.3389/fninf.2014.00088.
+* Martin N Hebart and Kai Goergen contributed equally to this work.
+
+If you want to use parts of its code for your own software distribution, please add 
+the following information to the code:
+
+"This code has been taken from The Decoding Toolbox (Hebart, Goergen, & Haynes, 2015)."
+
+Please e-mail us if you plan to re-distribute the code, so we can inform you
+in the case we find relevant programming mistakes.
+
+Should any part of this license disagree with the GNU General Public License,
+then only the corresponding part is considered obsolete, but does not impact
+the remaining license.
+
+The Decoding Toolbox is distributed together with the following third-party software, 
+each with their own software license, included below:
+
+libsvm 3.17
+Newton SVM
+liblinear 1.94
+
+
+
+
+
+
+============================
+ADDITIONAL COPYRIGHT NOTICES
+============================
+
+-----------
+libsvm 3.17
+-----------
+
+Copyright (c) 2000-2013 Chih-Chung Chang and Chih-Jen Lin
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. Neither name of copyright holders nor the names of its contributors
+may be used to endorse or promote products derived from this software
+without specific prior written permission.
+
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+
+----------
+Newton SVM
+----------
+
+The sourcecode for NSVM Newton Support Vector Machine has been downloaded from http://research.cs.wisc.edu/dmi/svm/nsvm
+
+Authors:
+Glenn Fung
+Olvi L. Mangasarian
+
+Copyright:
+The software is free for academic use. For commercial use, please contact Olvi Mangasarian (olvi@cs.wisc.edu).
+
+---------
+LIBLINEAR
+---------
+
+Copyright (c) 2007-2013 The LIBLINEAR Project.
+All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions
+are met:
+
+1. Redistributions of source code must retain the above copyright
+notice, this list of conditions and the following disclaimer.
+
+2. Redistributions in binary form must reproduce the above copyright
+notice, this list of conditions and the following disclaimer in the
+documentation and/or other materials provided with the distribution.
+
+3. Neither name of copyright holders nor the names of its contributors
+may be used to endorse or promote products derived from this software
+without specific prior written permission.
+
+
+THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS
+``AS IS'' AND ANY EXPRESS OR IMPLIED WARRANTIES, INCLUDING, BUT NOT
+LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND FITNESS FOR
+A PARTICULAR PURPOSE ARE DISCLAIMED.  IN NO EVENT SHALL THE REGENTS OR
+CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL,
+EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO,
+PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE, DATA, OR
+PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY OF
+LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
+SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
