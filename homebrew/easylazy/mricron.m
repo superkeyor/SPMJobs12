@@ -1,5 +1,5 @@
 % launch mricron
 
 function varargout = main(varargin)
-    !open -a mricron
+    !open -n -a mricron
 end
