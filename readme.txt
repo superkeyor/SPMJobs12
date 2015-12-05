@@ -53,6 +53,7 @@ Requires:
 
 Sub-directories:
     /spms - different versions of spm 
+        /extensions useful fmri related tools
 
     /homebrew   - homemade functions
         /jobs    functions that can process many files at a time

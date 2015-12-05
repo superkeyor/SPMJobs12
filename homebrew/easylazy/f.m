@@ -27,6 +27,10 @@ function main(v)
             catch
                 ez.print('could not check updates at this moment, please try again later.');
             end
+
+            % add extensions to path
+            extsPath = ez.joinpath(spmsPath, 'extensions');
+            addpath(genpath(extsPath));
         % otherwise, simply launch the last called version
         else
             spm('fmri');  % same version, no need to clear base workspace
@@ -50,6 +54,10 @@ function main(v)
             catch
                 ez.print('could not check updates at this moment, please try again later.');
             end
+
+            % add extensions to path
+            extsPath = ez.joinpath(spmsPath, 'extensions');
+            addpath(genpath(extsPath));
         else
             % previous launched spm path
             preVPath = fileparts(which('spm'));
@@ -61,7 +69,7 @@ function main(v)
                 % not the same version, clean everything otherwise report error
                 evalin('base','ez.clean'); evalin('base','clear classes');
                 ez.pprint('Switching to a different version...');
-                % warning if to be removed path does not exist
+                % warning if to-be-removed path does not exist
                 warning('off','MATLAB:rmpath:DirNotFound');
                 rmpath(genpath(preVPath));
                 warning('on','MATLAB:rmpath:DirNotFound');
