@@ -1,0 +1,65 @@
+------------------------------------------------------------------------------------------
+INSTALLATION OF CONN STANDALONE:
+
+To install CONN standalone version (linux installation instructions):
+
+  1) Download CONN standalone release for your target machine (or compile it in your target architecture by running conn_makestandalone on a system with Matlab Compiler)
+     note: make sure the file conn and run_conn.sh have executable permissions on your target machine
+
+  2) Add folder with CONN executable file to your path (and edit .cshrc or .bashrc to make that change permanent)
+
+     (using csh commands; change <conn_root> below to your CONN folder)
+            setenv PATH $PATH:<conn_root>
+
+     (using bash commands; ; change <conn_root> below to your CONN folder)
+            export PATH=$PATH:<mcr_root>
+
+  3) Download Matlab Compiler Runtime (MCR), freely available from http://www.mathworks.com/products/compiler/mcr/index.html
+     (select the Linux 64-bit version of the MCR for R2013a, or if you have compiled your own version of CONN select the MCR version specified in the readme.txt file created during compilation)
+
+  4) Add the MCR folder to the LD_LIBRARY_PATH environment variable (and edit .cshrc or .bashrc to make that change permanent):
+
+     (using csh commands; change <mcr_root> below to your MCR folder)
+            setenv LD_LIBRARY_PATH
+                $LD_LIBRARY_PATH:
+                <mcr_root>/v81/runtime/glnxa64:
+                <mcr_root>/v81/bin/glnxa64:
+                <mcr_root>/v81/sys/os/glnxa64:
+                <mcr_root>/v81/sys/java/jre/glnxa64/jre/lib/amd64/native_threads:
+                <mcr_root>/v81/sys/java/jre/glnxa64/jre/lib/amd64/server:
+                <mcr_root>/v81/sys/java/jre/glnxa64/jre/lib/amd64 
+            setenv XAPPLRESDIR <mcr_root>/v81/X11/app-defaults
+
+     (using bash commands; ; change <mcr_root> below to your MCR folder)
+            MCRROOT=<mcr_root>
+            LD_LIBRARY_PATH=${MCRROOT}/runtime/glnxa64 ;
+            LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/bin/glnxa64 ;
+            LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRROOT}/sys/os/glnxa64;
+            MCRJRE=${MCRROOT}/sys/java/jre/glnxa64/jre/lib/amd64 ;
+            LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/native_threads ;
+            LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/server ;
+            LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE}/client ;
+            LD_LIBRARY_PATH=${LD_LIBRARY_PATH}:${MCRJRE} ;
+            XAPPLRESDIR=${MCRROOT}/X11/app-defaults ;
+            export LD_LIBRARY_PATH;
+            export XAPPLRESDIR;
+
+------------------------------------------------------------------------------------------
+USE OF CONN STANDALONE:
+
+To run CONN interactive GUI type:
+   conn
+
+To run CONN batch scripts (.m or .mat files) type:
+   conn batch <filename>
+
+To run arbitrary Matlab commands type:
+   conn batch "<matlabcommands>"
+
+In general, any functionality accessible in Matlab-release using "conn_<fcn>('<arg1>',...,'<argn>')" from the Matlab 
+command-line will also be accessible in the standalone-release using "conn <fcn> <arg1> ... <argn>" from the system prompt. 
+For example, you may use "conn jobmanager report" (instead of conn_jobmanager('report')) to report the state of parallel 
+jobs running on cluster.
+
+   
+   
