@@ -124,12 +124,12 @@ clusterSizeThreshold = 5;
 
 % Appearance Settings
 figurePosition =                    [0.100,   0.050,    0.550,    0.880];
-sectionViewPosition =               [0.5,0.61,0.45,0.45];
-glassViewAxesPosition =             [0.000,   0.600,    0.464,    0.400];
+sectionViewPosition =               [0.463,0.61,0.45,0.45];
+glassViewAxesPosition =             [-0.005,   0.600,    0.464,    0.400];
 if screenResolution(3) <= 1024
     figurePosition =                    [0.100,   0.050,    0.700,    0.900];
-    sectionViewPosition =               [0.5,       0.61,   0.45,   0.46];
-    glassViewAxesPosition =             [0.000,   0.600,    0.464,    0.400];    
+    sectionViewPosition =               [0.463,       0.61,   0.45,   0.46];
+    glassViewAxesPosition =             [-0.005,   0.600,    0.464,    0.400];    
 end
 
 left =                              0.01;
@@ -192,7 +192,7 @@ helpPosition =                      stretchMatrix*[0.800,   5*heightUnit,    edi
 infoTextBoxPosition =               stretchMatrix*[0.000,   8*heightUnit,    1,           editBoxHeight*9]' + controlPanelOffset;
 %xjViewPosition =                    stretchMatrix*[0.400,   13*heightUnit,    editBoxWidth*2.5,    editBoxHeight*3]' + controlPanelOffset;
 
-sectionViewListboxPosition =        [sectionViewPosition(1)+0.4, sectionViewPosition(2)+0.02, 0.1, 0.14];
+sectionViewListboxPosition =        [sectionViewPosition(1)+0.45, sectionViewPosition(2)+0.02, 0.1, 0.14];
 sectionViewMoreTargetPushPosition = [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.02,0.10,0.02];
 xHairCheckPosition =                [sectionViewListboxPosition(1),sectionViewListboxPosition(2)+0.14,0.15,0.02];
 setTRangeEditPosition =             [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.06,0.05,0.02];
