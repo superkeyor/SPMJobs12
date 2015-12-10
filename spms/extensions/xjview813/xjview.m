@@ -192,7 +192,7 @@ helpPosition =                      stretchMatrix*[0.800,   5*heightUnit,    edi
 infoTextBoxPosition =               stretchMatrix*[0.000,   8*heightUnit,    1,           editBoxHeight*9]' + controlPanelOffset;
 %xjViewPosition =                    stretchMatrix*[0.400,   13*heightUnit,    editBoxWidth*2.5,    editBoxHeight*3]' + controlPanelOffset;
 
-sectionViewListboxPosition =        [sectionViewPosition(1)+0.45, sectionViewPosition(2)+0.02, 0.1, 0.14];
+sectionViewListboxPosition =        [sectionViewPosition(1)+0.46, sectionViewPosition(2)+0.02, 0.1, 0.14];
 sectionViewMoreTargetPushPosition = [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.02,0.10,0.02];
 xHairCheckPosition =                [sectionViewListboxPosition(1),sectionViewListboxPosition(2)+0.14,0.15,0.02];
 setTRangeEditPosition =             [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.06,0.05,0.02];
