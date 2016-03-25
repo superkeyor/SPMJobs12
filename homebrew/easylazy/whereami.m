@@ -23,7 +23,7 @@ function main(varargin)
         disp(oneline{i});
 
         url = sprintf('http://neurosynth.org/locations/%d_%d_%d/',varargin{1}(i,1),varargin{1}(i,2),varargin{1}(i,3));
-        disp(sprintf('\n<a href="%s">%s</a>',url,url));
+        disp(sprintf('\n <a href="%s">%s</a>\n',url,url));
     end
     
 end
