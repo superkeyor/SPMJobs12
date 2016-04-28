@@ -4,12 +4,22 @@ function main(ROI,Images)
 %
 % INPUT can be empty. if empty, the user is prompted
 %       ROI: ROI images, a single str or a cell of str
-%       Images: images to extract data from
+%       Images: beta/con images/subjects to extract data from
+%               or, a path to second-level SPM.mat
+%               if not provided, try to get info from second-level SPM.mat in pwd 
 %
-% OUTPUT the file is saved to the drive - the variable name is ROI_data
-%        a structure with n roi fields (ie the number of ROI images in input)
-%        with the subfields name. n (the number of voxel in the ROI), and ev
-%        ev is the 1st eigen value across voxels, obtained for each Images
+% OUTPUT the file is saved to the drive - the variable name is ROIDATA
+%        a structure (ROIDATA.roi) with length(ROI) roi fields (ie the number of ROI images in input)
+%        .name
+%        .n the number of voxels in the ROI
+%        .ev ev is the 1st eigen value across voxels, obtained for each Images
+%
+% Note:
+% 1) if there are NaN in the ROI area for an image/subject 
+% the values will be replaced with the mean of other non-NaN for that image
+% 2) ideally extract data from beta/con images
+% though also possible from first level/raw/time-series images
+%
 %
 % Cyril Pernet v1 19-02-2015
 % ---------------------------
@@ -20,12 +30,25 @@ function main(ROI,Images)
 if nargin == 0
     ROI = spm_select(Inf,'image','select ROI images');
     Images = spm_select(Inf,'image','select images to extract data from');
+elseif nargin == 1
+    ROI = ROI;
+    load('SPM.mat');
+    Images = SPM.xY.P;
 elseif nargin == 2
     ROI = ROI;
-    Images = Images;    
+    % if Images is path to 'SPM.mat'
+    if strfind(Images,'SPM.mat')
+        load('SPM.mat')
+        Images = SPM.xY.P;
+    else
+        Images = Images;
+    end
 else
     error('no or 2 arguments (ROI and Images) are needed, input error')    
 end
+% convert to char array -Jerry
+ROI = char(ROI);
+Images = char(Images);
 
 %% check size compatibility 
 ROI = spm_vol(ROI);
@@ -55,12 +78,12 @@ clear xx yy zz
 %% compute
 
 for r=1:nroi
-    [~,ROI_data.roi(r).name] = spm_fileparts(ROI(r).fname);
-    fprintf('getting data for %s .. \n',ROI_data.roi(r).name)
+    [~,ROIDATA.roi(r).name] = spm_fileparts(ROI(r).fname);
+    fprintf('getting data for %s ... \n',ROIDATA.roi(r).name)
     
     % find voxels of the ROIs
     [X,Y,Z] = ind2sub([x y z],find(squeeze(ROIs(:,:,:,r))));
-    ROI_data.roi(r).n = length(X);
+    ROIDATA.roi(r).n = length(X);
     
     % get the data (nb images * nb voxel in ROIs)
     data = spm_get_data(Images,[X Y Z]');
@@ -87,11 +110,11 @@ for r=1:nroi
     d       = sign(sum(v));
     u       = u*d;
     v       = v*d;
-    ROI_data.roi(r).ev = u*sqrt(s(1)/n);
+    ROIDATA.roi(r).ev = u*sqrt(s(1)/n);
 end
 
 % save
 newname = spm_input('save as',1,'s');
 newdir = uigetdir(pwd,['choose directory to save ' newname '.mat']);
-save([newdir filesep newname '.mat'],'ROI_data')
+save([newdir filesep newname '.mat'],'ROIDATA')
 
