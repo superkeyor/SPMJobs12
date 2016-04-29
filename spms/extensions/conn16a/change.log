@@ -1,0 +1,136 @@
+CONN change log:
+Ver  Change
+__________________________________________________________________________________________________________________________________________
+14   Added surface-based analyses 
+        freesurfer compatibility
+        surface support for spatial voxel-to-voxel measures
+        permutation analyses for cluster-level stats
+        GUI support
+     (*) Modified BA.img Brodmann areas atlas (Lancaster transform to improve MNI coregistration)
+         (note: to replicate results analyzed in previous versions select original BA.img file)
+     Improved 3d rendering displays & options
+     Added option "frequency filter" to 1st-level analysis (estimates spectral decomposition of seed-to-voxel and ROI-to-ROI connectivity)
+     Added option "condition-specific frequency filter" to Setup.Conditions (to analyze frequency-dependency of fcMRI measures)
+14.f Cumulative patch fixing GUI error conditions
+	 Added ability to run individual spatial-preprocessing steps on structural/functional files (Tools.SpatialPreprocessing GUI menu)
+14.g Cumulative patch fixing GUI error conditions
+     Added subject-sorting uicontext menu to Tools.Calculator display
+     (*) Added option to apply despiking before or after regression step; change default setting to 'after regression' (deprecated despiking effect in favor of ART-based scrubbing)
+         (note: to replicate results analyzed in previous versions change value to 'before regression');
+     Added ability to run arbitrary sequences of multiple spatial preprocessing steps to Tools.SpatialPreprocesing
+     Changes to the default spatial preprocessing pipeline
+        Added defaultMNI (for MNI-space volume-based analyses) and defaultSS (for subject-space surface-based analyses) default preprocessing pipelines to preprocessing wizard and Tools.SpatialPreprocessing
+        (*) Change realign to realign&unwarp in the default spatial preprocessing pipeline (for additional control of motion-related effects)
+            (note: to replicate results analyzed in previous versions select select 'other', enter 'default MNI pipeline', and change 'functional Realignment & unwarp' to 'functional Realignment')
+        (*) Added ART outlier detection & scrubbing as part of the default spatial preprocessing pipeline (for additional control of motion-related and other BOLD signal artifacts)
+            (note: to replicate results analyzed in previous versions select select 'other', enter 'default MNI pipeline', and remove 'functional Outlier detection (ART-based scrubbing)' from the selected list of spatial preprocessing steps)
+        (*) Removed slice timing correction in the default spatial preprocessing pipeline (to minimize the impact of potential outlier scans in conjunction with ART)
+            (note: to replicate results analyzed in previous versions select select 'other', enter 'default MNI pipeline', and add 'functional Slice-timing correction' as the first step in the spatial preprocessing list)
+14.h Improve 'explore clusters' bar display (clearer labels/ordering)
+     GUI 'Setup->2nd-level covariates' added ability to define new covariate as a function of other existing covariates (e.g. easily defining modulation/product terms)
+     (*) Added a detrending regressor when selecting 'Regress out covariates' for PCA decomposition of multi-dimensional ROI signal
+         (note: to replicate results analyzed in previous versions change 'DETRENDBEFOREPCA=true' to 'DETRENDBEFOREPCA=false' in conn_process.m)
+     Additional samples of preprocessing pipelines added to Spatial.Preprocessing menu (e.g. using phase correction when VDM files are available)
+     Added the possibility to define subject-specific TR values
+14.i Cumulative patch fixing several error conditions
+     Spatial preprocessing steps are always prompted for user confirmation (except batch processes) to increase awareness of the choice of spatial preprocesing options and to give users a better chance to adapt these to their needs
+     Added slice timing correction back to the spatial preprocessing pipeline templates (reverted change introduced in 14.g to maintain consistent behavior with previous versions and until clearer community consensus is reached on this issue; users may consider removing this step for relatively small TR values; Changwei W. Wu et al. (2011) Empirical evaluations of slice-timing, smoothing, and normalization effects in seed-based, resting-state functional magnetic resonance imaging analyses; Smith et al. (2013) Resting-state fMRI in the Human Connectome Project)
+     Added options for polynomial detrending (linear/quadratic/cubic) during Preprocessing step
+     Added 'Removal of initial scans' to list of optional spatial preprocessing steps (this step allows users to easily drop the first few scans in each session from the analyses) 
+     Added new first-level analysis option (for ROI-to-ROI and seed-to-voxel analyses) : standard PsychoPhysiological Interaction (PPI) analyses of task-related effects as well as PhysioPhysiological Interactions (note: FSL-style implementation, where task-effect interaction factors are hrf-convolved and linear interactions are modeled on the resulting BOLD-level signal; c.f. SPM-style implementation which deconvolves the BOLD timeseries instead and interactions are modeled on the resulting "neural"-level signal)
+     Added option for defining arbitrary temporal-modulation factors in Setup.Conditions and perform PPI analyses of these factors (pre-requisite for dynamic connectivity analyses) 
+     Preprocessing step output files have been reorganized to avoid duplication in the presence of multiple conditions (save storage space / processing time; note: as a consequence when selecting 'Create confound-corrected time-series' now only one nifti file will be created per subject -containing the entire timeseries- instead of one file per condition as before -containing each only those scans/samples associated with each condition-)
+     Added option in seed-to-voxel results explorer to specify T-value voxel-level thresholds (note: limited-precision of associated voxel-level p-values makes using T/F-value thresholds useful when you wish to threshold very strong effects; e.g. p<1e-10)
+14.j (internal distribution only)
+14.k Cumulative patch fixing error conditions
+     Added option for sliding-window temporal decomposition of FC measures (in Setup.Conditions.TimeFrequencyDecomposition)
+     Added ability to re-run Setup/Preprocessing steps for only a subset of analysis types (ROI-to-ROI/Seed-to-Voxel/Voxel-to-Voxel; user-selection when pressing 'Done')
+     Added ability to re-run Preprocessing/FirstLevelAnalysis steps for only a subset of conditions (user-selection when pressing 'Done')
+     Added ability to use ROIs defined in fsaverage-space (e.g. from surface-based result masks, or surface-based parcellations) (only available when selecting structural volumes that have been processed in FreeSurfer)
+     Cumulative GUI updates (less cluttered GUI layout and more detailed help tips throughout main CONN gui (e.g. right-click on data files to access data folders; easier access to and higher user-control of the display options in the "ROI-to-ROI results explorer")
+     Added "structural/functional manual orientation" to the list of potential spatial preprocessing steps (centers, rotates, reflects structural/functional volumes, typically to bring these closer to templates prior to coregistration/normalization) 
+     Cumulative patch fixing compatibility issues with SPM12b
+     (*) Added support for new SPM12 normalization and segmentation spatial preprocessing steps (new methods only available when using SPM12)
+        (note: to keep using the older normalization/segmentation procedures under SPM12 set the variable "PREFERSPM8OVERSPM12=true" in conn_setup_preproc.m)
+     Added Dynamic Functional Connectivity analyses 
+        "First-level Dynamic FC" estimates data-driven temporal-modulation factors that characterize the observed dynamic changes in functional connectivity (ROI-to-ROI connectivity matrix from selected ROIs)
+        The resulting factors are entered into standard PPI analyses to characterize dynamic changes in FC
+        Additional Seed-to-voxel or ROI-to-ROI analyses (for the selected or other ROIs) can be computed by selecting "temporal modulation effects (Dynamic FC)" in the first-level analysis "analysis type" option.
+        Aggregated subject/condition measures are also computed to analyze between-subject/condition differences in temporal modulation strength for each factor
+     Added new sample ROI files to conn/utils/otherrois/ ("large-voxel" MNI-space ROI parcellations covering grey-matter areas; P###.img; ###=number of ROIs from P304.img -20mm ROIs- to P2186.img -10mm ROIs-)
+14.l Cumulative patch fixing GUI error conditions (includig window-resizing and java-related-errors in some older Matlab versions)
+     Cumulative patch fixing Preprocessing issues (completed batch commands for flexible preprocessing pipeline; added "interleaved (Siemens)" and fixed prompt for sliceorder (asking sliceorder for each subject) in slice-timing preprocessing step; Added prompt for user-defined ART-thresholds in ART preprocessing step; included centering prior to structural segmentation or normalization like previous versions; fixed error-reporting problem in preprocessing steps (errors occuring inside spm batch processes were not being appropriately captured/displayed by CONN error-handling routines); remove art_mask_temporalfiles* after art preprocessing step)
+14.m (internal distribution only; CONN course)
+14.n Cumulative patch fixing error conditions
+     (*) Default Denoising steps set to "no despiking" (deprecated despiking effect in favor of ART-based scrubbing)
+         (note: to replicate analyses in previous versions change to "despiking (after regression)")
+14.o Cumulative patch, bug fixes and improvements
+     GUI changes (reduce clutter, more detailed help, early warnings on incomplete Setup information, more-responsive gui, fix Mac issues, some Matlab 2014b issues, light- and dark- background support)
+     Reorganize Dynamic FC analysis output into Dynamic scores (average/baseline and variability/modulation-strength of observed temporal modulation factors) and Dynamic loadings (ROI-to-ROI connectivity matrices characterizing modulations in functional connectivity)
+     Added new default atlas (132 ROIs) combining FSL Harvard-Oxford atlas cortical & subcortical areas and AAL atlas cerebellar areas (see conn/rois/atlas.info for details), as well as collapsed ROI file with MPFC/PCC/LLP/RLP Fox ROIs (see conn/rois/dmn.info)
+     Added to second-level results explorer a new "Slice display" option (display analysis results on individual slices)
+     Facilitate post-hoc seed-to-voxel analyses by adding to "second-level results explorer import values&explore values" options the ability to use alternative cluster-definition files and/or to extract connectivity values from alternative second-level analyses (e.g. estimate current-analysis effects within alternative-analysis clusters, or alternative-analysis effects within current-analysis clusters)
+     Facilitate longitudinal studies by adding the possibility to specify session-specific anatomical volumes (different anatomical volumes across sessions) as well as session-specific ROIs (different ROI files across sessions, e.g. gray/white/CSF masks generated when using session-specific anatomical files)
+     More flexible SPM import functionality by adding the possibility to specify session-specific SPM.mat files when importing experiment information from SPM
+     Added red/blue colormaps & colorbars for the display of two-sided results in "surface display", "volume display", and "slice display" in second-level results explorer
+14.p Cumulative patch, bug fixes and improvements
+15.a Cumulative patch, bug fixes and improvements
+     Added more flexible plot-display options to Calculator
+     Added selection of colorbar range to 3d-surface results renderings
+     Facilitate post-hoc ROI-to-ROI analyses by adding to the "second-level results" tab a barplot display of individual effects (as well as 'import values & display values' options, equivalent to those for seed-to-voxel analyses).
+15.b Cumulative patch, bug fixes and improvements
+     Added more flexible inputs for ART-based scrubbing during preprocessing
+     Added support for slice-timing correction of multiband sequences (CONN now supports entering "slice timing" sequence information instead of "slice order")
+     Added support for subjects with partial acquisition of condition-specific data (e.g. if a condition has only been acquired on a subset of subjects, all second-level analyses involving this condition will automatically be limited to the subset of subjects with valid condition-specific data; see Setup.Conditions.MissingData)
+15.c Cumulative patch, bug fixes and improvements
+     Reorganized and added new options to Dynamic FC analyses: added display of dynamic factors, display of ROI-to-ROI connectivity matrix changes across time, display of dynamic vs. static connectivity measures; added rate-of-change dynamic measure for each factor
+     Added support for gPPI models (generalized PsychoPhysiological Interaction; recommended PPI model to analyze task-related connectivity in the presence of multiple task conditions) in addition to sPPI models (single-condition PsychoPhysiological Interaction)
+15.d Cumulative patch, bug fixes and improvements
+     Added support for .annot ROI files (freesurfer parcellation files)
+     Added display of Denoising voxel-to-voxel histogram for all subjects/sessions
+     Added conn_batch_pct function to facilitate parallel processing of batch commands (see conn_batch_pct.m for details)
+15.e Cumulative patch, bug fixes and improvements
+     Added native support in SPM12 of cluster-level statistics for F-contrasts (when using SPM8 and below CONN still uses Keith Worsley stat_thresh FMRISTATS implementation of cluster-level statistics for F-contrasts as in previous CONN releases)
+     Added support for SGE (Sun Grid Engine) parallel batch processing on computer clusters (see help conn_batch_pct)
+     Added Second-level covariate import/export-to-file options (GUI Setup.Covariates tab, import/export buttons)
+15.f Cumulative patch, bug fixes and improvements
+     Added fully integrated Grid Engine, PBS/Torque, and LSF distributed environment parallelization options for Preprocessing, Setup, Denoising, and Analysis steps (accessible both through GUI as well as batch commands; see GUI Help.Documents.GridComputing, Tools.GridSettings, and conn_batch batch.parallel options)
+     Facilitate searching through database of user-community questions/answers from the NITRC Forum by adding search help functionality to CONN GUI (see GUI Help.Search menu)
+     Added batch commands for Preprocessing steps (same as previous batch.New functionality but it can now be run at any time, not only when the project was first created; see conn_batch Setup.preprocessing options)
+     Added option to import all condition information from a spreadsheet (in Setup.Conditions 'condition tools' menu)
+     Added batch commands for using non-default Tissue Probability Maps during segmentation/normalization (SPM8/SPM12) (see conn_batch tpm_template and tpm_ngaus options)
+     Added support for .par first-level covariate files (FSL estimated motion parameters)
+     Added explicit centering (translation to (0,0,0) coordinates) of functional and structural data in default MNI preprocessing pipelines
+     Added the option to use one-sided (negative) thresholds for adjacency-matrix generation in graph-theory analyses (compute graph-measures of anticorrelations networks)
+     Added option to drop initial scans in ART (through the GUI and in batch.Setup.preprocessing.art_thresholds)
+     Added option to modify the default mask thresholding value and number of erosion steps for CSF & WhiteMatter ROI definitions (see conn_batch cwthreshold field)
+15.g Cumulative patch, bug fixes and improvements
+     Added ability to compile CONN for use without a Matlab license or environments
+15.h Cumulative patch, bug fixes and improvements
+     Added option to extract weighted-sum BOLD timeseries from ROI files (e.g. for probabilistic ROI definitions, or dual regression network ROIs)
+     Added the possibility of defining multiple functional sets in "Setup.Functional.Functional data for ROI-level analyses" (to simplify using ROIs in different spaces, e.g. some ROIs in MNI-space while others in subject-space) 
+     Added support for 4d-nifti ROI atlas files (one volume per ROI)
+     Added group-ICA voxel-to-voxel analyses (spatially independent components using two-step dimensionality reduction, FastICA for IC estimation, and dual-regression for subject-level backprojection; see voxel-to-voxel analysis tab)
+     Added non-parametric statistics for voxel-level analyses (residual permutation/randomization tests, univariate and multivariate models; see Setup.Options "second-level analyses" field, and "parametric stats/non-parametric stats" option in results explorer window)
+16.a Cumulative patch, bug fixes and improvements
+
+
+
+(*) indicates changes that may produce different results compared to previous versions (may want to hold update for ongoing projects that are still processing new subjects)
+
+
+
+projected: 
+      add option to use alternative brain surfaces in 3d displays (e.g. for pediatric or non-human analyses)
+      add multivariate partitioned-variance and permutation statistics for second-level voxel-based analyses (port same functionality from surface-based analyses)
+      add the possibility to define arbitrary first-level between-conditions contrasts (e.g. variability in FC measures across conditions)
+      add import graph-theory measures as second-level covariates
+      add across-experiments/projects second-level analyses
+	  add ALFF/fALFF measures
+      add batch.mat second-level analysis file to second-level results folder
+      add support for flexible ROIs
+      add possibility to share/download neuromarker definitions
+      add integration with NITRC-IR image repository
+      add integration with NITRC-EC environments
+
+
