@@ -33,7 +33,7 @@ function main(v)
             % add extensions to path
             extsPath = ez.joinpath(spmsPath, 'extensions');
             % avoid weird functions from marsbar/spm folders, wfu
-            addpath(genpath_exclude(extsPath,{'^spm2$','^spm5$','^spm99$', '^wfu_results$','^wfu_tbx_common$'}));
+            addpath(genpath_exclude(extsPath,{'^spm2$','^spm5$','^spm99$', '^spm_lite$'}));
         % otherwise, simply launch the last called version
         else
             spm('fmri');  % same version, no need to clear base workspace
@@ -60,7 +60,7 @@ function main(v)
 
             % add extensions to path
             extsPath = ez.joinpath(spmsPath, 'extensions');
-            addpath(genpath_exclude(extsPath,{'^spm2$','^spm5$','^spm99$', '^wfu_results$','^wfu_tbx_common$'}));
+            addpath(genpath_exclude(extsPath,{'^spm2$','^spm5$','^spm99$', '^spm_lite$'}));
         else
             % previous launched spm path
             preVPath = fileparts(which('spm'));
