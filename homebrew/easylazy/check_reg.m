@@ -36,9 +36,8 @@ if showMNIT1
     images = vertcat(images{:},{T1}); 
 end
 
-if length(images) > 24, error('Only 24 (max) images allowed.'); end
-
 if ischar(images), images = cellstr(images); end % deal with batch call passed parameter
+if length(images) > 24, error('Only 24 (max) images allowed.'); end
 
 captions = cellfun(@num2str, num2cell(1:length(images)), 'Unif', false);
 for i = 1:length(captions)
