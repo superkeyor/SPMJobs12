@@ -6,11 +6,15 @@ function outname = main(in, outname, operation)
 %        operation = string specifying operation to apply
 % 
 %                    LOGICAL OPERATORS
-%                    'i1>i2', 'i1<i2', 'i1>=i2', 'i1<=i2', 'i1==i2', '(i1>100).*i2'
-%                                
+%                    'i1>i2', 'i1<i2', 'i1>=i2', 'i1<=i2', 'i1==i2', '(i1>100).*i2', '(i1 & i2) & ~i3'
+%                          
+%                    LOGICAL shortcuts      
+%                        'intersect' - intersect/overlap across images i1 & i2 & i3 etc
+%                        'union' - united across images i1 | i2 | i3 etc
+%
 %                    NON-LOGICAL OPERATORS (ACROSS IMAGES)
 %                        'sum'   - sum across images
-%                        'prod'  - produce across images (ie, i1 .* i2 .* i3 etc intersect/overlap)
+%                        'prod'  - produce across images (ie, i1 .* i2 .* i3)
 %                        'mean'  - mean across images
 %                        'median' - median across images
 %                        'std'   - std across images
@@ -67,6 +71,12 @@ if nvol > 1
     case {'prod'}
         operation  = 'i1'; 
         for i = 2:nvol, operation = [operation sprintf('.*i%d', i)]; end
+    case {'intersect'}
+        operation  = 'i1'; 
+        for i = 2:nvol, operation = [operation sprintf('&i%d', i)]; end             
+    case {'union'}
+        operation  = 'i1'; 
+        for i = 2:nvol, operation = [operation sprintf('|i%d', i)]; end            
     case {'sum', 'mean', 'median'}
         operation = strcat('nan', operation, '(X)'); 
     case {'min', 'max', 'std', 'var'}
