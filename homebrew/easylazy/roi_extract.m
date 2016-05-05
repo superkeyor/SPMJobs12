@@ -1,4 +1,4 @@
-function main(ROI,Images)
+function ROIDATA = main(ROI,Images,outputmat)
 % routine to extract data for an arbitrary number of ROI and from an
 % arbitrary number of images - the routine follows the pattern of spm_voi
 %
@@ -7,12 +7,19 @@ function main(ROI,Images)
 %       Images: beta/con images/subjects to extract data from
 %               or, a path to second-level SPM.mat
 %               if not provided, try to get info from second-level SPM.mat in pwd 
+%       outputmat: full path to output mat, 
+%               optional, default '', save nothing, but returns ROIDATA
 %
-% OUTPUT the file is saved to the drive - the variable name is ROIDATA
+% OUTPUT 
+%        ROIDATA
+%        
+%        the file is saved to the drive - the variable name is ROIDATA
 %        a structure (ROIDATA.roi) with length(ROI) roi fields (ie the number of ROI images in input)
 %        .name
 %        .n the number of voxels in the ROI
 %        .ev ev is the 1st eigen value across voxels, obtained for each Images
+%        .mean average across voxels for each image/subject (1 vector)
+%        .sd standard deviation
 %
 % Note:
 % 1) if there are NaN in the ROI area for an image/subject 
@@ -30,10 +37,12 @@ function main(ROI,Images)
 if nargin == 0
     ROI = spm_select(Inf,'image','select ROI images');
     Images = spm_select(Inf,'image','select images to extract data from');
+    outputmat = '';
 elseif nargin == 1
     ROI = ROI;
     load('SPM.mat');
     Images = SPM.xY.P;
+    outputmat = '';
 elseif nargin == 2
     ROI = ROI;
     % if Images is path to 'SPM.mat'
@@ -43,8 +52,7 @@ elseif nargin == 2
     else
         Images = Images;
     end
-else
-    error('no or 2 arguments (ROI and Images) are needed, input error')    
+    outputmat = '';
 end
 % convert to char array -Jerry
 ROI = char(ROI);
@@ -94,6 +102,11 @@ for r=1:nroi
         data(location(l),isnan(data(location(l),:))) = nanmean(data(location(l),:));
     end
     
+    % compute mean, sd
+    % the result for each images is given by
+    mean_each = mean(data,2);
+    sd_each = std (data,1,2); % note flag = 1, i.e. matlab divides by n
+
     % compute the eigen value
     [m,n]   = size(data);
     if m > n
@@ -110,11 +123,26 @@ for r=1:nroi
     d       = sign(sum(v));
     u       = u*d;
     v       = v*d;
+
     ROIDATA.roi(r).ev = u*sqrt(s(1)/n);
+    ROIDATA.roi(r).mean = mean_each; % average across voxels for each image
+    ROIDATA.roi(r).sd = sd_each;   % standard deviation
+
+    % plot
+    figure;
+    plot(ROIDATA.roi(r).ev,'b');
+    hold;
+    plot(ROIDATA.roi(r).mean,'r');
+    grid;
+    title(['1st eigenvariate (blue) and Mean (red)'],'FontSize',10);
+    hold off;
 end
 
 % save
-newname = spm_input('save as',1,'s');
-newdir = uigetdir(pwd,['choose directory to save ' newname '.mat']);
-save([newdir filesep newname '.mat'],'ROIDATA')
+% newname = spm_input('save as',1,'s');
+% newdir = uigetdir(pwd,['choose directory to save ' newname '.mat']);
+% save([newdir filesep newname '.mat'],'ROIDATA');
+if ~isempty(outputmat), save(outputmat,'ROIDATA'); end
+
+end % end func
 
