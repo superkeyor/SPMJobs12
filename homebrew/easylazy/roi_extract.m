@@ -28,7 +28,8 @@ function ROIDATA = main(ROI,Images,outputmat)
 % though also possible from first level/raw/time-series images
 % 3) spm_regions seems to get raw data and then to filter data a bit
 % this script gets raw data directly
-% 4) see also spm_get_data
+% 4) under the hood, this script calls spm_get_data, see:
+% http://andysbrainblog.blogspot.com/2014/07/quick-and-efficient-roi-analysis-using.html
 %
 % Cyril Pernet v1 19-02-2015
 % ---------------------------
