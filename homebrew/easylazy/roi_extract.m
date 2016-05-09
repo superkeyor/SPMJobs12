@@ -138,6 +138,7 @@ for r=1:nroi
 
     % plot
     figure;
+    set(gcf,'name',['Extracted data from ' ROIDATA.roi(r).name],'numbertitle','off');
     plot(ROIDATA.roi(r).ev,'b');
     hold;
     plot(ROIDATA.roi(r).mean,'r');
