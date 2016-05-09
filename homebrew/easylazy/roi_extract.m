@@ -1,6 +1,7 @@
 function ROIDATA = main(ROI,Images,outputmat)
 % routine to extract data for an arbitrary number of ROI and from an
 % arbitrary number of images - the routine follows the pattern of spm_voi
+% voi (volume of interest) in SPM is similar to ROI (voi may refer specificially to eigen analysis of ROI)
 %
 % INPUT can be empty. if empty, the user is prompted
 %       ROI: ROI images, a single str or a cell of str
