@@ -155,11 +155,23 @@ else
     hdr.fname = outname; 
     spm_write_vol(hdr, outim);
 end % end if
+
 % output some useful info of the generated image
 hdr_out = spm_vol(outname);
 type_out = spm_type(hdr_out.dt(1));
 values_out = unique(spm_read_vols(hdr_out));
-fprintf('Output image:\nData type: %s\n\t(note: UINT allows only positive values and 0;\n\tif negative included, select INT; \n\tsingle=float32, double=float64 also allow negative values)\nUnique values: %s\n',type_out,mat2str(values_out));
+dim_out = hdr_out.dim;
+description_out = hdr_out.descrip;
+
+fprintf('Output image:\n');
+fprintf('Data type: %s\n',type_nii);
+    fprintf('\t(note: UINT allows only positive values and 0;\n');
+    fprintf('\tif negative included, select INT;\n');
+    fprintf('\tsingle=float32, double=float64 also allow negative values)\n');
+fprintf('Unique values: %s\n',mat2str(values_nii));
+fprintf('Dimension: %s\n',mat2str(dim_nii));
+fprintf('Description: %s\n',description_nii);
+
 end % end func
 
 function Vo = spmimcalc(Vi,Vo,f,flags)

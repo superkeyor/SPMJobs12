@@ -135,6 +135,11 @@ for r=1:nroi
     plot(ROIDATA.roi(r).mean,'r');
     grid;
     title(['1st eigenvariate (blue) and Mean (red)'],'FontSize',10);
+    str = {
+        sprintf('%d voxels in VOI/ROI',size(data,2));...
+        sprintf('Variance: %0.2f%%',100*s(1)/sum(s))};
+    xlabel(str)
+    axis tight square
     hold off;
 end
 
