@@ -26,7 +26,9 @@ function ROIDATA = main(ROI,Images,outputmat)
 % the values will be replaced with the mean of other non-NaN for that image
 % 2) ideally extract data from beta/con images
 % though also possible from first level/raw/time-series images
-%
+% 3) spm_regions seems to get raw data and then to filter data a bit
+% this script gets raw data directly
+% 4) see also spm_get_data
 %
 % Cyril Pernet v1 19-02-2015
 % ---------------------------
@@ -102,12 +104,17 @@ for r=1:nroi
         data(location(l),isnan(data(location(l),:))) = nanmean(data(location(l),:));
     end
     
+    % data is nsubjects x nvoxels
+
     % compute mean, sd
     % the result for each images is given by
     mean_each = mean(data,2);
     sd_each = std (data,1,2); % note flag = 1, i.e. matlab divides by n
 
     % compute the eigen value
+    % u            - first eigenvariate {scaled - c.f. mean response} nsubjects x 1
+    % v            - first eigenimage nvoxels x 1
+    % s            - eigenvalues  nvoxels x 1 
     [m,n]   = size(data);
     if m > n
         [v,s,v] = svd(data'*data);
