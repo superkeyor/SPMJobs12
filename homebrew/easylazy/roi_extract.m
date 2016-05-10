@@ -27,7 +27,7 @@ function ROIDATA = main(ROI,Images,outputmat)
 % the values will be replaced with the mean of other non-NaN for that image
 % 2) ideally extract data from beta/con images
 % though also possible from first level/raw/time-series images
-% 3) spm_regions seems to get raw data and then to filter data a bit
+% 3) spm_regions seems to get whitened and filtered data
 % this script gets raw data directly
 % 4) under the hood, this script calls spm_get_data, see:
 % http://andysbrainblog.blogspot.com/2014/07/quick-and-efficient-roi-analysis-using.html
