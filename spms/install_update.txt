@@ -1,3 +1,4 @@
+best to keep one minor version for each major version of spm
 
 Note that if you download a full version of SPM (through the web form),
 these updates will already have been incorporated in the spm*.zip archive.
