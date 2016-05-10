@@ -14,6 +14,12 @@ function main(varargin)
     
     % [oneline, cellarray]=cuixuFindStructure([20 6 10; 30 9 12])
     % [oneline, cellarray]=cuixuFindStructure([20 6 10])
+    if isempty(which('cuixuFindStructure'))
+        extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
+        thePath = ez.lsd(extsPath,'^xjview');
+        thePath = ez.joinpath(extsPath,thePath{1});
+        addpath(thePath);
+    end
     oneline = cuixuFindStructure(varargin{:});
     
     for i = 1:length(oneline)

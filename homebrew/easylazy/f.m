@@ -12,6 +12,23 @@
 function main(v)
     close all;   % close all figures
     
+    % these following toolboxes are harmless to the path, add them when calling/adding spm path
+    if isempty(which('mricrondummy'))
+        extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
+        thePath = ez.lsd(extsPath,'^mricron');
+        thePath = ez.joinpath(extsPath,thePath{1});
+        addpath(thePath);
+        clear extsPath thePath;
+    end
+
+    if isempty(which('xjview'))
+        extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
+        thePath = ez.lsd(extsPath,'^xjview');
+        thePath = ez.joinpath(extsPath,thePath{1});
+        addpath(thePath);
+        clear extsPath thePath;
+    end
+
     if nargin < 1
         % no spm ever launched
         if isempty(which('spm'))
