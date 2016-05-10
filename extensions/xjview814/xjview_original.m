@@ -1,5 +1,5 @@
 function xjview(varargin)
-% xjview, version 8.13
+% xjview, version 8.14
 %
 % usage 1: xjview (no argument)
 %           for displaying a result img file, or multiple image files,
@@ -27,6 +27,11 @@ function xjview(varargin)
 % http://www.alivelearn.net/xjview
 %
 % by Xu Cui, Jian Li and Xiaowei Song
+% http://www.alivelearn.net/xjview
+% Xu Cui's personal blog: http://www.alivelearn.net
+%
+% last modified: 11/15/2015 v8.14 (fix stat bug and render view (old style) bug)
+% last modified: 11/12/2015 at 16:30PM (fix stat bug)
 % last modified: 11/09/2015 at 11:09AM (allow to change the minimum of color bar range, allow to resize window)
 % last modified: 03/31/2014 (fix setting F-test df bug)
 % last modified: 10/23/2012 (fix colorbar max bug)
@@ -53,6 +58,9 @@ function xjview(varargin)
 % Thank Joseph Maldjian for WFU_PickAtlas
 % Thank Yuval Cohen for the maximize figure function (maximize.m)
 %
+
+global VERSION_;
+VERSION_ = '8.14';
 
 warnstate = warning;
 warning off;
@@ -92,7 +100,7 @@ try
     spmdir = spm('dir');
     %spm('defaults', 'fmri');
 catch
-    disp('Please add spm path.');
+    disp('Please add SPM to your path. xjView requires SPM.');
     warning(warnstate(1).state);
     return
 end
@@ -113,6 +121,28 @@ else
     os = 'linux';
 end
 screenResolution = get(0,'ScreenSize');
+if ispc
+    ver_info = '! ver';
+elseif ismac
+    ver_info = '! sw_vers -productVersion';
+elseif isunix
+    ver_info = '';
+end
+ver_string = evalc( ver_info );
+ver_string = strtrim(ver_string);
+if ismac
+    ver_string = ['Mac OS ' ver_string];
+elseif isunix
+    ver_string = 'Linux';
+end
+
+tmp=ver('matlab');
+global systemInfo_;
+systemInfo_ = ['screenResolution=' num2str(screenResolution(3)) 'x' num2str(screenResolution(4)) ];
+systemInfo_ = [systemInfo_ '&matlabVersion=' tmp.Version];
+systemInfo_ = [systemInfo_ '&os=' ver_string];
+systemInfo_ = [systemInfo_ '&spmVersion=' spm('ver')];
+systemInfo_ = regexprep(systemInfo_,' ','%20');
 
 xjviewpath = fileparts(which('xjview'));
 
@@ -124,12 +154,12 @@ clusterSizeThreshold = 5;
 
 % Appearance Settings
 figurePosition =                    [0.100,   0.050,    0.550,    0.880];
-sectionViewPosition =               [0.463,0.61,0.45,0.45];
-glassViewAxesPosition =             [-0.005,   0.600,    0.464,    0.400];
+sectionViewPosition =               [0.5,0.61,0.45,0.45];
+glassViewAxesPosition =             [0.000,   0.600,    0.464,    0.400];
 if screenResolution(3) <= 1024
     figurePosition =                    [0.100,   0.050,    0.700,    0.900];
-    sectionViewPosition =               [0.463,       0.61,   0.45,   0.46];
-    glassViewAxesPosition =             [-0.005,   0.600,    0.464,    0.400];    
+    sectionViewPosition =               [0.5,       0.61,   0.45,   0.46];
+    glassViewAxesPosition =             [0.000,   0.600,    0.464,    0.400];    
 end
 
 left =                              0.01;
@@ -192,7 +222,7 @@ helpPosition =                      stretchMatrix*[0.800,   5*heightUnit,    edi
 infoTextBoxPosition =               stretchMatrix*[0.000,   8*heightUnit,    1,           editBoxHeight*9]' + controlPanelOffset;
 %xjViewPosition =                    stretchMatrix*[0.400,   13*heightUnit,    editBoxWidth*2.5,    editBoxHeight*3]' + controlPanelOffset;
 
-sectionViewListboxPosition =        [sectionViewPosition(1)+0.46, sectionViewPosition(2)+0.02, 0.1, 0.14];
+sectionViewListboxPosition =        [sectionViewPosition(1)+0.4, sectionViewPosition(2)+0.02, 0.1, 0.14];
 sectionViewMoreTargetPushPosition = [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.02,0.10,0.02];
 xHairCheckPosition =                [sectionViewListboxPosition(1),sectionViewListboxPosition(2)+0.14,0.15,0.02];
 setTRangeEditPosition =             [sectionViewListboxPosition(1),sectionViewListboxPosition(2)-0.06,0.05,0.02];
@@ -221,8 +251,11 @@ end
 
 handles.figure = f;
 handles.instructionText = uicontrol(handles.figure,'style','text',...
-        'unit','normalized','position',[0.02 0.7 0.4 0.2],...
-        'string','Click menu File | Open Images','horizontal','left', 'fontSize',40);     
+        'unit','normalized','position',[0.02 0.7 0.6 0.2],...
+        'string','To start, click menu: File | Open Images','horizontal','left', 'fontSize',30);     
+handles.instructionText2 = uicontrol(handles.figure,'style','push',...
+        'unit','normalized','position',[0.02 0.65 0.6 0.1],...
+        'string','Or click to open an example image','horizontal','left','fontSize',25, 'callback',@CallBack_openExample);         
 handles.frame = uicontrol(handles.figure,'style','frame',... 
         'unit','normalized',...
         'position',framePosition,...
@@ -507,47 +540,62 @@ handles.getCurrentPosition = uicontrol(handles.figure, 'style','push',...
 
     
 try
-    %urlread([XJVIEWURL '/guestbook/stat.php']);    
+    latestVersion = urlread([XJVIEWURL '/stat.php?action=launch&v=' VERSION_ '&' systemInfo_]);    
+    if ~strcmp(latestVersion,VERSION_)
+        %h=warndlg(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. Please download xjView at ' XJVIEWURL], 'Update xjView');
+        %uiwait(h);
+        ButtonName = questdlg(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. Please download xjView at ' XJVIEWURL], 'Update xjView', ...
+                         'Download now', 'Cancel', 'Download now');
+       switch ButtonName,
+         case 'Download now',
+          web -browser http://www.alivelearn.net/xjview
+          return;
+         case 'Cancel',
+         x=[]; 
+         pause(0.1);
+       end % switch
+    end
 	s = urlread([XJVIEWURL '/toUser.txt']);
     set(handles.infoTextBox, 'String', s);
 end
 
 % feed
-% try
-%     jObject = com.mathworks.mlwidgets.html.HTMLBrowserPanel;
-%     [browser,container] = javacomponent(jObject, [], f);
-%     set(container, 'Units','norm', 'Pos',[0.55,0.05,0.44,0.45]);
-%     browser.setCurrentLocation('http://www.alivelearn.net/xjview/ad.php');
-%     handles.feed = container;
-% %     s = urlread(['http://www.alivelearn.net/xjview8/getFeed.php']);
-% %     [feeds, links]=strread(s,'%s%s', 'delimiter','\t');
-% %     
-% %     handles.feed = uicontrol(handles.figure,'style','listbox',...
-% %         'unit','normalized',...
-% %         'String', feeds, ...
-% %         'userdata',links, ...
-% %         'value',1,...
-% %         'fontsize',12,...
-% %         'position',[0.55 0.05 0.44 0.25]);
-% %     handles.refreshclick  = uicontrol(handles.figure,'style','push',...
-% %         'unit','normalized',...
-% %         'String', 'Refresh', ...
-% %         'position',[0.55 0.02 0.1 0.03],...
-% %         'fontsize',12, ...
-% %         'callback',@refreshFeeds);
-% %     handles.feedclick  = uicontrol(handles.figure,'style','push',...
-% %         'unit','normalized',...
-% %         'String', 'Read', ...
-% %         'position',[0.88 0.02 0.1 0.03],...
-% %         'fontsize',12, ...
-% %         'callback',@openURL);
-% %     handles.postfeedclick  = uicontrol(handles.figure,'style','push',...
-% %         'unit','normalized',...
-% %         'String', 'Post', ...
-% %         'position',[0.65 0.02 0.05 0.03],...
-% %         'fontsize',12, ...
-% %         'callback','web(''http://www.alivelearn.net/xjview8/feed.php'')');    
-% end
+try
+    jObject = com.mathworks.mlwidgets.html.HTMLBrowserPanel;
+    [browser,container] = javacomponent(jObject, [], f);    
+    set(container, 'Units','norm', 'Pos',[0.55,0.05,0.44,0.45]);
+    browser.setCurrentLocation([XJVIEWURL '/ad.php?action=launch&v=' VERSION_  '&' systemInfo_]);
+    handles.feed = container;
+    handles.browser = browser;
+%     s = urlread(['http://www.alivelearn.net/xjview8/getFeed.php']);
+%     [feeds, links]=strread(s,'%s%s', 'delimiter','\t');
+%     
+%     handles.feed = uicontrol(handles.figure,'style','listbox',...
+%         'unit','normalized',...
+%         'String', feeds, ...
+%         'userdata',links, ...
+%         'value',1,...
+%         'fontsize',12,...
+%         'position',[0.55 0.05 0.44 0.25]);
+%     handles.refreshclick  = uicontrol(handles.figure,'style','push',...
+%         'unit','normalized',...
+%         'String', 'Refresh', ...
+%         'position',[0.55 0.02 0.1 0.03],...
+%         'fontsize',12, ...
+%         'callback',@refreshFeeds);
+%     handles.feedclick  = uicontrol(handles.figure,'style','push',...
+%         'unit','normalized',...
+%         'String', 'Read', ...
+%         'position',[0.88 0.02 0.1 0.03],...
+%         'fontsize',12, ...
+%         'callback',@openURL);
+%     handles.postfeedclick  = uicontrol(handles.figure,'style','push',...
+%         'unit','normalized',...
+%         'String', 'Post', ...
+%         'position',[0.65 0.02 0.05 0.03],...
+%         'fontsize',12, ...
+%         'callback','web(''http://www.alivelearn.net/xjview8/feed.php'')');    
+end
 
 handles.glassViewAxes = axes('unit','normalized','position',glassViewAxesPosition,'XTick',[],'YTick',[],'visible','off');
 
@@ -706,6 +754,15 @@ vars
 x = evalin('base',vars{1});
 x
 handles.DIM
+
+function CallBack_openExample(hObject, eventdata, value)
+
+handles = guidata(hObject);
+tmp = which('example2.img');
+CallBack_quit(hObject, eventdata,'');
+disp(['xjview ' tmp]);
+xjview(tmp);
+
 
 function CallBack_getCurrentPosition(hObject, eventdata)
 handles = guidata(hObject);
@@ -3340,7 +3397,15 @@ warning(warnstate)
 % try
 %     rmdir('xjviewtmp');
 % end
+set(gcf,'Visible','off')   
 delete(gcf);
+global XJVIEWURL_;
+global VERSION_;
+global systemInfo_;
+try
+urlread([XJVIEWURL_ '/stat.php?action=exit&v=' VERSION_  '&' systemInfo_]); 
+end
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -3384,6 +3449,7 @@ function CallBack_loadImagePush(hObject, eventdata, thisfilename)
 handles = guidata(hObject);
 
 set(handles.instructionText, 'visible', 'off');
+set(handles.instructionText2, 'visible', 'off');
 
 handles.imageFileName=[]; handles.M=[]; handles.DIM=[]; handles.TF=[]; handles.df=[]; 
 handles.mni=[]; handles.intensity=[]; handles.currentmni=[]; handles.currentintensity=[]; handles.currentDisplayMNI=[]; handles.currentDisplayIntensity=[];
@@ -3514,6 +3580,16 @@ CallBack_pValueEdit(handles.pValueEdit, eventdata);
 % catch
 %     report{1} = 'Welcome to xjView 8';
 % end
+try
+    global VERSION_;
+    global systemInfo_;
+    urlread([XJVIEWURL_ '/stat.php?action=openImage&v=' VERSION_  '&' systemInfo_]);    
+    adIsHidden = 'no';
+    if get(handles.renderViewCheck, 'Value')
+        adIsHidden = 'yes';    
+    end
+    handles.browser.setCurrentLocation([XJVIEWURL_ '/ad.php?adIsHidden=' adIsHidden '&action=openImage&v=' VERSION_  '&' systemInfo_]);
+end
 
 for jj=1:length(handles.imageFileName)
     report{2+6*(jj-1)} = cell2str(handles.imageFileName(jj));
@@ -7094,7 +7170,7 @@ st.Space = spm_matrix([0 0 0  0 0 -pi/2])*st.Space;
 spm_orthviews('Image',spms,handles.sectionViewPosition); % position
 spm_orthviews('MaxBB');
 spm_orthviews('register',hReg);
-if ~iscell(SPM)0
+if ~iscell(SPM)
     spm_orthviews('addblobs',1,SPM.XYZ,SPM.Z,SPM.M);
 elseif length(SPM) == 1
     SPM = SPM{1};
@@ -7387,7 +7463,7 @@ set(ax,'YTick',[],'XTick',[]);
 if ~isfinite(brt),
 	% Old style split colourmap display.
 	%---------------------------------------------------------------
-	load Split;
+	split = [gray(64); hot(64)];
 	colormap(split);
 	for i=1:length(rend),
 		ren = rend{i}.ren;
