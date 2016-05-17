@@ -33,16 +33,17 @@ for n = 1:ez.len(conditions)
             matlabbatch{1}.spm.util.voi.roi{2}.mask.image = {ez.joinpath(ROIPath,[ROI,'.nii,1'])};
     
             cd(conditionPath);
-            save(['voi_' SPM.xCon(p).name '_job.mat'], 'matlabbatch');
+            save(['voi_' SPM.xCon(p).name '_'  ROI '_job.mat'], 'matlabbatch');
 
-            diary(['voi_' SPM.xCon(p).name '.txt']);
-            ez.print(['Processing ' condition '_' SPM.xCon(p).name ' ...']);
+            diary(['voi_' SPM.xCon(p).name '_'  ROI '.txt']);
+            ez.print(['Processing ' condition '_' SPM.xCon(p).name '_'  ROI ' ...']);
             if together
                 try
                     spm_jobman('run',matlabbatch);
                     drawnow; % let the figure finish drawing and get ready before continuing the script
                     spm_figure('GetWin','Graphics');
-                    ez.export(['voi_' SPM.xCon(p).name '.pdf'],'nocrop');
+                    ez.export(['voi_' SPM.xCon(p).name '_'  ROI '.pdf']);
+                    ez.rn(['VOI_' SPM.xCon(p).name '.mat'], ['voi_' SPM.xCon(p).name '_'  ROI '.mat']);
                 catch
                     ez.pprint(['No value extracted from ' SPM.xCon(p).name],'red');
                 end
