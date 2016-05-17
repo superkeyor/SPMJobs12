@@ -1,5 +1,6 @@
 function outname = main(in, outname, operation)
-% Calculate Image based on Input Image(s)
+% Calculate Image based on Input Image(s) with customized spmimcal()
+% spmimcal should be similar to spm_imcal (not sure how differnt though--jerry)
 % USAGE: (in, outname, operation)
 %        in  =  str or a cell of str with images (full path), eg. {'a.nii','b.nii'}
 %        outname = path for output image, eg. 'diff.nii'
