@@ -6,6 +6,7 @@
 ez.clean();
 
 conditions = {'comp_e','nc_e','comp_mce','nc_mce'};
+conditions = {'comp_e'};
 ROIs = {'APFC_L','APFC_R','DLPFC_L','DLPFC_R','DStriatum_L','DStriatum_R'};
 conditionsPath = ez.pwd;
 ROIPath = ez.whichdir('roisdummy.m');
@@ -14,6 +15,7 @@ together = 1;
 spm('fmri');
 
 startTime = ez.moment();
+cd(conditionsPath);
 for n = 1:ez.len(conditions)
     condition = conditions{n};
     conditionPath = ez.joinpath(conditionsPath,condition);
@@ -52,6 +54,7 @@ for n = 1:ez.len(conditions)
 
     ez.pprint('****************************************'); % pretty colorful print
 end
+cd(conditionsPath);
 ez.pprint('Done!');
 finishTime = ez.moment();
 %------------- END OF CODE --------------
