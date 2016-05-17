@@ -36,7 +36,7 @@ for n = 1:ez.len(conditions)
             save(['voi_' SPM.xCon(p).name '_'  ROI '_job.mat'], 'matlabbatch');
 
             diary(['voi_' SPM.xCon(p).name '_'  ROI '.txt']);
-            ez.print(['Processing ' condition '_' SPM.xCon(p).name '_'  ROI ' ...']);
+            ez.print(['Processing ' SPM.xCon(p).name '_'  ROI ' ...']);
             if together
                 try
                     spm_jobman('run',matlabbatch);
