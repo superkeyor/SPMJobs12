@@ -13,9 +13,7 @@ startTime = ez.moment();
 cd(conditionsPath);
 
 data = {};
-data{1,1} = 'SUBJID';
-data{2,end+1} = ;
-total = 2; % total columns in data in addition to SUBJID
+total = 1; % total columns in data
 for n = 1:ez.len(conditions)
     condition = conditions{n};
     conditionPath = ez.joinpath(conditionsPath,condition);
@@ -27,17 +25,16 @@ for n = 1:ez.len(conditions)
         matstr = strrep(mat,'voi_(+)','plus_');
         matstr = strrep(matstr,'voi_(-)','minus_');
         matstr = strrep(matstr,'.mat','');
-        data{2,end+1} = matstr;
+        data{1,end+1} = matstr;
         load(mat);
         Y =num2cell(Y);
         data(2:length(Y)+1,total)= Y(:);
         total = total + 1;
         ez.pprint('****************************************'); % pretty colorful print
     end
-
-    cd(conditionsPath);
 end
 cd(conditionsPath);
+
 ez.cell2csv('VOIs.csv',data);
 
 ez.pprint('Done!');
