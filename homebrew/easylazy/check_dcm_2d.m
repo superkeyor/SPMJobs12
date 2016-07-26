@@ -5,7 +5,7 @@ function info = main(dcm)
 
 info = dicominfo(dcm);
 Y = dicomread(info);
-figure;imshow(Y);
+figure;imshow(Y,[]);
 % imcontrast;
 
 end % end func
