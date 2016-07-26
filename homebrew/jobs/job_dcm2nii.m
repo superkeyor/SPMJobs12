@@ -19,7 +19,7 @@
 % scout dim: 256*256*3 or 256*256*1  few slices, several volumes
 % structual dim: 256*256*200 many slices, but only one volume
 %
-% bat_dcm2nii(inputDir, outputDir, autodetect);
+% (inputDir, outputDir, autodetect);
 % after conversion, a nifti-1 file is a 3D file (1 nii = 1 single volume)
 % if nii files exist with same name, overwrite without any prompt
 %
