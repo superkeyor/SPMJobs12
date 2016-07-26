@@ -1,4 +1,4 @@
-% Put this script in the folder of each step. Change the working directory to a folder/step. Go!
+% Put this script in the folder of each step. Change the working directory the a folder/step. Go!
 ez.clean();
 %----------------------------------
 projDir = ez.parentdir(ez.csd);
