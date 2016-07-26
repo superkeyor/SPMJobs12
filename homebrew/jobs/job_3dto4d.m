@@ -3,7 +3,7 @@
 % optional input: together = 0/1 (default 1) if 0 only generates job_.mat files, 1 run the jobs and clean up afterwards
 % generates _s0215_r01.nii (which is 4d as file name, prepending _ now, because later on spm atuo add prefix for each step)
 %
-% bat_3dto4d(inputDir, outputDir, together);
+% (inputDir, outputDir, together);
 % after conversion, a nifti-1 file is a 4D file (1 nii = xxx volumes)
 % if nii files exist with same name, overwrite without any prompt
 %
