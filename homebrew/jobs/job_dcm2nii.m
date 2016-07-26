@@ -114,14 +114,18 @@ for n = 1:ez.len(inputDirs)
                         ez.rm(P(discards)); % P(discards) returns a cell
                     end
                 end
+                ez.print(sprintf('Renaming %s --> %s',subDirs{i},sprintf('%s_r%02d', subID, funcRun)));
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_r%02d', subID, funcRun)));
                 funcRun = funcRun + 1;
             elseif volumes >= dti_volumes_threshold % DTI
+                ez.print(sprintf('Renaming %s --> %s',subDirs{i},sprintf('%s_dti', subID)));
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_dti', subID)));
             % min number of slices across all volumes
             elseif min([V.dim]) <= loc_slices_threshold % localizer
+                ez.print(sprintf('Renaming %s --> %s',subDirs{i},sprintf('%s_loc', subID)));
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_loc', subID)));
             elseif volumes == 1 % anatomical
+                ez.print(sprintf('Renaming %s --> %s',subDirs{i},sprintf('%s_anat', subID)));
                 ez.rn(subDir,ez.joinpath(outputDir,sprintf('%s_anat', subID)));
             else
                 % unknown, retain the folder name
