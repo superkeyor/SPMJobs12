@@ -7,7 +7,7 @@ function outname = main(xyz,radius,labels)
 % Output:
 %       ROI_Sphere8_2_3_4_label.nii or ROI_Sphere8_2_3_4 in the pwd
 %       the full path to the (last) generated ROI file
-
+% note: may use marsbar or wfu_pickatlas instead
 
 
 % Uses code authored by:

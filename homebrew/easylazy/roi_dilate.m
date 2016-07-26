@@ -5,7 +5,8 @@ function main(in, ndilation, appendextent)
 %       appendextent = 0 (default) / 1 (extent = sum of non-zero voxels in ROIs)
 % Output:
 %       if appendextent, generate file_D2_k=111.nii, else file_D2.nii
-%       
+%
+% note: may use marsbar or wfu_pickatlas instead       
 
 % ------------ Copyright (C) 2014 ------------
 %	Author: Bob Spunt
