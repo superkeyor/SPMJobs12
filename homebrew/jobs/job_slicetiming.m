@@ -31,13 +31,14 @@ startTime = ez.moment();
 runFiles = ez.ls(inputDir,'s\d\d\d\d_r\d\d\.nii$');
 for n = 1:ez.len(runFiles)
     runFile = runFiles{n};
-    [dummy runFileName] = ez.splitpath(runFile);
+    [dummy, runFileName] = ez.splitpath(runFile);
     ez.print(['Processing ' runFileName ' ...']);
     
     
     load('mod_slicetiming.mat');
-    runVolumes = cellstr(spm_select('ExtList',inputDir,runFileName,[1:1000]));
-    runVolumes = cellfun(@(e) ez.joinpath(inputDir,e),runVolumes,'UniformOutput',false);
+    % runVolumes = cellstr(spm_select('ExtList',inputDir,runFileName,[1:1000]));
+    % runVolumes = cellfun(@(e) ez.joinpath(inputDir,e),runVolumes,'UniformOutput',false);
+    runVolumes = cellstr(spm_select('ExtFPList',inputDir,runFileName,Inf));
     matlabbatch{1}.spm.temporal.st.scans{1,1} = runVolumes;  % volumes for only one run/4dfile
     matlabbatch{1}.spm.temporal.st.nslices = nslices;
     matlabbatch{1}.spm.temporal.st.tr = tr;
@@ -46,7 +47,7 @@ for n = 1:ez.len(runFiles)
     matlabbatch{1}.spm.temporal.st.refslice = refslice;
     prefix = matlabbatch{1}.spm.temporal.st.prefix;
     cd(outputDir);
-    save(['job_slicetiming_' runFileName '.mat'], 'matlabbatch');
+    save(['job_slicetiming' runFileName '.mat'], 'matlabbatch');
     if together
         spm_jobman('run',matlabbatch);
         ez.mv(ez.joinpath(inputDir,[prefix runFileName '.nii']), outputDir);
@@ -57,6 +58,6 @@ for n = 1:ez.len(runFiles)
 end
 ez.pprint('Done!');
 finishTime = ez.moment();
-if exist('email','var'), try, jobmail(mfilename, startTime, finishTime); end; end;
+if exist('email','var') && together, try, jobmail(mfilename, startTime, finishTime); end; end;
 end % of main function
 %------------- END OF CODE --------------
