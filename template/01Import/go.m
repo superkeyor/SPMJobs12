@@ -10,17 +10,20 @@ inputDir = ez.joinpath(projDir,prevStep);
 %----------------------------------
 outputDir = ez.csd();
 %----------------------------------
-inputDirs = {ez.joinpath(inputDir,'00215');
-             ez.joinpath(inputDir,'00216');
-             ez.joinpath(inputDir,'00217');
-             ez.joinpath(inputDir,'00225');
-             ez.joinpath(inputDir,'00226');
-             ez.joinpath(inputDir,'00255');
-             ez.joinpath(inputDir,'00256');
-             ez.joinpath(inputDir,'00258');
-             ez.joinpath(inputDir,'00264');
-             ez.joinpath(inputDir,'00265');
-             ez.joinpath(inputDir,'00266');};
+subjects = {
+'00215';
+'00216';
+'00217';
+'00225';
+'00226';
+'00255';
+'00256';
+'00258';
+'00264';
+'00265';
+'00266';    
+};
+inputDirs = ez.joinpath(inputDir,subjects);
 
 %----------------------------------
 autodetect = 1;
