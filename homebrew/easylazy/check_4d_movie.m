@@ -46,7 +46,8 @@ while playagain==1
         set(h1,'CData',autobrightvol(d(:,:,i)));
         pause(1/rate);
     end;
-    playagain = input('Play it again? [1=Yes, 2=No] ');
+    % playagain = input('Play it again? [1=Yes, 2=No] ');
+    playagain = 2;
     close gcf
 end
 end

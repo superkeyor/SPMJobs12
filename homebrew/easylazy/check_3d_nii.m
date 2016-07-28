@@ -21,4 +21,7 @@ fprintf('Non-zero voxels #: %d\n', n_out);
 fprintf('Dimension: %s\n',mat2str(dim_out));
 fprintf('Description: %s\n',description_out);
 
+if iscell(nii), nii = char(nii); end
+spm_image('Display', nii); 
+
 end % end func
