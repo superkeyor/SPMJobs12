@@ -96,7 +96,7 @@ for n = 1:ez.len(subjects)
         ez.mv(ez.joinpath(outputDir,'*seg8.mat'),hallway);
         % segments
         segs = ez.ls(outputDir,'^c\d.*nii$');
-        spm_check_registration(char(segs));
+        check_reg(segs);
         fig = spm_figure('FindWin','Graphics');
         ez.export(ez.joinpath(outputDir,[subject '_segs.pdf']),fig);
         cellfun(@(e) ez.mv(e,hallway),segs,'UniformOutput',false);
@@ -116,7 +116,7 @@ for n = 1:ez.len(subjects)
         % check warped
         files = cellstr(spm_select('ExtList',outputDir,['^w.*' subject '.*\.nii'],[1]));
         files = cellfun(@(e) ez.joinpath(outputDir,e),files,'UniformOutput',false);
-        spm_check_registration(char(files));
+        check_reg(files);
         fig = spm_figure('FindWin','Graphics');
         ez.export(ez.joinpath(outputDir,[subject '_warped.pdf']),fig);
         % finally anat with header changed

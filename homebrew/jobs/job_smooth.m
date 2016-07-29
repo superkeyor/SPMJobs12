@@ -55,7 +55,7 @@ for n = 1:ez.len(subjects)
         % check smoothed
         files = cellstr(spm_select('ExtList',inputDir,['^(w|sw).*' subject '_r01\.nii'],[1]));
         files = cellfun(@(e) ez.joinpath(inputDir,e),files,'UniformOutput',false);
-        spm_check_registration(char(files));
+        check_reg(files);
         fig = spm_figure('FindWin','Graphics');
         ez.export(ez.joinpath(outputDir,[subject '_r01_smoothed.pdf']),fig);
 

@@ -102,7 +102,7 @@ for n = 1:ez.len(subjects)
         ez.rm(files);
         % plot files
         files = ez.ls('.',[mapName '_(p|r|z)\.nii$']);
-        spm_check_registration(char(files));
+        check_reg(files);
         fig = spm_figure('FindWin','Graphics');
         % ready dir
         outputSubDir = ez.joinpath(outputDir, mapName);
