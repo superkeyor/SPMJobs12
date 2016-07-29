@@ -103,7 +103,7 @@ for n = 1:ez.len(subjects)
         cellfun(@(e) ez.mv(e,hallway),files,'UniformOutput',false);
         % process graph
         psFile = ez.ls(outputDir,'\.ps$'){1};
-        eps2pdf(psFile,ez.joinpath(outputDir,[subject '_coreg.pdf']));  %eps2pdf comes with ez.export, requires ghostscript
+        ez.ps2pdf(psFile,ez.joinpath(outputDir,[subject '_coreg.pdf']));  
         ez.rm(psFile);
         % move warped files
         files = ez.ls(inputDir,['^w.*' subject '_r\d\d\.nii$']);
