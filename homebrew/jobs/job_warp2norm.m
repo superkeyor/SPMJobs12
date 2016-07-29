@@ -116,7 +116,7 @@ for n = 1:ez.len(subjects)
         % check warped
         files = cellstr(spm_select('ExtList',outputDir,['^w.*' subject '.*\.nii'],[1]));
         files = cellfun(@(e) ez.joinpath(outputDir,e),files,'UniformOutput',false);
-        check_reg(files);
+        check_reg(files,[0 0 0]);
         fig = spm_figure('FindWin','Graphics');
         ez.export(ez.joinpath(outputDir,[subject '_warped.pdf']),fig);
         % finally anat with header changed
