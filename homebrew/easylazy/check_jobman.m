@@ -1,9 +1,28 @@
-function varargout = main(j)
+function varargout = main(job)
     % load job into Batch GUI
-    % j default 'matlabbatch', in case spm 5 ('jobs')
-    % spm 8/12 use matlabbatch, spm 5 uses jobs
+    % job: optional
+    % 1) if job not provided, search base workspace
+    %    matlabbatch (spm8/12) > jobs (spm5)
+    % 2) main('jobs'/'matlabbatch') to explicitly search base workspace
+    % 3) if job is a job mat file, load the job internally and display 
 
-    if nargin<1, j = 'matlabbatch'; end
-    matlabbatch = evalin('base', j);
-    spm_jobman('interactive',matlabbatch);
+    if nargin<1
+        try
+            j = evalin('base', 'matlabbatch');
+        catch
+            j = evalin('base', 'jobs');
+        end
+    else
+        if strcmp(job,'matlabbatch'), j = evalin('base', 'matlabbatch'); end
+        if strcmp(job,'jobs'), j = evalin('base', 'jobs'); end
+        if strfind(job,'.mat')
+            load(job);
+            try
+                j = eval('matlabbatch');
+            catch
+                j = eval('jobs');
+            end
+        end
+
+    spm_jobman('interactive',j);
 end
