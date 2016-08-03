@@ -4,6 +4,16 @@
 
 function varargout = main(conseq)
     % ez.clean();
+    % close previous xjview windows
+    figs = sort(findobj(0,'type','figure'));
+    for iii = 1:ez.len(figs);
+        fig = figs(iii);
+        if strfind(fig.Name,'xjView')
+            ez.print(['closing previous ' fig.Name ' ...']);
+            close(fig); 
+        end
+    end
+
     load('SPM.mat');
     ncons = length(SPM.xCon);
     names = {SPM.xCon.name};
