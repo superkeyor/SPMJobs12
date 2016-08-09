@@ -166,14 +166,24 @@ unique_values_out = unique(spm_read_vols(hdr_out));
 dim_out = hdr_out.dim;
 description_out = hdr_out.descrip;
 
+fprintf('note: UINT allows only positive values and 0;\n');
+fprintf('if negative included, select INT;\n');
+fprintf('single=float32, double=float64 also allow negative values\n\n');
+
 fprintf('Data type: %s\n',type_out);
-    fprintf('\t(note: UINT allows only positive values and 0;\n');
-    fprintf('\tif negative included, select INT;\n');
-    fprintf('\tsingle=float32, double=float64 also allow negative values)\n');
-fprintf('Unique values: %s\n',mat2str(unique_values_out));
+if length(unique_values_out) < 10
+    fprintf('Unique values: %s\n',mat2str(unique_values_out));
+else
+    fprintf('Unique values: %d in total, showing first 10... %s\n', length(unique_values_out), mat2str(unique_values_out(1:10)))
+end
+
+fprintf('Min value: %s\n',num2str(min(unique_values_out)));
+fprintf('Max value: %s\n',num2str(max(unique_values_out)));
+
 fprintf('Non-zero voxels #: %d\n', n_out);
 fprintf('Dimension: %s\n',mat2str(dim_out));
 fprintf('Description: %s\n',description_out);
+
 end % end func
 
 function Vo = spmimcalc(Vi,Vo,f,flags)
