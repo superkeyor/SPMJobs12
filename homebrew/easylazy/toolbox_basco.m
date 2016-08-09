@@ -1,18 +1,18 @@
 function varargout = main(varargin)
     % add extensions to path
     % requires marsbar
-    ez.print('Preloading marsbar...')
-    if isempty(which('marsbar'))
+    if isempty(which('adjacency_plot_und'))  % a func randomly selected from BCT
+        ez.print('addpath brain connectivity toolbox...')
         extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
-        thePath = ez.lsd(extsPath,'^marsbar');
+        thePath = ez.lsd(extsPath,'^BCT');
         thePath = ez.joinpath(extsPath,thePath{1});
         addpath(thePath);
     end
-
-    ez.print('Preloading brain connectivity toolbox...')
-    if isempty(which('adjacency_plot_und'))  % a func randomly selected from BCT
+    
+    if isempty(which('marsbar'))
+        ez.print('addpath marsbar...')
         extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
-        thePath = ez.lsd(extsPath,'^BCT');
+        thePath = ez.lsd(extsPath,'^marsbar');
         thePath = ez.joinpath(extsPath,thePath{1});
         addpath(thePath);
     end
