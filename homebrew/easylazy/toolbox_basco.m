@@ -9,6 +9,14 @@ function varargout = main(varargin)
         addpath(thePath);
     end
 
+    ez.print('Preloading brain connectivity toolbox...')
+    if isempty(which('adjacency_plot_und'))  % a func randomly selected from BCT
+        extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
+        thePath = ez.lsd(extsPath,'^BCT');
+        thePath = ez.joinpath(extsPath,thePath{1});
+        addpath(thePath);
+    end
+
     if isempty(which('BASCO'))
         extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
         thePath = ez.lsd(extsPath,'^BASCO');
