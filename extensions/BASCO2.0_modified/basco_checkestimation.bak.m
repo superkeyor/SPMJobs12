@@ -14,8 +14,6 @@ WriteInfoBox(handles,sprintf('Processing subject %d ...',isubj),true)
 
 SPMfile = fullfile(spmpath,spmfile);
 D = mardo(SPMfile); % Marsbar design object
-% Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
-D = autocorr(D, 'fmristat', 2);
 R = maroi(fullfile(roipath,roifile)); % Marsbar ROI object
 Y = get_marsy(R,D,'mean'); % put data into marsbar data object
 E = estimate(D,Y); % estimate model based on ROI summary
@@ -45,5 +43,3 @@ ylabel('scans');
 legend('signal','fitted model');
 
 end % end loop opver subjects
-
-

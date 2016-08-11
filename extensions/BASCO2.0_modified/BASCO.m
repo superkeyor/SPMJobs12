@@ -222,7 +222,7 @@ if AnaDef.ROIAnalysis==true % retrieve ROIs
     end
     scnames = textscan(fid,'%s');
     thenames = char(scnames{1});
-    if length(thenames)~=ROINum
+    if size(thenames,1)~=ROINum
         handles.InfoText = WriteInfoBox(handles,'Check number of ROIs in txt-file.',true);
         guidata(hObject, handles);
         return;
@@ -426,6 +426,8 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             str=sprintf('Retrieving design for subject %d from SPM file: %s',isubj,SPMfile);
             handles.InfoText = WriteInfoBox(handles,str,true);
             D = mardo(SPMfile); % Marsbar design object
+            % Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
+            D = autocorr(D, 'fmristat', 2);
             R = maroi(ROIFile{iROI}); % Marsbar ROI object
             str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
             handles.InfoText = WriteInfoBox(handles,str,true);
@@ -931,6 +933,8 @@ mars_display_roi('display',seedroifile,fullfile(t1path,t1file));
 function bs = GetROIBetaSeries(SPMfile,ROIfile,ROISummaryFunction)
 % get ROI beta series: estimate model based on ROI summary
 D  = mardo(SPMfile); % Marsbar design object
+% Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
+D = autocorr(D, 'fmristat', 2);
 R  = maroi(ROIfile); % Marsbar ROI object
 fprintf('Retrieving data from ROI %s using summary function %s ... \n',ROIfile,ROISummaryFunction);
 Y  = get_marsy(R,D,ROISummaryFunction); % put data into marsbar data object
