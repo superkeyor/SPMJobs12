@@ -296,12 +296,6 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
         counter  = 0;
         for icond=1:AnaDef.NumCond % loop over conditions
             NumOnsets = nnz(onsets(icond,2:end))+1;
-            % hack by Jerry start
-            if NumOnsets==1 && onsets(icond,1)<0
-                handles.anaobj{isubj}.Ana{1}.AnaDef.RegCond.Run{irun}.Cond{icond} = [];
-                continue; 
-            end % skip a cond for this run
-            % hack by Jerry end
             fprintf('Condition %d: %d trials \n',icond,NumOnsets);
             for ionsets=1:1:NumOnsets % loop over individual trials of given condition
                 trialonset = onsets(icond,ionsets);
@@ -401,10 +395,6 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
         matlabbatch{3}.spm.stats.fmri_est.method.Classical = 1;
     end
     
-    % hack by Jerry start
-    [~, SuBjectNaMe] = ez.splitpath(data_path);
-    save(fullfile(data_path,['job_' SuBjectNaMe '.mat']), 'matlabbatch');
-    % hack by Jerry end
     % run SPM job
     spm('defaults', 'FMRI');
     spm_jobman('initcfg')
