@@ -296,6 +296,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
         counter  = 0;
         for icond=1:AnaDef.NumCond % loop over conditions
             NumOnsets = nnz(onsets(icond,2:end))+1;
+            if NumOnsets==1 && onsets(icond,1)<0, continue; end % skip a cond for this run--modified by Jerry
             fprintf('Condition %d: %d trials \n',icond,NumOnsets);
             for ionsets=1:1:NumOnsets % loop over individual trials of given condition
                 trialonset = onsets(icond,ionsets);
