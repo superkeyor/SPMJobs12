@@ -404,7 +404,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
         matlabbatch{3}.spm.stats.fmri_est.method.Classical = 1;
     
     % run the job or not
-    if AnaDef.VoxelAnalysis==true 
+    if AnaDef.BetaAnalysis==true 
         % hack by Jerry start
         [~, SuBjectNaMe] = ez.splitpath(data_path);
         save(fullfile(data_path,['job_' SuBjectNaMe '.mat']), 'matlabbatch');
@@ -445,7 +445,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             SPMfile = fullfile(data_path,outdirname,'SPM.mat');
             str=sprintf('Retrieving design for subject %d from SPM file: %s',isubj,SPMfile);
             handles.InfoText = WriteInfoBox(handles,str,true);
-            if AnaDef.ROIReML==true
+            if strcmp(AnaDef.ROIMethod,'ReML')
                 try
                     D = mardo(SPMfile); % Marsbar design object
                     R = maroi(ROIFile{iROI}); % Marsbar ROI object
