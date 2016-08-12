@@ -509,7 +509,7 @@ handles.InfoText = WriteInfoBox(handles,'Extracting ROI beta-series ...',true);
 BaseDirectory  = pwd;
 [ROIFile, sts] = spm_select([Inf],'mat','Select ROIs (Marsbar format).');
 if ~sts
-    handles.InfoText = WriteInfoBox(handles,'No ROIs selected.',true);
+    handles.InfoText = WriteInfoBox(handles,'No ROIs selected by user.',true);
     guidata(hObject, handles);
     return;
 end
@@ -569,7 +569,10 @@ for isubj=1:handles.NumJobs
     
     % create list of files which contain the beta-values
     beta_path  = fullfile(handles.anaobj{isubj}.Ana{1}.AnaDef.DataPath,handles.anaobj{isubj}.Ana{1}.AnaDef.OutDir);
-    DATA = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
+    DATA = spm_select('FPList',beta_path, ['^beta*.*\.img']);
+    if isempty(DATA)
+        DATA = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
+    end
     % retrieve beta values
     handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
     
@@ -698,7 +701,7 @@ switch selected
     case 2
         [Files, sts] = spm_select([2],'mat','Select two files containing the analyses objects.');
         if ~sts
-            disp('Select two files.');
+            disp('Select two files, please.');
             return;
         end
         load(strtrim(Files(1,:)));
@@ -773,6 +776,7 @@ switch selected
         guidata(hObject, handles);
     case 8
         ROIS = spm_select([1],'image','Select number labelled ROI file.');
+        if isempty(ROIs),disp('User Cancelled'); return; end
         NumSubj = handles.NumJobs;
         % loop over subjects
         for isubj=1:NumSubj
@@ -1230,6 +1234,7 @@ hrfderivs = handles.anaobj{1}.Ana{1}.AnaDef.HRFDERIVS; % regressors for temporal
 
 if use_mask==1
     maskfile                = spm_select(1,'image','Select mask (nifti image).');
+    if isempty(maskfile),disp('User Cancelled'); return; end
     handles.InfoText        = WriteInfoBox(handles,'Mask selected.',true);
     maskvol                 = spm_vol(maskfile);
     maskimg                 = spm_read_vols(maskvol);
@@ -1352,5 +1357,6 @@ guidata(hObject, handles);
 
 function pushbutton_rissmannmask_Callback(hObject, eventdata, handles)
 handles.maskfile = spm_select(1,'mat','Select mask (Marsbar).');
+if isempty(handles.maskfile), disp('User Cancelled'); return; end
 handles.InfoText = WriteInfoBox(handles,'Mask selected.',true);
 guidata(hObject, handles);
