@@ -600,7 +600,7 @@ for isubj=1:handles.NumJobs
     handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
     SPMfile = fullfile(beta_path,'SPM.mat');
     ROISummaryFunction = handles.anaobj{isubj}.Ana{1}.AnaDef.ROISummaryFunction;
-    bs = GetROIBetaSeries(SPMfile,ROIfile,ROISummaryFunction);
+    bs = GetROIBetaSeries(SPMfile,ROIFile,ROISummaryFunction);
     handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
     disp('... done.');
     % correlation matrix
