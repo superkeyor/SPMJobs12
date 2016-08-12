@@ -11,7 +11,7 @@ if ~iscell(ROIfile)
     bs = betas(E); % retrieve estimated beta-values
 else
     for iROI=1:length(ROIfile) % loop over ROIs
-        b = GetROIBetaSeries(SPMfile,ROIFile{iROI},ROISummaryFunction)
+        b = GetROIBetaSeries(SPMfile,ROIfile{iROI},ROISummaryFunction);
         bs(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)        
     end % end loop over ROIs
 end % end if
