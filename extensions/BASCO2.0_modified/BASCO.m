@@ -390,8 +390,8 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
     
     %
     % model estimation (voxel)
-    %
-    if AnaDef.VoxelAnalysis==true % voxel-betaseries
+    % voxel-betaseries
+
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
@@ -402,18 +402,35 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
         matlabbatch{3}.spm.stats.fmri_est.method.Classical = 1;
-    end
     
-    % hack by Jerry start
-    [~, SuBjectNaMe] = ez.splitpath(data_path);
-    save(fullfile(data_path,['job_' SuBjectNaMe '.mat']), 'matlabbatch');
-    % hack by Jerry end
-    % run SPM job
-    spm('defaults', 'FMRI');
-    spm_jobman('initcfg')
-    %spm_jobman('serial', jobs, '', inputs{:});
-    %spm_jobman('interactive',matlabbatch); % open a GUI containing all the setup
-    spm_jobman('run',matlabbatch);          % execute the batch
+    % run the job or not
+    if AnaDef.VoxelAnalysis==true 
+        % hack by Jerry start
+        [~, SuBjectNaMe] = ez.splitpath(data_path);
+        save(fullfile(data_path,['job_' SuBjectNaMe '.mat']), 'matlabbatch');
+        % hack by Jerry end
+
+        %-Delete old analysis files
+        %--------------------------------------------------------------------------
+        files = {'^mask\..{3}$','^ResMS\..{3}$','^RPV\..{3}$',...
+            '^beta_.{4}\..{3}$','^con_.{4}\..{3}$','^ResI_.{4}\..{3}$',...
+            '^ess_.{4}\..{3}$', '^spm\w{1}_.{4}\..{3}$', 'SPM.mat'};
+
+        for i=1:length(files)
+            j = spm_select('List',fullfile(data_path,AnaDef.OutDir),files{i});
+            for k=1:size(j,1)
+                spm_unlink(deblank(j(k,:)));
+            end
+        end
+        %--------------------------------------------------------------------------
+        
+        % run SPM job
+        spm('defaults', 'FMRI');
+        spm_jobman('initcfg')
+        %spm_jobman('serial', jobs, '', inputs{:});
+        %spm_jobman('interactive',matlabbatch); % open a GUI containing all the setup
+        spm_jobman('run',matlabbatch);          % execute the batch
+    end
     
     %
     % ROI-based model estimation (estimate model on mean ROI time courses)
@@ -428,16 +445,40 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             SPMfile = fullfile(data_path,outdirname,'SPM.mat');
             str=sprintf('Retrieving design for subject %d from SPM file: %s',isubj,SPMfile);
             handles.InfoText = WriteInfoBox(handles,str,true);
-            D = mardo(SPMfile); % Marsbar design object
-            % Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
-            D = autocorr(D, 'fmristat', 2);
-            R = maroi(ROIFile{iROI}); % Marsbar ROI object
-            str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
-            handles.InfoText = WriteInfoBox(handles,str,true);
-            Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
-            E = estimate(D,Y); % estimate model based on ROI summary
-            b = betas(E); % retrieve estimated beta-values
-            bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
+            if AnaDef.ROIReML==true
+                try
+                    D = mardo(SPMfile); % Marsbar design object
+                    R = maroi(ROIFile{iROI}); % Marsbar ROI object
+                    str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
+                    handles.InfoText = WriteInfoBox(handles,str,true);
+                    Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
+                    E = estimate(D,Y); % estimate model based on ROI summary
+                    b = betas(E); % retrieve estimated beta-values
+                    bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
+                catch
+                    D = mardo(SPMfile); % Marsbar design object
+                    % Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
+                    D = autocorr(D, 'fmristat', 2);
+                    R = maroi(ROIFile{iROI}); % Marsbar ROI object
+                    str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
+                    handles.InfoText = WriteInfoBox(handles,str,true);
+                    Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
+                    E = estimate(D,Y); % estimate model based on ROI summary
+                    b = betas(E); % retrieve estimated beta-values
+                    bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
+                end
+            else
+                D = mardo(SPMfile); % Marsbar design object
+                D = autocorr(D, 'fmristat', 2);
+                R = maroi(ROIFile{iROI}); % Marsbar ROI object
+                str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
+                handles.InfoText = WriteInfoBox(handles,str,true);
+                Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
+                E = estimate(D,Y); % estimate model based on ROI summary
+                b = betas(E); % retrieve estimated beta-values
+                bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
+            end
+                
         end % end loop over ROIs
         handles.anaobj{isubj}.Ana{1}.BetaSeries  = bmat;
         try

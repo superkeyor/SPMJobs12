@@ -28,6 +28,6 @@ function varargout = main(job)
                 j = eval('jobs');
             end
         end
-
+    end
     spm_jobman('interactive',j);
 end

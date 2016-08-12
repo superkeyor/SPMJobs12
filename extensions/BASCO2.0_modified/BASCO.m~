@@ -84,6 +84,7 @@ drawnow;
 function pushbuttonopen_Callback(hObject, ~, handles)
 % load analysis object from file
 [file,path]=uigetfile('*.mat','MultiSelect','off');
+if isequal(file,0),disp('User Cancelled'); return; end
 str=sprintf('Reading file %s.',fullfile(path,file));
 handles.InfoText = WriteInfoBox(handles,str,true);
 load(fullfile(path,file));
@@ -193,6 +194,7 @@ handles.InfoText = WriteInfoBox(handles,str,true);
 
 % load configuration file
 [file,path] = uigetfile('*.m','MultiSelect','off');
+if isequal(file,0),disp('User Cancelled'); return; end
 str=sprintf('Loading file %s.',fullfile(path,file));
 handles.InfoText = WriteInfoBox(handles,str,true);
 run(fullfile(path,file));
@@ -205,6 +207,7 @@ Img4D   = AnaDef.Img4D;
 if AnaDef.ROIAnalysis==true % retrieve ROIs
     if strcmp(AnaDef.ROIDir,'')==true
         AnaDef.ROIDir = uigetdir(BaseDirectory);
+        if isequal(AnaDef.ROIDir,0),disp('User Cancelled'); return; end
     end
     ROIFile  = cellstr(spm_select('FPList',AnaDef.ROIDir,['^' AnaDef.ROIPrefix '.*.mat']));
     ROINum   = size(ROIFile,1);
@@ -256,8 +259,8 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
     outdirname = AnaDef.OutDir;
     clear('matlabbatch');
     % model specification
-    matlabbatch{1}.spm.util.md.basedir = cellstr(data_path);
-    matlabbatch{1}.spm.util.md.name    = outdirname;
+    matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.parent = cellstr(data_path);
+    matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.name = outdirname;
     matlabbatch{2}.spm.stats.fmri_spec.dir            = cellstr(fullfile(data_path,outdirname));
     matlabbatch{2}.spm.stats.fmri_spec.timing.units   = AnaDef.units;
     matlabbatch{2}.spm.stats.fmri_spec.timing.RT      = AnaDef.RT;
@@ -387,8 +390,8 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
     
     %
     % model estimation (voxel)
-    %
-    if AnaDef.VoxelAnalysis==true % voxel-betaseries
+    % voxel-betaseries
+
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1) = cfg_dep;
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).tname = 'Select SPM.mat';
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).tgt_spec{1}(1).name = 'filter';
@@ -399,18 +402,21 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).src_exbranch = substruct('.','val', '{}',{2}, '.','val', '{}',{1}, '.','val', '{}',{1});
         matlabbatch{3}.spm.stats.fmri_est.spmmat(1).src_output = substruct('.','spmmat');
         matlabbatch{3}.spm.stats.fmri_est.method.Classical = 1;
-    end
+
     
+    if AnaDef.VoxelAnalysis==true 
     % hack by Jerry start
     [~, SuBjectNaMe] = ez.splitpath(data_path);
     save(fullfile(data_path,['job_' SuBjectNaMe '.mat']), 'matlabbatch');
     % hack by Jerry end
+        
     % run SPM job
     spm('defaults', 'FMRI');
     spm_jobman('initcfg')
     %spm_jobman('serial', jobs, '', inputs{:});
     %spm_jobman('interactive',matlabbatch); % open a GUI containing all the setup
     spm_jobman('run',matlabbatch);          % execute the batch
+    end
     
     %
     % ROI-based model estimation (estimate model on mean ROI time courses)
@@ -433,7 +439,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             handles.InfoText = WriteInfoBox(handles,str,true);
             Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
             E = estimate(D,Y); % estimate model based on ROI summary
-            b = 2(E); % retrieve estimated beta-values
+            b = betas(E); % retrieve estimated beta-values
             bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
         end % end loop over ROIs
         handles.anaobj{isubj}.Ana{1}.BetaSeries  = bmat;
@@ -506,7 +512,7 @@ handles.InfoText = WriteInfoBox(handles,'Extracting ROI beta-series ...',true);
 BaseDirectory  = pwd;
 [ROIFile, sts] = spm_select([Inf],'mat','Select ROIs (Marsbar format).');
 if ~sts
-    handles.InfoText = WriteInfoBox(handles,'No ROIs selected.',true);
+    handles.InfoText = WriteInfoBox(handles,'No ROIs selected by user.',true);
     guidata(hObject, handles);
     return;
 end
@@ -524,7 +530,7 @@ else
     scnames  = textscan(fid,'%s');
     thenames = cellstr(char(scnames{1}));
 end
-if length(thenames)~=ROINum
+if size(thenames,1)~=ROINum
     handles.InfoText = WriteInfoBox(handles,'Number of ROIs do not match.',true);
     guidata(hObject, handles);
     return;
@@ -567,6 +573,9 @@ for isubj=1:handles.NumJobs
     % create list of files which contain the beta-values
     beta_path  = fullfile(handles.anaobj{isubj}.Ana{1}.AnaDef.DataPath,handles.anaobj{isubj}.Ana{1}.AnaDef.OutDir);
     DATA = spm_select('FPList',beta_path, ['^beta*.*\.img']);
+    if isempty(DATA)
+        DATA = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
+    end
     % retrieve beta values
     handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
     
@@ -576,7 +585,7 @@ for isubj=1:handles.NumJobs
     handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
     numcols = size(bs,2);
     if numcols~=ROINum
-        handles.InfoText = WriteInfoBox(handles,sprintf('Subject %d. Missing data (%d).',isub,numcols),true);
+        handles.InfoText = WriteInfoBox(handles,sprintf('Subject %d. Missing data (%d).',isubj,numcols),true);
     end
     disp('... done.');
     % correlation matrix
@@ -615,6 +624,7 @@ dlg_title = 'Select condition';
 num_lines = 1;
 def       = { '1' };
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 thecond   = str2num(answer{1});
 NumCond   = size(thecond,2);
 hrfderivs = handles.anaobj{1}.Ana{1}.AnaDef.HRFDERIVS; % regressors for temporal derivatives?
@@ -694,7 +704,7 @@ switch selected
     case 2
         [Files, sts] = spm_select([2],'mat','Select two files containing the analyses objects.');
         if ~sts
-            disp('Select two files.');
+            disp('Select two files, please.');
             return;
         end
         load(strtrim(Files(1,:)));
@@ -727,6 +737,7 @@ switch selected
         basco_checkestimation(handles);
     case 5 % rename nodes/ROIs
         [file, path]    = uigetfile('*.txt');
+        if isequal(file,0),disp('User Cancelled'); return; end
         fid             = fopen(fullfile(path,file));
         importeddata    = textscan(fid,'%s');
         NumSubj = handles.NumJobs;
@@ -753,6 +764,7 @@ switch selected
         num_lines = 1;
         def = {sprintf('1:%d',length(handles.anaobj))};
         answer = inputdlg(prompt,dlg_title,num_lines,def);
+        if isempty(answer),disp('User Cancelled'); return; end
         idx = str2num(answer{1});
         cnt=0;
         for i=idx
@@ -767,6 +779,7 @@ switch selected
         guidata(hObject, handles);
     case 8
         ROIS = spm_select([1],'image','Select number labelled ROI file.');
+        if isempty(ROIs),disp('User Cancelled'); return; end
         NumSubj = handles.NumJobs;
         % loop over subjects
         for isubj=1:NumSubj
@@ -778,6 +791,7 @@ switch selected
         tmppath = pwd;
         cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
         [fname1,path] = uigetfile('*.nii','Select map.','MultiSelect','off');
+        if isequal(fname1,0),disp('User Cancelled'); return; end
         cd(tmppath);
         NumSubj   = handles.NumJobs;
         thefiles  = cell(1,NumSubj);
@@ -815,6 +829,7 @@ end
 function pushbuttonseedroi_Callback(hObject, eventdata, handles)
 % select ROI
 [roifile,roipath] = uigetfile('*.mat','Select seed ROI (marsbar .mat)','MultiSelect','off');
+if isequal(roifile,0),disp('User Cancelled'); return; end
 str=sprintf('Selected seed-ROI: %s. \nNow enter name for ROI.',fullfile(roipath,roifile));
 handles.InfoText = WriteInfoBox(handles,str,true);
 handles.SeedROI  = fullfile(roipath,roifile);
@@ -823,6 +838,7 @@ dlg_title = 'ROI name';
 num_lines = 1;
 def       = { strrep(roifile,'.mat','') };
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 handles.SeedROIName = answer{1};
 str=sprintf('Name: %s. \nNow you want to specify a condition and calculate the correlation map.',handles.SeedROIName);
 handles.InfoText = WriteInfoBox(handles,str,true);
@@ -953,6 +969,7 @@ dlg_title = 'Configure';
 num_lines = 1;
 def       = { '1' , 'mean' };
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 isubj     = str2num(answer{1});
 SumFunc   = answer{2};
 ROIfile = handles.SeedROI;
@@ -985,8 +1002,10 @@ if thetest==1
     tmppath = pwd;
     cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
     file = uigetfile({'*.nii';'*.img'},'Select two maps.','MultiSelect','on');
+    if isequal(file,0),disp('User Cancelled'); return; end
     cd(tmppath);
     thedir = uigetdir('Select output directory');
+    if isequal(thedir,0),disp('User Cancelled'); return; end
     fname1 = file{1};
     fname2 = file{2};
     cd(thedir);
@@ -1020,12 +1039,15 @@ end
 %
 if thetest==2
     [file,anapath] = uigetfile('*.mat','Select two files','MultiSelect','on');
+    if isequal(file,0),disp('User Cancelled'); return; end
     thedir = uigetdir('Select output directory');
+    if isequal(thedir,0),disp('User Cancelled'); return; end
     load(fullfile(anapath,file{1}))
     NumSubj1  = length(anaobj);
     thefiles1 = cell(1,NumSubj1);
     cd(fullfile(anaobj{1}.Ana{1}.AnaDef.DataPath,anaobj{1}.Ana{1}.AnaDef.OutDir));
     [fname,path] = uigetfile({'*.img';'*.nii'},'Select correlation/degree map','MultiSelect','off');
+    if isequal(fname,0),disp('User Cancelled'); return; end
     for isubj=1:NumSubj1 % loop over subjects
         data_path  = anaobj{isubj}.Ana{1}.AnaDef.DataPath;
         outdirname = anaobj{isubj}.Ana{1}.AnaDef.OutDir;
@@ -1066,14 +1088,20 @@ if thetest==3
     num_lines = 1;
     def       = { 'A' , 'B' };
     answer    = inputdlg(prompt,dlg_title,num_lines,def);
+    if isempty(answer),disp('User Cancelled'); return; end
     tmppath = pwd;
     cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
     [fname1] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A1 B1','MultiSelect','off');
+    if isequal(fname1,0),disp('User Cancelled'); return; end
     [fname2] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A1 B2','MultiSelect','off');
+    if isequal(fname2,0),disp('User Cancelled'); return; end
     [fname3] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A2 B1','MultiSelect','off');
+    if isequal(fname3,0),disp('User Cancelled'); return; end
     [fname4] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A2 B2','MultiSelect','off');
+    if isequal(fname4,0),disp('User Cancelled'); return; end
     cd(tmppath);
     thedir = uigetdir('Select output directory');
+    if isequal(thedir,0),disp('User Cancelled'); return; end
     cd(thedir);
     NumSubj = handles.NumJobs;
     thefiles1=cell(1,NumSubj);
@@ -1195,6 +1223,7 @@ dlg_title = 'Configure analysis';
 num_lines = 1;
 def       = { '0.25' , '1' , 'test' , '1' , '0'};
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 th        = str2num(answer{1});
 thecondv  = str2num(answer{2});
 idstr     = answer{3};
@@ -1208,6 +1237,7 @@ hrfderivs = handles.anaobj{1}.Ana{1}.AnaDef.HRFDERIVS; % regressors for temporal
 
 if use_mask==1
     maskfile                = spm_select(1,'image','Select mask (nifti image).');
+    if isempty(maskfile),disp('User Cancelled'); return; end
     handles.InfoText        = WriteInfoBox(handles,'Mask selected.',true);
     maskvol                 = spm_vol(maskfile);
     maskimg                 = spm_read_vols(maskvol);
@@ -1330,5 +1360,6 @@ guidata(hObject, handles);
 
 function pushbutton_rissmannmask_Callback(hObject, eventdata, handles)
 handles.maskfile = spm_select(1,'mat','Select mask (Marsbar).');
+if isempty(handles.maskfile), disp('User Cancelled'); return; end
 handles.InfoText = WriteInfoBox(handles,'Mask selected.',true);
 guidata(hObject, handles);
