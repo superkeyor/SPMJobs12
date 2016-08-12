@@ -445,40 +445,10 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             SPMfile = fullfile(data_path,outdirname,'SPM.mat');
             str=sprintf('Retrieving design for subject %d from SPM file: %s',isubj,SPMfile);
             handles.InfoText = WriteInfoBox(handles,str,true);
-            if strcmp(AnaDef.ROIMethod,'ReML')
-                try
-                    D = mardo(SPMfile); % Marsbar design object
-                    R = maroi(ROIFile{iROI}); % Marsbar ROI object
-                    str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
-                    handles.InfoText = WriteInfoBox(handles,str,true);
-                    Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
-                    E = estimate(D,Y); % estimate model based on ROI summary
-                    b = betas(E); % retrieve estimated beta-values
-                    bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
-                catch
-                    D = mardo(SPMfile); % Marsbar design object
-                    % Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
-                    D = autocorr(D, 'fmristat', 2);
-                    R = maroi(ROIFile{iROI}); % Marsbar ROI object
-                    str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
-                    handles.InfoText = WriteInfoBox(handles,str,true);
-                    Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
-                    E = estimate(D,Y); % estimate model based on ROI summary
-                    b = betas(E); % retrieve estimated beta-values
-                    bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
-                end
-            else
-                D = mardo(SPMfile); % Marsbar design object
-                D = autocorr(D, 'fmristat', 2);
-                R = maroi(ROIFile{iROI}); % Marsbar ROI object
-                str=sprintf('Retrieving data from ROI %d using summary function %s ...',iROI,AnaDef.ROISummaryFunction);
-                handles.InfoText = WriteInfoBox(handles,str,true);
-                Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
-                E = estimate(D,Y); % estimate model based on ROI summary
-                b = betas(E); % retrieve estimated beta-values
-                bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
-            end
-                
+            
+            b = GetROIBetaSeries(SPMfile,ROIFile{iROI},AnaDef.ROISummaryFunction);
+            bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
+            
         end % end loop over ROIs
         handles.anaobj{isubj}.Ana{1}.BetaSeries  = bmat;
         try
@@ -610,21 +580,28 @@ for isubj=1:handles.NumJobs
     
     % create list of files which contain the beta-values
     beta_path  = fullfile(handles.anaobj{isubj}.Ana{1}.AnaDef.DataPath,handles.anaobj{isubj}.Ana{1}.AnaDef.OutDir);
-    DATA = spm_select('FPList',beta_path, ['^beta*.*\.img']);
-    if isempty(DATA)
-        DATA = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
-    end
-    % retrieve beta values
-    handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
     
-    rois = maroi('load_cell', ROIFile);             % make maroi ROI objects
-    mY = get_marsy(rois{:}, DATA, 'mean','v');      % extract data into marsy data object
-    bs = summary_data(mY);                          % get summary time course(s)
+    % DATA = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
+    % if isempty(DATA)
+    %     DATA = spm_select('FPList',beta_path, ['^beta*.*\.img']);
+    % end
+    % % retrieve beta values
+    % handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
+    
+    % rois = maroi('load_cell', ROIFile);             % make maroi ROI objects
+    % mY = get_marsy(rois{:}, DATA, 'mean','v');      % extract data into marsy data object
+    % bs = summary_data(mY);                          % get summary time course(s)
+    % handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
+    % numcols = size(bs,2);
+    % if numcols~=ROINum
+    %     handles.InfoText = WriteInfoBox(handles,sprintf('Subject %d. Missing data (%d).',isubj,numcols),true);
+    % end
+
+    handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
+    SPMfile = fullfile(beta_path,'SPM.mat');
+    ROISummaryFunction = handles.anaobj{isubj}.Ana{1}.AnaDef.ROISummaryFunction;
+    bs = GetROIBetaSeries(SPMfile,ROIfile,ROISummaryFunction);
     handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
-    numcols = size(bs,2);
-    if numcols~=ROINum
-        handles.InfoText = WriteInfoBox(handles,sprintf('Subject %d. Missing data (%d).',isubj,numcols),true);
-    end
     disp('... done.');
     % correlation matrix
     handles.InfoText = WriteInfoBox(handles,'Computing correlation matrix ...',true);
@@ -919,9 +896,9 @@ for isubj=1:NumSubj % loop over subjects
     roibs = GetROIBetaSeries(SPMfile,seedroifile,ROISummaryFunction); % estimate model (from design in SPM-file) for seed-ROI
     % path to beta-files
     beta_path = fullfile(data_path,outdirname);
-    BETAFILES = spm_select('FPList',beta_path, '^beta*.*\.img'); % get all beta-files
+    BETAFILES = spm_select('FPList',beta_path, '^beta*.*\.nii'); % get all beta-files
     if isempty(BETAFILES)
-       BETAFILES = spm_select('FPList',beta_path, '^beta*.*\.nii');
+       BETAFILES = spm_select('FPList',beta_path, '^beta*.*\.img');
     end
     fprintf('Number of beta-files (regressors): %d\n',size(BETAFILES,1));
     % get voxel timeseries within mask
@@ -984,16 +961,8 @@ t1file      = 'avg152T1.nii';
 mars_display_roi('display',seedroifile,fullfile(t1path,t1file));
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function bs = GetROIBetaSeries(SPMfile,ROIfile,ROISummaryFunction)
-% get ROI beta series: estimate model based on ROI summary
-D  = mardo(SPMfile); % Marsbar design object
-% Jerry fix, see https://www.nitrc.org/forum/forum.php?thread_id=6781&forum_id=3998
-D = autocorr(D, 'fmristat', 2);
-R  = maroi(ROIfile); % Marsbar ROI object
-fprintf('Retrieving data from ROI %s using summary function %s ... \n',ROIfile,ROISummaryFunction);
-Y  = get_marsy(R,D,ROISummaryFunction); % put data into marsbar data object
-E  = estimate(D,Y); % estimate model based on ROI summary
-bs = betas(E); % retrieve estimated beta-values
+
+    
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbuttonroibetaseries_Callback(hObject, ~, handles)
@@ -1235,15 +1204,22 @@ function [seedroimeanbs_selcond] = MeanROIBetaSeries(handles,isubj,ROIfile,theco
 % mean ROI beta-series
 % create list of files which contain the beta-values
 beta_path = fullfile(handles.anaobj{isubj}.Ana{1}.AnaDef.DataPath,handles.anaobj{isubj}.Ana{1}.AnaDef.OutDir)
-DATA = spm_select('FPList',beta_path,'^beta*.*\.img');
-if isempty(DATA)
-  DATA = spm_select('FPList',beta_path,'^beta*.*\.nii');
-end
-% retrieve beta values
-handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values for voxels in selected ROI.',true);
-rois = maroi('load_cell', ROIfile);           % make maroi ROI objects
-mY = get_marsy(rois{:}, DATA, 'mean');        % extract data into marsy data object
-seedroimeanbs = summary_data(mY);             % get summary time course(s)
+
+% DATA = spm_select('FPList',beta_path,'^beta*.*\.nii');
+% if isempty(DATA)
+%   DATA = spm_select('FPList',beta_path,'^beta*.*\.img');
+% end
+% % retrieve beta values
+% handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values for voxels in selected ROI.',true);
+% rois = maroi('load_cell', ROIfile);           % make maroi ROI objects
+% mY = get_marsy(rois{:}, DATA, 'mean');        % extract data into marsy data object
+% seedroimeanbs = summary_data(mY);             % get summary time course(s)
+% seedroimeanbs_selcond = CondSelBS(handles.anaobj{isubj},thecond,seedroimeanbs);
+
+handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values for voxels in selected ROI using summary function (may not be mean).',true);
+SPMfile = fullfile(beta_path,'SPM.mat');
+ROISummaryFunction = handles.anaobj{isubj}.Ana{1}.AnaDef.ROISummaryFunction;
+seedroimeanbs = GetROIBetaSeries(SPMfile,ROIfile,ROISummaryFunction);
 seedroimeanbs_selcond = CondSelBS(handles.anaobj{isubj},thecond,seedroimeanbs);
 
 %
@@ -1304,9 +1280,9 @@ for jcond=1:length(thecondv)
         %
         % path to beta-files
         beta_path  = fullfile(data_path,outdirname);
-        BETAFILES  = spm_select('FPList',beta_path, ['^beta*.*\.img']); % get all beta-files
+        BETAFILES  = spm_select('FPList',beta_path, ['^beta*.*\.nii']); % get all beta-files
         if isempty(BETAFILES)
-           BETAFILES = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
+           BETAFILES = spm_select('FPList',beta_path, ['^beta*.*\.img']);
         end
         str = sprintf('Correlate beta-series for condition(s): %s',num2str(thecond));
         handles.InfoText = WriteInfoBox(handles,str,true);
