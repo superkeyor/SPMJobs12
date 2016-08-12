@@ -84,6 +84,7 @@ drawnow;
 function pushbuttonopen_Callback(hObject, ~, handles)
 % load analysis object from file
 [file,path]=uigetfile('*.mat','MultiSelect','off');
+if isequal(file,0),disp('User Cancelled'); return; end
 str=sprintf('Reading file %s.',fullfile(path,file));
 handles.InfoText = WriteInfoBox(handles,str,true);
 load(fullfile(path,file));
@@ -193,6 +194,7 @@ handles.InfoText = WriteInfoBox(handles,str,true);
 
 % load configuration file
 [file,path] = uigetfile('*.m','MultiSelect','off');
+if isequal(file,0),disp('User Cancelled'); return; end
 str=sprintf('Loading file %s.',fullfile(path,file));
 handles.InfoText = WriteInfoBox(handles,str,true);
 run(fullfile(path,file));
@@ -205,6 +207,7 @@ Img4D   = AnaDef.Img4D;
 if AnaDef.ROIAnalysis==true % retrieve ROIs
     if strcmp(AnaDef.ROIDir,'')==true
         AnaDef.ROIDir = uigetdir(BaseDirectory);
+        if isequal(AnaDef.ROIDir,0),disp('User Cancelled'); return; end
     end
     ROIFile  = cellstr(spm_select('FPList',AnaDef.ROIDir,['^' AnaDef.ROIPrefix '.*.mat']));
     ROINum   = size(ROIFile,1);
@@ -615,6 +618,7 @@ dlg_title = 'Select condition';
 num_lines = 1;
 def       = { '1' };
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 thecond   = str2num(answer{1});
 NumCond   = size(thecond,2);
 hrfderivs = handles.anaobj{1}.Ana{1}.AnaDef.HRFDERIVS; % regressors for temporal derivatives?
@@ -727,6 +731,7 @@ switch selected
         basco_checkestimation(handles);
     case 5 % rename nodes/ROIs
         [file, path]    = uigetfile('*.txt');
+        if isequal(file,0),disp('User Cancelled'); return; end
         fid             = fopen(fullfile(path,file));
         importeddata    = textscan(fid,'%s');
         NumSubj = handles.NumJobs;
@@ -753,6 +758,7 @@ switch selected
         num_lines = 1;
         def = {sprintf('1:%d',length(handles.anaobj))};
         answer = inputdlg(prompt,dlg_title,num_lines,def);
+        if isempty(answer),disp('User Cancelled'); return; end
         idx = str2num(answer{1});
         cnt=0;
         for i=idx
@@ -778,6 +784,7 @@ switch selected
         tmppath = pwd;
         cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
         [fname1,path] = uigetfile('*.nii','Select map.','MultiSelect','off');
+        if isequal(fname1,0),disp('User Cancelled'); return; end
         cd(tmppath);
         NumSubj   = handles.NumJobs;
         thefiles  = cell(1,NumSubj);
@@ -815,6 +822,7 @@ end
 function pushbuttonseedroi_Callback(hObject, eventdata, handles)
 % select ROI
 [roifile,roipath] = uigetfile('*.mat','Select seed ROI (marsbar .mat)','MultiSelect','off');
+if isequal(roifile,0),disp('User Cancelled'); return; end
 str=sprintf('Selected seed-ROI: %s. \nNow enter name for ROI.',fullfile(roipath,roifile));
 handles.InfoText = WriteInfoBox(handles,str,true);
 handles.SeedROI  = fullfile(roipath,roifile);
@@ -823,6 +831,7 @@ dlg_title = 'ROI name';
 num_lines = 1;
 def       = { strrep(roifile,'.mat','') };
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 handles.SeedROIName = answer{1};
 str=sprintf('Name: %s. \nNow you want to specify a condition and calculate the correlation map.',handles.SeedROIName);
 handles.InfoText = WriteInfoBox(handles,str,true);
@@ -953,6 +962,7 @@ dlg_title = 'Configure';
 num_lines = 1;
 def       = { '1' , 'mean' };
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 isubj     = str2num(answer{1});
 SumFunc   = answer{2};
 ROIfile = handles.SeedROI;
@@ -985,8 +995,10 @@ if thetest==1
     tmppath = pwd;
     cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
     file = uigetfile({'*.nii';'*.img'},'Select two maps.','MultiSelect','on');
+    if isequal(file,0),disp('User Cancelled'); return; end
     cd(tmppath);
     thedir = uigetdir('Select output directory');
+    if isequal(thedir,0),disp('User Cancelled'); return; end
     fname1 = file{1};
     fname2 = file{2};
     cd(thedir);
@@ -1020,12 +1032,15 @@ end
 %
 if thetest==2
     [file,anapath] = uigetfile('*.mat','Select two files','MultiSelect','on');
+    if isequal(file,0),disp('User Cancelled'); return; end
     thedir = uigetdir('Select output directory');
+    if isequal(thedir,0),disp('User Cancelled'); return; end
     load(fullfile(anapath,file{1}))
     NumSubj1  = length(anaobj);
     thefiles1 = cell(1,NumSubj1);
     cd(fullfile(anaobj{1}.Ana{1}.AnaDef.DataPath,anaobj{1}.Ana{1}.AnaDef.OutDir));
     [fname,path] = uigetfile({'*.img';'*.nii'},'Select correlation/degree map','MultiSelect','off');
+    if isequal(fname,0),disp('User Cancelled'); return; end
     for isubj=1:NumSubj1 % loop over subjects
         data_path  = anaobj{isubj}.Ana{1}.AnaDef.DataPath;
         outdirname = anaobj{isubj}.Ana{1}.AnaDef.OutDir;
@@ -1066,14 +1081,20 @@ if thetest==3
     num_lines = 1;
     def       = { 'A' , 'B' };
     answer    = inputdlg(prompt,dlg_title,num_lines,def);
+    if isempty(answer),disp('User Cancelled'); return; end
     tmppath = pwd;
     cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
     [fname1] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A1 B1','MultiSelect','off');
+    if isequal(fname1,0),disp('User Cancelled'); return; end
     [fname2] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A1 B2','MultiSelect','off');
+    if isequal(fname2,0),disp('User Cancelled'); return; end
     [fname3] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A2 B1','MultiSelect','off');
+    if isequal(fname3,0),disp('User Cancelled'); return; end
     [fname4] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A2 B2','MultiSelect','off');
+    if isequal(fname4,0),disp('User Cancelled'); return; end
     cd(tmppath);
     thedir = uigetdir('Select output directory');
+    if isequal(thedir,0),disp('User Cancelled'); return; end
     cd(thedir);
     NumSubj = handles.NumJobs;
     thefiles1=cell(1,NumSubj);
@@ -1195,6 +1216,7 @@ dlg_title = 'Configure analysis';
 num_lines = 1;
 def       = { '0.25' , '1' , 'test' , '1' , '0'};
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 th        = str2num(answer{1});
 thecondv  = str2num(answer{2});
 idstr     = answer{3};
