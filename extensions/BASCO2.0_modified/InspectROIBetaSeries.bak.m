@@ -134,11 +134,11 @@ if handles.show==true
   plot([1:N],bs(:,idx1),'+-',[1:N],bs(:,idx2),'+-');
   roiname1 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx1};
   roiname2 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx2};
-  legend({roiname1,roiname2}, 'Interpreter', 'none');
+  legend(roiname1,roiname2);
 else
   plot([1:N],bs(:,idx1),'+-');
   roiname1 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx1};
-  legend({roiname1}, 'Interpreter', 'none');  
+  legend(roiname1);  
 end
 title('');
 xlabel('beta-series');

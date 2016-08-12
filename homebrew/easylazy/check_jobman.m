@@ -10,7 +10,12 @@ function varargout = main(job)
         try
             j = evalin('base', 'matlabbatch');
         catch
-            j = evalin('base', 'jobs');
+            try
+                j = evalin('base', 'jobs');
+            catch
+                spm_jobman;
+                return;
+            end
         end
     else
         if strcmp(job,'matlabbatch'), j = evalin('base', 'matlabbatch'); end

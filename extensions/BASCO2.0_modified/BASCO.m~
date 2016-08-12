@@ -256,8 +256,8 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
     outdirname = AnaDef.OutDir;
     clear('matlabbatch');
     % model specification
-    matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.parent = cellstr(data_path);
-    matlabbatch{1}.cfg_basicio.file_dir.dir_ops.cfg_mkdir.name = outdirname;
+    matlabbatch{1}.spm.util.md.basedir = cellstr(data_path);
+    matlabbatch{1}.spm.util.md.name    = outdirname;
     matlabbatch{2}.spm.stats.fmri_spec.dir            = cellstr(fullfile(data_path,outdirname));
     matlabbatch{2}.spm.stats.fmri_spec.timing.units   = AnaDef.units;
     matlabbatch{2}.spm.stats.fmri_spec.timing.RT      = AnaDef.RT;
@@ -433,7 +433,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             handles.InfoText = WriteInfoBox(handles,str,true);
             Y = get_marsy(R,D,AnaDef.ROISummaryFunction); % put data into marsbar data object
             E = estimate(D,Y); % estimate model based on ROI summary
-            b = betas(E); % retrieve estimated beta-values
+            b = 2(E); % retrieve estimated beta-values
             bmat(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)
         end % end loop over ROIs
         handles.anaobj{isubj}.Ana{1}.BetaSeries  = bmat;
@@ -524,7 +524,7 @@ else
     scnames  = textscan(fid,'%s');
     thenames = cellstr(char(scnames{1}));
 end
-if size(thenames,1)~=ROINum
+if length(thenames)~=ROINum
     handles.InfoText = WriteInfoBox(handles,'Number of ROIs do not match.',true);
     guidata(hObject, handles);
     return;
@@ -566,7 +566,7 @@ for isubj=1:handles.NumJobs
     
     % create list of files which contain the beta-values
     beta_path  = fullfile(handles.anaobj{isubj}.Ana{1}.AnaDef.DataPath,handles.anaobj{isubj}.Ana{1}.AnaDef.OutDir);
-    DATA = spm_select('FPList',beta_path, ['^beta*.*\.nii']);
+    DATA = spm_select('FPList',beta_path, ['^beta*.*\.img']);
     % retrieve beta values
     handles.InfoText = WriteInfoBox(handles,'Retrieving beta-values ...',true);
     
@@ -576,7 +576,7 @@ for isubj=1:handles.NumJobs
     handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
     numcols = size(bs,2);
     if numcols~=ROINum
-        handles.InfoText = WriteInfoBox(handles,sprintf('Subject %d. Missing data (%d).',isubj,numcols),true);
+        handles.InfoText = WriteInfoBox(handles,sprintf('Subject %d. Missing data (%d).',isub,numcols),true);
     end
     disp('... done.');
     % correlation matrix
