@@ -347,32 +347,32 @@ Prefix   = handles.anaobj{isubj}.Ana{1}.AnaDef.Prefix;
 NumRuns  = handles.anaobj{isubj}.Ana{1}.AnaDef.NumRuns;
 IDRuns   = handles.anaobj{isubj}.Ana{1}.AnaDef.RunDirs;
 
-for irun=1:NumRuns
-  figure('Name',sprintf('global mean time courses subject %d (run %d)',isubj,irun));
-
-  % global time courses
-  TC{irun} = handles.anaobj{isubj}.GlobalMean{irun};
-  subplot(2,1,1);
-  plot([1:1:NScan],TC{irun},'-');
-  title(sprintf('global mean time course subject %d (run %d)',isubj,irun));
-  xlabel('scan');
-  ylabel('signal [a.u.]');
- 
-  % motion
-  subplot(2,1,2);
-  var = handles.anaobj{isubj}.RealignmentParameters{irun};
-  MotX   = [ var(:,1:6) ];
-  dMotX = DiffTimeCourse(MotX);
-  dMotX(:,4) = 50*dMotX(:,4);
-  dMotX(:,5) = 50*dMotX(:,5);
-  dMotX(:,6) = 50*dMotX(:,6);
-  FD = sum(abs(dMotX),2);
-  plot([1:1:NScan],FD,'k-',[1:1:NScan],0.5*ones(1,NScan),'g--');
-  title('motion');
-  xlabel('scan');
-  ylabel('motion [a.u.]');
-  
-end
+% for irun=NumRuns:-1:1
+%   figure('Name',sprintf('global mean time courses subject %d (run %d)',isubj,irun));
+% 
+%   % global time courses
+%   TC{irun} = handles.anaobj{isubj}.GlobalMean{irun};
+%   subplot(2,1,1);
+%   plot([1:1:NScan],TC{irun},'-');
+%   title(sprintf('global mean time course subject %d (run %d)',isubj,irun));
+%   xlabel('scan');
+%   ylabel('signal [a.u.]');
+%  
+%   % motion
+%   subplot(2,1,2);
+%   var = handles.anaobj{isubj}.RealignmentParameters{irun};
+%   MotX   = [ var(:,1:6) ];
+%   dMotX = DiffTimeCourse(MotX);
+%   dMotX(:,4) = 50*dMotX(:,4);
+%   dMotX(:,5) = 50*dMotX(:,5);
+%   dMotX(:,6) = 50*dMotX(:,6);
+%   FD = sum(abs(dMotX),2);
+%   plot([1:1:NScan],FD,'k-',[1:1:NScan],0.5*ones(1,NScan),'g--');
+%   title('motion');
+%   xlabel('scan');
+%   ylabel('motion [a.u.]');
+%   
+% end
 
 % fluctuations in global mean time course
 figure('Name',sprintf('global mean time course fluctuation (subject %d)',isubj));
@@ -393,7 +393,7 @@ for irun=1:NumRuns % signal fluctuation
    ylabel('global mean time course');
    xlabel('scan');
    title(sprintf('global mean time course run %d',irun)); 
-   legend('time course','detrending');
+   % legend('time course','detrending');
    
    subplot(NumRuns,2,2*irun);
    plot([1:1:NScan],100*(e./E),'x',[1:1:NScan],0.5*ones(1,NScan),'g--',[1:1:NScan],-0.5*ones(1,NScan),'g--');
