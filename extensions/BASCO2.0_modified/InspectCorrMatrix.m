@@ -388,14 +388,14 @@ for irun=1:NumRuns % signal fluctuation
    e = Y - X*B;
    E = X*B; % estimated
    
-   subplot(3,2,2*irun-1);
+   subplot(NumRuns,2,2*irun-1);
    plot([1:1:NScan],Y,'b-',[1:1:NScan],E,'r-');
    ylabel('global mean time course');
    xlabel('scan');
    title(sprintf('global mean time course run %d',irun)); 
    legend('time course','detrending');
    
-   subplot(3,2,2*irun);
+   subplot(NumRuns,2,2*irun);
    plot([1:1:NScan],100*(e./E),'x',[1:1:NScan],0.5*ones(1,NScan),'g--',[1:1:NScan],-0.5*ones(1,NScan),'g--');
    ylabel('relative deviation [%]');
    xlabel('scan');
