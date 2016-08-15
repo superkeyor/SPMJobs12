@@ -237,12 +237,12 @@ for i=1:handles.NumEdges
          strn2 = strtrim(handles.Names{handles.indexNode2(i)});
          n1max = length(strn1);
          n2max = length(strn2);
-         if n1max>20
-             n1max=20;
-         end
-         if n2max>20
-             n2max=20;
-         end        
+%          if n1max>20
+%              n1max=20;
+%          end
+%          if n2max>20
+%              n2max=20;
+%          end        
          Edgenames(counter)   = cellstr(sprintf('%s <-> %s',strn1(1:n1max),strn2(1:n2max)));
          if StatTest==3
            tableData(counter,1) = handles.Prob(i);
@@ -467,7 +467,7 @@ Plot(handles);
 %
 function pushbuttonplot_Callback(hObject, eventdata, handles)
 if ~isfield(handles.ana{1}{1}.Ana{1}.Configure.ROI,'ROICOM')
-    disp('Calculating c.o.m. of nodes ...');
+    disp('Calculating center.of.mass. of nodes ...');
     ROIS      = handles.ana{1}{1}.Ana{1}.Configure.ROI.File;
     NumROIs   = handles.ana{1}{1}.Ana{1}.Configure.ROI.Num;
     % get c.o.m.
@@ -518,13 +518,19 @@ end
 fprintf('Number of nodes: %d \n',numnodes);
 nwmatrix = zeros(numnodes,numnodes);
 for irow=1:numrows
-    fprintf('%d <-> %d : weight=%f \n',find(idx==idx1(irow)),find(idx==idx2(irow)),w);
+    fprintf('%d <-> %d : weight=%f \n',find(idx==idx1(irow)),find(idx==idx2(irow)),1);
     nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=1;
     nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=1;
 end
-basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix);
+[edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix);
 disp('Plotting NW ...')
-fastBrainNetPlot(idx,compos,nwmatrix,shortlabel);
+% fastBrainNetPlot(idx,compos,nwmatrix,shortlabel);
+bnDir = fileparts(which('BrainNet'));
+meshFile = fullfile(bnDir,'Data','SurfTemplate','BrainMesh_ICBM152.nv');
+spmDir = fileparts(which('spm'));
+volFile = fullfile(spmDir,'canonical','single_subj_T1.nii');
+cfgFile = fullfile(bnDir,'SelfBrainNetCfg.mat');
+BrainNet_MapCfg(meshFile,edgeFile,nodeFile,volFile,cfgFile);
 disp('... done.')
 
 function pushbuttonviewrois_Callback(hObject, eventdata, handles)

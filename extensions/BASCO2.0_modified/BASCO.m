@@ -726,8 +726,10 @@ switch selected
         ana{1}=anaobj;
         load(strtrim(Files(2,:)));
         ana{2}=anaobj;
-        leg{1}='A';
-        leg{2}='B';
+%         leg{1}='A';
+%         leg{2}='B';
+        [~,leg{1}]=fileparts(strtrim(Files(1,:)));
+        [~,leg{2}]=fileparts(strtrim(Files(2,:)));
         GrAnaEdge(ana,leg);
         guidata(hObject, handles);
     case 3

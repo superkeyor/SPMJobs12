@@ -17,6 +17,14 @@ function varargout = main(varargin)
         addpath(thePath);
     end
 
+    if isempty(which('BrainNet'))
+        ez.print('addpath BrainNet...')
+        extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
+        thePath = ez.lsd(extsPath,'^BrainNet');
+        thePath = ez.joinpath(extsPath,thePath{1});
+        addpath(thePath);
+    end
+
     if isempty(which('BASCO'))
         extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
         thePath = ez.lsd(extsPath,'^BASCO');
