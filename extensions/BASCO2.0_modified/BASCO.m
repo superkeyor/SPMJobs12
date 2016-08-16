@@ -796,7 +796,7 @@ switch selected
         guidata(hObject, handles);
     case 8
         ROIS = spm_select([1],'image','Select number labelled ROI file.');
-        if isempty(ROIs),disp('User Cancelled'); return; end
+        if isempty(ROIS),disp('User Cancelled'); return; end
         NumSubj = handles.NumJobs;
         % loop over subjects
         for isubj=1:NumSubj
