@@ -164,6 +164,8 @@ values_out = spm_read_vols(hdr_out);
 n_out = length(find(values_out ~= 0)); % how many non-zero voxels, ie the masked voxels of the ROI
 unique_values_out = unique(spm_read_vols(hdr_out));
 dim_out = hdr_out.dim;
+Z = spm_imatrix(hdr_out.mat);
+voxsize = Z(7:9);
 description_out = hdr_out.descrip;
 
 fprintf('note: UINT allows only positive values and 0;\n');
@@ -182,6 +184,7 @@ fprintf('Max value: %s\n',num2str(max(unique_values_out)));
 
 fprintf('Non-zero voxels #: %d\n', n_out);
 fprintf('Dimension: %s\n',mat2str(dim_out));
+fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
 fprintf('Description: %s\n',description_out);
 
 end % end func
