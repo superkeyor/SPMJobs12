@@ -99,7 +99,9 @@ function pushbuttonsave_Callback(~, ~, handles)
 % save analysis object to file
 anaobj         = handles.anaobj;
 [name, folder] = uiputfile('*','Select folder and enter file name.');
-save(fullfile(folder,strcat(name,'.mat')),'anaobj'); % fix me!
+if isequal(name,0),disp('User Cancelled'); return; end
+if strcmp(name(end-3:end),'.mat'),name=name(1:end-4);end
+save(fullfile(folder,strcat(name,'.mat')),'anaobj');
 
 function pushbuttonhelp_Callback(~, ~, ~)
 web('http://www.nitrc.org/projects/basco');
@@ -765,6 +767,7 @@ switch selected
                 fprintf('%d -> %s \n',inode,handles.anaobj{isubj}.Ana{1}.Configure.ROI.Names{inode});
             end % end loop over nodes
         end % end loop over subjects
+        guidata(hObject, handles);
     case 6 % reslice image (gray matter mask)
         matlabbatch{1}.spm.spatial.coreg.write.ref = '<UNDEFINED>';
         matlabbatch{1}.spm.spatial.coreg.write.source = '<UNDEFINED>';
