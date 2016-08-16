@@ -7,7 +7,7 @@ end
 % get t-images
 tmppath = pwd;
 cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
-[file,path] = uigetfile('corrmap*.img','Select two images','MultiSelect','on');
+[file,path] = uigetfile('*.nii','Select two images','MultiSelect','on');
 if isequal(file,0),disp('User Cancelled'); return; end
 cd(tmppath);
 fname1 = file{1};
