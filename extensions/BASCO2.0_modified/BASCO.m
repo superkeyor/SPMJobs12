@@ -826,7 +826,7 @@ switch selected
         spm_jobman('initcfg')
         spm_jobman('interactive',matlabbatch);
     case 10
-        
+        basco_meanmap(handles);
     case 11
         basco_checkmaps(handles);
 end % end switch

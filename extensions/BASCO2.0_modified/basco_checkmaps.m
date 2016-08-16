@@ -8,17 +8,16 @@ end
 tmppath = pwd;
 cd(fullfile(handles.anaobj{1}.Ana{1}.AnaDef.DataPath,handles.anaobj{1}.Ana{1}.AnaDef.OutDir));
 [file,path] = uigetfile('corrmap*.img','Select two images','MultiSelect','on');
+if isequal(file,0),disp('User Cancelled'); return; end
 cd(tmppath);
 fname1 = file{1};
 fname2 = file{2};
 
 % select ROI
 [roifile,roipath] = uigetfile('*.mat','Select ROI','MultiSelect','off');
+if isequal(roifile,0),disp('User Cancelled'); return; end
 fprintf('Selected ROI: %s',fullfile(roipath,roifile));
 
-% selected subjects
-idxsubj = str2num(get(handles.editsubjectselection,'String'));
-Nsubj   = length(idxsubj); % number of selected subjects
 NumSubj = handles.NumJobs;
 
 % get files
@@ -57,7 +56,7 @@ xlabel('correlation coefficient');
 ylabel('number of subjects');
 [~, theprob] = ttest(TS1,TS2);
 title(sprintf('correlation (probability from t-test: %f)',theprob));
-legend(sprintf('mean: %.2f sigma: %.2f',mean(TS1),std(TS1)),sprintf('mean: %.2f sigma: %.2f',mean(TS2),std(TS2)));
+legend(sprintf('mean: %.2f std: %.2f',mean(TS1),std(TS1)),sprintf('mean: %.2f std: %.2f',mean(TS2),std(TS2)));
 subplot(2,2,3); 
 plot([1:NumSubj],TS1-TS2,'-',[1:NumSubj],zeros(1,NumSubj),'g--');
 xlabel('subjects');
@@ -66,4 +65,18 @@ subplot(2,2,4);
 hist(TS1-TS2);
 xlabel('difference');
 ylabel('number of subjects');
-title(sprintf('mean: %.2f sigma: %.2f',mean(TS1-TS2),std(TS1-TS2)));
+title(sprintf('mean: %.2f std: %.2f',mean(TS1-TS2),std(TS1-TS2)));
+
+
+
+
+function newstr = WriteInfoBox(handles,str,append)
+disp(str);
+oldstr = handles.InfoText;
+if append==true
+    newstr = sprintf('%s \n%s',str,oldstr);
+else
+    newstr = sprintf('%s',str);
+end
+set(handles.infobox,'String',newstr);
+drawnow;

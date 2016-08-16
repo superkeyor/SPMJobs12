@@ -3,6 +3,7 @@ function basco_checkestimation(handles)
 WriteInfoBox(handles,'Check model estimation. Please select ROI.',true)
 % select ROI
 [roifile,roipath] = uigetfile('*.mat','Select ROI','MultiSelect','off');
+if isequal(roifile,0),disp('User Cancelled'); return; end
 fprintf('Selected ROI: %s \n',fullfile(roipath,roifile));
 % loop over subjects
 for isubj=1:handles.NumJobs
@@ -35,6 +36,7 @@ X = [SPM.xX.X];
 % get summary time course(s)
 ts = summary_data(Y);
 % ts = filter_bandpass(ts,2,0.01,0.5/2,4);
+ts = spm_filter(SPM.xX.K,ts); % high pass filtering
 thefit = X*b;
 [NumScans, NumRegr] = size(X);
 
@@ -47,3 +49,13 @@ legend('signal','fitted model');
 end % end loop opver subjects
 
 
+function newstr = WriteInfoBox(handles,str,append)
+disp(str);
+oldstr = handles.InfoText;
+if append==true
+    newstr = sprintf('%s \n%s',str,oldstr);
+else
+    newstr = sprintf('%s',str);
+end
+set(handles.infobox,'String',newstr);
+drawnow;

@@ -2,9 +2,11 @@ function univariateroi()
 % estimate model for selected ROI using SPM design (marsbar)
 % select design
 [spmfile,spmpath] = uigetfile('SPM.mat','Select SPM-design','MultiSelect','off');
+if isequal(spmfile,0),disp('User Cancelled'); return; end
 fprintf('Selected SPM.mat file in directory: %s\n',spmpath);
 % select ROI
 [roifile,roipath] = uigetfile('*.mat','Select ROI','MultiSelect','off');
+if isequal(roifile,0),disp('User Cancelled'); return; end
 fprintf('Selected ROI: %s \n',fullfile(roipath,roifile));
 
 load(fullfile(spmpath,spmfile));

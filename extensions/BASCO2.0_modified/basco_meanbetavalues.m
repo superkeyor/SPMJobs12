@@ -26,11 +26,12 @@ hrfderivs = handles.anaobj{1}.Ana{1}.AnaDef.HRFDERIVS; % should be the same for 
 betamat1  = zeros(NumSubj,NumNodes); % mean beta-values in each ROI for the subjects
 betamat2  = zeros(NumSubj,NumNodes);
 
-figcounter = 0;
-figure('Name',sprintf('mean beta-values for nodes (%d)',figcounter));
+figcounter = 1;
+figure('Name',sprintf('mean beta-values for nodes (#%d)',figcounter));
 for isubj=1:1:NumSubj % loop over subjects 
   disp(sprintf('Processing subject number %d (=> %d) ...',isubj,idxsubj(isubj)));
   bs=handles.anaobj{isubj}.Ana{1}.BetaSeries;
+  
   for inode=1:size(bs,2)
     newbs1(:,inode) = CondSelBS(handles.anaobj{isubj},thecond1,bs(:,inode));
     newbs2(:,inode) = CondSelBS(handles.anaobj{isubj},thecond2,bs(:,inode));    
@@ -39,9 +40,9 @@ for isubj=1:1:NumSubj % loop over subjects
   % plot mean beta values for each subject
   if mod(isubj-1,16)==0 && isubj>1
     figcounter=figcounter+1;
-    figure('Name',sprintf('mean beta-values for nodes (%d)',figcounter));
+    figure('Name',sprintf('mean beta-values for nodes (#%d)',figcounter));
   end
-  subplot(4,4,isubj-figcounter*16);
+  subplot(4,4,isubj-(figcounter-1)*16);
   plot([1:1:NumNodes],mean(newbs1,1),'-',[1:1:NumNodes],mean(newbs2,1),'-');
   title(sprintf('mean beta value for subject %d',isubj));
   xlabel('node');
@@ -51,7 +52,7 @@ for isubj=1:1:NumSubj % loop over subjects
   % store mean beta values for each subject
   betamat1(isubj,:) = mean(newbs1,1);
   betamat2(isubj,:) = mean(newbs2,1);
-
+  clear newbs1 newbs2;
 end % loop over subjects
 
 if NumSubj<10
@@ -78,19 +79,20 @@ xlabel('probability');
 ylabel('number of nodes');
 subplot(3,2,[3 4]);
 semilogy([1:1:NumNodes],pval1,'-',[1:1:NumNodes],pval2,'-',[1:1:NumNodes],thepth*ones(1,NumNodes),'');
-title('mean beta-values significantly different from zero');
+title('mean beta-values significantly different from zero (one-sample t-test)');
 xlabel('node');
 ylabel('probability');
 legend('condition 1','condition 2',sprintf('p=%f',thepth));
 
 therois = (pval1<thepth)|(pval2<thepth);
-fprintf('===> ROIs: %d of %d \n',nnz(therois),length(therois));
+fprintf('\n===> ROIs: %d of %d mean beta diff from zero (one-sample t-test)\n',nnz(therois),length(therois));
 
 for i=1:length(therois)
     if therois(i)==1
        fprintf('ROI %d  ->  %s \n',i,Names{i});
     end
 end
+
 
 %
 % statistical test - conditions
@@ -101,7 +103,7 @@ end
 Nsig = 0;
 for inode=1:NumNodes
    if pval(inode)<=thepth
-       fprintf('%s : p=%f \n',Names{inode},pval(inode));
+       % fprintf('ROI %d -> %s : p=%f \n',inode,Names{inode},pval(inode));  % not print now
        Nsig = Nsig+1;
        h(inode) = 1.0;
        ROIFiles{Nsig} = handles.anaobj{1}.Ana{1}.Configure.ROI.File{inode};%fullfile(handles.anaobj{1}.Ana{1}.Configure.ROI.Path,handles.anaobj{1}.Ana{1}.Configure.ROI.File{inode});
@@ -109,12 +111,18 @@ for inode=1:NumNodes
        h(inode) = 0.0;   
    end
 end
-fprintf('Found %d significant differences (alpha-value = %f => %f expected).\n',Nsig,thepth,thepth*NumNodes);
+fprintf('\nFound %d significant differences (alpha-value = %f => %f expected, paired t-test).\n',Nsig,thepth,thepth*NumNodes);
+% print details
+for inode=1:length(h)
+   if h(inode)==1
+       fprintf('ROI %d -> %s : p=%f \n',inode,Names{inode},pval(inode));
+   end
+end
 
 %
 % plot
 %
-figure('Name','test if mean beta values significantly different between conditions');
+figure('Name','test if mean beta values significantly different between conditions (paired t-test)');
 subplot(2,2,[1 2]);
 errorbar([1:1:NumNodes],mean(betamat1,1),std(betamat1,1)/sqrt(NumSubj),'xb');
 hold on;
