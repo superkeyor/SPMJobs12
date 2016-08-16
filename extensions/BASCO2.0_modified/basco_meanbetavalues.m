@@ -11,6 +11,7 @@ dlg_title = 'Select condition';
 num_lines = 1;
 def       = { '1 3' , '2 4' , '0.001' , sprintf('%s',num2str([1:1:NumSubj])) , '0'};
 answer    = inputdlg(prompt,dlg_title,num_lines,def);
+if isempty(answer),disp('User Cancelled'); return; end
 thecond1  = str2num(answer{1});
 thecond2  = str2num(answer{2});
 thepth    = str2double(answer{3});
