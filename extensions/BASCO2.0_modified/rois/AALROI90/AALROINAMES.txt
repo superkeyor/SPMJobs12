@@ -52,10 +52,10 @@ Olfactory_L
 Olfactory_R
 Pallidum_L
 Pallidum_R
-Paracentral_Lobule_L
-Paracentral_Lobule_R
 ParaHippocampal_L
 ParaHippocampal_R
+Paracentral_Lobule_L
+Paracentral_Lobule_R
 Parietal_Inf_L
 Parietal_Inf_R
 Parietal_Sup_L
