@@ -37,8 +37,8 @@ handles.TheAna   = 1;
 
 NumAna1 = size(handles.ana{1},2);
 NumAna2 = size(handles.ana{2},2);
-set(handles.editgroupA,'String',sprintf('group/condition 1: %s %d',handles.leg{1},NumAna1));
-set(handles.editgroupB,'String',sprintf('group/condition 2: %s %d',handles.leg{2},NumAna2));
+set(handles.editgroupA,'String',sprintf('group/condition A: %s %d',handles.leg{1},NumAna1));
+set(handles.editgroupB,'String',sprintf('group/condition B: %s %d',handles.leg{2},NumAna2));
 
 result = RetrieveCorrelationCoefficients(handles);
 handles.Amean       = result.Amean;
@@ -144,7 +144,7 @@ for i=1:handles.NumEdges,
       theprob = handles.Prob(i);   
       if theprob<=ProbCut
          if mod(counter,9)==0
-           figure('Name',sprintf('Distribution of correlation coefficients %d',mod(counter,9)));
+           figure('Name',sprintf('Distribution of correlation coefficients #%d',mod(counter,9)+1));
            wincounter = 0;
          end
          counter = counter +1;
@@ -159,7 +159,7 @@ for i=1:handles.NumEdges,
          title(sprintf('%s and %s (p=%f)',handles.Names{handles.indexNode1(i)},handles.Names{handles.indexNode2(i)},theprob));
          xlabel('correlation coefficients');
          ylabel('number of subjects');
-         legend(handles.leg{1},handles.leg{2});
+         legend({handles.leg{1},handles.leg{2}},'Interpreter', 'none');
       end
 end % end loop over edges
 
@@ -325,7 +325,7 @@ else
   title(sprintf('p distribution group differences (A vs B) (%d)',Nentr));
   ylabel('number of edges');
   xlabel('probability');
-  legend(StatStr{StatTest},'two-sample t-test');
+  legend(StatStr{StatTest},'two-sample t-test','Interpreter', 'none');
 end
 
 
@@ -526,16 +526,19 @@ for irow=1:numrows
     nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=weight_diff;
     nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=weight_diff;
 end
-[edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix);
+basename = [handles.leg{1} '-' handles.leg{2}];
+[edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix,basename);
+if ~isempty(edgeFile)
 disp('Plotting NW ...')
 % fastBrainNetPlot(idx,compos,nwmatrix,shortlabel);
 bnDir = fileparts(which('BrainNet'));
 meshFile = fullfile(bnDir,'Data','SurfTemplate','BrainMesh_ICBM152.nv');
 spmDir = fileparts(which('spm'));
-volFile = fullfile(spmDir,'canonical','single_subj_T1.nii');
+% volFile = fullfile(spmDir,'canonical','single_subj_T1.nii');
 cfgFile = fullfile(bnDir,'SelfBrainNetCfg.mat');
 BrainNet_MapCfg(meshFile,edgeFile,nodeFile,cfgFile);
 disp('... done.')
+end
 
 function pushbuttonviewrois_Callback(hObject, eventdata, handles)
 % display marsbar ROIs

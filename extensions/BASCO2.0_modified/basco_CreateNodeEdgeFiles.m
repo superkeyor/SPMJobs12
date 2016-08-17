@@ -1,6 +1,11 @@
-function [edge,node] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix)
-disp('Save .node and .edge files. Select directory and filename.');
-[fname, fdir, fidx] = uiputfile();
+function [edge,node] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix,basename)
+edge = '';
+node = '';
+if nargin<5, basename='';end
+
+
+disp('To save .node and .edge files, specify base filename...');
+[fname, fdir, fidx] = uiputfile('*.*','save .node and .edge files...',basename);
 if isequal(fname,0),disp('User Cancelled'); return; end
 fprintf('Number of edges: %d \n',nnz(nwmatrix));
 dlmwrite(fullfile(fdir,[fname '.edge']),nwmatrix,'\t');
