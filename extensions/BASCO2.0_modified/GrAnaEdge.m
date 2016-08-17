@@ -477,19 +477,22 @@ if ~isfield(handles.ana{1}{1}.Ana{1}.Configure.ROI,'ROICOM')
     end
     % short labels of ROIs
     for iroi=1:NumROIs
-        shortname = '';
-        roiname   = handles.ana{1}{1}.Ana{1}.Configure.ROI.Names{iroi};
-        theidx   = findstr(roiname,'_');
-        shortname(1)=roiname(1);
-        if length(theidx)<3
-            shortname(2)=roiname(2);
-            shortname(3)=roiname(3);
-        end
-        for idx=theidx
-            shortname(length(shortname)+1) = roiname(idx+1);
-        end
-        shortlabel{iroi} = shortname;
-        fprintf('%s -> %s \n',roiname,shortname);
+        % shortname = '';
+        % roiname   = handles.ana{1}{1}.Ana{1}.Configure.ROI.Names{iroi};
+        % theidx   = findstr(roiname,'_');
+        % shortname(1)=roiname(1);
+        % if length(theidx)<3
+        %     shortname(2)=roiname(2);
+        %     shortname(3)=roiname(3);
+        % end
+        % for idx=theidx
+        %     shortname(length(shortname)+1) = roiname(idx+1);
+        % end
+        % shortlabel{iroi} = shortname;
+        % fprintf('%s -> %s \n',roiname,shortname);
+
+        % autoshortening is weird. do not use. simply copy over
+        shortlabel{iroi} = handles.ana{1}{1}.Ana{1}.Configure.ROI.Names{iroi};
     end
     
     handles.ana{1}{1}.Ana{1}.Configure.ROI.ROIFILES      = ROIS;
@@ -518,9 +521,10 @@ end
 fprintf('Number of nodes: %d \n',numnodes);
 nwmatrix = zeros(numnodes,numnodes);
 for irow=1:numrows
-    fprintf('%d <-> %d : weight=%f \n',find(idx==idx1(irow)),find(idx==idx2(irow)),1);
-    nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=1;
-    nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=1;
+    weight = thedata(irow,end-1) - thedata(irow,end);
+    fprintf('%d <-> %d : weight(left-right)=%f \n',find(idx==idx1(irow)),find(idx==idx2(irow)),weight);
+    nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=weight;
+    nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=weight;
 end
 [edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix);
 disp('Plotting NW ...')
@@ -530,7 +534,7 @@ meshFile = fullfile(bnDir,'Data','SurfTemplate','BrainMesh_ICBM152.nv');
 spmDir = fileparts(which('spm'));
 volFile = fullfile(spmDir,'canonical','single_subj_T1.nii');
 cfgFile = fullfile(bnDir,'SelfBrainNetCfg.mat');
-BrainNet_MapCfg(meshFile,edgeFile,nodeFile,volFile,cfgFile);
+BrainNet_MapCfg(meshFile,edgeFile,nodeFile,cfgFile);
 disp('... done.')
 
 function pushbuttonviewrois_Callback(hObject, eventdata, handles)

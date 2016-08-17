@@ -764,6 +764,7 @@ switch selected
             NumNodes = size(importeddata{1},1);
             for inode=1:1:NumNodes
                 handles.anaobj{isubj}.Ana{1}.Configure.ROI.Names{inode} = char(importeddata{1}(inode,:));
+                handles.anaobj{isubj}.Ana{1}.Configure.ROI.ROIShortLabel{inode} = char(importeddata{1}(inode,:));
                 fprintf('%d -> %s \n',inode,handles.anaobj{isubj}.Ana{1}.Configure.ROI.Names{inode});
             end % end loop over nodes
         end % end loop over subjects
