@@ -521,10 +521,10 @@ end
 fprintf('Number of nodes: %d \n',numnodes);
 nwmatrix = zeros(numnodes,numnodes);
 for irow=1:numrows
-    weight = thedata(irow,end-1) - thedata(irow,end);
-    fprintf('%d <-> %d : weight(left-right)=%f \n',find(idx==idx1(irow)),find(idx==idx2(irow)),weight);
-    nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=weight;
-    nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=weight;
+    weight_diff = thedata(irow,end-1) - thedata(irow,end);
+    fprintf('%d <-> %d : weight(left-right)=%f \n',find(idx==idx1(irow)),find(idx==idx2(irow)),weight_diff);
+    nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=weight_diff;
+    nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=weight_diff;
 end
 [edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix);
 disp('Plotting NW ...')
