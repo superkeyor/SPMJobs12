@@ -315,7 +315,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
                     return;
                 end
                 counter=counter+1;
-                matlabbatch{2}.spm.stats.fmri_spec.sess(irun).cond(counter).name     = sprintf('%s%d',AnaDef.Cond{icond},ionsets);
+                matlabbatch{2}.spm.stats.fmri_spec.sess(irun).cond(counter).name     = sprintf('%s_%d',AnaDef.Cond{icond},ionsets);
                 matlabbatch{2}.spm.stats.fmri_spec.sess(irun).cond(counter).onset    = trialonset;
                 matlabbatch{2}.spm.stats.fmri_spec.sess(irun).cond(counter).duration = AnaDef.Subj{isubj}.Duration(icond);
                 matlabbatch{2}.spm.stats.fmri_spec.sess(irun).cond(counter).tmod     = 0;
