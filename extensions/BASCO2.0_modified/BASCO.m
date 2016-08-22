@@ -419,7 +419,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             '^ess_.{4}\..{3}$', '^spm\w{1}_.{4}\..{3}$', 'SPM.mat'};
 
         for i=1:length(files)
-            j = spm_select('List',fullfile(data_path,AnaDef.OutDir),files{i});
+            j = spm_select('FPList',fullfile(data_path,AnaDef.OutDir),files{i});
             for k=1:size(j,1)
                 spm_unlink(deblank(j(k,:)));
             end
