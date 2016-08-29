@@ -1017,7 +1017,7 @@ if thetest==1
     file = uigetfile({'*.nii';'*.img'},'Select two maps.','MultiSelect','on');
     if isequal(file,0),disp('User Cancelled'); return; end
     cd(tmppath);
-    thedir = uigetdir('Select output directory');
+    thedir = uigetdir(pwd,'Select output directory');
     if isequal(thedir,0),disp('User Cancelled'); return; end
     fname1 = file{1};
     fname2 = file{2};
@@ -1053,7 +1053,7 @@ end
 if thetest==2
     [file,anapath] = uigetfile('*.mat','Select two files','MultiSelect','on');
     if isequal(file,0),disp('User Cancelled'); return; end
-    thedir = uigetdir('Select output directory');
+    thedir = uigetdir(pwd,'Select output directory');
     if isequal(thedir,0),disp('User Cancelled'); return; end
     load(fullfile(anapath,file{1}))
     NumSubj1  = length(anaobj);
@@ -1113,7 +1113,7 @@ if thetest==3
     [fname4] = uigetfile({'*.nii';'*.img'},'Select connectivity/degree map: A2 B2','MultiSelect','off');
     if isequal(fname4,0),disp('User Cancelled'); return; end
     cd(tmppath);
-    thedir = uigetdir('Select output directory');
+    thedir = uigetdir(pwd,'Select output directory');
     if isequal(thedir,0),disp('User Cancelled'); return; end
     cd(thedir);
     NumSubj = handles.NumJobs;
