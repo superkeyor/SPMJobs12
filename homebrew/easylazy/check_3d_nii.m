@@ -33,8 +33,8 @@ fprintf('Dimension: %s\n',mat2str(dim_out));
 fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
 fprintf('Description: %s\n',description_out);
 
-if iscell(nii), nii = char(nii); end
-spm_image('Display', nii); 
+if iscell(outname), outname = char(outname); end
+spm_image('Display', outname); 
 
 ez.pprint('========================================================================\n');
 end % end func
