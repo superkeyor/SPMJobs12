@@ -1,13 +1,14 @@
-function outname = main(xyz,radius,labels,verbose)
+function result = main(crl,verbose)
 % Input:
-%       xyz = coordinates in mm (rows are ROIs) eg, [2,-3,4;-20,30,40]
-%       radius = 'Sphere' radius of ROI, a single value for all xyz
-%       labels = corresponds to each ROI nx1 {'leftROI';'rightROI'}
-%                default ''
+%       crl: {coordinates1, radius1, label1;
+%             coordinates2, radius2, label2}
+%            xyz = coordinates in mm (rows are ROIs) eg, [2,-3,4]
+%            radius = 'sphere' radius of ROI in mm
+%            label = corresponds to each ROI 'leftROI'
 %       verbose = 0/1, if true, print out roi info and display roi, default true
 % Output:
-%       ROI_Sphere8_2_-3_4_label.nii/.mat or ROI_Sphere8_2-_3_4.nii/.mat in the pwd
-%       the full path to the (last) generated ROI mat file
+%       MNI_label_5mmsphere_x_y_z_roi.nii/.mat in the pwd
+%       the full path to the generated ROI mat file(s), if more than one file, a cell; otherwise a str
 % Note:
 %       Uses marsbar functions to generate .mat and .nii ROI
 %       If marsbar path not in searchpath, auto add them internally first.
@@ -22,36 +23,33 @@ if isempty(which('marsbar'))
     addpath(thePath);
 end
 
-if nargin<3, labels = repmat({''},size(xyz,1),1); end
+xyz = cell2mat(crl(:,1));
+radius = cell2mat(crl(:,2));
+labels = crl(:,3);
+
 if ischar(labels), labels = cellstr(labels); end
-if nargin<4, verbose = 1; end
+if nargin<2, verbose = 1; end
+
+result = cell(size(xyz,1),1);
 
 for i = 1:size(xyz,1)
 % sphere_center is specified as the centre of the sphere in mm in MNI space
 sphere_center = xyz(i,1:3);
-sphere_radius = radius;
-sphere_roi = maroi_sphere(struct('centre', sphere_center, ...
-    'radius', sphere_radius));
-if isempty(labels{i})
-    sphere_label = ['ROI_Sphere' num2str(sphere_radius) '_' num2str(round(xyz(i,1))) '_' num2str(round(xyz(i,2))) '_' num2str(round(xyz(i,3)))];
-else
-    sphere_label = ['ROI_Sphere' num2str(sphere_radius) '_' num2str(round(xyz(i,1))) '_' num2str(round(xyz(i,2))) '_' num2str(round(xyz(i,3))) '_' labels{i}];
-end
+sphere_radius = radius(i);
+sphere_roi = maroi_sphere(struct('centre', sphere_center, 'radius', sphere_radius));
+sphere_label = ['MNI_' labels{i}, '_', num2str(sphere_radius) 'mmsphere'  '_' num2str(round(xyz(i,1))) '_' num2str(round(xyz(i,2))) '_' num2str(round(xyz(i,3))), '_roi'];
 sphere_roi = label(sphere_roi, sphere_label);
 
 % save ROI as MarsBaR ROI file
-saveroi(sphere_roi, fullfile(sprintf('%s.mat', ...
-    sphere_label)));
+saveroi(sphere_roi, fullfile(sprintf('%s.mat', sphere_label)));
 % Save as image
-save_as_image(sphere_roi, fullfile(sprintf('%s.nii', ...
-    sphere_label)));
+save_as_image(sphere_roi, fullfile(sprintf('%s.nii', sphere_label)));
 
 fprintf('ROI file created: %s\n\n', sphere_label);
 
 if verbose
 % output some useful info of the generated image
-outname = fullfile(sprintf('%s.nii', ...
-    sphere_label));
+outname = fullfile(sprintf('%s.nii', sphere_label));
 hdr_out = spm_vol(outname);
 type_out = spm_type(hdr_out.dt(1));
 values_out = spm_read_vols(hdr_out);
@@ -80,16 +78,21 @@ fprintf('Non-zero voxels #: %d\n', n_out);
 fprintf('Dimension: %s\n',mat2str(dim_out));
 fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
 fprintf('Description: %s\n',description_out);
-
-outname = fullfile(sprintf('%s.mat', ...
-    sphere_label));
-spmpath = fileparts(which('spm'));
-mars_display_roi('display',outname,fullfile(spmpath,'canonical','avg152T1.nii'));
-
 end % end if
-outname = fullfile(sprintf('%s.mat', ...
-    sphere_label));
+result{i,1} = fullfile(sprintf('%s.mat', sphere_label));
 ez.pprint('========================================================================\n');
 end % end for
 
+if verbose,
+    spmpath = fileparts(which('spm'));
+    mars_display_roi('display',char(result),fullfile(spmpath,'canonical','avg152T1.nii'));
+end % end if
+
+% output a text list of generated rois
+ROIs = cellstr(spm_select('List',pwd,['^MNI_.*mmsphere_.*_roi.mat']));
+ROIs = strrep(ROIs,'MNI_','');
+ROIs = regexprep(ROIs,'_\d{1,2}mmsphere_-?\d{1,2}_-?\d{1,2}_-?\d{1,2}_roi\.mat$','');
+ez.cell2csv('ALLROINAMES.txt',ROIs);
+
+if length(result)==1, result=result{1}; end
 end % end function
