@@ -921,7 +921,7 @@ for isubj=1:NumSubj % loop over subjects
     handles.InfoText = WriteInfoBox(handles,str,true);
     str=sprintf('Number of time points: %d',NumPts);
     handles.InfoText = WriteInfoBox(handles,str,true);
-    str='Calculating functional connectivity map.';
+    str='Calculating functional connectivity map...';
     handles.InfoText = WriteInfoBox(handles,str,true);
     % create correlation map
     Aall   = [roibs y];
@@ -948,6 +948,7 @@ for isubj=1:NumSubj % loop over subjects
     outvol.fname = fullfile(data_path,outdirname,sprintf('zfcmap_%s_%s.nii',handles.SeedROIName,strrep(num2str(thecond),' ','_')));
     spm_write_vol(outvol,zcorrmap);
     toc
+    fprintf('\n\n\n');
 end % end loop over subjects
 handles.InfoText = WriteInfoBox(handles,'Seed-based connectivity analysis completed. Proceed to => Level 2 analysis <=.',true);
 guidata(hObject, handles);
