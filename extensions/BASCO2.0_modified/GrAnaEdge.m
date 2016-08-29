@@ -325,7 +325,7 @@ else
   title(sprintf('p distribution group differences (A vs B) (%d)',Nentr));
   ylabel('number of edges');
   xlabel('probability');
-  legend(StatStr{StatTest},'two-sample t-test','Interpreter', 'none');
+  legend({StatStr{StatTest},'two-sample t-test'},'Interpreter', 'none');
 end
 
 
