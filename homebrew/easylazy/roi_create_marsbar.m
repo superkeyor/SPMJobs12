@@ -1,9 +1,10 @@
-function outname = main(xyz,radius,labels)
+function outname = main(xyz,radius,labels,verbose)
 % Input:
 %       xyz = coordinates in mm (rows are ROIs) eg, [2,-3,4;-20,30,40]
 %       radius = 'Sphere' radius of ROI, a single value for all xyz
 %       labels = corresponds to each ROI nx1 {'leftROI';'rightROI'}
 %                default ''
+%       verbose = 0/1, if true, print out roi info and display roi, default true
 % Output:
 %       ROI_Sphere8_2_-3_4_label.nii/.mat or ROI_Sphere8_2-_3_4.nii/.mat in the pwd
 %       the full path to the (last) generated ROI mat file
@@ -23,6 +24,7 @@ end
 
 if nargin<3, labels = repmat({''},size(xyz,1),1); end
 if ischar(labels), labels = cellstr(labels); end
+if nargin<4, verbose = 1; end
 
 for i = 1:size(xyz,1)
 % sphere_center is specified as the centre of the sphere in mm in MNI space
@@ -46,6 +48,7 @@ save_as_image(sphere_roi, fullfile(sprintf('%s.nii', ...
 
 fprintf('ROI file created: %s\n\n', sphere_label);
 
+if verbose
 % output some useful info of the generated image
 outname = fullfile(sprintf('%s.nii', ...
     sphere_label));
@@ -83,6 +86,9 @@ outname = fullfile(sprintf('%s.mat', ...
 spmpath = fileparts(which('spm'));
 mars_display_roi('display',outname,fullfile(spmpath,'canonical','avg152T1.nii'));
 
+end % end if
+outname = fullfile(sprintf('%s.mat', ...
+    sphere_label));
 ez.pprint('========================================================================\n');
 end % end for
 
