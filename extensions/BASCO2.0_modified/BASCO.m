@@ -59,7 +59,8 @@ set(handles.popupmenu_nwana,'String',list4);
 list3{1}='Product-moment correlation';
 list3{2}='Spearman correlation coefficients';
 list3{3}='arc-hyperbolic tangent transf.';
-list3{4}='Pearson (outlier rejection)';
+list3{4}='Pearson (outlier rejection,z score)';
+list3{5}='Pearson (outlier rejection,abs score)';
 set(handles.popupmenucorrelation,'String',list3);
 guidata(hObject, handles);
 
@@ -165,7 +166,25 @@ if sel==4
         ztrbs  = (bs-repmat(mean(bs),size(bs,1),1))./repmat(std(bs),size(bs,1),1);
         ztrmax = abs(min(ztrbs'));
         inidx  = find(ztrmax<zthr);
-        fprintf('Subject %d ===> rejected outlier (%.2f) : %d (%d) \n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
+        fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d) \n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
+        [NWM, pNWM] = corrcoef(bs(inidx,:));
+        NWM         = NWM-eye(size(NWM,1));
+        handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
+        handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+    end
+    str='Calculated correlation coefficients from beta-series (outlier rejection; Fisher-z transformed).';
+    handles.InfoText = WriteInfoBox(handles,str,true);
+end
+% outlier rejection
+if sel==5
+    thr = 10; % z-thresjhold for outlier rejection
+    for isubj=1:NumSubj
+        bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
+        NWMpre = corrcoef(bs);
+        NWMpre = NWMpre-eye(size(NWMpre,1));
+        trmax = abs(min(bs'));
+        inidx  = find(trmax<thr);
+        fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %d (%d) \n',isubj,thr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
