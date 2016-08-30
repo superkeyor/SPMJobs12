@@ -164,7 +164,8 @@ if sel==4
         NWMpre = corrcoef(bs);
         NWMpre = NWMpre-eye(size(NWMpre,1));
         ztrbs  = (bs-repmat(mean(bs),size(bs,1),1))./repmat(std(bs),size(bs,1),1);
-        ztrmax = abs(min(ztrbs'));
+        % ztrmax = abs(min(ztrbs'));
+        ztrmax = max(abs(ztrbs'));
         inidx  = find(ztrmax<zthr);
         fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d) \n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
@@ -182,7 +183,7 @@ if sel==5
         bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
         NWMpre = corrcoef(bs);
         NWMpre = NWMpre-eye(size(NWMpre,1));
-        trmax = abs(min(bs'));
+        trmax = max(abs(bs'));
         inidx  = find(trmax<thr);
         fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %d (%d) \n',isubj,thr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
