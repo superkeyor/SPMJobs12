@@ -7,10 +7,14 @@ function result = main(crl,verbose)
 %            label = corresponds to each ROI 'leftROI'
 %       verbose = 0/1, if true, print out roi info and display roi, default true
 % Output:
-%       MNI_label_5mmsphere_x_y_z_roi.nii/.mat in the pwd
+%       MNI_label_5mmsphere_x_y_z_roi.mat in the pwd (nii export could be tricky, because of voxel size)
+%             Base space (default) is MNI: 2x2x2
+%             From image: choose an image to copy over the info (size, dim)
+%             ROI native: from ROI file info itself
 %       the full path to the generated ROI mat file(s), if more than one file, a cell; otherwise a str
 % Note:
-%       Uses marsbar functions to generate .mat and .nii ROI
+%       Uses marsbar functions to generate .mat ROI
+%             nii: save nii first to print some info, then delete the nii to avoid confusion
 %       If marsbar path not in searchpath, auto add them internally first.
 
 % modified from http://akiraoconnor.org/2010/08/18/marsbar-script-save-spheres-as-both-img-and-mat-files/
@@ -42,7 +46,8 @@ sphere_roi = label(sphere_roi, sphere_label);
 
 % save ROI as MarsBaR ROI file
 saveroi(sphere_roi, fullfile(sprintf('%s.mat', sphere_label)));
-% Save as image
+% Save as image--tricky, see function help at the top of this file
+% save nii first to print some info, then delete the nii to avoid confusion
 save_as_image(sphere_roi, fullfile(sprintf('%s.nii', sphere_label)));
 
 fprintf('ROI file created: %s\n\n', sphere_label);
@@ -79,6 +84,10 @@ fprintf('Dimension: %s\n',mat2str(dim_out));
 fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
 fprintf('Description: %s\n',description_out);
 end % end if
+
+% remove nii
+ez.rm(outname);
+
 result{i,1} = fullfile(sprintf('%s.mat', sphere_label));
 ez.pprint('========================================================================\n');
 end % end for
