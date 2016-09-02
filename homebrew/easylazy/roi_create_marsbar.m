@@ -3,7 +3,7 @@ function result = main(crl,verbose)
 %       crl: {coordinates1, radius1, label1;
 %             coordinates2, radius2, label2}
 %            xyz = coordinates in mm (rows are ROIs) eg, [2,-3,4]
-%            radius = 'sphere' radius of ROI in mm
+%            radius = 'sphere' radius of ROI in mm (>0)
 %            label = corresponds to each ROI 'leftROI'
 %       verbose = 0/1, if true, print out roi info and display roi, default true
 % Output:
