@@ -139,7 +139,7 @@ if sel==1
 end
 % Spearman correlation coefficients
 if sel==2
-    handles.InfoText = WriteInfoBox(handles,'Calculating Spearman correlation coefficients from beta-series. Please wait.',true);
+    handles.InfoText = WriteInfoBox(handles,'Calculating Spearman correlation coefficients from beta-series. Please wait...',true);
     for isubj=1:NumSubj
         BS          = handles.anaobj{isubj}.Ana{1}.BetaSeries;
         [NWM, pNWM] = corr(BS,'type','Spearman');
@@ -170,10 +170,11 @@ if sel==4
         fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d) \n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
-        handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
+        % handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
+        handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
     end
-    str='Calculated correlation coefficients from beta-series (outlier rejection; Fisher-z transformed).';
+    str='Calculated correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
 end
 % outlier rejection
@@ -188,10 +189,10 @@ if sel==5
         fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %d (%d) \n',isubj,thr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
-        handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
+        handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
     end
-    str='Calculated correlation coefficients from beta-series (outlier rejection; Fisher-z transformed).';
+    str='Calculated correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
 end
 guidata(hObject, handles);
