@@ -18,6 +18,8 @@ function varargout = main(arg)
         end
     end
     spm_DesRep('DesRepUI',SPM);
+    filenames = reshape(cellstr(SPM.xY.P),size(SPM.xY.VY));
+    spm_DesRep('DesMtx',SPM.xX,filenames,SPM.xsDes);
 end
 
 

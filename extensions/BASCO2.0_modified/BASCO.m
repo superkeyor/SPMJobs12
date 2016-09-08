@@ -178,7 +178,7 @@ if sel==4
 end
 % outlier rejection
 if sel==5
-    thr = 10; % z-thresjhold for outlier rejection
+    thr = 20; % z-thresjhold for outlier rejection
     for isubj=1:NumSubj
         bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
         NWMpre = corrcoef(bs);
