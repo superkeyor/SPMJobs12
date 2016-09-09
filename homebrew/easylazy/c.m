@@ -23,7 +23,9 @@ function varargout = main(conseq)
     else
         if isstr(conseq); conseq = str2num(conseq); end;
     end
-
+    
+    % these variables may interefer with xjview
+    evalin('base','clear hReg SPM TabDat xSPM');
     for i = conseq; eval(sprintf('xjview spmT_00%02d.nii',i)); set(gcf,'numbertitle','off','name',[get(gcf,'name') '  ' names{i}]); end
     % close all warning dialog
     warnings = findall(0,'type','figure','name','Warning Dialog');
