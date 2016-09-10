@@ -120,6 +120,10 @@ function DisplayTimeCourseCompare(handles,idx1,idx2)
 currentana = handles.anaobj{handles.CurrentJob}.AnaCurrent;
 bs         = handles.anaobj{handles.CurrentJob}.Ana{currentana}.BetaSeries;
 NWM        = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Matrix;
+try
+    inidx = handles.anaobj{handles.CurrentJob}.Ana{currentana}.NonOutliers;
+    if ~isempty(inidx),bs = bs(inidx,:);end
+end
 [N, NumROIs] = size(bs);
 
 if idx1>NumROIs | idx2>NumROIs
@@ -130,15 +134,47 @@ end
 idx1 = round(idx1);
 idx2 = round(idx2);
 axes(handles.axes);
+
+nallbetas = length(handles.anaobj{handles.CurrentJob}.Ana{currentana}.BetaSeries);
+outlierinfo = sprintf('%d betas, %d rois, %d beta outliers rejected',size(bs,1),size(bs,2),nallbetas-size(bs,1));
+set(handles.outlierinfo,'String',outlierinfo);
+  
 if handles.show==true
+  plot([1:N],bs(:,:));
+  
+  legend({'All ROIs'}, 'Interpreter', 'none');
+  set(handles.text10,'visible','off');
+  set(handles.sliderroiselect,'visible','off');
+  set(handles.editroiselect,'visible','off');
+  
+  set(handles.text11,'visible','off');
+  set(handles.editroiselectCompare,'visible','off');
+  set(handles.sliderroiselectCompare,'visible','off');
+  
+  set(handles.text2,'visible','off');
+  set(handles.editcorrelation,'visible','off');
+  set(handles.checkboxscatterplot,'visible','off');
+else
+%   plot([1:N],bs(:,idx1),'+-');
+%   roiname1 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx1};
+%   legend({roiname1}, 'Interpreter', 'none');  
+  
   plot([1:N],bs(:,idx1),'+-',[1:N],bs(:,idx2),'+-');
   roiname1 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx1};
   roiname2 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx2};
   legend({roiname1,roiname2}, 'Interpreter', 'none');
-else
-  plot([1:N],bs(:,idx1),'+-');
-  roiname1 = handles.anaobj{handles.CurrentJob}.Ana{currentana}.Configure.ROI.Names{idx1};
-  legend({roiname1}, 'Interpreter', 'none');  
+  
+  set(handles.text10,'visible','on');
+  set(handles.sliderroiselect,'visible','on');
+  set(handles.editroiselect,'visible','on');
+  
+  set(handles.text11,'visible','on');
+  set(handles.editroiselectCompare,'visible','on');
+  set(handles.sliderroiselectCompare,'visible','on');
+  
+  set(handles.text2,'visible','on');
+  set(handles.editcorrelation,'visible','on');
+  set(handles.checkboxscatterplot,'visible','on');
 end
 title('');
 xlabel('beta-series');
@@ -146,7 +182,7 @@ ylabel('beta-value');
 
 set(handles.editcorrelation,'String',NWM(idx1,idx2));  % show correlation coefficient
 
-corrmat  = corrcoef(bs(:,idx1),bs(:,idx2));
+% corrmat  = corrcoef(bs(:,idx1),bs(:,idx2));
 
 % show scatter plot?
 val = get(handles.checkboxscatterplot,'Value');
@@ -164,7 +200,7 @@ if val==true
   inidx  = find(ztrmax<zthr);
   [rho1,pval1] = corr(bs1,bs2);
   [rho2,pval2] = corr(bs1(inidx),bs2(inidx));
-  fprintf('Rejected outlier (%.2f --- %d): %.2f -> %.2f \n',zthr,length(bs1)-length(inidx),rho1,rho2);
+  fprintf('ScatterPlot Rejected outlier (%.2f --- %d): %.2f -> %.2f \n',zthr,length(bs1)-length(inidx),rho1,rho2);
   
 end
 

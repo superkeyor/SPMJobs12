@@ -166,11 +166,17 @@ xlabel('correlation coefficient');
 ylabel('number');
 
 bs = handles.anaobj{handles.CurrentJob}.Ana{1}.BetaSeries;
+nallbetas = length(bs);
+try
+    inidx = handles.anaobj{handles.CurrentJob}.Ana{1}.NonOutliers;
+    if ~isempty(inidx),bs = bs(inidx,:);end
+end
+outlierinfo = sprintf('%d betas, %d rois, %d beta outliers rejected',size(bs,1),size(bs,2),nallbetas-size(bs,1));
 axes(handles.axes7);
 plot(mean(bs,2));
 xlabel('beta-series');
 ylabel('beta-value');
-title('mean ROI beta-series');
+title(['mean ROI beta-series', ' ', outlierinfo]);
 
 function DisplayHistC(handles)
 axes(handles.axes3);

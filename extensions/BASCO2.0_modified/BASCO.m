@@ -84,7 +84,7 @@ drawnow;
 
 function pushbuttonopen_Callback(hObject, ~, handles)
 % load analysis object from file
-[file,path]=uigetfile('*.mat','MultiSelect','off');
+[file,path]=uigetfile('*.mat','MultiSelect','off','Load mat file','outest.mat');
 if isequal(file,0),disp('User Cancelled'); return; end
 str=sprintf('Reading file %s.',fullfile(path,file));
 handles.InfoText = WriteInfoBox(handles,str,true);
@@ -133,6 +133,7 @@ if sel==1
         NWM = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
     end
     str='Calculated correlation coefficients from beta-series.';
     handles.InfoText = WriteInfoBox(handles,str,true);
@@ -146,6 +147,7 @@ if sel==2
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
     end
     handles.InfoText = WriteInfoBox(handles,'Calculated Spearman correlation coefficients from beta-series.',true);
 end
@@ -168,12 +170,13 @@ if sel==4
         % ztrmax = abs(min(ztrbs'));
         ztrmax = max(abs(ztrbs'));
         inidx  = find(ztrmax<zthr);
-        fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d) \n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
+        fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d)\n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
         % handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
     end
     str='Calculated correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
@@ -193,6 +196,7 @@ if sel==5
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
     end
     str='Calculated correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
