@@ -1,4 +1,8 @@
 % Find anatomical location of a list of mni coordinates
+%
+% if no input, search TabDat that is table data structure extracted from
+% SPM results table (right click mouse)
+%
 % example: 
 % ([20 6 10; 30 9 12])
 % ([20 6 10])
@@ -9,6 +13,17 @@
 % wrapper of http://www.alivelearn.net/?p=1456 
 
 function main(varargin)
+    if nargin==0
+        try
+            varargin = evalin('base','TabDat');
+            varargin = varargin.dat(:,12);
+            varargin = {[varargin{:}]'};
+        catch
+            ez.pprint('Please extract table data structure from SPM results table to get ''TabDat''.');
+            return
+        end
+    end
+
     % if  [20 6 10]
     if iscellstr(varargin); varargin = {str2num(varargin{:})}; end;
     
