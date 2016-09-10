@@ -8,7 +8,7 @@ function result = main(crl,verbose,folder)
 %       verbose = 0/1, if true, print out roi info and display roi, default true
 %       folder, path to folder where ROI files will be saved, default pwd
 % Output:
-%       MNI_label_5mmsphere_x_y_z_roi.mat in the pwd (nii export could be tricky, because of voxel size)
+%       MNI_label_5mmsphere_x_y_z_roi.mat (nii export could be tricky, because of voxel size)
 %             Base space (default) is MNI: 2x2x2
 %             From image: choose an image to copy over the info (size, dim)
 %             ROI native: from ROI file info itself
@@ -100,7 +100,7 @@ if verbose,
 end % end if
 
 % output a text list of generated rois
-ROIs = cellstr(spm_select('List',pwd,['^MNI_.*mmsphere_.*_roi.mat']));
+ROIs = cellstr(spm_select('List',folder,['^MNI_.*mmsphere_.*_roi.mat']));
 ROIs = strrep(ROIs,'MNI_','');
 ROIs = regexprep(ROIs,'_\d{1,2}mmsphere_-?\d{1,2}_-?\d{1,2}_-?\d{1,2}_roi\.mat$','');
 ez.cell2csv(fullfile(folder,'ALLROINAMES.txt'),ROIs);

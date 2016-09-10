@@ -158,7 +158,8 @@ if sel==3
 end
 % outlier rejection
 if sel==4
-    zthr = 4.0; % z-thresjhold for outlier rejection
+    zthr = ez.Inputs({'z-threshold for outlier rejection'},{'3'},'z'); % z-threshold for outlier rejection
+    zthr = ez.num(zthr{1});
     for isubj=1:NumSubj
         bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
         NWMpre = corrcoef(bs);
@@ -179,7 +180,8 @@ if sel==4
 end
 % outlier rejection
 if sel==5
-    thr = 20; % z-thresjhold for outlier rejection
+    thr = ez.Inputs({'beta threshold for outlier rejection'},{'10'},'beta'); % z-threshold for outlier rejection
+    thr = ez.num(thr{1}); % beta thresjhold for outlier rejection
     for isubj=1:NumSubj
         bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
         NWMpre = corrcoef(bs);
