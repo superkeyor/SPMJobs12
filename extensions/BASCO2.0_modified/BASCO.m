@@ -160,16 +160,24 @@ if sel==3
 end
 % outlier rejection
 if sel==4
-    zthr = ez.Inputs({'z-threshold for outlier rejection'},{'3'},'z'); % z-threshold for outlier rejection
-    zthr = ez.num(zthr{1});
+    zthrs = ez.Inputs({'z-threshold(s) for outlier rejection'},{'3 3'},'z'); % z-threshold for outlier rejection
+    zthrs = ez.num(zthrs{1});
     for isubj=1:NumSubj
         bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
         NWMpre = corrcoef(bs);
         NWMpre = NWMpre-eye(size(NWMpre,1));
-        ztrbs  = (bs-repmat(mean(bs),size(bs,1),1))./repmat(std(bs),size(bs,1),1);
-        % ztrmax = abs(min(ztrbs'));
-        ztrmax = max(abs(ztrbs'));
-        inidx  = find(ztrmax<zthr);
+        
+        % multiple rounds of rejection
+        for zz = 1:length(zthrs)
+            zthr = zthrs(zz);
+            ztrbs  = (bs-repmat(nanmean(bs),size(bs,1),1))./repmat(nanstd(bs),size(bs,1),1);
+            % ztrmax = abs(min(ztrbs'));
+            ztrmax = nanmax(abs(ztrbs'));
+            inidx  = find(ztrmax>=zthr);
+            bs(inidx,:) = nan;
+        end
+        
+        inidx = find(~isnan(bs(:,1)));
         fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d)\n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
