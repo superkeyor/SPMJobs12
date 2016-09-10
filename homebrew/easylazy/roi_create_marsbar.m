@@ -1,4 +1,4 @@
-function result = main(crl,verbose)
+function result = main(crl,verbose,folder)
 % Input:
 %       crl: {coordinates1, radius1, label1;
 %             coordinates2, radius2, label2}
@@ -6,6 +6,7 @@ function result = main(crl,verbose)
 %            radius = 'sphere' radius of ROI in mm (>0)
 %            label = corresponds to each ROI 'leftROI'
 %       verbose = 0/1, if true, print out roi info and display roi, default true
+%       folder, path to folder where ROI files will be saved, default pwd
 % Output:
 %       MNI_label_5mmsphere_x_y_z_roi.mat in the pwd (nii export could be tricky, because of voxel size)
 %             Base space (default) is MNI: 2x2x2
@@ -33,6 +34,7 @@ labels = crl(:,3);
 
 if ischar(labels), labels = cellstr(labels); end
 if nargin<2, verbose = 1; end
+if nargin<3, folder = pwd; else ez.mkdir(folder); end
 
 result = cell(size(xyz,1),1);
 
@@ -45,16 +47,16 @@ sphere_label = ['MNI_' labels{i}, '_', num2str(sphere_radius) 'mmsphere'  '_' nu
 sphere_roi = label(sphere_roi, sphere_label);
 
 % save ROI as MarsBaR ROI file
-saveroi(sphere_roi, fullfile(sprintf('%s.mat', sphere_label)));
+saveroi(sphere_roi, fullfile(folder,sprintf('%s.mat', sphere_label)));
 % Save as image--tricky, see function help at the top of this file
 % save nii first to print some info, then delete the nii to avoid confusion
-save_as_image(sphere_roi, fullfile(sprintf('%s.nii', sphere_label)));
+save_as_image(sphere_roi, fullfile(folder,sprintf('%s.nii', sphere_label)));
 
 fprintf('ROI file created: %s\n\n', sphere_label);
 
 if verbose
 % output some useful info of the generated image
-outname = fullfile(sprintf('%s.nii', sphere_label));
+outname = fullfile(folder,sprintf('%s.nii', sphere_label));
 hdr_out = spm_vol(outname);
 type_out = spm_type(hdr_out.dt(1));
 values_out = spm_read_vols(hdr_out);
@@ -88,7 +90,7 @@ end % end if
 % remove nii
 ez.rm(outname);
 
-result{i,1} = fullfile(sprintf('%s.mat', sphere_label));
+result{i,1} = fullfile(folder,sprintf('%s.mat', sphere_label));
 ez.pprint('========================================================================\n');
 end % end for
 
@@ -101,7 +103,7 @@ end % end if
 ROIs = cellstr(spm_select('List',pwd,['^MNI_.*mmsphere_.*_roi.mat']));
 ROIs = strrep(ROIs,'MNI_','');
 ROIs = regexprep(ROIs,'_\d{1,2}mmsphere_-?\d{1,2}_-?\d{1,2}_-?\d{1,2}_roi\.mat$','');
-ez.cell2csv('ALLROINAMES.txt',ROIs);
+ez.cell2csv(fullfile(folder,'ALLROINAMES.txt'),ROIs);
 
 if length(result)==1, result=result{1}; end
 end % end function
