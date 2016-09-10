@@ -178,7 +178,7 @@ if sel==4
         end
         
         inidx = find(~isnan(bs(:,1)));
-        fprintf('Subject %d ===> rejected outlier (zscore > %.2f) : %d (%d)\n',isubj,zthr,size(bs,1)-length(inidx),size(bs,1));
+        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %d (%d)\n',isubj,mat2str(zthrs),size(bs,1)-length(inidx),size(bs,1));
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
         % handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
