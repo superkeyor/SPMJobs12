@@ -101,7 +101,9 @@ function pushbuttonsave_Callback(~, ~, handles)
 anaobj         = handles.anaobj;
 [name, folder] = uiputfile('*','Select folder and enter file name.');
 if isequal(name,0),disp('User Cancelled'); return; end
-if strcmp(name(end-3:end),'.mat'),name=name(1:end-4);end
+if length(name) >= 5
+    if strcmp(name(end-3:end),'.mat'),name=name(1:end-4);end
+end
 save(fullfile(folder,strcat(name,'.mat')),'anaobj');
 
 function pushbuttonhelp_Callback(~, ~, ~)
