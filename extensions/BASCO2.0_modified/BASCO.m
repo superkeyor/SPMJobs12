@@ -695,11 +695,6 @@ for isubj=1:handles.NumJobs % loop over subjects
     
     clear(sprintf('handles.anaobj{%d}.Ana{1}.BetaSeries',isubj));
     handles.anaobj{isubj}.Ana{1}.BetaSeries = newbs;
-    % correlation matrix
-    [NWM, Pmat ] = corrcoef(handles.anaobj{isubj}.Ana{1}.BetaSeries); % rows: time and columns: ROI
-    NWM = NWM-eye(size(NWM,1));
-    handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
-    handles.anaobj{isubj}.Ana{1}.MatrixP = Pmat;
 end % end loop over subjects
 
 handles.InfoText = WriteInfoBox(handles,sprintf('Selection performed: %s',answer{1}),true);
