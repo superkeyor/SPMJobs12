@@ -161,18 +161,26 @@ if sel==3
         NWMpre = corrcoef(bs);
         NWMpre = NWMpre-eye(size(NWMpre,1));
         
+        roiIndex = [];
         % multiple rounds of rejection
         for zz = 1:length(zthrs)
             zthr = zthrs(zz);
             ztrbs  = (bs-repmat(nanmean(bs),size(bs,1),1))./repmat(nanstd(bs),size(bs,1),1);
             % ztrmax = abs(min(ztrbs'));
-            ztrmax = nanmax(abs(ztrbs'));
+            [ztrmax, I] = nanmax(abs(ztrbs'));
             inidx  = find(ztrmax>=zthr);
             bs(inidx,:) = nan;
+            roiIndex = [roiIndex, I(inidx)];
         end
         
         inidx = find(~isnan(bs(:,1)));
-        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %d (%d) now min=%0.2f, max=%0.2f\n',isubj,mat2str(zthrs),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %d (%d); now min=%0.2f, max=%0.2f\n',isubj,mat2str(zthrs),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        if ~isempty(roiIndex)
+            % fprintf('\tOutlier ROIs: %s\n',mat2str(roiIndex));
+            [mostOutlierROINum, mostOutlierROIFreq] = mode(roiIndex);
+            mostOutlierROIName = handles.anaobj{isubj}.Ana{1}.Configure.ROI.Names{mostOutlierROINum};
+            ez.pprint(sprintf('\tROI %d (%s) has the most outliers (%d)',mostOutlierROINum,mostOutlierROIName,mostOutlierROIFreq));
+        end
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
