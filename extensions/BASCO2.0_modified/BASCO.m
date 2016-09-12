@@ -633,12 +633,6 @@ for isubj=1:handles.NumJobs
     bs = GetROIBetaSeries(SPMfile,cellstr(ROIFile),ROISummaryFunction);
     handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
     disp('... done.');
-    % correlation matrix
-    handles.InfoText = WriteInfoBox(handles,'Computing correlation matrix ...',true);
-    [NWM, Pmat] = corrcoef(handles.anaobj{isubj}.Ana{1}.BetaSeries); % rows: time and columns: ROI
-    handles.InfoText = WriteInfoBox(handles,'... done.',true);
-    handles.anaobj{isubj}.Ana{1}.Matrix  = NWM;
-    handles.anaobj{isubj}.Ana{1}.MatrixP = Pmat;
 end % end loop over subjects
 handles.InfoText = WriteInfoBox(handles,'Extracted beta-series.',true);
 guidata(hObject, handles);
