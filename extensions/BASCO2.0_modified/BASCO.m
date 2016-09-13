@@ -174,7 +174,7 @@ if sel==3
         end
         
         inidx = find(~isnan(bs(:,1)));
-        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %d (%d); now min=%0.2f, max=%0.2f\n',isubj,mat2str(zthrs),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d); now min=%0.2f, max=%0.2f\n',isubj,mat2str(zthrs),(size(bs,1)-length(inidx))/size(bs,1),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
         if ~isempty(roiIndex)
             % fprintf('\tOutlier ROIs: %s\n',mat2str(roiIndex));
             [mostOutlierROINum, mostOutlierROIFreq] = mode(roiIndex);
@@ -198,9 +198,17 @@ if sel==4
         bs     = handles.anaobj{isubj}.Ana{1}.BetaSeries; % (trials,rois)
         NWMpre = corrcoef(bs);
         NWMpre = NWMpre-eye(size(NWMpre,1));
-        trmax = max(abs(bs'));
-        inidx  = find(trmax<thr);
-        fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %d (%d) now min=%0.2f, max=%0.2f \n',isubj,thr,size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        [trmax, I] = max(abs(bs'));
+        inidx = find(trmax>=thr);
+        roiIndex = I(inidx);
+        inidx = find(trmax<thr);
+        fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %0.2f (%d/%d); now min=%0.2f, max=%0.2f \n',isubj,thr,(size(bs,1)-length(inidx))/size(bs,1),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        if ~isempty(roiIndex)
+            % fprintf('\tOutlier ROIs: %s\n',mat2str(roiIndex));
+            [mostOutlierROINum, mostOutlierROIFreq] = mode(roiIndex);
+            mostOutlierROIName = handles.anaobj{isubj}.Ana{1}.Configure.ROI.Names{mostOutlierROINum};
+            ez.pprint(sprintf('\tROI %d (%s) has the most outliers (%d)',mostOutlierROINum,mostOutlierROIName,mostOutlierROIFreq));
+        end
         [NWM, pNWM] = corrcoef(bs(inidx,:));
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
