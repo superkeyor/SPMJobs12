@@ -235,8 +235,8 @@ for i=1:handles.NumEdges
          counter = counter +1;
          strn1 = strtrim(handles.Names{handles.indexNode1(i)});
          strn2 = strtrim(handles.Names{handles.indexNode2(i)});
-         n1max = length(strn1);
-         n2max = length(strn2);
+         n1max = ez.len(strn1);
+         n2max = ez.len(strn2);
 %          if n1max>20
 %              n1max=20;
 %          end
@@ -299,7 +299,7 @@ if SEED==false
       hold on;
       hist(handles.Prob_ttest2,[0:0.02:1]);
     end
-    Nentr=length(handles.Prob);
+    Nentr=ez.len(handles.Prob);
 end
 if SEED==true
    if StatTest==3 % paired t-test   
@@ -311,7 +311,7 @@ if SEED==true
      hold on;
      hist(handles.Prob_ttest2_seed,[0:0.05:1]);
    end
-   Nentr=length(handles.Prob_seed);
+   Nentr=ez.len(handles.Prob_seed);
 end
 
 if get(handles.popupmenustattest,'Value')==3 
@@ -338,7 +338,7 @@ disp('<GrAnaEdges::RetrieveCorrelationCoefficients> : Retrieving correlation coe
 tic
 N      = handles.NumNodes;
 theind = find(triu(ones(N,N),1));
-results.NumEdges = length(theind);
+results.NumEdges = ez.len(theind);
 [ results.indexNode1 results.indexNode2 ] = ind2sub(N,theind);
 disp(sprintf('<GrAnaEdges::RetrieveCorrelationCoefficients> : Nodes %d ----- Edges %d (symmetric matrix)',N,results.NumEdges));
 [results.Amean results.Astd results.Aweights] = MeanCorrCoef(handles.ana{1},theind);
@@ -349,7 +349,7 @@ disp('<GrAnaEdges::RetrieveCorrelationCoefficients> : ... done.');
 function [themean, thestd, edgeweights] = MeanCorrCoef(anaobj,theind)
 % edgeweights(edge,subject)
 NumSubj = size(anaobj,2);
-edgeweights = zeros(length(theind),NumSubj); % correlation coefficients for different jobs
+edgeweights = zeros(ez.len(theind),NumSubj); % correlation coefficients for different jobs
 size(edgeweights)
 for idx=1:NumSubj % loop over jobs
     try
@@ -413,10 +413,10 @@ qcut  = str2double(get(handles.editFDR,'String'));
 SEED  = get(handles.checkboxseedbasedanalysis,'Value');
 if SEED==true
     p = handles.Prob_seed;
-    fprintf('Analysis restricted to single seed region. Number of statistical tests: %d \n',length(p));
+    fprintf('Analysis restricted to single seed region. Number of statistical tests: %d \n',ez.len(p));
 else
     p = handles.Prob; 
-    fprintf('Number of statistical tests: %d \n',length(p));
+    fprintf('Number of statistical tests: %d \n',ez.len(p));
 end
 
 if storey
@@ -432,7 +432,7 @@ else
     significant = mafdr_fdr<=qcut;
     padj        = max(p(find(mafdr_fdr<=qcut)));
     fprintf('=====>> FDR correction: q < %f \n',qcut);
-    if length(padj)==0
+    if ez.len(padj)==0
         disp('No node survived FDR correction.');
         return;
     else
@@ -450,12 +450,12 @@ q     = str2double(get(handles.editFDR,'String'));
 SEED  = get(handles.checkboxseedbasedanalysis,'Value');
 if SEED==true
     p = handles.Prob_seed;
-    fprintf('Analysis restricted to single seed region. Number of statistical tests: %d \n',length(p));
+    fprintf('Analysis restricted to single seed region. Number of statistical tests: %d \n',ez.len(p));
 else
     p = handles.Prob; 
-    fprintf('Number of statistical tests: %d \n',length(p));
+    fprintf('Number of statistical tests: %d \n',ez.len(p));
 end
-padj  = q/length(p);
+padj  = q/ez.len(p);
 set(handles.editprobcut,'String',num2str(padj));
 guidata(hObject, handles);
 Plot(handles);
@@ -481,12 +481,12 @@ if ~isfield(handles.ana{1}{1}.Ana{1}.Configure.ROI,'ROICOM')
         % roiname   = handles.ana{1}{1}.Ana{1}.Configure.ROI.Names{iroi};
         % theidx   = findstr(roiname,'_');
         % shortname(1)=roiname(1);
-        % if length(theidx)<3
+        % if ez.len(theidx)<3
         %     shortname(2)=roiname(2);
         %     shortname(3)=roiname(3);
         % end
         % for idx=theidx
-        %     shortname(length(shortname)+1) = roiname(idx+1);
+        %     shortname(ez.len(shortname)+1) = roiname(idx+1);
         % end
         % shortlabel{iroi} = shortname;
         % fprintf('%s -> %s \n',roiname,shortname);
@@ -507,14 +507,14 @@ rownames      = get(handles.tableedges,'RowName');
 columnnames   = get(handles.tableedges,'ColumnName');
 thedata       = get(handles.tableedges,'data');
 handles.Names = strtrim(handles.Names);
-numrows       = length(rownames);
+numrows       = ez.len(rownames);
 for irow=1:numrows
     htemp{irow} = textscan(rownames{irow},'%s <-> %s');
     idx1(irow)  = find(strcmp(handles.Names,char(htemp{irow}{1}))==1);
     idx2(irow)  = find(strcmp(handles.Names,char(htemp{irow}{2}))==1);
 end
 idx = unique([idx1 idx2]);
-numnodes = length(idx);
+numnodes = ez.len(idx);
 for inodes=1:numnodes
     disp(handles.Names{idx(inodes)});
 end
@@ -546,7 +546,7 @@ rownames      = get(handles.tableedges,'RowName');
 columnnames   = get(handles.tableedges,'ColumnName');
 thedata       = get(handles.tableedges,'data');
 handles.Names = strtrim(handles.Names);
-numrows       = length(rownames);
+numrows       = ez.len(rownames);
 for irow=1:numrows
     htemp{irow} = textscan(rownames{irow},'%s <-> %s');
     idx1(irow)  = find(strcmp(handles.Names,char(htemp{irow}{1}))==1);
@@ -564,7 +564,7 @@ function pushbuttonprinttable_Callback(hObject, eventdata, handles)
 % print table
 rownames = get(handles.tableedges,'RowName');
 thedata  = get(handles.tableedges,'data');
-numrows  = length(rownames);
+numrows  = ez.len(rownames);
 for irow=1:numrows
     htemp{irow} = textscan(rownames{irow},'%s <-> %s');
     roi1 = char(htemp{irow}{1});
@@ -573,8 +573,8 @@ for irow=1:numrows
     roi2 = strrep(roi2,'_',' ');
     stdroi1 = '                         ';
     stdroi2 = '                         ';
-    stdroi1(1:length(roi1)) = roi1;
-    stdroi2(1:length(roi2)) = roi2;
+    stdroi1(1:ez.len(roi1)) = roi1;
+    stdroi2(1:ez.len(roi2)) = roi2;
     col=size(thedata,2);
     fprintf('%s \t %s \t %.2f \t %.2f \t %.6f \n',stdroi1,stdroi2,thedata(irow,col-1),thedata(irow,col),thedata(irow,1)); 
 end

@@ -85,9 +85,9 @@ ylabel('probability');
 legend('condition 1','condition 2',sprintf('p=%f',thepth));
 
 therois = (pval1<thepth)|(pval2<thepth);
-fprintf('\n===> ROIs: %d of %d mean beta diff from zero (one-sample t-test)\n',nnz(therois),length(therois));
+fprintf('\n===> ROIs: %d of %d mean beta diff from zero (one-sample t-test)\n',nnz(therois),ez.len(therois));
 
-for i=1:length(therois)
+for i=1:ez.len(therois)
     if therois(i)==1
        fprintf('ROI %d  ->  %s \n',i,Names{i});
     end
@@ -113,7 +113,7 @@ for inode=1:NumNodes
 end
 fprintf('\nFound %d significant differences (alpha-value = %f => %f expected, paired t-test).\n',Nsig,thepth,thepth*NumNodes);
 % print details
-for inode=1:length(h)
+for inode=1:ez.len(h)
    if h(inode)==1
        fprintf('ROI %d -> %s : p=%f \n',inode,Names{inode},pval(inode));
    end
@@ -160,7 +160,7 @@ end
 
 function theindices = Condition2Indices(anaobj,thecond)
 theindices = [];
-NumCond    = length(thecond);
+NumCond    = ez.len(thecond);
 for icond=1:NumCond
     theindices = [theindices anaobj.Ana{1}.AnaDef.RegCondVec{thecond(icond)}];
 end
@@ -173,7 +173,7 @@ if hrfderivs(1)==0 && hrfderivs(2)==0
 end
 if hrfderivs(1)==1 && hrfderivs(2)==0
     X = anaobj.Ana{1}.AnaDef.X; % design (runs,regressors)
-    for itrial=1:length(theindices)
+    for itrial=1:ez.len(theindices)
         idx   = theindices(itrial);
         beta1 = bs(idx);
         beta2 = bs(idx+1);
@@ -182,7 +182,7 @@ if hrfderivs(1)==1 && hrfderivs(2)==0
 end
 if hrfderivs(1)==1 && hrfderivs(2)==1 % fix me!
     X = anaobj.Ana{1}.AnaDef.X; % design (runs,regressors)
-    for itrial=1:length(theindices)
+    for itrial=1:ez.len(theindices)
         idx   = theindices(itrial);
         beta1 = bs(idx);
         beta2 = bs(idx+1);

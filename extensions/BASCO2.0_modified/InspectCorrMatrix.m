@@ -68,7 +68,7 @@ function edittextcut_Callback(hObject, eventdata, handles)
 value = str2num(get(hObject,'String'));
 set(handles.edittextcut,'String',num2str(value));
 set(handles.slidercut,'Value',value);
-for isubj=1:length(handles.anaobj)
+for isubj=1:ez.len(handles.anaobj)
     handles.anaobj{isubj}.Ana{1}.Cut = value;
 end
 DisplayMatrix(handles);
@@ -166,7 +166,7 @@ xlabel('correlation coefficient');
 ylabel('number');
 
 bs = handles.anaobj{handles.CurrentJob}.Ana{1}.BetaSeries;
-nallbetas = length(bs);
+nallbetas = size(bs,1);
 try
     inidx = handles.anaobj{handles.CurrentJob}.Ana{1}.NonOutliers;
     if ~isempty(inidx),bs = bs(inidx,:);end
@@ -181,7 +181,7 @@ title(['mean ROI beta-series', ' ', outlierinfo]);
 function DisplayHistC(handles)
 axes(handles.axes3);
 GM = [];
-for i=1:length(handles.anaobj{handles.CurrentJob}.GlobalMean)
+for i=1:ez.len(handles.anaobj{handles.CurrentJob}.GlobalMean)
   GM = [GM handles.anaobj{handles.CurrentJob}.GlobalMean{i}'];
 end
 plot(GM);
@@ -342,7 +342,7 @@ X = [SPM.xX.X];
 %ylabel('scans');
 
 [NumScans, NumRegr] = size(X);
-Nruns    = length(SPM.Sess);
+Nruns    = ez.len(SPM.Sess);
 NScan    = NumScans/Nruns;                             % number of scans per run
 Ncondvec = str2num(SPM.xsDes.Trials_per_session);      % number of trials per session
 Ncond    = Ncondvec(1);

@@ -3,7 +3,7 @@ if nnz(selection)==0
     disp('No nodes selected.');
     return;
 end
-NumROIs = length(selection);
+NumROIs = ez.len(selection);
 k=0;
 for j=1:NumROIs,
     if selection(j)==1

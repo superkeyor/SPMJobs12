@@ -135,7 +135,7 @@ idx1 = round(idx1);
 idx2 = round(idx2);
 axes(handles.axes);
 
-nallbetas = length(handles.anaobj{handles.CurrentJob}.Ana{currentana}.BetaSeries);
+nallbetas = size(handles.anaobj{handles.CurrentJob}.Ana{currentana}.BetaSeries,1);
 outlierinfo = sprintf('%d betas, %d rois, %d beta outliers rejected',size(bs,1),size(bs,2),nallbetas-size(bs,1));
 set(handles.outlierinfo,'String',outlierinfo);
   
@@ -200,7 +200,7 @@ if val==true
   inidx  = find(ztrmax<zthr);
   [rho1,pval1] = corr(bs1,bs2);
   [rho2,pval2] = corr(bs1(inidx),bs2(inidx));
-  fprintf('ScatterPlot Rejected outlier (%.2f --- %d): %.2f -> %.2f \n',zthr,length(bs1)-length(inidx),rho1,rho2);
+  fprintf('ScatterPlot Rejected outlier (%.2f --- %d): %.2f -> %.2f \n',zthr,size(bs1,1)-ez.len(inidx),rho1,rho2);
   
 end
 

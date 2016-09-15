@@ -100,7 +100,7 @@ function pushbuttonsave_Callback(~, ~, handles)
 anaobj         = handles.anaobj;
 [name, folder] = uiputfile('*','Select folder and enter file name.');
 if isequal(name,0),disp('User Cancelled'); return; end
-if length(name) >= 5
+if ez.len(name) >= 5
     if strcmp(name(end-3:end),'.mat'),name=name(1:end-4);end
 end
 save(fullfile(folder,strcat(name,'.mat')),'anaobj');
@@ -163,7 +163,7 @@ if sel==3
         
         roiIndex = [];
         % multiple rounds of rejection
-        for zz = 1:length(zthrs)
+        for zz = 1:ez.len(zthrs)
             zthr = zthrs(zz);
             ztrbs  = (bs-repmat(nanmean(bs),size(bs,1),1))./repmat(nanstd(bs),size(bs,1),1);
             % ztrmax = abs(min(ztrbs'));
@@ -174,7 +174,7 @@ if sel==3
         end
         
         inidx = find(~isnan(bs(:,1)));
-        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d); now min=%0.2f, max=%0.2f\n',isubj,mat2str(zthrs),(size(bs,1)-length(inidx))/size(bs,1),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        fprintf('Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d); now min=%0.2f, max=%0.2f\n',isubj,mat2str(zthrs),(size(bs,1)-ez.len(inidx))/size(bs,1),size(bs,1)-ez.len(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
         if ~isempty(roiIndex)
             % fprintf('\tOutlier ROIs: %s\n',mat2str(roiIndex));
             [mostOutlierROINum, mostOutlierROIFreq] = mode(roiIndex);
@@ -202,7 +202,7 @@ if sel==4
         inidx = find(trmax>=thr);
         roiIndex = I(inidx);
         inidx = find(trmax<thr);
-        fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %0.2f (%d/%d); now min=%0.2f, max=%0.2f \n',isubj,thr,(size(bs,1)-length(inidx))/size(bs,1),size(bs,1)-length(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
+        fprintf('Subject %d ===> rejected outlier (beta > %.2f) : %0.2f (%d/%d); now min=%0.2f, max=%0.2f \n',isubj,thr,(size(bs,1)-ez.len(inidx))/size(bs,1),size(bs,1)-ez.len(inidx),size(bs,1), min(min(bs(inidx,:))), max(max(bs(inidx,:))));
         if ~isempty(roiIndex)
             % fprintf('\tOutlier ROIs: %s\n',mat2str(roiIndex));
             [mostOutlierROINum, mostOutlierROIFreq] = mode(roiIndex);
@@ -462,7 +462,7 @@ for isubj=1:NumSubj % loop over subjects  %%%%%%%%%%%%%%%%%%%%%
             '^beta_.{4}\..{3}$','^con_.{4}\..{3}$','^ResI_.{4}\..{3}$',...
             '^ess_.{4}\..{3}$', '^spm\w{1}_.{4}\..{3}$', 'SPM.mat'};
 
-        for i=1:length(files)
+        for i=1:ez.len(files)
             j = spm_select('FPList',fullfile(data_path,AnaDef.OutDir),files{i});
             for k=1:size(j,1)
                 spm_unlink(deblank(j(k,:)));
@@ -677,7 +677,7 @@ function pushbuttonselectconditions_Callback(hObject, eventdata, handles)
 % prompt    = { 'Select condition' };
 allconds =  handles.anaobj{1}.Ana{1}.AnaDef.Cond;
 prompt = '';
-for cc = 1:length(allconds)
+for cc = 1:ez.len(allconds)
     prompt = [prompt num2str(cc) '\t' allconds{cc} '\t:\n'];
 end
 prompt = sprintf(prompt);
@@ -725,7 +725,7 @@ guidata(hObject, handles);
 
 function theindices = Condition2Indices(anaobj,thecond)
 theindices = [];
-NumCond    = length(thecond);
+NumCond    = ez.len(thecond);
 for icond=1:NumCond
     theindices = [theindices anaobj.Ana{1}.AnaDef.RegCondVec{thecond(icond)}];
 end
@@ -738,7 +738,7 @@ if hrfderivs(1)==0 && hrfderivs(2)==0
 end
 if hrfderivs(1)==1 && hrfderivs(2)==0
     X = anaobj.Ana{1}.AnaDef.X; % design (runs,regressors)
-    for itrial=1:length(theindices)
+    for itrial=1:ez.len(theindices)
         idx   = theindices(itrial);
         beta1 = bs(idx);
         beta2 = bs(idx+1);
@@ -747,7 +747,7 @@ if hrfderivs(1)==1 && hrfderivs(2)==0
 end
 if hrfderivs(1)==1 && hrfderivs(2)==1 % fix me!
     X = anaobj.Ana{1}.AnaDef.X; % design (runs,regressors)
-    for itrial=1:length(theindices)
+    for itrial=1:ez.len(theindices)
         idx   = theindices(itrial);
         beta1 = bs(idx);
         beta2 = bs(idx+1);
@@ -823,7 +823,7 @@ switch selected
         prompt = {'Select subjects.'};
         dlg_title = 'Select subjects';
         num_lines = 1;
-        def = {sprintf('1:%d',length(handles.anaobj))};
+        def = {sprintf('1:%d',ez.len(handles.anaobj))};
         answer = inputdlg(prompt,dlg_title,num_lines,def);
         if isempty(answer),disp('User Cancelled'); return; end
         idx = str2num(answer{1});
@@ -835,7 +835,7 @@ switch selected
         end
         clear('handles.anaobj');
         handles.anaobj = newanaobj;
-        handles.NumJobs = length(handles.anaobj);
+        handles.NumJobs = ez.len(handles.anaobj);
         handles.InfoText = WriteInfoBox(handles,sprintf('Selected %d subjects.\n',handles.NumJobs),true);
         guidata(hObject, handles);
     case 8
@@ -1034,7 +1034,7 @@ drawnow;
 [voxelbs]            = EstimateModelOnROI(handles,isubj,ROIfile,SumFunc,thecond);
 [seedroimeanbs_cond] = MeanROIBetaSeries(handles,isubj,ROIfile,thecond);
 figure('Name','');
-plot([1:1:length(voxelbs)],voxelbs,'b-+',[1:1:length(seedroimeanbs_cond)],seedroimeanbs_cond,'r-+');
+plot([1:1:ez.len(voxelbs)],voxelbs,'b-+',[1:1:ez.len(seedroimeanbs_cond)],seedroimeanbs_cond,'r-+');
 xlabel('trial');
 ylabel('beta-value');
 title('beta-series seed-ROI (model estimated on ROI level)');
@@ -1097,7 +1097,7 @@ if thetest==2
     thedir = uigetdir(pwd,'Select output directory');
     if isequal(thedir,0),disp('User Cancelled'); return; end
     load(fullfile(anapath,file{1}))
-    NumSubj1  = length(anaobj);
+    NumSubj1  = ez.len(anaobj);
     thefiles1 = cell(1,NumSubj1);
     cd(fullfile(anaobj{1}.Ana{1}.AnaDef.DataPath,anaobj{1}.Ana{1}.AnaDef.OutDir));
     [fname,path] = uigetfile({'*.img';'*.nii'},'Select correlation/degree map','MultiSelect','off');
@@ -1108,7 +1108,7 @@ if thetest==2
         thefiles1{isubj} = fullfile(data_path,outdirname,fname);
     end % end loop over subjects
     load(fullfile(anapath,file{2}));
-    NumSubj2  = length(anaobj);
+    NumSubj2  = ez.len(anaobj);
     thefiles2 = cell(1,NumSubj2);
     for isubj=1:NumSubj2 % loop over subjects
         data_path  = anaobj{isubj}.Ana{1}.AnaDef.DataPath;
@@ -1243,7 +1243,7 @@ thecond    = str2num(get(handles.editconditionrissman,'String'));
 SPMfile    = fullfile(data_path,outdirname,'SPM.mat');
 fprintf('Retrieving design for subject %d from SPM file: %s \n',isubj,SPMfile);
 bs = GetROIBetaSeries(SPMfile,ROIfile,ROISummaryFunction);
-str = sprintf('Number of beta-values: %d',length(bs));
+str = sprintf('Number of beta-values: %d',ez.len(bs));
 handles.InfoText = WriteInfoBox(handles,str,true);
 voxelbs_cond = CondSelBS(handles.anaobj{isubj},thecond,bs);
 
@@ -1310,7 +1310,7 @@ if use_mask==1
     maskvec(find(~maskvec)) = nan;
 end
 
-for jcond=1:length(thecondv)
+for jcond=1:ez.len(thecondv)
     thecond = thecondv(jcond);
     
     str=sprintf('===> Condition %d <===',thecond);

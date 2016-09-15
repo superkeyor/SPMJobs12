@@ -10,7 +10,7 @@ if ~iscell(ROIfile)
     E  = estimate(D,Y); % estimate model based on ROI summary
     bs = betas(E); % retrieve estimated beta-values
 else
-    for iROI=1:length(ROIfile) % loop over ROIs
+    for iROI=1:ez.len(ROIfile) % loop over ROIs
         b = GetROIBetaSeries(SPMfile,ROIfile{iROI},ROISummaryFunction);
         bs(:,iROI) = b; % matrix of beta-values: (rows: beta-values,columns: ROI)        
     end % end loop over ROIs

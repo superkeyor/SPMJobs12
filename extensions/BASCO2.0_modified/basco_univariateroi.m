@@ -25,7 +25,7 @@ ui_plot(Y,'all');
 ts = spm_filter(SPM.xX.K,ts); % high pass filtering
 [NumScans, NumRegr] = size(X);
 NumRegr = size(b,1);
-Nruns = length(SPM.Sess);
+Nruns = ez.len(SPM.Sess);
 NScan = NumScans/Nruns;                             % number of scans per run
 Ncondvec = str2num(SPM.xsDes.Trials_per_session);   % number of trials per session
 Ncond = Ncondvec(1);
