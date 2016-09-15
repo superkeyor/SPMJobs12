@@ -674,11 +674,18 @@ end
 InspectCorrMatrix(handles.anaobj);
 
 function pushbuttonselectconditions_Callback(hObject, eventdata, handles)
-prompt    = { 'Select condition' };
+% prompt    = { 'Select condition' };
+allconds =  handles.anaobj{1}.Ana{1}.AnaDef.Cond;
+prompt = '';
+for cc = 1:length(allconds)
+    prompt = [prompt num2str(cc) '\t' allconds{cc} '\t:\n'];
+end
+prompt = sprintf(prompt);
+    
 dlg_title = 'Select condition';
 num_lines = 1;
 def       = { '1' };
-answer    = inputdlg(prompt,dlg_title,num_lines,def);
+answer    = inputdlg(prompt,dlg_title,num_lines,def,'on');
 if isempty(answer),disp('User Cancelled'); return; end
 thecond   = str2num(answer{1});
 NumCond   = size(thecond,2);
