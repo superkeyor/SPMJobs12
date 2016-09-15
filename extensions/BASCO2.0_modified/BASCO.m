@@ -681,7 +681,7 @@ for cc = 1:length(allconds)
     prompt = [prompt num2str(cc) '\t' allconds{cc} '\t:\n'];
 end
 prompt = sprintf(prompt);
-    
+fprintf(prompt);    
 dlg_title = 'Select condition';
 num_lines = 1;
 def       = { '1' };
