@@ -648,6 +648,11 @@ for isubj=1:handles.NumJobs
     ROISummaryFunction = handles.anaobj{isubj}.Ana{1}.AnaDef.ROISummaryFunction;
     bs = GetROIBetaSeries(SPMfile,cellstr(ROIFile),ROISummaryFunction);
     handles.anaobj{isubj}.Ana{1}.BetaSeries  = bs;  % rows: beta-value and columns: ROIs
+    
+    if isfield(handles.anaobj{isubj}.Ana{1},'Matrix'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'Matrix');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'MatrixP'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixP');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'NonOutliers'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'NonOutliers');end
+
     disp('... done.');
 end % end loop over subjects
 handles.InfoText = WriteInfoBox(handles,'Extracted beta-series.',true);
@@ -718,6 +723,10 @@ for isubj=1:handles.NumJobs % loop over subjects
     
     clear(sprintf('handles.anaobj{%d}.Ana{1}.BetaSeries',isubj));
     handles.anaobj{isubj}.Ana{1}.BetaSeries = newbs;
+    
+    if isfield(handles.anaobj{isubj}.Ana{1},'Matrix'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'Matrix');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'MatrixP'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixP');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'NonOutliers'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'NonOutliers');end
 end % end loop over subjects
 
 handles.InfoText = WriteInfoBox(handles,sprintf('Selection performed: %s',answer{1}),true);
