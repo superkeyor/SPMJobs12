@@ -117,6 +117,7 @@ end
 str=sprintf('Number of subjects: %d',handles.NumJobs);
 handles.InfoText = WriteInfoBox(handles,str,true);
 disp(handles.anaobj{1});
+fprintf('Showing the first subject as an example...\n');
 disp(handles.anaobj{1}.Ana{1});
 guidata(hObject, handles);
 
@@ -135,6 +136,7 @@ if sel==1
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
         handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
+        handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = '';
     end
     str='Calculated correlation coefficients from beta-series.';
     handles.InfoText = WriteInfoBox(handles,str,true);
@@ -149,6 +151,7 @@ if sel==2
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
         handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
+        handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = '';
     end
     handles.InfoText = WriteInfoBox(handles,'Calculated Spearman correlation coefficients from beta-series.',true);
 end
@@ -186,6 +189,7 @@ if sel==3
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
         handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
+        handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = sprintf('zscore > %s',mat2str(zthrs));
     end
     str='Calculated correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
@@ -214,6 +218,7 @@ if sel==4
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
         handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
+        handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = sprintf('beta > %.2f',thr);
     end
     str='Calculated correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
@@ -652,6 +657,7 @@ for isubj=1:handles.NumJobs
     if isfield(handles.anaobj{isubj}.Ana{1},'Matrix'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'Matrix');end
     if isfield(handles.anaobj{isubj}.Ana{1},'MatrixP'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixP');end
     if isfield(handles.anaobj{isubj}.Ana{1},'NonOutliers'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'NonOutliers');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod');end
 
     disp('... done.');
 end % end loop over subjects
@@ -727,6 +733,8 @@ for isubj=1:handles.NumJobs % loop over subjects
     if isfield(handles.anaobj{isubj}.Ana{1},'Matrix'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'Matrix');end
     if isfield(handles.anaobj{isubj}.Ana{1},'MatrixP'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixP');end
     if isfield(handles.anaobj{isubj}.Ana{1},'NonOutliers'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'NonOutliers');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod');end
+
 end % end loop over subjects
 
 handles.InfoText = WriteInfoBox(handles,sprintf('Selection performed: %s',answer{1}),true);
