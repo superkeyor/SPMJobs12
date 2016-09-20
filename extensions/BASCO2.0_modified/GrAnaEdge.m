@@ -385,7 +385,7 @@ if StatTest==2 % paired t-test
     results.Prob = Prob_pairedttest;
 end
 if StatTest==3 % permutation two-sample t test
-     fprintf('<GrAnaEdges::PerformStatisticalTests> : Performing permutation test. Number of permutations: %d \n',Num);
+     fprintf('<GrAnaEdges::PerformStatisticalTests> : Performing two-sample permutation test. Number of permutations: %d \n',Num);
      Prob_perm    = mattest(Amat,Bmat,'Permute',Num); % permutation test
      results.Prob = Prob_perm';
 end
