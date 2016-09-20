@@ -142,6 +142,7 @@ if sel==1
         NWM = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.MatrixMethod = 'Pearson';
         handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = '';
     end
@@ -157,6 +158,7 @@ if sel==2
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.MatrixMethod = 'Spearman';
         handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = '';
     end
@@ -195,6 +197,7 @@ if sel==3
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.MatrixMethod = 'Pearson';
         handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = sprintf('zscore > %s',mat2str(zthrs));
     end
@@ -224,6 +227,7 @@ if sel==4
         NWM         = NWM-eye(size(NWM,1));
         handles.anaobj{isubj}.Ana{1}.Matrix  = atanh(NWM);
         handles.anaobj{isubj}.Ana{1}.MatrixP = pNWM;
+        handles.anaobj{isubj}.Ana{1}.MatrixMethod = 'Pearson';
         handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = sprintf('beta > %.2f',thr);
     end
@@ -665,6 +669,7 @@ for isubj=1:handles.NumJobs
     if isfield(handles.anaobj{isubj}.Ana{1},'MatrixP'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixP');end
     if isfield(handles.anaobj{isubj}.Ana{1},'NonOutliers'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'NonOutliers');end
     if isfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'MatrixMethod'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixMethod');end
 
     disp('... done.');
 end % end loop over subjects
@@ -741,6 +746,7 @@ for isubj=1:handles.NumJobs % loop over subjects
     if isfield(handles.anaobj{isubj}.Ana{1},'MatrixP'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixP');end
     if isfield(handles.anaobj{isubj}.Ana{1},'NonOutliers'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'NonOutliers');end
     if isfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'OutlierRejMethod');end
+    if isfield(handles.anaobj{isubj}.Ana{1},'MatrixMethod'),handles.anaobj{isubj}.Ana{1}=rmfield(handles.anaobj{isubj}.Ana{1},'MatrixMethod');end
 
 end % end loop over subjects
 
