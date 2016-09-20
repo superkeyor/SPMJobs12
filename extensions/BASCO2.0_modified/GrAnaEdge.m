@@ -58,11 +58,11 @@ handles.Prob             = result.Prob;
 handles.Prob_ttest2      = result.Prob_ttest2;
 
 % configure popupmenus
-list{1}='two-sample t-test'; 
+list{1}='two-sample two-sided t-test'; 
 list{2}='paired t-test';
-list{3}='permutation test';
-list{4}='one-sided +';
-list{5}='one-sided -';
+list{3}='two-sample permutation test';
+list{4}='two-sample one-sided +';
+list{5}='two-sample one-sided -';
 set(handles.popupmenustattest,'String',list);
 Names = handles.ana{1}{1}.Ana{1}.Configure.ROI.Names;
 set(handles.popupmenuselectseedregion,'String',Names);
@@ -244,10 +244,11 @@ for i=1:handles.NumEdges
 %              n2max=20;
 %          end        
          Edgenames(counter)   = cellstr(sprintf('%s <-> %s',strn1(1:n1max),strn2(1:n2max)));
-         if StatTest==3
-           tableData(counter,1) = handles.Prob(i);
-           tableData(counter,2) = handles.Amean(i);
-           tableData(counter,3) = handles.Bmean(i);  
+         if StatTest==2
+           tableData(counter,1) = handles.Prob_ttest2(i);
+           tableData(counter,2) = handles.Prob(i);
+           tableData(counter,3) = handles.Amean(i);
+           tableData(counter,4) = handles.Bmean(i);
          else
            tableData(counter,1) = handles.Prob_ttest2(i);
            tableData(counter,2) = handles.Prob(i);
@@ -260,11 +261,9 @@ end
 % display table with edges which are significantly different
 if counter>0
   set(handles.tableedges,'RowName',cell(Edgenames));
-  if get(handles.popupmenustattest,'Value')==3
-      columnHeaders = {'paired t-test',handles.leg{1},handles.leg{2}}; 
-  else
-      columnHeaders = {'t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}};
-  end
+
+  columnHeaders = {'two-sample two-sided t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}};
+
   set(handles.tableedges,'ColumnName',columnHeaders);
   set(handles.tableedges,'data',tableData);
 else
@@ -274,7 +273,7 @@ else
   tableData(1,3) = 0;
   tableData(1,4) = 0; 
   set(handles.tableedges,'RowName',cell(Edgenames));
-  columnHeaders = {'t-test','bootstrapping',handles.leg{1},handles.leg{2}}; 
+  columnHeaders = {'two-sample two-sided t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}}; 
   set(handles.tableedges,'ColumnName',columnHeaders);
   set(handles.tableedges,'data',tableData);  
 end
@@ -290,7 +289,7 @@ end
 figure(handles.figure1);
 subplot(1,1,1,'Parent',handles.uipanelprob);
 if SEED==false
-    if StatTest==3 % paired t-test
+    if StatTest==2 % paired t-test
       hold off;
       hist(handles.Prob,[0:0.02:1]);  
     else
@@ -302,7 +301,7 @@ if SEED==false
     Nentr=ez.len(handles.Prob);
 end
 if SEED==true
-   if StatTest==3 % paired t-test   
+   if StatTest==2 % paired t-test   
      hold off;
      hist(handles.Prob_seed,[0:0.02:1]);    
    else    
@@ -314,7 +313,7 @@ if SEED==true
    Nentr=ez.len(handles.Prob_seed);
 end
 
-if get(handles.popupmenustattest,'Value')==3 
+if get(handles.popupmenustattest,'Value')==2 
   title('p distribution');
   ylabel('number of edges');
   xlabel('probability');
@@ -325,7 +324,7 @@ else
   title(sprintf('p distribution group differences (A vs B) (%d)',Nentr));
   ylabel('number of edges');
   xlabel('probability');
-  legend({StatStr{StatTest},'two-sample t-test'},'Interpreter', 'none');
+  legend({StatStr{StatTest},'two-sample two-sided t-test'},'Interpreter', 'none');
 end
 
 
@@ -370,7 +369,7 @@ function results = PerformStatisticalTests(Amat,Bmat,Num,StatTest)
 % input: matrix (rows: edges, columns: subjects)
 disp('<GrAnaEdges::PerformStatisticalTests> : Statistical test for group differences ...');
 tic
-Prob_ttest2              = mattest(Amat,Bmat); % two-tailed two-sample t-test
+Prob_ttest2              = mattest(Amat,Bmat); % two-tailed two-sample t-test assuming unequal variance, call ttest2(X1, X2, [],[],'unequal',2)
 results.Prob_ttest2      = Prob_ttest2';
 results.Prob             = Prob_ttest2';
 if StatTest==2 % paired t-test
@@ -385,7 +384,7 @@ if StatTest==2 % paired t-test
     end
     results.Prob = Prob_pairedttest;
 end
-if StatTest==3 % permutation test
+if StatTest==3 % permutation two-sample t test
      fprintf('<GrAnaEdges::PerformStatisticalTests> : Performing permutation test. Number of permutations: %d \n',Num);
      Prob_perm    = mattest(Amat,Bmat,'Permute',Num); % permutation test
      results.Prob = Prob_perm';
