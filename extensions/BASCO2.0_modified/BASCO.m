@@ -145,8 +145,9 @@ if sel==1
         handles.anaobj{isubj}.Ana{1}.MatrixMethod = 'Pearson';
         handles.anaobj{isubj}.Ana{1}.NonOutliers = [];
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = '';
+        fprintf('Subject %d ===> %d betas, min=%0.2f, max=%0.2f \n',isubj, size(BS,1), min(min(BS(:,:))), max(max(BS(:,:))));
     end
-    str='Calculated correlation coefficients from beta-series.';
+    str='Calculated Pearson correlation coefficients from beta-series.';
     handles.InfoText = WriteInfoBox(handles,str,true);
 end
 % Spearman correlation coefficients
@@ -201,7 +202,7 @@ if sel==3
         handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = sprintf('zscore > %s',mat2str(zthrs));
     end
-    str='Calculated correlation coefficients from beta-series (outlier rejection).';
+    str='Calculated Pearson correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
 end
 % outlier rejection
@@ -231,7 +232,7 @@ if sel==4
         handles.anaobj{isubj}.Ana{1}.NonOutliers = inidx;
         handles.anaobj{isubj}.Ana{1}.OutlierRejMethod = sprintf('beta > %.2f',thr);
     end
-    str='Calculated correlation coefficients from beta-series (outlier rejection).';
+    str='Calculated Pearson correlation coefficients from beta-series (outlier rejection).';
     handles.InfoText = WriteInfoBox(handles,str,true);
 end
 guidata(hObject, handles);
@@ -714,10 +715,10 @@ thecond   = str2num(answer{1});
 NumCond   = size(thecond,2);
 hrfderivs = handles.anaobj{1}.Ana{1}.AnaDef.HRFDERIVS; % regressors for temporal derivatives?
 if isfield(handles.anaobj{1}.Ana{1},'BetaSeriesFull')==true
-    handles.InfoText = WriteInfoBox(handles,'Reverting previous selection of beta-series.',true);
+    handles.InfoText = WriteInfoBox(handles,'Reverting previous selection of beta-series...',true);
     for isubj=1:handles.NumJobs % loop over subjects
         handles.anaobj{isubj}.Ana{1}.BetaSeries = handles.anaobj{isubj}.Ana{1}.BetaSeriesFull; % restore beta-series
-        size(handles.anaobj{isubj}.Ana{1}.BetaSeries)
+        size(handles.anaobj{isubj}.Ana{1}.BetaSeries);
     end
     handles.InfoText = WriteInfoBox(handles,'... done.',true);
 end
@@ -732,7 +733,7 @@ for isubj=1:handles.NumJobs % loop over subjects
     %
     theindices = Condition2Indices(handles.anaobj{isubj},thecond);
     handles.anaobj{isubj}.Ana{1}.ConditionIndices = theindices; % store indices
-    theindices
+    theindices;
     clear('bs','newbs');
     bs=handles.anaobj{isubj}.Ana{1}.BetaSeries;
     for inode=1:size(bs,2)
