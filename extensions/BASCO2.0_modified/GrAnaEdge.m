@@ -355,7 +355,7 @@ function [themean, thestd, edgeweights] = MeanCorrCoef(anaobj,theind)
 % edgeweights(edge,subject)
 NumSubj = size(anaobj,2);
 edgeweights = zeros(ez.len(theind),NumSubj); % correlation coefficients for different jobs
-size(edgeweights)
+size(edgeweights);
 for idx=1:NumSubj % loop over jobs
     try
       edgeweights(:,idx) = anaobj{idx}.Ana{1}.Matrix(theind)';  
