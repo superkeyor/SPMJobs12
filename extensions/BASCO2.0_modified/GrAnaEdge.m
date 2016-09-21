@@ -245,10 +245,10 @@ for i=1:handles.NumEdges
 %          end        
          Edgenames(counter)   = cellstr(sprintf('%s <-> %s',strn1(1:n1max),strn2(1:n2max)));
          if StatTest==2
-           tableData(counter,1) = handles.Prob_ttest2(i);
-           tableData(counter,2) = handles.Prob(i);
-           tableData(counter,3) = handles.Amean(i);
-           tableData(counter,4) = handles.Bmean(i);
+
+           tableData(counter,1) = handles.Prob(i);
+           tableData(counter,2) = handles.Amean(i);
+           tableData(counter,3) = handles.Bmean(i);
          else
            tableData(counter,1) = handles.Prob_ttest2(i);
            tableData(counter,2) = handles.Prob(i);
@@ -262,8 +262,12 @@ end
 if counter>0
   set(handles.tableedges,'RowName',cell(Edgenames));
 
-  columnHeaders = {'two-sample two-sided t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}};
-
+  if get(handles.popupmenustattest,'Value')==2
+      columnHeaders = {StatStr{StatTest},handles.leg{1},handles.leg{2}}; 
+  else
+      columnHeaders = {'two-sample two-sided t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}};
+  end
+  
   set(handles.tableedges,'ColumnName',columnHeaders);
   set(handles.tableedges,'data',tableData);
 else
@@ -292,6 +296,7 @@ if SEED==false
     if StatTest==2 % paired t-test
       hold off;
       hist(handles.Prob,[0:0.02:1]);  
+
     else
       hold off;
       hist(handles.Prob,[0:0.02:1]);
@@ -303,12 +308,13 @@ end
 if SEED==true
    if StatTest==2 % paired t-test   
      hold off;
-     hist(handles.Prob_seed,[0:0.02:1]);    
+     hist(handles.Prob_seed,[0:0.02:1]);   
+
    else    
      hold off;  
-     hist(handles.Prob_seed,[0:0.05:1]);
+     hist(handles.Prob_seed,[0:0.02:1]);
      hold on;
-     hist(handles.Prob_ttest2_seed,[0:0.05:1]);
+     hist(handles.Prob_ttest2_seed,[0:0.02:1]);
    end
    Nentr=ez.len(handles.Prob_seed);
 end
