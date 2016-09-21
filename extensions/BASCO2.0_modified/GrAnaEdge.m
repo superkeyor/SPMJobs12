@@ -367,7 +367,7 @@ thestd  = std(edgeweights');
 
 function results = PerformStatisticalTests(Amat,Bmat,Num,StatTest)
 % input: matrix (rows: edges, columns: subjects)
-fprintf('\n');
+ez.pprint('=============================================================');
 tic
 disp('<GrAnaEdges::PerformStatisticalTests> : Performing two-tailed two-sample t-test assuming unequal variance...');
 Prob_ttest2              = mattest(Amat,Bmat); % two-tailed two-sample t-test assuming unequal variance, call ttest2(X1, X2, [],[],'unequal',2)
@@ -402,7 +402,7 @@ if StatTest==5 % one-sided test
 end
 toc
 disp('<GrAnaEdges::PerformStatisticalTests> : ... done');
-fprintf('\n');
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%% p-value adjustment using FDR/ Bonferroni FWE                      %%%%
@@ -414,21 +414,21 @@ qcut  = str2double(get(handles.editFDR,'String'));
 SEED  = get(handles.checkboxseedbasedanalysis,'Value');
 if SEED==true
     p = handles.Prob_seed;
-    fprintf('\nAnalysis restricted to single seed region. Number of statistical tests: %d \n',ez.len(p));
+    fprintf('Analysis restricted to single seed region. Number of statistical tests: %d \n',ez.len(p));
 else
     p = handles.Prob; 
-    fprintf('\nNumber of statistical tests: %d \n',ez.len(p));
+    fprintf('Number of statistical tests: %d \n',ez.len(p));
 end
 
 if storey
-    fprintf('\n');
+    
     disp('FDR correction (Storey, 2002; as implemented in MATLAB mafdr-function).');
     figure('Name','mafdr');
     [fdr, q] = mafdr(p,'showplot',true);
     padj     = max(p(find(q<=qcut)));
     fprintf('Adjusted p-value: %f.  \n',padj);
 else
-    fprintf('\n');
+    
     disp('Method for FDR correction: Benjamini and Hochberg, 1995');
     figure('Name','MAFDR');
     mafdr_fdr   = mafdr(p,'BHFDR',true,'showplot',true);
@@ -448,7 +448,7 @@ guidata(hObject, handles);
 Plot(handles);
 
 function pushbutton_fwe_Callback(hObject, eventdata, handles)
-fprintf('\n');
+
 disp('Bonferroni FWE correction.');
 q     = str2double(get(handles.editFDR,'String'));
 SEED  = get(handles.checkboxseedbasedanalysis,'Value');
@@ -471,7 +471,7 @@ Plot(handles);
 %
 function pushbuttonplot_Callback(hObject, eventdata, handles)
 if ~isfield(handles.ana{1}{1}.Ana{1}.Configure.ROI,'ROICOM')
-    fprintf('\n');
+    
     disp('Calculating center.of.mass. of nodes ...');
     ROIS      = handles.ana{1}{1}.Ana{1}.Configure.ROI.File;
     NumROIs   = handles.ana{1}{1}.Ana{1}.Configure.ROI.Num;
@@ -567,7 +567,7 @@ DisplayMarsBarROIs(ROIS,selection);
 
 function pushbuttonprinttable_Callback(hObject, eventdata, handles)
 % print table
-fprintf('\n');
+
 rownames = get(handles.tableedges,'RowName');
 thedata  = get(handles.tableedges,'data');
 numrows  = ez.len(rownames);
