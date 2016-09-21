@@ -577,12 +577,14 @@ for irow=1:numrows
     roi2 = char(htemp{irow}{2});
     roi1 = strrep(roi1,'_',' ');
     roi2 = strrep(roi2,'_',' ');
-    stdroi1 = '                         ';
-    stdroi2 = '                         ';
+    stdroi1 = '                    ';
+    stdroi2 = '                    ';
     stdroi1(1:ez.len(roi1)) = roi1;
     stdroi2(1:ez.len(roi2)) = roi2;
     col=size(thedata,2);
-    fprintf('%s \t %s \t %.2f \t %.2f \t %.6f \n',stdroi1,stdroi2,thedata(irow,col-1),thedata(irow,col),thedata(irow,1)); 
+    thedata = arrayfun(@(e) sprintf('%.6f\t',e), thedata, 'UniformOutput',false);
+    thedata = [thedata{:}];
+    fprintf('%s %s %s \n',stdroi1,stdroi2,thedata); 
 end
 
 function edit_corrpval_Callback(hObject, eventdata, handles)
