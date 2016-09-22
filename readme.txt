@@ -2,7 +2,7 @@ spmjobs12
 =========Short summary=========
 Summary: Batch process (SPM 12 specific) multiple subjects' fMRI data by running a single command up to the first level analysis; separate files into each processing step; generate job files beforehand for you to double-check and review; save informative graphs as pdf for quality control; can send email notification when a job is done.
 
-Author: Jerry Zhu (jerryzhu@siu.edu)
+Author: Jerry Zhu (jerryzhujian9@gmail.com)
 
 URL: http://zhupsy.com/more
 
@@ -29,6 +29,9 @@ Requirements:
 3) Install ghostscript to print pdf
         windows/linux users: http://ghostscript.com/download/gsdnld.html
         mac users: download at http://pages.uoregon.edu/koch/
+4) ez general matlab functions 
+        independent of spm
+        downloadable from https://github.com/jerryzhujian9/ez/blob/master/ez.m
 
 Usage:
 1) put this folder somewhere anywhere
@@ -47,13 +50,9 @@ Note:
 
 
 
-
-Requires:
-    ez  general matlab functions (independent of spm)
-
 Sub-directories:
     /spms - different versions of spm 
-        /extensions useful fmri related tools
+    /extensions useful fmri related tools
 
     /homebrew   - homemade functions
         /jobs    functions that can process many files at a time
