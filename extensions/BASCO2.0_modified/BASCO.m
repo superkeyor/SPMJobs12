@@ -97,6 +97,13 @@ guidata(hObject, handles);
 
 function pushbuttonsave_Callback(~, ~, handles)
 % save analysis object to file
+fprintf('===============To be saved .mat info===============\n');
+str=sprintf('Number of subjects: %d',handles.NumJobs);
+handles.InfoText = WriteInfoBox(handles,str,true);
+disp(handles.anaobj{1});
+fprintf('Showing the first subject as an example...\n');
+disp(handles.anaobj{1}.Ana{1});
+fprintf('===============To be saved .mat info===============\n');
 anaobj         = handles.anaobj;
 [name, folder] = uiputfile('*','Select folder and enter file name.');
 if isequal(name,0),disp('User Cancelled'); return; end
