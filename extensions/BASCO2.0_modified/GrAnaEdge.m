@@ -272,13 +272,21 @@ if counter>0
   set(handles.tableedges,'data',tableData);
 else
   Edgenames(1)   = cellstr('no edge below threshold');
-  tableData(1,1) = 0;
-  tableData(1,2) = 0;
-  tableData(1,3) = 0;
-  tableData(1,4) = 0; 
+  
   set(handles.tableedges,'RowName',cell(Edgenames));
-  columnHeaders = {'two-sample two-sided t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}}; 
-  set(handles.tableedges,'ColumnName',columnHeaders);
+  if get(handles.popupmenustattest,'Value')==2
+    columnHeaders = {StatStr{StatTest},handles.leg{1},handles.leg{2}}; 
+    tableData(1,1) = 0;
+    tableData(1,2) = 0;
+    tableData(1,3) = 0;
+  else
+    columnHeaders = {'two-sample two-sided t-test',StatStr{StatTest},handles.leg{1},handles.leg{2}};       
+    tableData(1,1) = 0;
+    tableData(1,2) = 0;
+    tableData(1,3) = 0;
+    tableData(1,4) = 0; 
+  end
+    set(handles.tableedges,'ColumnName',columnHeaders);
   set(handles.tableedges,'data',tableData);  
 end
 
