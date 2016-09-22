@@ -129,39 +129,39 @@ handles.counter = Plot(handles);
 
 function pushbuttoncorrelationcoefficients_Callback(hObject, eventdata, handles)
 % plot correlation coefficients
-% ProbCut = str2double(get(handles.editprobcut,'String'));
-% disp(sprintf('Probability threshold: %f',ProbCut));
-% counter    = 0;
-% wincounter = 0;
-% SEED   = get(handles.checkboxseedbasedanalysis,'Value');
-% seednr = get(handles.popupmenuselectseedregion,'Value');
-% for i=1:handles.NumEdges,
-%       if SEED 
-%           if handles.indexNode1(i)~=seednr & handles.indexNode2(i)~=seednr
-%              continue;
-%           end
-%       end
-%       theprob = handles.Prob(i);   
-%       if theprob<=ProbCut
-%          if mod(counter,9)==0
-%            figure('Name',sprintf('Distribution of correlation coefficients'));
-%            wincounter = 0;
-%          end
-%          counter = counter +1;
-%          wincounter = wincounter+1;
-%          subplot(3,3,wincounter);
-%          hist(handles.Aweights(i,:),[-1:0.1:1]);
-%          hold on;
-%          hist(handles.Bweights(i,:),[-1:0.1:1]);
-%          h = findobj(gca,'Type','patch');
-%          set(h(2),'FaceColor','w','EdgeColor','b','facealpha',0.75,'LineWidth',2);
-%          set(h(1),'FaceColor','w','EdgeColor','r','facealpha',0.75,'LineWidth',2,'LineStyle','-.');
-%          title(sprintf('%s and %s (p=%f)',handles.Names{handles.indexNode1(i)},handles.Names{handles.indexNode2(i)},theprob));
-%          xlabel('correlation coefficients');
-%          ylabel('number of subjects');
-%          legend({handles.leg{1},handles.leg{2}},'Interpreter', 'none');
-%       end
-% end % end loop over edges
+ProbCut = str2double(get(handles.editprobcut,'String'));
+disp(sprintf('Probability threshold: %f',ProbCut));
+counter    = 0;
+wincounter = 0;
+SEED   = get(handles.checkboxseedbasedanalysis,'Value');
+seednr = get(handles.popupmenuselectseedregion,'Value');
+for i=1:handles.NumEdges,
+      if SEED 
+          if handles.indexNode1(i)~=seednr & handles.indexNode2(i)~=seednr
+             continue;
+          end
+      end
+      theprob = handles.Prob(i);   
+      if theprob<=ProbCut
+         if mod(counter,9)==0
+           figure('Name',sprintf('Distribution of correlation coefficients #%d',mod(counter,9)+1));
+           wincounter = 0;
+         end
+         counter = counter +1;
+         wincounter = wincounter+1;
+         subplot(3,3,wincounter);
+         hist(handles.Aweights(i,:),[-1:0.1:1]);
+         hold on;
+         hist(handles.Bweights(i,:),[-1:0.1:1]);
+         h = findobj(gca,'Type','patch');
+         set(h(2),'FaceColor','w','EdgeColor','b','facealpha',0.75,'LineWidth',2);
+         set(h(1),'FaceColor','w','EdgeColor','r','facealpha',0.75,'LineWidth',2,'LineStyle','-.');
+         title(sprintf('%s and %s (p=%f)',handles.Names{handles.indexNode1(i)},handles.Names{handles.indexNode2(i)},theprob));
+         xlabel('correlation coefficients');
+         ylabel('number of subjects');
+         legend({handles.leg{1},handles.leg{2}},'Interpreter', 'none');
+      end
+end % end loop over edges
 
 
 ProbCut = str2double(get(handles.editprobcut,'String'));
@@ -178,7 +178,7 @@ for i=1:handles.NumEdges,
       theprob = handles.Prob(i);   
       if theprob<=ProbCut
          if mod(counter,9)==0
-           figure('Name',sprintf('Boxplot of correlation coefficients'));
+           figure('Name',sprintf('Boxplot of correlation coefficients #%d',mod(counter,9)+1));
            wincounter = 0;
          end
          counter = counter +1;
@@ -186,7 +186,8 @@ for i=1:handles.NumEdges,
          sp = subplot(3,3,wincounter);
          % box plot individual scores
          edgeName = sprintf('%s <-> %s',handles.Names{handles.indexNode1(i)},handles.Names{handles.indexNode2(i)});
-         boxplot([handles.Aweights(i,:)',handles.Bweights(i,:)'],'Labels',{handles.leg{1},handles.leg{2}},'Whisker',1,'Jitter',1);
+         sp = subplot(handles.NumEdges,3,i);
+         boxplot([handles.Aweights(i,:)',handles.Bweights(i,:)'],'Labels',{'A','B'},'Whisker',1);
          title(edgeName);
          m = [handles.Aweights(i,:)',handles.Bweights(i,:)'];
          e = eps(max(m(:)));
