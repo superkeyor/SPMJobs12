@@ -938,6 +938,9 @@ guidata(hObject, handles);
 
 % create seed-based FC map
 function pushbuttonrissman_Callback(hObject, eventdata, handles)
+zthrs = ez.Inputs({'z-threshold(s) for whole-brain mean signal outlier rejection'},{'3 3'},'z'); % z-threshold for outlier rejection
+zthrs = ez.num(zthrs{1});
+
 spm('Defaults','fMRI');
 spm_jobman('initcfg');
 marsbar('on');
@@ -997,6 +1000,29 @@ for isubj=1:NumSubj % loop over subjects
     % create correlation map
     Aall   = [roibs y];
     A      = Aall(theidx,:); % select trials
+    
+    % improvement starts: remove seed, whole brain avg, outliers
+    yy      = y(theidx,:);
+    yy      = nanmean(yy,2);
+    yy      = [roibs(theidx,:) yy];
+    badIdx  = [];
+    for zz = 1:ez.len(zthrs)
+        zthr = zthrs(zz);
+        zyy  = (yy-repmat(nanmean(yy),size(yy,1),1))./repmat(nanstd(yy),size(yy,1),1);
+        [ztrmax, I] = nanmax(abs(zyy'));
+        inidx  = find(ztrmax>=zthr);
+        yy(inidx,:) = nan;
+        badIdx = [badIdx, inidx];
+    end
+    fprintf('%s Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d)\n',ez.moment(),isubj,mat2str(zthrs),ez.len(badIdx)/size(yy,1),ez.len(badIdx),size(yy,1));
+    fileID = fopen('seed_brain_beta_outliers.txt','a');
+    fprintf(fileID,'%s Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d)\n',ez.moment(),isubj,mat2str(zthrs),ez.len(badIdx)/size(yy,1),ez.len(badIdx),size(yy,1));
+    fclose(fileID);
+    goodIdx = find(~isnan(yy(:,1)));
+    clear inidx;
+    A     = A(goodIdx,:);
+    % improvement ends
+    
     An     = bsxfun(@minus,A,mean(A,1));
     An     = bsxfun(@times,An,1./sqrt(sum(An.*An,1)));
     tsmat  = repmat(An(:,1),1,NumVox+1);
