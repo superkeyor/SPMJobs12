@@ -1014,9 +1014,9 @@ for isubj=1:NumSubj % loop over subjects
         yy(inidx,:) = nan;
         badIdx = [badIdx, inidx];
     end
-    fprintf('%s Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d)\n',ez.moment(),isubj,mat2str(zthrs),ez.len(badIdx)/size(yy,1),ez.len(badIdx),size(yy,1));
+    fprintf('%s Subject %d seed %s cnd %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d)\n',ez.moment(),isubj,handles.SeedROIName,thecond,mat2str(zthrs),ez.len(badIdx)/size(yy,1),ez.len(badIdx),size(yy,1));
     fileID = fopen('seed_brain_beta_outliers.txt','a');
-    fprintf(fileID,'%s Subject %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d)\n',ez.moment(),isubj,mat2str(zthrs),ez.len(badIdx)/size(yy,1),ez.len(badIdx),size(yy,1));
+    fprintf(fileID,'%s Subject %d seed %s cnd %d ===> rejected outlier (zscore > %s) : %0.2f (%d/%d)\n',ez.moment(),isubj,handles.SeedROIName,thecond,mat2str(zthrs),ez.len(badIdx)/size(yy,1),ez.len(badIdx),size(yy,1));
     fclose(fileID);
     goodIdx = find(~isnan(yy(:,1)));
     clear inidx;
