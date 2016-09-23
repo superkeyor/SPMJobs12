@@ -637,9 +637,9 @@ for irow=1:numrows
     stdroi1(1:ez.len(roi1)) = roi1;
     stdroi2(1:ez.len(roi2)) = roi2;
     col=size(thedata,2);
-    thedata = arrayfun(@(e) sprintf('%.6f\t',e), thedata, 'UniformOutput',false);
-    thedata = [thedata{:}];
-    fprintf('%s %s %s \n',stdroi1,stdroi2,thedata); 
+    xthedata = arrayfun(@(e) sprintf('%.6f\t',e), thedata(irow,:), 'UniformOutput',false);
+    xthedata = [xthedata{:}];
+    fprintf('%s %s %s \n',stdroi1,stdroi2,xthedata); 
 end
 
 function edit_corrpval_Callback(hObject, eventdata, handles)
