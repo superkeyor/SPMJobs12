@@ -465,7 +465,8 @@ disp('<GrAnaEdges::PerformStatisticalTests> : ... done');
 %%%% p-value adjustment using FDR/ Bonferroni FWE                      %%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function pushbutton_FDR_Callback(hObject, eventdata, handles)
-storey=true;
+storey = ez.Inputs({'Storey (1) or BH (2)?'},{'1'},'FDR Option'); % z-threshold for outlier rejection
+if strcmp(storey,'1'), storey=true; else storey=false; end
 
 qcut  = str2double(get(handles.editFDR,'String'));
 SEED  = get(handles.checkboxseedbasedanalysis,'Value');
