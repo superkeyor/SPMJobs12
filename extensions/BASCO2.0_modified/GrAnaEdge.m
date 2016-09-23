@@ -481,21 +481,21 @@ end
 if storey
     
     disp('FDR correction (Storey, 2002; as implemented in MATLAB mafdr-function).');
-    figure('Name','mafdr');
+    figure('Name','MAFDR-Storey');
     [fdr, q] = mafdr(p,'showplot',true);
     padj     = max(p(find(q<=qcut)));
     fprintf('Adjusted p-value: %f.  \n',padj);
 else
     
     disp('Method for FDR correction: Benjamini and Hochberg, 1995');
-    figure('Name','MAFDR');
+    figure('Name','MAFDR-BH');
     mafdr_fdr   = mafdr(p,'BHFDR',true,'showplot',true);
     significant = mafdr_fdr<=qcut;
     padj        = max(p(find(mafdr_fdr<=qcut)));
     fprintf('=====>> FDR correction: q < %f \n',qcut);
     if ez.len(padj)==0
         disp('No node survived FDR correction.');
-        return;
+        % return;
     else
         fprintf('Adjusted p-threshold (MAFDR): %f \n',padj);
     end
