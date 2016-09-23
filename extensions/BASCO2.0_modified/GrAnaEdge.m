@@ -71,6 +71,8 @@ set(handles.popupmenuselectseedregion,'String',Names);
 handles.counter = Plot(handles);
 
 guidata(hObject, handles);
+assignin('base','handles',handles);
+
 
 function varargout = GrAnaEdge_OutputFcn(hObject, eventdata, handles) 
 varargout{1} = handles.output;
