@@ -46,16 +46,17 @@ end
 
 for i = 1:length(matPath)
     roi = matPath{i};
+    [pn fn ext] = fileparts(roi);
     roi = maroi('load', roi); 
 
-    [pn fn ext] = fileparts(roi);
     fname = ez.joinpath(folder,[fn,'.nii']);
     save_as_image(roi, fname, sp);
+    fprintf('---------------------------------------------------------\n');
     fprintf('Saved ROI as %s\n',fname);
 
     if verbose
         % output some useful info of the exported nii image
-        fprintf('\Exported nii image info:\n');
+        fprintf('\nExported nii image info:\n');
         hdr_out = spm_vol(fname);
         type_out = spm_type(hdr_out.dt(1));
         values_out = spm_read_vols(hdr_out);
@@ -84,6 +85,7 @@ for i = 1:length(matPath)
         fprintf('Dimension: %s\n',mat2str(dim_out));
         fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
         fprintf('Description: %s\n',description_out);
+        fprintf('---------------------------------------------------------\n');
     end % end if
 
     result{i,1} = fname;
