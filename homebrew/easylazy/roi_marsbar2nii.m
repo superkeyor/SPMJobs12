@@ -4,6 +4,7 @@ function result = main(matPath,space,verbose,folder)
 %       space: exported nii space, three choices
 %              1) 'mni', default, the so-called "base space"
 %              2) from image... by passing a path of an image file, eg. './beta_0001.nii,1'
+%                 recommended! voxel size/dim could be diff, eg 2x2x2 [79 95 68]
 %              3) 'roi' whatever the mat roi's space, the so-called "native"
 %       verbose = 0/1, if true, print out roi info and display roi, default true
 %       folder, path to folder where ROI files will be saved, default pwd
