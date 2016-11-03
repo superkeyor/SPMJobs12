@@ -10,6 +10,7 @@ function result = main(matPath,space,verbose,folder)
 % Output:
 %       .nii files
 %       the full path to the generated ROI nii file(s), if more than one file, a cell; otherwise a str
+%       a csv file with all ROI names and non-zero voxels in folder
 % Note:
 %       Uses marsbar functions to export .mat ROI into nii formats
 %       If marsbar path not in searchpath, auto add them internally first.
@@ -85,6 +86,7 @@ for i = 1:length(matPath)
         fprintf('Dimension: %s\n',mat2str(dim_out));
         fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
         fprintf('Description: %s\n',description_out);
+        ez.log([fn,',',num2str(n_out)],ez.joinpath(folder,'ROIs.csv'));
         fprintf('---------------------------------------------------------\n');
     end % end if
 
