@@ -544,16 +544,19 @@ try
     if ~strcmp(latestVersion,VERSION_)
         %h=warndlg(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. Please download xjView at ' XJVIEWURL], 'Update xjView');
         %uiwait(h);
-        ButtonName = questdlg(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. Please download xjView at ' XJVIEWURL], 'Update xjView', ...
-                         'Download now', 'Cancel', 'Download now');
-       switch ButtonName,
-         case 'Download now',
-          web -browser http://www.alivelearn.net/xjview
-          return;
-         case 'Cancel',
-         x=[]; 
-         pause(0.1);
-       end % switch
+        
+        ez.pprint(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. \nPlease download xjView at ' XJVIEWURL]);
+        x=[];
+%         ButtonName = questdlg(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. Please download xjView at ' XJVIEWURL], 'Update xjView', ...
+%                          'Download now', 'Cancel', 'Download now');
+%        switch ButtonName,
+%          case 'Download now',
+%           web -browser http://www.alivelearn.net/xjview
+%           return;
+%          case 'Cancel',
+%          x=[]; 
+%          pause(0.1);
+%        end % switch
     end
 	s = urlread([XJVIEWURL '/toUser.txt']);
     set(handles.infoTextBox, 'String', s);
