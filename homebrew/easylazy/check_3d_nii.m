@@ -29,7 +29,7 @@ fprintf('Min value: %s\n',num2str(min(unique_values_out)));
 fprintf('Max value: %s\n',num2str(max(unique_values_out)));
 
 fprintf('Non-zero voxels #: %d\n', n_out);
-fprintf('Dimension: %s\n',mat2str(dim_out));
+fprintf('Dimension (product contains voxels outside brain): %s\n',mat2str(dim_out));
 fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
 fprintf('Description: %s\n',description_out);
 
