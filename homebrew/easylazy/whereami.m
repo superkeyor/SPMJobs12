@@ -16,7 +16,12 @@ function main(varargin)
     if nargin==0
         try
             varargin = evalin('base','TabDat');
-            varargin = varargin.dat(:,12);
+            
+            % only tell main clusters
+            pcluster = varargin.dat(:,6);
+            clusters = find(~cellfun(@isempty,pcluster));
+            
+            varargin = varargin.dat(clusters,12);
             varargin = {[varargin{:}]'};
         catch
             ez.pprint('Please extract table data structure from SPM results table to get ''TabDat''.');
@@ -45,6 +50,11 @@ function main(varargin)
 
         url = sprintf('http://neurosynth.org/locations/%d_%d_%d/',varargin{1}(i,1),varargin{1}(i,2),varargin{1}(i,3));
         disp(sprintf('\n <a href="%s">%s</a>\n',url,url));
+    end
+    
+    disp(sprintf('----------------------------\nThis is for easy copying to excel.\n'));
+    for i = 1:length(oneline)
+        disp(oneline{i});
     end
     
 end
