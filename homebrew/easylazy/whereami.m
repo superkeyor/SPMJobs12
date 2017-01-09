@@ -66,36 +66,50 @@ function main(varargin)
             % call talairach demo to get labels
                 % awk '{print $2}' prints only the 2nd column of the output (in this case the PID)
                 % $(...) is command substitution. Basically the result from the inner command will be used as an argument to kill
-            % cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.ExcelToTD 2, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.joinpath(ez.pwd(),'TempTalairach.txt'));
+                % code: seems like 1 returns no data, 2 = single point in the GUI, 4 = nearest grey matter, 3 cube range
+                        % 1 - SPMap data
+                        % 2 - Talairach Label Data
+                        % 3 - mm x mm x mm cube search area
+                        %     use [:Cubesize] for sizes of 3, 5, 7, 9, or 11. Default is 5.
+                        % 4 - Talairach Label Data, gray matter only
+            % cmd = sprintf(['java -jar %s'],ez.joinpath(thePath,'talairach.jar'));
             % cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.PointToTD 2, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.join(',',[-26.9051,-36.1621,-8.6124]));
-            % command line bug, won't work, call gui to manually select
-            ez.pprint('Select 1) Nearest grey matter; 2) From file TempTalairach.txt; 3) Search');
-            cmd = sprintf(['java -jar %s'],ez.joinpath(thePath,'talairach.jar'));
+            cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.ExcelToTD 2, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.joinpath(ez.pwd(),'TempTalairach.txt'));
             [sts, res] = system(cmd);
+            result21 = ez.csv2cell('TempTalairach.txt.td');
+            result21 = regexp(result21, '\t', 'split');
+            result21 = vertcat(result21{:});
+            result21(:,8) = cellfun(@(x) x(1), result21(:,4),'UniformOutput',false);
             
-            result2 = ez.csv2cell('TempTalairach.td.txt');
-            result2 = result2(2:end,:);
-            result2 = regexp(result2, '\t', 'split');
-            result2 = vertcat(result2{:});
-            result2(:,9) = regexprep(result2(:,9),'Brodmann area ','');
-            result2(:,12) = cellfun(@(x) x(1), result2(:,5),'UniformOutput',false);
-            % ez.rm('TempTalairach.txt');
-            % ez.rm('TempTalairach.td.txt');
+            cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.ExcelToTD 4, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.joinpath(ez.pwd(),'TempTalairach.txt'));
+            [sts, res] = system(cmd);
+            result22 = ez.csv2cell('TempTalairach.txt.td');
+            result22 = regexp(result22, '\t', 'split');
+            result22 = vertcat(result22{:});
+            result22(:,8) = regexprep(result22(:,8),'Brodmann area ','');
+            result22 = result22(:,[8,6]);
+
+            ez.rm('TempTalairach.txt');
+            ez.rm('TempTalairach.txt.td');
+            result2 = [result21,result22];
             
             % part 3: spm Neuromorphometrics
-            result3 = cell(size(xyz,1),1);
+            result3 = cell(size(xyz,1),2);
             for i=1:size(xyz,1)
+                result3{i,2} = i;
                 result3{i,1} = spm_atlas('query','Neuromorphometrics',xyz(i,:)');
             end    
             
             % final combine
-            header = {'x','y','z','Z score','k','xjView','url','Number','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Tal4','BA','Extended_Range_mm','','Hem','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM'};
+            header = {'x','y','z','Z score','k','xjView','url','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Tal4','Hem','BA','Anatomy_GreyMatter','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM','Number'};
             result = [result1, result2, c3, c4, c6, p7, p8, t, p11, result3];
             result = [header;result];
-            result = result(:,[13,12,6,27,14,19,16,1:5,7:11,15,17,20:26]);
+            newheader = {'Lobe','Hemisphere','xjView','SPM','Anatomy_GreyMatter','Anatomy','Hem','BA','x','y','z','Z score','k','url','x_tal','y_tal','z_tal','Tal4','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','Number'};
+            newheaderind = cellfun(@(x) find(strcmp(header,x)), newheader, 'UniformOutput', false);
+            result = result(:,cell2mat(newheaderind));
             
             ez.cell2csv('TabDat.csv',result);
-            ez.pprint('Done! Check TabDat.csv. Sort by Lobe then Hemisphere. AAL labeling is less weighted.');
+            ez.pprint('Done! Check TabDat.csv. Sort by Lobe then Hemisphere. BA refers to BA of nearest grey matter if not found. AAL labeling should be less weighted(?).');
             return
         catch
             ez.pprint('Something wrong. Did you extract table data structure from SPM results table to get ''TabDat''?');
