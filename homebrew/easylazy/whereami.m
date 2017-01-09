@@ -62,33 +62,43 @@ function main(varargin)
                 thePath = ez.splitpath(which('icbm_spm2tal'));
             end
             % convert to talairach
-            ez.cell2csv('TempTal.txt', num2cell(icbm_spm2tal(xyz)));
+            ez.cell2csv('TempTalairach.txt', num2cell(icbm_spm2tal(xyz)));
             % call talairach demo to get labels
                 % awk '{print $2}' prints only the 2nd column of the output (in this case the PID)
                 % $(...) is command substitution. Basically the result from the inner command will be used as an argument to kill
-            % cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.ExcelToTD 2, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.joinpath(ez.pwd(),'TempTal.txt'));
+            % cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.ExcelToTD 2, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.joinpath(ez.pwd(),'TempTalairach.txt'));
             % cmd = sprintf(['java -cp "%s" org.talairach.AtlasServer 1600 & java -cp "%s" org.talairach.PointToTD 2, ' '"%s"' ' host=127.0.0.1:1600 && kill $(ps -A|grep java|grep org.talairach.AtlasServer|awk "{print $1}")'],ez.joinpath(thePath,'talairach.jar'),ez.joinpath(thePath,'talairach.jar'),ez.join(',',[-26.9051,-36.1621,-8.6124]));
             % command line bug, won't work, call gui to manually select
-            ez.pprint('Select 1) Nearest grey matter; 2) From file TempTal.txt; 3) Search');
+            ez.pprint('Select 1) Nearest grey matter; 2) From file TempTalairach.txt; 3) Search');
             cmd = sprintf(['java -jar %s'],ez.joinpath(thePath,'talairach.jar'));
             [sts, res] = system(cmd);
             
-            result2 = ez.csv2cell('TempTal.td.txt');
+            result2 = ez.csv2cell('TempTalairach.td.txt');
             result2 = result2(2:end,:);
             result2 = regexp(result2, '\t', 'split');
             result2 = vertcat(result2{:});
-            % ez.rm('TempTal.txt');
-            % ez.rm('TempTal.td.txt');
+            result2(:,9) = regexprep(result2(:,9),'Brodmann area ','');
+            result2(:,12) = cellfun(@(x) x(1), result2(:,5),'UniformOutput',false);
+            % ez.rm('TempTalairach.txt');
+            % ez.rm('TempTalairach.td.txt');
+            
+            % part 3: spm Neuromorphometrics
+            result3 = cell(size(xyz,1),1);
+            for i=1:size(xyz,1)
+                result3{i,1} = spm_atlas('query','Neuromorphometrics',xyz(i,:)');
+            end    
             
             % final combine
-            header = {'x','y','z','Z score','k','xjView','url','Number','x_tal','y_tal','z_tal','Tal1','Tal2','Tal3','Tal4','Tal5','Extended_Range_mm','','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p'};
-            result = [result1, result2, c3, c4, c6, p7, p8, t, p11];
+            header = {'x','y','z','Z score','k','xjView','url','Number','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Tal4','BA','Extended_Range_mm','','Hem','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM'};
+            result = [result1, result2, c3, c4, c6, p7, p8, t, p11, result3];
             result = [header;result];
+            result = result(:,[14,13,12,6,27,19,16,1:5,7:11,15,17,18,20:26]);
+            
             ez.cell2csv('TabDat.csv',result);
-            ez.pprint('Done! Check TabDat.csv.');
+            ez.pprint('Done! Check TabDat.csv. Sort by Hemisphere then Lobe.');
             return
         catch
-            ez.pprint('Please extract table data structure from SPM results table to get ''TabDat''.');
+            ez.pprint('Something wrong. Did you extract table data structure from SPM results table to get ''TabDat''?');
             return
         end
     end
