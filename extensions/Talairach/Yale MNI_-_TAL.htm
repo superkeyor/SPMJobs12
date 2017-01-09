@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<!-- saved from url=(0053)http://sprout022.sprout.yale.edu/mni2tal/mni2tal.html -->
+<html><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+    
+    <title>Yale MNI&lt;-&gt;TAL</title>
+    <link rel="stylesheet" href="./Yale MNI_-_TAL_files/mni2tal.css">
+    <link rel="shortcut icon" href="http://sprout022.sprout.yale.edu/mni2tal/48.ico">
+    <meta name="viewport" content="width=device-width, initial-scale=1"> 
+      
+<script type="text/javascript">try {
+window.AG_onLoad = function(func) { if (window.addEventListener) { window.addEventListener('DOMContentLoaded', func); } };
+window.AG_removeElementById = function(id) { var element = document.getElementById(id); if (element && element.parentNode) { element.parentNode.removeChild(element); }};
+window.AG_removeElementBySelector = function(selector) { if (!document.querySelectorAll) { return; } var nodes = document.querySelectorAll(selector); if (nodes) { for (var i = 0; i < nodes.length; i++) { if (nodes[i] && nodes[i].parentNode) { nodes[i].parentNode.removeChild(nodes[i]); } } } };
+window.AG_each = function(selector, fn) { if (!document.querySelectorAll) return; var elements = document.querySelectorAll(selector); for (var i = 0; i < elements.length; i++) { fn(elements[i]); }; };
+var AG_removeParent = function(el, fn) { while (el && el.parentNode) { if (fn(el)) { el.parentNode.removeChild(el); return; } el = el.parentNode; } };
+var AG_onLoad=function(func){if(document.readyState==="complete"||document.readyState==="interactive")func();else if(document.addEventListener)document.addEventListener("DOMContentLoaded",func);else if(document.attachEvent)document.attachEvent("DOMContentLoaded",func)};
+var AG_removeElementById = function(id) { var element = document.getElementById(id); if (element && element.parentNode) { element.parentNode.removeChild(element); }};
+var AG_removeElementBySelector = function(selector) { if (!document.querySelectorAll) { return; } var nodes = document.querySelectorAll(selector); if (nodes) { for (var i = 0; i < nodes.length; i++) { if (nodes[i] && nodes[i].parentNode) { nodes[i].parentNode.removeChild(nodes[i]); } } } };
+var AG_each = function(selector, fn) { if (!document.querySelectorAll) return; var elements = document.querySelectorAll(selector); for (var i = 0; i < elements.length; i++) { fn(elements[i]); }; };
+var AdFox_getCodeScript = function() {};
+AG_onLoad(function() { AG_each('iframe[id^="AdFox_iframe_"]', function(el) { if (el && el.parentNode) { el.parentNode.removeChild(el); } }); });
+try { Object.defineProperty(window, 'noAdsAtAll', { get: function() { return true; } }); } catch (ex) {}
+navigator.getBattery = undefined;
+(function() { window.Ya = window.Ya || {}; window.Ya.Metrika = function() { var noop = function() {}; this.addFileExtension = noop; this.extLink = noop; this.file = noop; this.hit = noop; this.notBounce = noop; this.params = noop; this.reachGoal = noop; this.replacePhones = noop; this.clickmap = noop; this.trackLinks = noop; }; })();
+var _gaq = []; var _gat = { _getTracker: function() { return { _initData: function(){}, _trackPageview: function(){}, _trackEvent: function(){}, _setAllowLinker: function() {}, _setCustomVar: function() {} } }, _createTracker: function() { return this._getTracker(); }, _anonymizeIp: function() {} };
+function urchinTracker() {};
+var addthis = { init: function() {}, addEventListener: function() {}, button: function() {}, counter: function() {}, update: function() {}, toolbox: function() {}, layers: function() {} };
+window.uabInject = function() {};
+window.wcs_add = {}; window.wcs_do = function() { };
+} catch (ex) { console.error('Error executing AG js: ' + ex); }</script><style id="style-1-cropbar-clipper">/* Copyright 2014 Evernote Corporation. All rights reserved. */
+.en-markup-crop-options {
+    top: 18px !important;
+    left: 50% !important;
+    margin-left: -100px !important;
+    width: 200px !important;
+    border: 2px rgba(255,255,255,.38) solid !important;
+    border-radius: 4px !important;
+}
+
+.en-markup-crop-options div div:first-of-type {
+    margin-left: 0px !important;
+}
+</style></head>
+<body>
+  
+ <div id="bheader">
+   <h2>MNI&lt;-&gt;Talairach with Brodmann Areas (1.09)</h2>
+     <a href="http://www.bioimagesuite.org/"><img src="./Yale MNI_-_TAL_files/logo.jpg" id="logo"></a>
+ </div>
+ <div id="viewer">
+   <div id="tempviewer"></div>
+      <canvas id="xviewer" width="217" height="181"></canvas>
+      <canvas id="yviewer" width="181" height="181"></canvas>
+      <canvas id="zviewer" width="181" height="217"></canvas>
+      <canvas id="xlines" width="217" height="181"></canvas>
+      <canvas id="ylines" width="181" height="181"></canvas>
+      <canvas id="zlines" width="181" height="217"></canvas>
+        
+      <input type="range" id="xcontrols" min="0" max="180">
+      <input type="range" id="ycontrols" min="0" max="216">
+      <input type="range" id="zcontrols" min="0" max="180">
+                
+      <div id="navframe"></div>
+      <div id="mniframe">
+        <label class="labelid" id="mnilabel">MNI:</label>
+        <input type="number" class="numberid" id="mnix" value="0" min="-90" max="90" step="1" data-com.agilebits.onepassword.user-edited="yes">
+        <input type="number" class="numberid" id="mniy" value="0" min="-90" max="90" step="1" data-com.agilebits.onepassword.user-edited="yes">
+        <input type="number" class="numberid" id="mniz" value="0" min="-72" max="108" step="1" data-com.agilebits.onepassword.user-edited="yes">
+        <button type="button" class="buttonid" id="mnigo">Go</button>
+      </div>
+         
+      <div id="talframe">
+        <label class="labelid" id="talabel">TAL:</label>
+        <input type="number" class="numberid" id="talx" value="0" min="-90" max="90" step="1">
+        <input type="number" class="numberid" id="taly" value="0" min="-90" max="126" step="1">
+        <input type="number" class="numberid" id="talz" value="0" min="-72" max="108" step="1" data-com.agilebits.onepassword.user-edited="yes">
+        <button type="button" class="buttonid" id="talgo">Go</button>
+      </div>
+        
+      <div id="overlayframe">
+         <div id="showlabel" class="labelid2">
+         <input type="checkbox" id="showoverlaybutton" value="false">
+          <label>Show Brodmann areas overlay</label></div>
+       </div>
+       
+      <div id="baframe">
+        <div class="labelid" id="balabel">Area:</div>
+        <select id="baselectbox"><option value="-1">Outside defined BAs</option><option value="0">Right-PrimSensory (1)</option><option value="100">Left-PrimSensory (1)</option><option value="1">Right-PrimMotor (4)</option><option value="101">Left-PrimMotor (4)</option><option value="2">Right-SensoryAssoc (5)</option><option value="102">Left-SensoryAssoc (5)</option><option value="3">Right-BA6</option><option value="103">Left-BA6</option><option value="4">Right-BA7</option><option value="104">Left-BA7</option><option value="5">Right-BA8</option><option value="105">Left-BA8</option><option value="6">Right-BA9</option><option value="106">Left-BA9</option><option value="7">Right-BA10</option><option value="107">Left-BA10</option><option value="8">Right-BA11</option><option value="108">Left-BA11</option><option value="9">Right-Insula (13)</option><option value="109">Left-Insula (13)</option><option value="10">Right-PrimVisual (17)</option><option value="110">Left-PrimVisual (17)</option><option value="11">Right-VisualAssoc (18)</option><option value="111">Left-VisualAssoc (18)</option><option value="12">Right-BA19</option><option value="112">Left-BA19</option><option value="13">Right-BA20</option><option value="113">Left-BA20</option><option value="14">Right-BA21</option><option value="114">Left-BA21</option><option value="15">Right-BA22</option><option value="115">Left-BA22</option><option value="16">Right-BA23</option><option value="116">Left-BA23</option><option value="17">Right-BA24</option><option value="117">Left-BA24</option><option value="18">Right-BA25</option><option value="118">Left-BA25</option><option value="19">Right-BA30</option><option value="119">Left-BA30</option><option value="20">Right-BA31</option><option value="120">Left-BA31</option><option value="21">Right-BA32</option><option value="121">Left-BA32</option><option value="22">Right-BA34</option><option value="122">Left-BA34</option><option value="23">Right-Parahip (36)</option><option value="123">Left-Parahip (36)</option><option value="24">Right-Fusiform (37)</option><option value="124">Left-Fusiform (37)</option><option value="25">Right-BA38</option><option value="125">Left-BA38</option><option value="26">Right-BA39</option><option value="126">Left-BA39</option><option value="27">Right-BA40</option><option value="127">Left-BA40</option><option value="28">Right-PrimAuditory (41)</option><option value="128">Left-PrimAuditory (41)</option><option value="29">Right-BA44</option><option value="129">Left-BA44</option><option value="30">Right-BA45</option><option value="130">Left-BA45</option><option value="31">Right-BA46</option><option value="131">Left-BA46</option><option value="32">Right-BA47</option><option value="132">Left-BA47</option><option value="33">Right-Caudate (48)</option><option value="133">Left-Caudate (48)</option><option value="34">Right-Putamen (49)</option><option value="134">Left-Putamen (49)</option><option value="35">Right-Thalamus (50)</option><option value="135">Left-Thalamus (50)</option><option value="36">Right-GlobPal (51)</option><option value="136">Left-GlobPal (51)</option><option value="37">Right-NucAccumb (52)</option><option value="137">Left-NucAccumb (52)</option><option value="38">Right-Amygdala (53)</option><option value="138">Left-Amygdala (53)</option><option value="39">Right-Hippocampus (54)</option><option value="139">Left-Hippocampus (54)</option><option value="40">Right-Hypothalamus (55)</option><option value="140">Left-Hypothalamus (55)</option></select>
+        <button type="button" class="buttonid" id="resetbutton">Reset</button>
+        
+      </div>
+        
+      <div id="aboutframe">
+           
+       <details id="detailsframe"><summary id="sumlabel"><b>About this application</b></summary>
+        <p>This application consists of components of the 
+        <a href="http://www.bioimagesuite.org/" target="_newwindow">Yale BioImage Suite Package</a>. The MNI to Talairach mapping is from 
+        <a href="http://www.ncbi.nlm.nih.gov/pmc/articles/PMC2603575/" target="_newwindow">Lacadie et al. NeuroImage 2008</a>.
+        The Brodmann area definitions are from the following abstract: C.M. Lacadie, R. K. Fulbright, J. Arora, 
+        R.T.Constable, and X. Papademetris. <em>Brodmann Areas defined in MNI space using a new Tracing Tool in BioImage Suite</em>.
+        Human Brain Mapping, 2008.
+
+        </p><p>This application works best in <a href="http://www.google.com/chrome" target="_newwindow">Chrome</a> or Safari. 
+        Firefox and IE may have problems.
+        It was implementated using  <a href="https://www.dartlang.org/" target="_newwindow">Dart</a>. 
+        (c) Xenios Papademetris, Yale University, 2014. </p></details>
+        
+      </div>
+  </div>
+    
+      
+  <script src="./Yale MNI_-_TAL_files/mni2tal.dart.js"></script>
+  <script src="./Yale MNI_-_TAL_files/mydart.js"></script>
+
+
+</body></html>

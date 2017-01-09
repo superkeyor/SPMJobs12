@@ -5,7 +5,7 @@ function varargout = main(varargin)
         extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
         thePath = ez.lsd(extsPath,'^mricron');
         thePath = ez.joinpath(extsPath,thePath{1});
-        addpath(thePath);
+        addpath(thePath,'-end');
     end
     !open -n -a mricron
 end

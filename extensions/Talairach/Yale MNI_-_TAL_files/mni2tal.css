@@ -1,0 +1,218 @@
+
+/*
+  Copyright (c) 2012, the Dart project authors.  Please see the AUTHORS file
+  for details. All rights reserved. Use of this source code is governed by a
+  BSD-style license that can be found in the COPYING file.
+*/
+
+
+body {
+  background-color: #888888;
+  font-family: 'Open Sans', sans-serif;
+  font-size: 90%;
+  font-weight: normal;
+  line-height: 1.0em;
+  margin: 0.25vh;
+}
+
+a:link {color:#ffff00; text-decoration:none;}
+a:visited {color:#ffff00; text-decoration:none;}
+a:hover {text-decoration:underline;}
+a:active {text-decoration:underline;}
+
+p {
+  color: #ffffff;
+  margin-top:.25em;
+  margin-left: .25em;
+  margin-right: .25em;
+  
+}
+
+#bheader { 
+  background-color: #000000;
+  color: #ffffff;
+  height: 4.5vh;
+  width: 86.4vh;
+  position:relative;
+ 
+}
+
+h2 {
+  font-size: 120%;
+  margin:0vh;
+  padding:1vh; 
+}
+
+
+#logo {
+  position:absolute;
+  top:0.25vh;
+  left: 63vh;
+  height: 4.0vh;
+}
+
+#viewer {
+  background-color: #222211;
+  position: relative;
+  top: 0.5vh;
+  width: 86.4vh;
+  height: 94vh;
+}
+
+
+#xviewer,#yviewer,#zviewer {
+  position: absolute;
+  z-index:1;
+}
+
+#tempviewer {
+  position: absolute;
+  z-index:4;
+  top:5vh;
+  left:12.5vh;
+  color: #ff0000;
+  font-size: 16vh;
+  width:50vh;
+  line-height: 18vh;
+  text-align: center;
+}
+
+#xlines,#ylines,#zlines {
+  position: absolute;
+  z-index:3;
+}
+
+
+#xcontrols,#ycontrols,#zcontrols {
+  position: absolute;
+  z-index:2;
+  width: 34.8vh;
+}
+
+#xcontrols {
+  left:41.6vh;
+  top:0vh;
+  width:42.3vh;
+}
+
+#ycontrols {
+  left:2.5vh;
+  top:0.0vh;
+}
+
+#ylines, #yviewer {
+  top: 4vh;
+  left: 1vh;
+  width:37.8vh;
+  height: 37.8vh;
+}
+
+#xlines, #xviewer {
+  top:4vh;
+  left: 40.1vh;
+  width:45.3vh;
+  height:37.8vh;
+}
+
+#zcontrols {
+  left:2.5vh;
+  top:89.5vh;
+}
+
+#zlines, #zviewer {
+  left: 1.0vh;
+  top: 43.4vh;
+  width: 37.8vh;
+  height: 45.3vh;
+}
+
+#mniframe, #talframe, #overlayframe,  #baframe, #aboutframe,#navframe {
+  background-color:#000000;
+  z-index:1;
+   left: 40.5vh;
+  width: 44.1vh;
+  position: absolute;
+  height: 5vh;
+}
+
+#overlayframe {
+  top: 42.5vh;
+  background-color:#222211;
+}
+
+#navframe {
+  top: 47.5vh;
+  left: 40.0vh;
+  width: 45.1vh;
+  background-color:#000000;
+  height:16.5vh;
+  
+}
+
+
+
+#mniframe {
+   top: 49vh;
+ }
+
+#talframe {
+  top: 54vh;
+}
+  
+#baframe {
+  top: 59vh;
+    
+  
+}
+
+#aboutframe {
+  background-color:#222211;
+  font-size: 90%;
+  top: 65.5vh;
+  height: 27vh;
+}
+
+#sumlabel {
+  color: #ff0000;
+}
+
+.labelid, .labelid2 {
+  color: #ffffff;
+  padding-top: 0.75vh;
+  float: left;
+  position: relative;
+}
+
+.labelid2 {
+  left: 8.5vh;
+}
+
+#mnilabel,#talabel,#balabel {
+  width: 8.5vh;
+}
+
+.numberid {
+  padding-top: 0vh;
+  padding-left: 0vh;
+  padding-right: 0.2vh;
+  vertical-align: text-bottom;
+  position: relative;
+  font-size: 100%;
+  width: 7.5vh;
+}
+
+.buttonid {
+   float:right;
+   padding-right:0.5vh;
+   font-size: 100%;
+   vertical-align: text-top;
+   display: inline-block;
+   position: relative;  
+   width: 8vh;
+}
+
+#baselectbox {
+  font-size:100%;
+  width: 25.5vh;
+}
+

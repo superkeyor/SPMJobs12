@@ -25,7 +25,7 @@ if isempty(which('marsbar'))
     extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
     thePath = ez.lsd(extsPath,'^marsbar');
     thePath = ez.joinpath(extsPath,thePath{1});
-    addpath(thePath);
+    addpath(thePath,'-end');
 end
 
 xyz = cell2mat(crl(:,1));
