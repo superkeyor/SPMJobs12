@@ -95,7 +95,7 @@ function main(varargin)
             result = result(:,[14,13,12,6,27,19,16,1:5,7:11,15,17,18,20:26]);
             
             ez.cell2csv('TabDat.csv',result);
-            ez.pprint('Done! Check TabDat.csv. Sort by Hemisphere then Lobe.');
+            ez.pprint('Done! Check TabDat.csv. Sort by Hemisphere then Lobe. AAL labeling is less weighted.');
             return
         catch
             ez.pprint('Something wrong. Did you extract table data structure from SPM results table to get ''TabDat''?');
