@@ -101,15 +101,16 @@ function main(varargin)
             end    
             
             % final combine
-            header = {'x','y','z','Z score','k','xjView','url','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Tal4','Hem','BA','Anatomy_GreyMatter','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM','Number'};
+            header = {'x','y','z','Z score','k','xjView','url','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Anatomy_Matter','Hem','BA','Anatomy_GreyMatter','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM','Number'};
             result = [result1, result2, c3, c4, c6, p7, p8, t, p11, result3];
             result = [header;result];
             newheader = {'Lobe','Hemisphere','xjView','SPM','Anatomy_GreyMatter','Anatomy','Hem','BA','x','y','z','Z score','k','url','x_tal','y_tal','z_tal','Tal4','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','Number'};
             newheaderind = cellfun(@(x) find(strcmp(header,x)), newheader, 'UniformOutput', false);
             result = result(:,cell2mat(newheaderind));
             
-            ez.cell2csv('TabDat.csv',result);
-            ez.pprint('Done! Check TabDat.csv. Sort by Lobe then Hemisphere. BA refers to BA of nearest grey matter if not found. AAL labeling should be less weighted(?).');
+            resultFile = sprintf('TabDat_%s.csv',evalin('base','xSPM.title'));
+            ez.cell2csv(resultFile,result);
+            ez.pprint(['Done! Check ' resultFile '. Sort by Lobe then Hemisphere. BA refers to BA of nearest grey matter if not found. AAL labeling should be less weighted(?).']);
             return
         catch
             ez.pprint('Something wrong. Did you extract table data structure from SPM results table to get ''TabDat''?');
