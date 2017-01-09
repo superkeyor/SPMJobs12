@@ -92,7 +92,7 @@ function main(varargin)
             header = {'x','y','z','Z score','k','xjView','url','Number','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Tal4','BA','Extended_Range_mm','','Hem','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM'};
             result = [result1, result2, c3, c4, c6, p7, p8, t, p11, result3];
             result = [header;result];
-            result = result(:,[13,12,6,27,14,19,16,1:5,7:11,15,17,18,20:26]);
+            result = result(:,[13,12,6,27,14,19,16,1:5,7:11,15,17,20:26]);
             
             ez.cell2csv('TabDat.csv',result);
             ez.pprint('Done! Check TabDat.csv. Sort by Lobe then Hemisphere. AAL labeling is less weighted.');
