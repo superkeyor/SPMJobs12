@@ -104,7 +104,7 @@ function main(varargin)
             header = {'x','y','z','Z score','k','xjView','url','x_tal','y_tal','z_tal','Hemisphere','Lobe','Anatomy','Anatomy_Matter','Hem','BA','Anatomy_GreyMatter','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','SPM','Number'};
             result = [result1, result2, c3, c4, c6, p7, p8, t, p11, result3];
             result = [header;result];
-            newheader = {'Lobe','Hemisphere','xjView','SPM','Anatomy_GreyMatter','url','Anatomy','Hem','BA','x','y','z','Z score','k','x_tal','y_tal','z_tal','Tal4','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p','Number'};
+            newheader = {'Lobe','Hemisphere','xjView','SPM','Anatomy_GreyMatter','Number','Anatomy','Hem','BA','x','y','z','Z score','k','url','x_tal','y_tal','z_tal','Anatomy_Matter','Cluster_p_FWE','Cluster_p_FDR','Cluster_p','Peak_p_FWE','Peak_p_FDR','T','Peak_p'};
             newheaderind = cellfun(@(x) find(strcmp(header,x)), newheader, 'UniformOutput', false);
             result = result(:,cell2mat(newheaderind));
             
