@@ -110,7 +110,7 @@ function main(varargin)
             
             resultFile = sprintf('TabDat_%s.csv',evalin('base','xSPM.title'));
             ez.cell2csv(resultFile,result);
-            ez.pprint(['Done! Check ' resultFile '. Sort by Lobe then Hemisphere. BA refers to BA of nearest grey matter if not found.']);
+            ez.pprint(['Done! Check ' resultFile '. Sort by Lobe/BA/Hemisphere. BA refers to BA of nearest grey matter if not found.']);
             ez.pprint('AAL labeling should be less weighted(?). One should also look at the activation map to see where the cluster is.');
             return
         catch
