@@ -16,11 +16,14 @@ function result = main(matPath,space,verbose,folder)
 %       Uses marsbar functions to export .mat ROI into nii formats
 %       If marsbar path not in searchpath, auto add them internally first.
 
-if isempty(which('marsbar'))
+if (isempty(which('marsbar'))||isempty(which('spm_get')))
     ez.print('addpath marsbar...')
     extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
     thePath = ez.lsd(extsPath,'^marsbar');
     thePath = ez.joinpath(extsPath,thePath{1});
+    addpath(thePath,'-end');
+    % additional path that would be added by marsbar
+    thePath = ez.joinpath(extsPath,'spm5');
     addpath(thePath,'-end');
 end
 
