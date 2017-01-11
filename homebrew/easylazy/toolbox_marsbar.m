@@ -7,8 +7,7 @@ function varargout = main(varargin)
         thePath = ez.joinpath(extsPath,thePath{1});
         addpath(thePath,'-end');
         % additional path that would be added by marsbar
-        thePath = ez.joinpath(extsPath,'spm5');
-        addpath(thePath,'-end');
+        addpath(ez.joinpath(thePath,'spm5'),'-end');
     end
     % addpath(genpath(thePath));
     % addpath(genpath_exclude(thePath,{'^spm2$','^spm5$','^spm99$', '^spm_lite$'})); % avoid weird functions from marsbar/spm folders, wfu

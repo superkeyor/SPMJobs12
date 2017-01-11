@@ -27,8 +27,7 @@ if (isempty(which('marsbar'))||isempty(which('spm_get')))
     thePath = ez.joinpath(extsPath,thePath{1});
     addpath(thePath,'-end');
     % additional path that would be added by marsbar
-    thePath = ez.joinpath(extsPath,'spm5');
-    addpath(thePath,'-end');
+    addpath(ez.joinpath(thePath,'spm5'),'-end');
 end
 
 xyz = cell2mat(crl(:,1));
