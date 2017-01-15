@@ -17,6 +17,7 @@ function result = main(SPMPath, clusterPath, stat, folder)
 %           parameter estimate (2nd-level GLM regression coeffecient, fmri effect size), arbitary unit, averaged across voxels within the cluster
 %           not likely to be standardized beta regression coeffecient
 %       Reference at http://www.jessicagrahn.com/marsbar-extract-data.html
+%       See Review-->Design-->Explore-->Files and factors to find out which beta is which
 
 if (isempty(which('marsbar'))||isempty(which('spm_get')))
     ez.print('addpath marsbar...')
