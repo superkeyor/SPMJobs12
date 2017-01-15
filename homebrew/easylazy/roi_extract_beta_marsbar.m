@@ -6,13 +6,15 @@ function result = main(SPMPath, clusterPath, stat, folder)
 %       stat: method to summarize values across all voxels within a cluster, 'mean'(default), 'median', 'eigen1', 'wtmean' (weighted mean)
 %       folder, path to folder where extracted betas (csv) will be saved , default pwd, if not exist, auto create the folder
 % Output:
-%       csv file with extracted betas
+%       csv file with extracted betas (betas_extracted.csv, file name hard-coded)
 %       returns a cell representing the csv result
 % Note:
 %       Uses marsbar functions to extract
 %       If marsbar path not in searchpath, auto add them internally first.
 %       The result should be equal to right-click->extract data->raw y in SPM map
 %           if very close, due possibly to conversion of marsbar cluster format
+%       The betas = mean signal (aka raw intensity values, beta weights, parameter estimates, effect sizes) from your regions of interest
+%       Reference at http://www.jessicagrahn.com/marsbar-extract-data.html
 
 if (isempty(which('marsbar'))||isempty(which('spm_get')))
     ez.print('addpath marsbar...')
@@ -58,6 +60,6 @@ for i = 1:length(clusterPath)
 
 end % end for
 result = [header;num2cell(result)];
-ez.cell2csv(fullfile(folder,'extracted_betas.csv'),result);
+ez.cell2csv(fullfile(folder,'betas_extracted.csv'),result);
 
 end % end function
