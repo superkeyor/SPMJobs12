@@ -19,6 +19,8 @@ function main(varargin)
             
             % only tell main clusters
             ind = find(~cellfun(@isempty,TabDat.dat(:,6)));
+            % include all clusters/subclusters
+            ind = find(~cellfun(@isempty,TabDat.dat(:,7)));
 
             % potentially useful output
             c3 = TabDat.dat(ind,3);
