@@ -14,6 +14,8 @@ function result = main(SPMPath, clusterPath, stat, folder)
 %       The result should be equal to right-click->extract data->raw y in SPM map
 %           if very close, due possibly to conversion of marsbar cluster format
 %       The betas = mean signal (aka raw intensity values, beta weights, parameter estimates, effect sizes) from your regions of interest
+%           parameter estimate (2nd-level GLM regression coeffecient, fmri effect size), arbitary unit, averaged across voxels within the cluster
+%           not likely to be standardized beta regression coeffecient
 %       Reference at http://www.jessicagrahn.com/marsbar-extract-data.html
 
 if (isempty(which('marsbar'))||isempty(which('spm_get')))
