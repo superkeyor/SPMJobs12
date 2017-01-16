@@ -123,6 +123,8 @@ function popupmenustattest_Callback(hObject, eventdata, handles)
 NumBoot  = str2num(get(handles.editnumbootstraptests,'String'));
 StatTest = get(hObject,'Value');
 result   = PerformStatisticalTests(handles.Aweights,handles.Bweights,NumBoot,StatTest);
+assignin('base','ABweights',[handles.Aweights',handles.Bweights']);
+ez.pprint('ABweights per subject/row exported. Each weight/column represents the correlation between two ROI beta series.');
 handles.Prob        = result.Prob;
 handles.Prob_ttest2 = result.Prob_ttest2;
 % plot
