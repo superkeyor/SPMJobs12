@@ -33,6 +33,9 @@ if ischar(clusterPath), clusterPath = cellstr(clusterPath); end
 if nargin<3, stat = 'mean'; end
 if nargin<4, folder = pwd; else ez.mkdir(folder); end
 
+% eigen1 relies on a obsolete function in spm: spm_atranspa
+if strcmp(stat,'eigen1'), addpath(ez.joinpath(ez.splitpath(which('spm')),'compat'),'-end'); end
+
 header = cell(1,length(clusterPath));
 result = [];
 for i = 1:length(clusterPath)
