@@ -98,7 +98,8 @@ end % end for
 
 if verbose,
     spmpath = fileparts(which('spm'));
-    mars_display_roi('display',char(result),fullfile(spmpath,'canonical','avg152T1.nii'));
+    % avg152T1
+    mars_display_roi('display',char(result),fullfile(spmpath,'canonical','single_subj_T1.nii'));
 end % end if
 
 % output a text list of generated rois
