@@ -16,6 +16,6 @@ function main(mat)
     outname = char(mat);
     spmpath = fileparts(which('spm'));
 
-    mars_display_roi('display',outname,fullfile(spmpath,'canonical','avg152T1.nii'));
-    % mars_display_roi('display',outname,fullfile(spmpath,'canonical','single_subj_T1.nii'));
+    % mars_display_roi('display',outname,fullfile(spmpath,'canonical','avg152T1.nii'));
+    mars_display_roi('display',outname,fullfile(spmpath,'canonical','single_subj_T1.nii'));
 end
