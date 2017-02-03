@@ -631,6 +631,14 @@ function pushbuttonprinttable_Callback(hObject, eventdata, handles)
 rownames = get(handles.tableedges,'RowName');
 thedata  = get(handles.tableedges,'data');
 numrows  = ez.len(rownames);
+
+% save the table to a file
+savData = num2cell(thedata);
+savData = cellfun(@(e) sprintf('%.2f',e), savData(:,:), 'UniformOutput',false);
+savData = [rownames,savData];
+ez.cell2csv('edge_analysis_results.csv',savData);
+% done
+
 for irow=1:numrows
     htemp{irow} = textscan(rownames{irow},'%s <-> %s');
     roi1 = char(htemp{irow}{1});
@@ -642,10 +650,11 @@ for irow=1:numrows
     stdroi1(1:ez.len(roi1)) = roi1;
     stdroi2(1:ez.len(roi2)) = roi2;
     col=size(thedata,2);
-    xthedata = arrayfun(@(e) sprintf('%.6f\t',e), thedata(irow,:), 'UniformOutput',false);
+    xthedata = arrayfun(@(e) sprintf('%.2f\t',e), thedata(irow,:), 'UniformOutput',false);
     xthedata = [xthedata{:}];
     fprintf('%s %s %s \n',stdroi1,stdroi2,xthedata); 
 end
+fprintf('The data has also been save to edge_analysis_results.csv in pwd.\n');
 
 function edit_corrpval_Callback(hObject, eventdata, handles)
 function edit_corrpval_CreateFcn(hObject, eventdata, handles)
