@@ -585,6 +585,7 @@ for inodes=1:numnodes
 end
 fprintf('Number of nodes: %d \n',numnodes);
 
+fprintf('Will save edge/node file for each condition/group and for their difference in the comparison; if you do not want to save, you can cancel and continue.\n');
 % generate edge/node file for each condition/group in the comparison but do
 % not display automatically (user can display the files with brainnet
 % viewer by themselves
