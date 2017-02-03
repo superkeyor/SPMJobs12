@@ -584,6 +584,31 @@ for inodes=1:numnodes
     disp(handles.Names{idx(inodes)});
 end
 fprintf('Number of nodes: %d \n',numnodes);
+
+% generate edge/node file for each condition/group in the comparison but do
+% not display automatically (user can display the files with brainnet
+% viewer by themselves
+% here we go
+% 1:
+nwmatrix = zeros(numnodes,numnodes);
+for irow=1:numrows
+    weight_diff = thedata(irow,end-1);
+    nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=weight_diff;
+    nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=weight_diff;
+end
+basename = [handles.leg{1}];
+[edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix,basename);
+% 2:
+nwmatrix = zeros(numnodes,numnodes);
+for irow=1:numrows
+    weight_diff = thedata(irow,end);
+    nwmatrix(find(idx==idx1(irow)),find(idx==idx2(irow)))=weight_diff;
+    nwmatrix(find(idx==idx2(irow)),find(idx==idx1(irow)))=weight_diff;
+end
+basename = [handles.leg{2}];
+[edgeFile,nodeFile] = basco_CreateNodeEdgeFiles(idx,compos,shortlabel,nwmatrix,basename);
+%%%%%%%% done
+
 nwmatrix = zeros(numnodes,numnodes);
 for irow=1:numrows
     weight_diff = thedata(irow,end-1) - thedata(irow,end);
@@ -603,6 +628,8 @@ spmDir = fileparts(which('spm'));
 cfgFile = fullfile(bnDir,'SelfBrainNetCfg.mat');
 BrainNet_MapCfg(meshFile,edgeFile,nodeFile,cfgFile);
 disp('... done.')
+
+
 end
 
 function pushbuttonviewrois_Callback(hObject, eventdata, handles)
