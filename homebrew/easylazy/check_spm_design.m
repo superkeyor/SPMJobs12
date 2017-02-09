@@ -9,8 +9,12 @@ function varargout = main(arg)
         try
             SPM = evalin('base', 'SPM');
         catch
-            spm_DesRep;
-            return;
+            [spmmatfile, sts] = spm_select(1,'^SPM\.mat$','Select SPM.mat');
+            if ~sts, varargout = {[]}; return; end
+            swd = spm_file(spmmatfile,'fpath');
+            load(fullfile(swd,'SPM.mat'));
+            SPM.swd = swd;
+            ez.print(fullfile(swd,'SPM.mat'));
         end
     else
         if strfind(arg,'.mat')
@@ -20,6 +24,12 @@ function varargout = main(arg)
     spm_DesRep('DesRepUI',SPM);
     filenames = reshape(cellstr(SPM.xY.P),size(SPM.xY.VY));
     spm_DesRep('DesMtx',SPM.xX,filenames,SPM.xsDes);
+
+    nregr = length(SPM.xX.name);
+    for iregr = 1:nregr
+        name = SPM.xX.name{iregr};
+        ez.print(sprintf('%d\t{%s}',iregr,name));
+    end
 end
 
 
