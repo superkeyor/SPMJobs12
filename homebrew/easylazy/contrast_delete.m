@@ -22,25 +22,32 @@ function varargout = main(arg)
 
     % last con
     ncon = length(SPM.xCon);
+
     % prepare
     swd = SPM.swd;
     conFile = ez.joinpath(swd, SPM.xCon(ncon).Vcon.fname);
     statFile = ez.joinpath(swd, SPM.xCon(ncon).Vspm.fname);
     name = SPM.xCon(ncon).name;
     stat = SPM.xCon(ncon).STAT;
-    con = mat2str(SPM.xCon(ncon).c);
+    con = mat2str(SPM.xCon(ncon).c,2);
 
-    % modify SPM.mat
-    SPM.xCon(ncon) = [];
-    assignin('base','SPM',SPM);
-    save(ez.joinpath(swd,'SPM.mat'),'SPM');
+    if  ez.Confirm({'Are you sure to delete the last contrast?'; sprintf('%d\t{%s}\t%s\t%s',ncon,stat,name,con); ''; 'Cannot be undone!'})
+        % modify SPM.mat
+        SPM.xCon(ncon) = [];
+        assignin('base','SPM',SPM);
+        save(ez.joinpath(swd,'SPM.mat'),'SPM');
 
-    % delete files
-    ez.rm(conFile);
-    ez.rm(statFile);
-
-    % done
-    ez.print(sprintf('removed contrast %d\t{%s}\t%s\t\t\t\t\t%s',ncon,stat,name,con));
+        % delete files
+        ez.rm(conFile);
+        ez.rm(statFile);
+        
+        % done
+        ez.print(sprintf('removed contrast %d\t{%s}\t%s\t\t\t\t\t%s',ncon,stat,name,con));
+    else
+        ez.print('canceled.');
+        return;
+    end  
+        
 end
 
 
