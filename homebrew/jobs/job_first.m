@@ -41,6 +41,11 @@
     %       if every subject/run is in same condition number and order, easy to know which beta is which condition
     %       with different conditions for each run (which generates different number of betas)
     %       better keep the condition order the same, making it a bit easier to track betas
+    %       
+    %       additional note: jerry note Wed, Feb 15 2017, 11:55:12 AM EST(-0500)
+    %       the order is actually determined when one sets up the first-level contrasts
+    %       it is during this time that the researcher combines different betas to determine the desired contrast order
+    %       with that said, it is good practice and easier to keep the same order as possible as it can be
     % If you enter a single number for the durations it will be assumed that all trials conform to this duration. 
     % If you have multiple different durations, then the number must match the number of onset times.    
     % e.g.,  (note s0215r02 does not have jol3 condition)
