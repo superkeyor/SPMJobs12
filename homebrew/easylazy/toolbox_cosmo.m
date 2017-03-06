@@ -17,5 +17,3 @@ function varargout = main(varargin)
     ez.print(cfg);
     ez.print('edit ~/.cosmomvpa.cfg');
 end % end function
-
-% cosmo_wizard_set_config
