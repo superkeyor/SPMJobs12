@@ -1,0 +1,169 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>run_classify_svm</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_classify_svm.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Classification using svm</a></li><li><a href="#2">Define data</a></li><li><a href="#3">Two class classification</a></li><li><a href="#4">Four class classification</a></li></ul></div><h2>Classification using svm<a name="1"></a></h2><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><pre class="codeinput"><span class="keyword">if</span> ~cosmo_check_external(<span class="string">'svm'</span>,false)
+    fprintf(<span class="string">'No SVM implementation is available, skipping\n'</span>);
+    <span class="keyword">return</span>
+<span class="keyword">end</span>
+</pre><h2>Define data<a name="2"></a></h2><pre class="codeinput">config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+
+data_fn=fullfile(data_path,<span class="string">'glm_T_stats_perrun.nii'</span>);
+mask_fn=fullfile(data_path,<span class="string">'vt_mask.nii'</span>);
+ds=cosmo_fmri_dataset(data_fn,<span class="string">'mask'</span>,mask_fn,<span class="keyword">...</span>
+                        <span class="string">'targets'</span>,repmat(1:6,1,10)',<span class="keyword">...</span>
+                        <span class="string">'chunks'</span>,floor(((1:60)-1)/6)+1)';
+
+
+<span class="comment">% remove constant features</span>
+ds=cosmo_remove_useless_data(ds);
+</pre><h2>Two class classification<a name="3"></a></h2><pre class="codeinput">ds_2class=cosmo_slice(ds, ds.sa.targets==2 | ds.sa.targets==5);
+ds_2class_train=cosmo_slice(ds_2class,ds_2class.sa.chunks&lt;=5);
+ds_2class_test=cosmo_slice(ds_2class,ds_2class.sa.chunks&gt;5);
+
+pred2=cosmo_classify_svm(ds_2class_train.samples,<span class="keyword">...</span>
+                                ds_2class_train.sa.targets,<span class="keyword">...</span>
+                                ds_2class_test.samples);
+
+fprintf(<span class="string">'2-class accuracy %.3f\n'</span>, sum(pred2==ds_2class_test.sa.targets)/numel(pred2));
+mx=cosmo_confusion_matrix(ds_2class_test.sa.targets,pred2);
+imagesc(mx);
+colorbar();
+</pre><pre class="codeoutput">2-class accuracy 1.000
+</pre><img vspace="5" hspace="5" src="run_classify_svm_01.png" alt=""> <h2>Four class classification<a name="4"></a></h2><pre class="codeinput">ds_4class=cosmo_slice(ds, ds.sa.targets&gt;=2 &amp; ds.sa.targets&lt;=5);
+ds_4class_train=cosmo_slice(ds_4class,ds_4class.sa.chunks&lt;=5);
+ds_4class_test=cosmo_slice(ds_4class,ds_4class.sa.chunks&gt;5);
+
+pred4=cosmo_classify_svm(ds_4class_train.samples,<span class="keyword">...</span>
+                        ds_4class_train.sa.targets,<span class="keyword">...</span>
+                        ds_4class_test.samples);
+
+fprintf(<span class="string">'4-class: accuracy %.3f\n'</span>, sum(pred4==ds_4class_test.sa.targets)/numel(pred4));
+
+mx=cosmo_confusion_matrix(ds_4class_test.sa.targets,pred4);
+imagesc(mx);
+colorbar();
+</pre><pre class="codeoutput">4-class: accuracy 0.750
+</pre><img vspace="5" hspace="5" src="run_classify_svm_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Classification using svm
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+if ~cosmo_check_external('svm',false)
+    fprintf('No SVM implementation is available, skipping\n');
+    return
+end
+
+%% Define data
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+data_fn=fullfile(data_path,'glm_T_stats_perrun.nii');
+mask_fn=fullfile(data_path,'vt_mask.nii');
+ds=cosmo_fmri_dataset(data_fn,'mask',mask_fn,...
+                        'targets',repmat(1:6,1,10)',...
+                        'chunks',floor(((1:60)-1)/6)+1)';
+
+
+% remove constant features
+ds=cosmo_remove_useless_data(ds);
+
+%% Two class classification
+ds_2class=cosmo_slice(ds, ds.sa.targets==2 | ds.sa.targets==5);
+ds_2class_train=cosmo_slice(ds_2class,ds_2class.sa.chunks<=5);
+ds_2class_test=cosmo_slice(ds_2class,ds_2class.sa.chunks>5);
+
+pred2=cosmo_classify_svm(ds_2class_train.samples,...
+                                ds_2class_train.sa.targets,...
+                                ds_2class_test.samples);
+
+fprintf('2-class accuracy %.3f\n', sum(pred2==ds_2class_test.sa.targets)/numel(pred2));
+mx=cosmo_confusion_matrix(ds_2class_test.sa.targets,pred2);
+imagesc(mx);
+colorbar();
+
+
+%% Four class classification
+ds_4class=cosmo_slice(ds, ds.sa.targets>=2 & ds.sa.targets<=5);
+ds_4class_train=cosmo_slice(ds_4class,ds_4class.sa.chunks<=5);
+ds_4class_test=cosmo_slice(ds_4class,ds_4class.sa.chunks>5);
+
+pred4=cosmo_classify_svm(ds_4class_train.samples,...
+                        ds_4class_train.sa.targets,...
+                        ds_4class_test.samples);
+
+fprintf('4-class: accuracy %.3f\n', sum(pred4==ds_4class_test.sa.targets)/numel(pred4));
+
+mx=cosmo_confusion_matrix(ds_4class_test.sa.targets,pred4);
+imagesc(mx);
+colorbar();
+
+##### SOURCE END #####
+--></body></html>

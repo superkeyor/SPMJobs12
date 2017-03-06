@@ -1,0 +1,323 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Demo: DISTATIS</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="demo_fmri_distatis.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Demo: DISTATIS</h1><!--introduction--><p>The data used here is available from <a href="http://cosmomvpa.org/datadb.zip">http://cosmomvpa.org/datadb.zip</a></p><p>It is based on the following work: * Connolly et al (2012), Representation of biological classes in the human   brain. Journal of Neuroscience, doi 10.1523/JNEUROSCI.5547-11.2012</p><p>Six categories (monkey, lemur, mallard, warbler, ladybug, lunamoth) during ten runs in an fMRI study.</p><p>This example shows the application of DISTATIS, which tries to find an optimal 'compromise' dissimilarity matrix across a set of observations (participants)</p><p>Reference:   - Abdi, H., Valentin, D., O?Toole, A. J., &amp; Edelman, B. (2005).     DISTATIS: The analysis of multiple distance matrices. In     Proceedings of the IEEE Computer Society: International conference     on computer vision and pattern recognition, San Diego, CA, USA     (pp. 42?47).</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set data paths</a></li><li><a href="#2">Preprocessing for DISTATIS: RSM analysis</a></li><li><a href="#3">Run DISTATIS</a></li><li><a href="#4">show comprimise distance matrix</a></li><li><a href="#5">show citation information</a></li></ul></div><h2>Set data paths<a name="1"></a></h2><p>The function cosmo_config() returns a struct containing paths to tutorial data. (Alternatively the paths can be set manually without using cosmo_config.)</p><pre class="codeinput">config=cosmo_config();
+study_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>);
+output_path=config.output_data_path;
+
+readme_fn=fullfile(study_path,<span class="string">'README'</span>);
+cosmo_type(readme_fn);
+
+<span class="comment">% reset citation list</span>
+cosmo_check_external(<span class="string">'-tic'</span>);
+</pre><pre class="codeoutput">   #    #    #        #####     ######                      
+  # #   #   #        #     #    #     #   ##   #####   ##   
+ #   #  #  #         #          #     #  #  #    #    #  #  
+#     # ###    ##### ######     #     # #    #   #   #    # 
+####### #  #         #     #    #     # ######   #   ###### 
+#     # #   #        #     #    #     # #    #   #   #    # 
+#     # #    #        #####     ######  #    #   #   #    # 
+
+Overview
+--------
+fMRI responses to viewing images of six species in the animal kingdom, 
+used in Connollly et al. 2012.
+
+Contents
+--------
+
+- s0[1-8]/                  This directory contains fMRI data from 8 of the 12 
+                            participants studied in the experiment reported in 
+                            Connolly et al. 2012 (Code-named 'AK6' for animal
+                            kingdom, 6-species). Each subject's subdirectory 
+                            contains the following data:
+   - glm_T_stats_perrun.nii A 60-volume file of EPI-data preprocessed using 
+                            AFNI up to and including fitting a general linear 
+                            model using 3dDeconvolve. Each volume contains the 
+                            t-statistics for the estimated response to a one 
+                            of the 6 stimulus categories. These estimates were
+                            calculated independently for each of the 10 runs 
+                            in the experiment. 
+   - glm_T_stats_even.nii   Data derived from glm_T_stats_perrun.nii.
+   - glm_T_stats_odd.nii    Each is a 6-volume file with the T-values averaged
+                            across even and odd runs for each category.
+   - brain.nii              Skull-stripped T1-weighted anatomical brain image.
+   - brain_mask.nii         Whole-brain mask in EPI-space/resolution.
+   - vt_mask.nii            Bilateral ventral temporal cortex mask similar to 
+                            that used in Connolly et al. 2012.
+   - ev_mask.nii            Bilateral early visual cortex mask.
+- models
+   - behav_sim.mat          Matlab file with behavioural similarity ratings.
+   - v1_model.mat           Matlab file with similarity values based on 
+                            low-level visual properties of the stimuli.
+
+Methods
+-------
+The stimulus-specific volumes in the stats T-stats file are in the order
+
+    monkey, lemur, mallard (duck), warbler, ladybug, lunamoth
+
+for each of the ten runs.
+
+Reference
+---------
+When using this dataset for any publication please cite:
+
+Connolly, A. C. , Guntupalli, J. S. , Gors, J. , Hanke, M. , Halchenko, Y. O., 
+Wu, Y. , Abdi, H. and Haxby, J. V. (2012). Representation of biological classes 
+in the human brain. Journal of Neuroscience, 32, 2608-2618. 
+[PDF] DOI: 10.1523/JNEUROSCI.5547-11.2012,
+
+Contact
+-------
+Andrew C. Connolly &lt;andrew.c.connolly |at| dartmouth.edu&gt;
+
+</pre><h2>Preprocessing for DISTATIS: RSM analysis<a name="2"></a></h2><pre class="codeinput"><span class="comment">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+subject_ids={<span class="string">'s01'</span>,<span class="string">'s02'</span>,<span class="string">'s03'</span>,<span class="string">'s04'</span>,<span class="string">'s05'</span>,<span class="string">'s06'</span>,<span class="string">'s07'</span>,<span class="string">'s08'</span>};
+nsubjects=numel(subject_ids);
+
+mask_label=<span class="string">'vt_mask'</span>;
+
+ds_rsms=cell(nsubjects,1); <span class="comment">% allocate space for output</span>
+<span class="keyword">for</span> subject_num=1:nsubjects
+    subject_id=subject_ids{subject_num};
+
+    <span class="comment">% Code from here is pretty much identical to that above &gt;&gt;&gt;</span>
+
+    <span class="comment">% set path for this subject</span>
+    data_path=fullfile(study_path,subject_id);
+
+    <span class="comment">% Define data locations and load data from even and odd runs</span>
+    mask_fn=fullfile(data_path, [mask_label <span class="string">'.nii'</span>]); <span class="comment">% vt mask</span>
+
+    <span class="comment">% Use odd runs only</span>
+    data_fn=fullfile(data_path,<span class="string">'glm_T_stats_odd.nii'</span>);
+    ds=cosmo_fmri_dataset(data_fn,<span class="string">'mask'</span>,mask_fn,<span class="keyword">...</span>
+                            <span class="string">'targets'</span>,1:6,<span class="string">'chunks'</span>,1);
+
+    ds_rsm=cosmo_dissimilarity_matrix_measure(ds);
+
+    <span class="comment">% set chunks (one chunk per subject)</span>
+    ds_rsm.sa.chunks=subject_num*ones(size(ds_rsm.samples,1),1);
+    ds_rsms{subject_num}=ds_rsm;
+<span class="keyword">end</span>
+
+<span class="comment">% combine data from all subjects</span>
+all_ds=cosmo_stack(ds_rsms);
+</pre><h2>Run DISTATIS<a name="3"></a></h2><pre class="codeinput">distatis=cosmo_distatis(all_ds);
+</pre><h2>show comprimise distance matrix<a name="4"></a></h2><pre class="codeinput">[compromise_matrix,dim_labels,values]=cosmo_unflatten(distatis,1);
+
+labels={<span class="string">'monkey'</span>, <span class="string">'lemur'</span>, <span class="string">'mallard'</span>, <span class="string">'warbler'</span>, <span class="string">'ladybug'</span>, <span class="string">'lunamoth'</span>};
+n_labels=numel(labels);
+figure();
+imagesc(compromise_matrix)
+title(<span class="string">'DSM'</span>);
+set(gca,<span class="string">'YTick'</span>,1:n_labels,<span class="string">'YTickLabel'</span>,labels);
+set(gca,<span class="string">'XTick'</span>,1:n_labels,<span class="string">'XTickLabel'</span>,labels);
+ylabel(dim_labels{1});
+xlabel(dim_labels{2});
+colorbar
+
+<span class="comment">% skip if stats toolbox is not present</span>
+<span class="keyword">if</span> cosmo_check_external(<span class="string">'@stats'</span>,false)
+    figure();
+    hclus = linkage(compromise_matrix);
+    dendrogram(hclus,<span class="string">'labels'</span>,labels,<span class="string">'orientation'</span>,<span class="string">'left'</span>);
+    title(<span class="string">'dendrogram'</span>);
+
+    figure();
+    F = cmdscale(squareform(compromise_matrix));
+    text(F(:,1), F(:,2), labels);
+    title(<span class="string">'2D MDS plot'</span>);
+    mx = max(abs(F(:)));
+    xlim([-mx mx]); ylim([-mx mx]);
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="demo_fmri_distatis_01.png" alt=""> <img vspace="5" hspace="5" src="demo_fmri_distatis_02.png" alt=""> <img vspace="5" hspace="5" src="demo_fmri_distatis_03.png" alt=""> <h2>show citation information<a name="5"></a></h2><pre class="codeinput">cosmo_check_external(<span class="string">'-cite'</span>);
+</pre><pre class="codeoutput">If you use CoSMoMVPA and/or some other toolboxes for a publication, please cite:
+
+J. Shen. NIFTI toolbox. available online from http://www.mathworks.com/matlabcentral/fileexchange/8797-tools-for-nifti-and-analyze-image
+
+Abdi, H., Valentin, D., O'Toole, A. J., Edelman, B. (2005). DISTATIS: The analysis of multiple distance matrices. In Proceedings of the IEEE Computer Society: International conference on computer vision and pattern recognition, San Diego, CA, USA (pp. 42-47). DISTATIS CoSMoMVPA implementation available online from http://cosmomvpa.org
+
+N. N. Oosterhof, A. C. Connolly, J. V. Haxby (2016). CoSMoMVPA: multi-modal multivariate pattern analysis of neuroimaging data in Matlab / GNU Octave. Frontiers in Neuroinformatics, doi:10.3389/fninf.2016.00027.. CoSMoMVPA toolbox available online from http://cosmomvpa.org
+
+The Mathworks, Natick, MA, United States. Matlab 8.5.0.197613 (R2015a) (February 12, 2015). available online from http://www.mathworks.com
+
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Demo: DISTATIS
+%
+% The data used here is available from http://cosmomvpa.org/datadb.zip
+%
+% It is based on the following work:
+% * Connolly et al (2012), Representation of biological classes in the human
+%   brain. Journal of Neuroscience, doi 10.1523/JNEUROSCI.5547-11.2012
+%
+% Six categories (monkey, lemur, mallard, warbler, ladybug, lunamoth)
+% during ten runs in an fMRI study.
+%
+% This example shows the application of DISTATIS, which tries to find an
+% optimal 'compromise' dissimilarity matrix across a set of observations
+% (participants)
+%
+% Reference:
+%   - Abdi, H., Valentin, D., O?Toole, A. J., & Edelman, B. (2005).
+%     DISTATIS: The analysis of multiple distance matrices. In
+%     Proceedings of the IEEE Computer Society: International conference
+%     on computer vision and pattern recognition, San Diego, CA, USA
+%     (pp. 42?47).
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+%% Set data paths
+% The function cosmo_config() returns a struct containing paths to tutorial
+% data. (Alternatively the paths can be set manually without using
+% cosmo_config.)
+config=cosmo_config();
+study_path=fullfile(config.tutorial_data_path,'ak6');
+output_path=config.output_data_path;
+
+readme_fn=fullfile(study_path,'README');
+cosmo_type(readme_fn);
+
+% reset citation list
+cosmo_check_external('-tic');
+
+%% Preprocessing for DISTATIS: RSM analysis
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+subject_ids={'s01','s02','s03','s04','s05','s06','s07','s08'};
+nsubjects=numel(subject_ids);
+
+mask_label='vt_mask';
+
+ds_rsms=cell(nsubjects,1); % allocate space for output
+for subject_num=1:nsubjects
+    subject_id=subject_ids{subject_num};
+
+    % Code from here is pretty much identical to that above >>>
+
+    % set path for this subject
+    data_path=fullfile(study_path,subject_id);
+
+    % Define data locations and load data from even and odd runs
+    mask_fn=fullfile(data_path, [mask_label '.nii']); % vt mask
+
+    % Use odd runs only
+    data_fn=fullfile(data_path,'glm_T_stats_odd.nii');
+    ds=cosmo_fmri_dataset(data_fn,'mask',mask_fn,...
+                            'targets',1:6,'chunks',1);
+
+    ds_rsm=cosmo_dissimilarity_matrix_measure(ds);
+
+    % set chunks (one chunk per subject)
+    ds_rsm.sa.chunks=subject_num*ones(size(ds_rsm.samples,1),1);
+    ds_rsms{subject_num}=ds_rsm;
+end
+
+% combine data from all subjects
+all_ds=cosmo_stack(ds_rsms);
+
+%% Run DISTATIS
+distatis=cosmo_distatis(all_ds);
+
+%% show comprimise distance matrix
+[compromise_matrix,dim_labels,values]=cosmo_unflatten(distatis,1);
+
+labels={'monkey', 'lemur', 'mallard', 'warbler', 'ladybug', 'lunamoth'};
+n_labels=numel(labels);
+figure();
+imagesc(compromise_matrix)
+title('DSM');
+set(gca,'YTick',1:n_labels,'YTickLabel',labels);
+set(gca,'XTick',1:n_labels,'XTickLabel',labels);
+ylabel(dim_labels{1});
+xlabel(dim_labels{2});
+colorbar
+
+% skip if stats toolbox is not present
+if cosmo_check_external('@stats',false)
+    figure();
+    hclus = linkage(compromise_matrix);
+    dendrogram(hclus,'labels',labels,'orientation','left');
+    title('dendrogram');
+
+    figure();
+    F = cmdscale(squareform(compromise_matrix));
+    text(F(:,1), F(:,2), labels);
+    title('2D MDS plot');
+    mx = max(abs(F(:)));
+    xlim([-mx mx]); ylim([-mx mx]);
+end
+
+
+%% show citation information
+cosmo_check_external('-cite');
+
+##### SOURCE END #####
+--></body></html>

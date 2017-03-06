@@ -1,0 +1,7 @@
+.. _cosmo_fx_hdr:
+
+cosmo fx hdr
+============
+
+.. include :: cosmo_fx_hdr.txt
+

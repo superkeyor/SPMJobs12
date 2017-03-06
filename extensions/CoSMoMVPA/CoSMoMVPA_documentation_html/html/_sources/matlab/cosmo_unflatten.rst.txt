@@ -1,0 +1,7 @@
+.. _cosmo_unflatten:
+
+cosmo unflatten
+===============
+
+.. include :: cosmo_unflatten.txt
+

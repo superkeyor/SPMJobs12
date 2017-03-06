@@ -1,0 +1,7 @@
+.. _cosmo_meeg_chan_neighbors_skl:
+
+cosmo meeg chan neighbors skl
+=============================
+
+.. include :: cosmo_meeg_chan_neighbors_skl.txt
+

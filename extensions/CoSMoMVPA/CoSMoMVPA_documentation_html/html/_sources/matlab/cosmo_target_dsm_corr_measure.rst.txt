@@ -1,0 +1,7 @@
+.. _cosmo_target_dsm_corr_measure:
+
+cosmo target dsm corr measure
+=============================
+
+.. include :: cosmo_target_dsm_corr_measure.txt
+

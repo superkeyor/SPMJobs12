@@ -1,0 +1,7 @@
+.. _cosmo_searchlight_hdr:
+
+cosmo searchlight hdr
+=====================
+
+.. include :: cosmo_searchlight_hdr.txt
+

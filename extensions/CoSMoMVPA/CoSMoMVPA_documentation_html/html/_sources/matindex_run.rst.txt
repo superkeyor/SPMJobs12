@@ -1,0 +1,82 @@
+.. _`matindex_run`:
+
+=================
+Runnable examples
+=================
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+
+    matlab/run_anatomical_dataset_basics
+    matlab/run_classify_lda
+    matlab/run_classify_naive_bayes
+    matlab/run_classify_svm
+    matlab/run_compare_dsm
+    matlab/run_correlation_measure
+    matlab/run_cross_validation
+    matlab/run_crossvalidation_measure
+    matlab/run_crossvalidation_searchlight
+    matlab/run_dataset_basics
+    matlab/run_demean
+    matlab/run_feature_selection_classifier
+    matlab/run_fmri_correlation_searchlight_trivial
+    matlab/run_load_datasets
+    matlab/run_measure_searchlight
+    matlab/run_meeg_time_generalization
+    matlab/run_meeg_timelock_measures
+    matlab/run_multiple_comparison_correction
+    matlab/run_nfold_crossvalidate
+    matlab/run_nifti_basics
+    matlab/run_operations_on_datasets
+    matlab/run_permutation_test
+    matlab/run_roi_neighborhood
+    matlab/run_rsa_visualize
+    matlab/run_rsm_measure_searchlight
+    matlab/run_setting_sample_attr
+    matlab/run_sphere_offsets
+    matlab/run_sphere_offsets_searchlight
+    matlab/run_spherical_neighborhood_searchlight
+    matlab/run_splithalf_correlations
+    matlab/run_splithalf_correlations_searchlight
+    matlab/run_splithalf_correlations_single_sub
+    matlab/run_cfy
+
+=============================================== ===============================================================================================================================================================================================================================
+----------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+**All functions**
+----------------------------------------------- -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------
+:ref:`run_anatomical_dataset_basics`            Anatomical dataset basics In this example, load a brain as a CoSMoMVPA datset and visualize it in matlab                                                                                                                        
+:ref:`run_cfy`                                  ds=cosmo_synthetic_dataset('ntargets',2,'nchunks',100,'size','big'); partitions=cosmo_oddeven_partitioner(ds);                                                                                                                  
+:ref:`run_classify_lda`                         odd-even classification with LDA classifier                                                                                                                                                                                     
+:ref:`run_classify_naive_bayes`                 Two-class classification with naive baysian classifier                                                                                                                                                                          
+:ref:`run_classify_svm`                         Classification using svm                                                                                                                                                                                                        
+:ref:`run_compare_dsm`                          RSA Tutorial Compare DSMs                                                                                                                                                                                                       
+:ref:`run_correlation_measure`                  Exercise with cosmo_correlation_measure Split-half correlation analysis using cosmo_correlation_measure                                                                                                                         
+:ref:`run_cross_validation`                     Cross validation example with multiple classifiers This example runs cross validation and shows confusion matrix using multiple classifiers                                                                                     
+:ref:`run_crossvalidation_measure`              Cross validation measure example This example runs cross validation with the cosmo_crossvalidation_measure function, using a classifier with n-fold crossvalidation. It shows the confusion matrices using multiple classifiers 
+:ref:`run_crossvalidation_searchlight`          Crossvalidation searchlight                                                                                                                                                                                                     
+:ref:`run_dataset_basics`                       Dataset basics                                                                                                                                                                                                                  
+:ref:`run_demean`                               Example of de-meaning                                                                                                                                                                                                           
+:ref:`run_feature_selection_classifier`         An example of using feature selection with a classifier                                                                                                                                                                         
+:ref:`run_fmri_correlation_searchlight_trivial` Demo: fMRI searchlights with split-half correlation                                                                                                                                                                             
+:ref:`run_load_datasets`                        Dataset Basics Load datasets using cosmo_fmri_dataset                                                                                                                                                                           
+:ref:`run_measure_searchlight`                  Searchlight using a data measure                                                                                                                                                                                                
+:ref:`run_meeg_time_generalization`             MEEG time generalization in a region (in space-time) of interest                                                                                                                                                                
+:ref:`run_meeg_timelock_measures`               MEEG time-lock searchlight                                                                                                                                                                                                      
+:ref:`run_multiple_comparison_correction`       Multiple comparison correction with Threshold-Free Cluster Enhancement                                                                                                                                                          
+:ref:`run_nfold_crossvalidate`                  n-fold cross-validation classification with LDA classifier                                                                                                                                                                      
+:ref:`run_nifti_basics`                         NIFTI basics In this example, load a brain and visualize it in matlab                                                                                                                                                           
+:ref:`run_operations_on_datasets`               Dataset Basics Run operations on datasets                                                                                                                                                                                       
+:ref:`run_permutation_test`                     Permutation test example                                                                                                                                                                                                        
+:ref:`run_roi_neighborhood`                     ROI neighborhood example                                                                                                                                                                                                        
+:ref:`run_rsa_visualize`                        RSA Visualize                                                                                                                                                                                                                   
+:ref:`run_rsm_measure_searchlight`              Searchlight for representational similarity analysis                                                                                                                                                                            
+:ref:`run_setting_sample_attr`                  Dataset Basics (setting sample attributes)                                                                                                                                                                                      
+:ref:`run_sphere_offsets`                       Show sphere offsets for used in spherical neighborhood                                                                                                                                                                          
+:ref:`run_sphere_offsets_searchlight`           Searchlight analysis in the volume                                                                                                                                                                                              
+:ref:`run_spherical_neighborhood_searchlight`   Spherical searchlight this example implements a spherical searchlight using cosmo_spherical_neighborhood and performs crossvalidation with a nearest neigh classifier                                                           
+:ref:`run_splithalf_correlations`               roi-based MVPA with group-analysis                                                                                                                                                                                              
+:ref:`run_splithalf_correlations_searchlight`   Volumetric fMRI Searchlight                                                                                                                                                                                                     
+:ref:`run_splithalf_correlations_single_sub`    Roi-based MVPA for single subject (run_split_half_correlations_single_sub)                                                                                                                                                      
+=============================================== ===============================================================================================================================================================================================================================

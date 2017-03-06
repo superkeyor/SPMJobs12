@@ -1,0 +1,7 @@
+.. _test_dim_rename:
+
+test dim rename
+===============
+
+.. include :: test_dim_rename.txt
+

@@ -1,0 +1,7 @@
+.. _test_publish_run_scripts:
+
+test publish run scripts
+========================
+
+.. include :: test_publish_run_scripts.txt
+

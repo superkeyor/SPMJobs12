@@ -1,0 +1,7 @@
+.. _cosmo_neighborhood_split_skl:
+
+cosmo neighborhood split skl
+============================
+
+.. include :: cosmo_neighborhood_split_skl.txt
+

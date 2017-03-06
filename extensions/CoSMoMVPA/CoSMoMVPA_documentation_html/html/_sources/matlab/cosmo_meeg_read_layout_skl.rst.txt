@@ -1,0 +1,7 @@
+.. _cosmo_meeg_read_layout_skl:
+
+cosmo meeg read layout skl
+==========================
+
+.. include :: cosmo_meeg_read_layout_skl.txt
+

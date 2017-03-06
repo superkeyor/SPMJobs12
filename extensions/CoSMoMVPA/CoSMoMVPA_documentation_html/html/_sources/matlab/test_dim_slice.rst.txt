@@ -1,0 +1,7 @@
+.. _test_dim_slice:
+
+test dim slice
+==============
+
+.. include :: test_dim_slice.txt
+

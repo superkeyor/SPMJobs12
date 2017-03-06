@@ -1,0 +1,464 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>MEEG timeseries classification</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="demo_meeg_timeseries_classification.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>MEEG timeseries classification</h1><!--introduction--><p>This example shows MVPA analyses performed on MEEG data.</p><p>The input dataset involved a paradigm with electrical median nerve stimulation for durations of 2s at 20Hz.</p><p>The code presented here can be adapted for other MEEG analyses, but there are a few potential caveats:</p><div><ul><li>assignment of targets (labels of conditions) is based here on   stimulation periods versus pre-stimulation periods. In typical   analyses the targets should be based on different trial conditions, for   example as set a FieldTrip .trialinfo field.</li><li>assignment of chunks (parts of the data that are assumed to be   independent) is based on a trial-by-trial basis. For cross-validation,   the number of chunks is reduced to four to speed up the analysis.</li><li>the time window used for analyses is rather small. This means that in   particular for time-freq analysis a lot of data is missing, especially   for early and late timepoints in the lower frequency bands. For typical   analyses it may be preferred to use a wider time window.</li><li>the current examples do not perform baseline corrections or signal   normalizations, which may reduce discriminatory power.</li></ul></div><p>Note: running this code requires FieldTrip.</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">get timelock data in CoSMoMVPA format</a></li><li><a href="#2">Prepare MVPA</a></li><li><a href="#3">Run time-series searchlight on magneto- and gradio-meters seperately</a></li></ul></div><h2>get timelock data in CoSMoMVPA format<a name="1"></a></h2><pre class="codeinput"><span class="comment">% set configuration</span>
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'meg_20hz'</span>);
+
+<span class="comment">% show dataset information</span>
+readme_fn=fullfile(data_path,<span class="string">'README'</span>);
+cosmo_type(readme_fn);
+
+<span class="comment">% reset citation list</span>
+cosmo_check_external(<span class="string">'-tic'</span>);
+
+<span class="comment">% load data</span>
+data_fn=fullfile(data_path,<span class="string">'subj102_B01_20Hz_timelock.mat'</span>);
+data_tl=load(data_fn);
+
+<span class="comment">% convert to cosmomvpa struct</span>
+ds_tl=cosmo_meeg_dataset(data_tl);
+
+<span class="comment">% set the target (trial condition)</span>
+ds_tl.sa.targets=ds_tl.sa.trialinfo(:,1); <span class="comment">% 1=pre, 2=post</span>
+
+<span class="comment">% set the chunks (independent measurements)</span>
+<span class="comment">% in this dataset, the first half of the samples (in order)</span>
+<span class="comment">% are the post-trials;</span>
+<span class="comment">% the second half the pre-trials</span>
+ds_tl.sa.chunks=[(1:145) (1:145)]';
+
+
+<span class="comment">% in addition give a label to each trial</span>
+index2label={<span class="string">'pre'</span>,<span class="string">'post'</span>}; <span class="comment">% 1=pre, 2=peri/post</span>
+ds_tl.sa.labels=cellfun(@(x)index2label(x),num2cell(ds_tl.sa.targets));
+
+<span class="comment">% just to check everything is ok</span>
+cosmo_check_dataset(ds_tl);
+</pre><pre class="codeoutput">Summary
+-------
+MEG data in raw, time-locked and time-frequency formats.
+
+Contents
+--------
+- subj102_B01_20Hz.fif            raw MEG recording
+- preproc.m                       Matlab preprocessing script (based on 
+                                  FieldTrip)
+- subj102_B01_20Hz_timefreq.mat   Time-locked data (generated by preproc.m)
+- subj102_B01_20Hz_timelock.mat   Time-frequency data  (generated by preproc.m)
+- LICENSE                         License file 
+- README                          This file
+
+Methods
+-------
+The dataset involved a paradigm with electrical median nerve stimulation with a 
+human participant for durations of 2s at 20Hz. Data was acquired at 1khz using 
+a neuromag306 system. 
+Trial info in the .mat files: 1=pre-stimulus, 2=peri/post-stimulus
+
+License
+-------
+The contents are made available by Nathan Weisz &lt;nathanweisz |at| me.com&gt; and 
+Gianpaolo Demarchi &lt;gianpaolo.demarchi |at| unitn.it&gt; under the Creative 
+Commons CC0 1.0 Universal Public Domain Dedication ("CC0"). See the LICENSE 
+file for details, or visit 
+http://creativecommons.org/publicdomain/zero/1.0/deed.en.
+
+Acknowledgements
+----------------
+Thanks to Nathan Weisz and Gianpaolo Demarchi for providing this dataset, and 
+an anonymous participant for volunteering during the recordings.
+
+Contact
+-------
+Nikolaas N. Oosterhof &lt;nikolaas.oosterhof |at| unitn.it&gt;
+</pre><h2>Prepare MVPA<a name="2"></a></h2><p>reset chunks: use four chunks</p><pre class="codeinput">nchunks=4;
+ds_tl.sa.chunks=cosmo_chunkize(ds_tl,nchunks);
+
+<span class="comment">% do a take-one-fold out cross validation.</span>
+<span class="comment">% except when using a splithalf correlation measure it is important that</span>
+<span class="comment">% the partitions are *balanced*, i.e. each target (or class) is presented</span>
+<span class="comment">% equally often in each chunk</span>
+partitions=cosmo_nchoosek_partitioner(ds_tl,1);
+partitions=cosmo_balance_partitions(partitions, ds_tl);
+
+npartitions=numel(partitions);
+fprintf(<span class="string">'There are %d partitions\n'</span>, numel(partitions.train_indices));
+fprintf(<span class="string">'# train samples:%s\n'</span>, sprintf(<span class="string">' %d'</span>, cellfun(@numel, <span class="keyword">...</span>
+                                        partitions.train_indices)));
+fprintf(<span class="string">'# test samples:%s\n'</span>, sprintf(<span class="string">' %d'</span>, cellfun(@numel, <span class="keyword">...</span>
+                                        partitions.test_indices)));
+</pre><pre class="codeoutput">There are 4 partitions
+# train samples: 216 218 218 218
+# test samples: 74 72 72 72
+</pre><h2>Run time-series searchlight on magneto- and gradio-meters seperately<a name="3"></a></h2><pre class="codeinput"><span class="comment">% try two different classification approaches:</span>
+<span class="comment">% 1) without averaging the samples in the train set</span>
+<span class="comment">% 2) by averaging 5 samples at the time in the train set, and re-using</span>
+<span class="comment">%    every sample 3 times.</span>
+<span class="comment">% (Note: As of July 2015, there is no clear indication in the literature</span>
+<span class="comment">%  which approach is 'better'. These two approaches are used here to</span>
+<span class="comment">%  illustrate how they can be used with a searchlight).</span>
+average_train_args_cell={{},<span class="keyword">...</span><span class="comment">                                  % {  1</span>
+                         {<span class="string">'average_train_count'</span>,5,<span class="keyword">...</span><span class="comment">            %  { 2</span>
+                                <span class="string">'average_train_resamplings'</span>,3}}; <span class="comment">%  { 2</span>
+n_average_train_args=numel(average_train_args_cell);
+
+<span class="comment">% compute and plot accuracies for magnetometers and gradiometers separately</span>
+chantypes={<span class="string">'meg_axial'</span>,<span class="string">'meg_planar'</span>};
+
+<span class="comment">% in the time searchlight analysis, select the time-point itself, the two</span>
+<span class="comment">% timepoints after it, and the two timepoints before it</span>
+time_radius=2;
+nchantypes=numel(chantypes);
+
+ds_chantypes=cosmo_meeg_chantype(ds_tl);
+plot_counter=0;
+<span class="keyword">for</span> j=1:n_average_train_args
+    <span class="comment">% define the measure and its argument.</span>
+    <span class="comment">% here a simple naive baysian classifier is used.</span>
+    <span class="comment">% Alternative are @cosmo_classify_{svm,nn,lda}.</span>
+    measure=@cosmo_crossvalidation_measure;
+    measure_args=struct();
+    measure_args.classifier=@cosmo_classify_naive_bayes;
+    measure_args.partitions=partitions;
+
+    <span class="comment">% add the options to average samples to the measure arguments.</span>
+    <span class="comment">% (if no averaging is desired, this step can be left out.)</span>
+    average_train_args=average_train_args_cell{j};
+    measure_args=cosmo_structjoin(measure_args, average_train_args);
+
+
+    <span class="keyword">for</span> k=1:nchantypes
+        parent_type=chantypes{k};
+
+        <span class="comment">% find feature indices of channels matching the parent_type</span>
+        chantype_idxs=find(cosmo_match(ds_chantypes,parent_type));
+
+        <span class="comment">% define mask with channels matching those feature indices</span>
+        chan_msk=cosmo_match(ds_tl.fa.chan,chantype_idxs);
+
+        <span class="comment">% slice the dataset to select only the channels matching the channel</span>
+        <span class="comment">% types</span>
+        ds_tl_sel=cosmo_dim_slice(ds_tl, chan_msk, 2);
+        ds_tl_sel=cosmo_dim_prune(ds_tl_sel); <span class="comment">% remove non-indexed channels</span>
+
+        <span class="comment">% define neighborhood over time; for each time point the time</span>
+        <span class="comment">% point itself is included, as well as the two time points before</span>
+        <span class="comment">% and the two time points after it</span>
+        nbrhood=cosmo_interval_neighborhood(ds_tl_sel,<span class="string">'time'</span>,<span class="keyword">...</span>
+                                                <span class="string">'radius'</span>,time_radius);
+
+        <span class="comment">% run the searchlight using the measure, measure arguments, and</span>
+        <span class="comment">% neighborhood defined above.</span>
+        <span class="comment">% Note that while the input has both 'chan' and 'time' as feature</span>
+        <span class="comment">% dimensions, the output only has 'time' as the feature dimension</span>
+        sl_map=cosmo_searchlight(ds_tl_sel,nbrhood,measure,measure_args);
+        fprintf(<span class="string">'The output has feature dimensions: %s\n'</span>, <span class="keyword">...</span>
+                        cosmo_strjoin(sl_map.a.fdim.labels,<span class="string">', '</span>));
+
+        plot_counter=plot_counter+1;
+        subplot(n_average_train_args,nchantypes,plot_counter);
+
+        time_values=sl_map.a.fdim.values{1}; <span class="comment">% first dim (channels got nuked)</span>
+        plot(time_values,sl_map.samples);
+
+        ylim([.4 .8])
+        xlim([min(time_values),max(time_values)]);
+        ylabel(<span class="string">'classification accuracy (chance=.5)'</span>);
+        xlabel(<span class="string">'time'</span>);
+
+        <span class="keyword">if</span> isempty(average_train_args)
+            postfix=<span class="string">' no averaging'</span>;
+        <span class="keyword">else</span>
+            postfix=<span class="string">' with averaging'</span>;
+        <span class="keyword">end</span>
+
+        descr=sprintf(<span class="string">'%s - %s'</span>, strrep(parent_type,<span class="string">'_'</span>,<span class="string">' '</span>), postfix);
+        title(descr);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+<span class="comment">% Show citation information</span>
+cosmo_check_external(<span class="string">'-cite'</span>);
+</pre><pre class="codeoutput">Warning: cosmo_dim_slice is deprecated and will be removed in the future;
+instead of:
+
+      % this is deprecated:
+      result=cosmo_dim_slice(ds, ...)
+
+use:
+
+      ds_sliced=cosmo_slice(ds, ...)
+
+      result=cosmo_dim_prune(ds_sliced);
+
+
+This warning is shown only once, but the underlying issue may occur multiple
+times. To show each warning:
+ - every time:   cosmo_warning('on')
+ - once:         cosmo_warning('once')
+ - never:        cosmo_warning('off')
+ 
++00:00:14 [####################] -00:00:00  
+The output has feature dimensions: time
++00:00:18 [####################] -00:00:00  
+The output has feature dimensions: time
++00:00:26 [####################] -00:00:00  
+The output has feature dimensions: time
++00:00:33 [####################] -00:00:00  
+The output has feature dimensions: time
+If you use CoSMoMVPA and/or some other toolboxes for a publication, please cite:
+
+N. N. Oosterhof, A. C. Connolly, J. V. Haxby (2016). CoSMoMVPA: multi-modal multivariate pattern analysis of neuroimaging data in Matlab / GNU Octave. Frontiers in Neuroinformatics, doi:10.3389/fninf.2016.00027.. CoSMoMVPA toolbox available online from http://cosmomvpa.org
+
+The Mathworks, Natick, MA, United States. Matlab 8.5.0.197613 (R2015a) (February 12, 2015). available online from http://www.mathworks.com
+
+</pre><img vspace="5" hspace="5" src="demo_meeg_timeseries_classification_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% MEEG timeseries classification
+%
+% This example shows MVPA analyses performed on MEEG data.
+%
+% The input dataset involved a paradigm with electrical median nerve
+% stimulation for durations of 2s at 20Hz.
+%
+% The code presented here can be adapted for other MEEG analyses, but
+% there are a few potential caveats:
+%
+% * assignment of targets (labels of conditions) is based here on
+%   stimulation periods versus pre-stimulation periods. In typical
+%   analyses the targets should be based on different trial conditions, for
+%   example as set a FieldTrip .trialinfo field.
+% * assignment of chunks (parts of the data that are assumed to be
+%   independent) is based on a trial-by-trial basis. For cross-validation,
+%   the number of chunks is reduced to four to speed up the analysis.
+% * the time window used for analyses is rather small. This means that in
+%   particular for time-freq analysis a lot of data is missing, especially
+%   for early and late timepoints in the lower frequency bands. For typical
+%   analyses it may be preferred to use a wider time window.
+% * the current examples do not perform baseline corrections or signal
+%   normalizations, which may reduce discriminatory power.
+%
+% Note: running this code requires FieldTrip.
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+
+%% get timelock data in CoSMoMVPA format
+
+% set configuration
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'meg_20hz');
+
+% show dataset information
+readme_fn=fullfile(data_path,'README');
+cosmo_type(readme_fn);
+
+% reset citation list
+cosmo_check_external('-tic');
+
+% load data
+data_fn=fullfile(data_path,'subj102_B01_20Hz_timelock.mat');
+data_tl=load(data_fn);
+
+% convert to cosmomvpa struct
+ds_tl=cosmo_meeg_dataset(data_tl);
+
+% set the target (trial condition)
+ds_tl.sa.targets=ds_tl.sa.trialinfo(:,1); % 1=pre, 2=post
+
+% set the chunks (independent measurements)
+% in this dataset, the first half of the samples (in order)
+% are the post-trials;
+% the second half the pre-trials
+ds_tl.sa.chunks=[(1:145) (1:145)]';
+
+
+% in addition give a label to each trial
+index2label={'pre','post'}; % 1=pre, 2=peri/post
+ds_tl.sa.labels=cellfun(@(x)index2label(x),num2cell(ds_tl.sa.targets));
+
+% just to check everything is ok
+cosmo_check_dataset(ds_tl);
+
+%% Prepare MVPA
+% reset chunks: use four chunks
+nchunks=4;
+ds_tl.sa.chunks=cosmo_chunkize(ds_tl,nchunks);
+
+% do a take-one-fold out cross validation.
+% except when using a splithalf correlation measure it is important that
+% the partitions are *balanced*, i.e. each target (or class) is presented
+% equally often in each chunk
+partitions=cosmo_nchoosek_partitioner(ds_tl,1);
+partitions=cosmo_balance_partitions(partitions, ds_tl);
+
+npartitions=numel(partitions);
+fprintf('There are %d partitions\n', numel(partitions.train_indices));
+fprintf('# train samples:%s\n', sprintf(' %d', cellfun(@numel, ...
+                                        partitions.train_indices)));
+fprintf('# test samples:%s\n', sprintf(' %d', cellfun(@numel, ...
+                                        partitions.test_indices)));
+
+
+
+
+%% Run time-series searchlight on magneto- and gradio-meters seperately
+
+% try two different classification approaches:
+% 1) without averaging the samples in the train set
+% 2) by averaging 5 samples at the time in the train set, and re-using
+%    every sample 3 times.
+% (Note: As of July 2015, there is no clear indication in the literature
+%  which approach is 'better'. These two approaches are used here to
+%  illustrate how they can be used with a searchlight).
+average_train_args_cell={{},...                                  % {  1
+                         {'average_train_count',5,...            %  { 2
+                                'average_train_resamplings',3}}; %  { 2
+n_average_train_args=numel(average_train_args_cell);
+
+% compute and plot accuracies for magnetometers and gradiometers separately
+chantypes={'meg_axial','meg_planar'};
+
+% in the time searchlight analysis, select the time-point itself, the two
+% timepoints after it, and the two timepoints before it
+time_radius=2;
+nchantypes=numel(chantypes);
+
+ds_chantypes=cosmo_meeg_chantype(ds_tl);
+plot_counter=0;
+for j=1:n_average_train_args
+    % define the measure and its argument.
+    % here a simple naive baysian classifier is used.
+    % Alternative are @cosmo_classify_{svm,nn,lda}.
+    measure=@cosmo_crossvalidation_measure;
+    measure_args=struct();
+    measure_args.classifier=@cosmo_classify_naive_bayes;
+    measure_args.partitions=partitions;
+
+    % add the options to average samples to the measure arguments.
+    % (if no averaging is desired, this step can be left out.)
+    average_train_args=average_train_args_cell{j};
+    measure_args=cosmo_structjoin(measure_args, average_train_args);
+
+
+    for k=1:nchantypes
+        parent_type=chantypes{k};
+
+        % find feature indices of channels matching the parent_type
+        chantype_idxs=find(cosmo_match(ds_chantypes,parent_type));
+
+        % define mask with channels matching those feature indices
+        chan_msk=cosmo_match(ds_tl.fa.chan,chantype_idxs);
+
+        % slice the dataset to select only the channels matching the channel
+        % types
+        ds_tl_sel=cosmo_dim_slice(ds_tl, chan_msk, 2);
+        ds_tl_sel=cosmo_dim_prune(ds_tl_sel); % remove non-indexed channels
+
+        % define neighborhood over time; for each time point the time
+        % point itself is included, as well as the two time points before
+        % and the two time points after it
+        nbrhood=cosmo_interval_neighborhood(ds_tl_sel,'time',...
+                                                'radius',time_radius);
+
+        % run the searchlight using the measure, measure arguments, and
+        % neighborhood defined above.
+        % Note that while the input has both 'chan' and 'time' as feature
+        % dimensions, the output only has 'time' as the feature dimension
+        sl_map=cosmo_searchlight(ds_tl_sel,nbrhood,measure,measure_args);
+        fprintf('The output has feature dimensions: %s\n', ...
+                        cosmo_strjoin(sl_map.a.fdim.labels,', '));
+
+        plot_counter=plot_counter+1;
+        subplot(n_average_train_args,nchantypes,plot_counter);
+
+        time_values=sl_map.a.fdim.values{1}; % first dim (channels got nuked)
+        plot(time_values,sl_map.samples);
+
+        ylim([.4 .8])
+        xlim([min(time_values),max(time_values)]);
+        ylabel('classification accuracy (chance=.5)');
+        xlabel('time');
+
+        if isempty(average_train_args)
+            postfix=' no averaging';
+        else
+            postfix=' with averaging';
+        end
+
+        descr=sprintf('%s - %s', strrep(parent_type,'_',' '), postfix);
+        title(descr);
+    end
+end
+% Show citation information
+cosmo_check_external('-cite');
+
+
+##### SOURCE END #####
+--></body></html>

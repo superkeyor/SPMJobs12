@@ -1,0 +1,7 @@
+.. _cosmo_classify_svm:
+
+cosmo classify svm
+==================
+
+.. include :: cosmo_classify_svm.txt
+

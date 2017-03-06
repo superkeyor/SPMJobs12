@@ -1,0 +1,9 @@
+.. _demo_fmri_searchlight_lda:
+
+demo fmri searchlight lda
+=========================
+
+:demo_up:`demo_fmri_searchlight_lda`
+
+.. include :: demo_fmri_searchlight_lda.txt
+

@@ -1,0 +1,179 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Split-half correlation-based MVPA with group analysis &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Classification analysis" href="ex_classify_lda.html" />
+    <link rel="prev" title="Dataset basics" href="ex_dataset_basics.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ex_classify_lda.html" title="Classification analysis"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_dataset_basics.html" title="Dataset basics"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="split-half-correlation-based-mvpa-with-group-analysis">
+<span id="ex-splithalf-correlations"></span><h1>Split-half correlation-based MVPA with group analysis<a class="headerlink" href="#split-half-correlation-based-mvpa-with-group-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reading-material">
+<h2>Reading material<a class="headerlink" href="#reading-material" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="references.html#hgf-01" id="id1">[HGF+01]</a>: first MVPA correlation paper showing evidence for distributed object category representations in ventral temporal cortex.</li>
+<li><a class="reference internal" href="references.html#pwd06" id="id2">[PWD06]</a>: illustration of correlation approach to dissociate spatially overlappig but distinct neural populations.</li>
+</ul>
+<div class="section" id="background">
+<h3>Background<a class="headerlink" href="#background" title="Permalink to this headline">¶</a></h3>
+<p>This exercise the most simple and most popular type of MVPA, that was first reported in <a class="reference internal" href="references.html#hgf-01" id="id3">[HGF+01]</a>.
+The intuition is to split the data in two halves (e.g. odd and even runs) and estimate the response for each category, voxel and half seperately. If an area represents categories in a distributed manner (over voxels), then correlations (over voxels) of matching categories may be higher than correlations of non-matching categories. If categories are not represented in such a way, one would expect no differences between correlations of matching and non-matching categories.</p>
+<p>Briefly, the procedure can be visualized as follows:</p>
+<div class="figure" id="id4">
+<img alt="_images/splithalf_correlation.png" src="_images/splithalf_correlation.png" />
+<p class="caption"><span class="caption-text"><em>Illustration of split-half correlations</em>. For split-half correlations, two chunks are required (e.g. odd and even runs) with matching targets. If not done yet, the data is split in two chunks (top and bottom). Each pattern in one half is correlated with each pattern in the other half, yeilding an <code class="docutils literal"><span class="pre">NxN</span></code> correlation matrix (with <code class="docutils literal"><span class="pre">N</span></code> the number of targets). Values in this correlation matrix are weighted positively if they are on the diagonal (matching target across the two halves) and negatively otherswise, in a way that all weights together add to zero, yielding a weighted correlation matrix (bottom right). If the sum of all elements in this matrix is positive, this indicates that the patterns contain target-specific information.</span></p>
+</div>
+</div>
+<div class="section" id="exercise">
+<h3>Exercise<a class="headerlink" href="#exercise" title="Permalink to this headline">¶</a></h3>
+<p>In this exercise data we use the handy functionality that <a class="reference internal" href="matlab/cosmo_fmri_dataset.html#cosmo-fmri-dataset"><span class="std std-ref">cosmo fmri dataset</span></a> provided us with to compute split-half correlations. Note that this exercise requires you to compute these correlations &#8216;manually&#8217;; <a class="reference internal" href="ex_measures.html#ex-measures"><span class="std std-ref">another exercise</span></a> shows how to use a <a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a> <em>measure</em> (<a class="reference internal" href="matlab/cosmo_correlation_measure.html#cosmo-correlation-measure"><span class="std std-ref">cosmo correlation measure</span></a>) that computes these values more conveniently.</p>
+</div>
+</div>
+<div class="section" id="part-1-single-subject-analysis">
+<span id="ex-single-subject-correlations"></span><h2>Part 1 (single subject analysis)<a class="headerlink" href="#part-1-single-subject-analysis" title="Permalink to this headline">¶</a></h2>
+<p>Using <a class="reference internal" href="matlab/cosmo_fmri_dataset.html#cosmo-fmri-dataset"><span class="std std-ref">cosmo fmri dataset</span></a>, load the t stats for &#8216;odd&#8217; and &#8216;even&#8217; runs for s01 (<code class="docutils literal"><span class="pre">glm_T_stats_odd.nii</span></code> and <code class="docutils literal"><span class="pre">glm_T_stats_even.nii</span></code>), while supplying the VT mask. As a reminder, the stimulus labels for each run of the fMRI study were monkey, lemur, mallard, warbler, ladybug, and lunamoth &#8211; in that order. These two nifti files contain summary statistics (T statistics from the general linear model
+analysis, GLM) for each stimulus for odd and even runs, respectively.</p>
+<p>Apply the VT mask to each half, then compute all pairwise correlations between patterns in the first and the second half, resulting in a 6x6 matrix. After applying a Fisher transform, compute the mean difference between
+values on the diagonal and those off the diagonal. If there is no category information one would expect a difference of zero.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_splithalf_correlations_single_sub_skl.html#run-splithalf-correlations-single-sub-skl"><span class="std std-ref">run splithalf correlations single sub skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_splithalf_correlations_single_sub.html#run-splithalf-correlations-single-sub"><span class="std std-ref">run splithalf correlations single sub</span></a> / <a class="reference external" href="_static/publish/run_splithalf_correlations_single_sub.html">Matlab output: run_splithalf_correlations_single_sub</a></p>
+</div>
+<div class="section" id="part-2-group-study">
+<h2>Part 2 (group study)<a class="headerlink" href="#part-2-group-study" title="Permalink to this headline">¶</a></h2>
+<p>As in the <a class="reference internal" href="#ex-single-subject-correlations"><span class="std std-ref">previous exercise</span></a>, compute the difference between the average on-diagonal versus on the odd-diagonal Fisher-transformed correlations. This time, do this for each subject and for the three ROIs (<code class="docutils literal"><span class="pre">ev</span></code>, <code class="docutils literal"><span class="pre">vt</span></code>, <code class="docutils literal"><span class="pre">brain</span></code>). For each ROI, gather the correlation difference for each subject and store these, then perform a one-sample t-test against zero to obtain a p-value against the null hypothesis of no correlation information in each region. Use a nested for loop (over ROIs in the outer loop, and subjects in the inner loop) when performing these computations.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_splithalf_correlations_skl.html#run-splithalf-correlations-skl"><span class="std std-ref">run splithalf correlations skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_splithalf_correlations.html#run-splithalf-correlations"><span class="std std-ref">run splithalf correlations</span></a> / <a class="reference external" href="_static/publish/run_splithalf_correlations.html">Matlab output: run_splithalf_correlations</a></p>
+<p>Advanced exercise: plot an image of the 6x6 correlation matrix averaged over participants.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Split-half correlation-based MVPA with group analysis</a><ul>
+<li><a class="reference internal" href="#reading-material">Reading material</a><ul>
+<li><a class="reference internal" href="#background">Background</a></li>
+<li><a class="reference internal" href="#exercise">Exercise</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#part-1-single-subject-analysis">Part 1 (single subject analysis)</a></li>
+<li><a class="reference internal" href="#part-2-group-study">Part 2 (group study)</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ex_dataset_basics.html"
+                        title="previous chapter">Dataset basics</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ex_classify_lda.html"
+                        title="next chapter">Classification analysis</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_splithalf_correlations.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ex_classify_lda.html" title="Classification analysis"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_dataset_basics.html" title="Dataset basics"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

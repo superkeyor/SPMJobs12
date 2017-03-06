@@ -1,0 +1,7 @@
+.. _cosmo_surficial_neighborhood_hdr:
+
+cosmo surficial neighborhood hdr
+================================
+
+.. include :: cosmo_surficial_neighborhood_hdr.txt
+

@@ -1,0 +1,7 @@
+.. _test_meeg_chantype:
+
+test meeg chantype
+==================
+
+.. include :: test_meeg_chantype.txt
+

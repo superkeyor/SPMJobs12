@@ -1,0 +1,7 @@
+.. _cosmo_searchlight_skl:
+
+cosmo searchlight skl
+=====================
+
+.. include :: cosmo_searchlight_skl.txt
+

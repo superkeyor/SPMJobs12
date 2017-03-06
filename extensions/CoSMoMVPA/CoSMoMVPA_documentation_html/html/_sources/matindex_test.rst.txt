@@ -1,0 +1,234 @@
+.. _`matindex_test`:
+
+====================
+CoSMoMVPA unit tests
+====================
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+
+    matlab/test_align
+    matlab/test_anova_feature_selector
+    matlab/test_average_samples
+    matlab/test_balance_partitions
+    matlab/test_cartprod
+    matlab/test_check_dataset
+    matlab/test_check_external
+    matlab/test_check_neighborhood
+    matlab/test_check_partitions
+    matlab/test_chunkize
+    matlab/test_classify
+    matlab/test_cluster_neighborhood
+    matlab/test_clusterize
+    matlab/test_config
+    matlab/test_confusion_matrix
+    matlab/test_convert_neighborhood
+    matlab/test_corr
+    matlab/test_correlation_measure
+    matlab/test_cosmo_dataset_operations
+    matlab/test_cosmo_fmri_dataset
+    matlab/test_cross_neighborhood
+    matlab/test_crossvalidate
+    matlab/test_crossvalidation_measure
+    matlab/test_dim_find
+    matlab/test_dim_generalization_measure
+    matlab/test_dim_insert
+    matlab/test_dim_match
+    matlab/test_dim_prune
+    matlab/test_dim_remove
+    matlab/test_dim_rename
+    matlab/test_dim_slice
+    matlab/test_dim_transpose
+    matlab/test_dir
+    matlab/test_dir_minimal
+    matlab/test_disp
+    matlab/test_dissimilarity_matrix_measure
+    matlab/test_distatis
+    matlab/test_external_neuroelf
+    matlab/test_external_surfing
+    matlab/test_find_local_extrema
+    matlab/test_flatten
+    matlab/test_fmri_convert_xform
+    matlab/test_fmri_dataset
+    matlab/test_fmri_deoblique
+    matlab/test_fmri_io
+    matlab/test_fmri_orientation
+    matlab/test_fx
+    matlab/test_independent_samples_partitioner
+    matlab/test_index_unique
+    matlab/test_interval_neighborhood
+    matlab/test_isequaln
+    matlab/test_isfield
+    matlab/test_map_pca
+    matlab/test_mask_dim_intersect
+    matlab/test_match
+    matlab/test_measure_clusters
+    matlab/test_meeg_baseline_correct
+    matlab/test_meeg_chan_neighborhood
+    matlab/test_meeg_chan_neighbors
+    matlab/test_meeg_chantype
+    matlab/test_meeg_find_layout
+    matlab/test_meeg_io
+    matlab/test_meeg_layout_collection
+    matlab/test_meeg_read_layout
+    matlab/test_meeg_senstype_collection
+    matlab/test_meeg_source
+    matlab/test_montecarlo_cluster_stat
+    matlab/test_montecarlo_cluster_stat_distribution
+    matlab/test_naive_bayes_classifier_searchlight
+    matlab/test_neighborhood_split
+    matlab/test_normalize
+    matlab/test_oddeven_partitioner
+    matlab/test_parallel_get_nproc_available
+    matlab/test_parcellfun
+    matlab/test_partitions
+    matlab/test_pca
+    matlab/test_pdist
+    matlab/test_plot_slices
+    matlab/test_publish_run_scripts
+    matlab/test_rand
+    matlab/test_randomize_targets
+    matlab/test_randperm
+    matlab/test_remove_useless_data
+    matlab/test_run_tests
+    matlab/test_sample_unique
+    matlab/test_searchlight
+    matlab/test_show_progress
+    matlab/test_slice
+    matlab/test_spherical_neighborhood
+    matlab/test_split
+    matlab/test_squareform
+    matlab/test_stack
+    matlab/test_stat
+    matlab/test_statcode
+    matlab/test_strjoin
+    matlab/test_strsplit
+    matlab/test_structjoin
+    matlab/test_surface_io
+    matlab/test_surficial_io_gifti
+    matlab/test_surficial_io_niml_dset
+    matlab/test_surficial_neighborhood
+    matlab/test_synthetic_dataset
+    matlab/test_tail
+    matlab/test_target_dsm_corr_measure
+    matlab/test_type
+    matlab/test_vol_coordinates
+    matlab/test_vol_grid_convert
+    matlab/test_warning
+    matlab/test_wtf
+
+================================================ ====================================================================================================================
+------------------------------------------------ --------------------------------------------------------------------------------------------------------------------
+**All functions**
+------------------------------------------------ --------------------------------------------------------------------------------------------------------------------
+:ref:`test_align`                                tests for cosmo_align
+:ref:`test_anova_feature_selector`               tests for cosmo_anova_feature_selector
+:ref:`test_average_samples`                      tests for cosmo_average_samples
+:ref:`test_balance_partitions`                   tests for cosmo_balance_partitions
+:ref:`test_cartprod`                             tests for cosmo_cartprod
+:ref:`test_check_dataset`                        tests for cosmo_check_dataset
+:ref:`test_check_external`                       tests for cosmo_check_external
+:ref:`test_check_neighborhood`                   tests for cosmo_check_neighborhood
+:ref:`test_check_partitions`                     tests for cosmo_check_partitions
+:ref:`test_chunkize`                             tests for cosmo_chunkize
+:ref:`test_classify`                             tests for cosmo_classify_* functions
+:ref:`test_cluster_neighborhood`                 tests for cosmo_cluster_neighborhood
+:ref:`test_clusterize`                           tests for cosmo_clusterize
+:ref:`test_config`                               tests for cosmo_config
+:ref:`test_confusion_matrix`                     tests for cosmo_confusion_matrix
+:ref:`test_convert_neighborhood`                 tests for cosmo_convert_neighborhood
+:ref:`test_corr`                                 tests for cosmo_corr
+:ref:`test_correlation_measure`                  tests for cosmo_correlation_measure
+:ref:`test_cosmo_dataset_operations`             tests for slicing and stacking
+:ref:`test_cosmo_fmri_dataset`                   tests for cosmo_fmri_dataset
+:ref:`test_cross_neighborhood`                   tests for cosmo_cross_neighborhood
+:ref:`test_crossvalidate`                        tests for test_crossvalidate
+:ref:`test_crossvalidation_measure`              tests for cosmo_crossvalidation_measure
+:ref:`test_dim_find`                             tests for cosmo_dim_find
+:ref:`test_dim_generalization_measure`           tests for cosmo_dim_generalization_measure
+:ref:`test_dim_insert`                           tests for cosmo_dim_insert
+:ref:`test_dim_match`                            tests for cosmo_dim_match
+:ref:`test_dim_prune`                            tests for cosmo_dim_prune
+:ref:`test_dim_remove`                           tests for cosmo_dim_remove
+:ref:`test_dim_rename`                           tests for cosmo_dim_rename
+:ref:`test_dim_slice`                            tests for cosmo_dim_slice
+:ref:`test_dim_transpose`                        tests for cosmo_dim_transpose
+:ref:`test_dir`                                  tests for cosmo_dir
+:ref:`test_dir_minimal`                          tests for cosmo_dir
+:ref:`test_disp`                                 tests for cosmo_disp
+:ref:`test_dissimilarity_matrix_measure`         tests for cosmo_dissimilarity_matrix_measure
+:ref:`test_distatis`                             tests for cosmo_distatis
+:ref:`test_external_neuroelf`                    regression tests for external "neuroelf" toolbox
+:ref:`test_external_surfing`                     regression tests for external "surfing" toolbox
+:ref:`test_find_local_extrema`                   tests for cosmo_find_local_extrema
+:ref:`test_flatten`                              tests for cosmo_flatten
+:ref:`test_fmri_convert_xform`                   tests for cosmo_fmri_convert_xform
+:ref:`test_fmri_dataset`                         tests for cosmo_fmri_dataset
+:ref:`test_fmri_deoblique`                       tests for cosmo_fmri_deoblique
+:ref:`test_fmri_io`                              tests for fmri input/output
+:ref:`test_fmri_orientation`                     tests for cosmo_fmri_orientation
+:ref:`test_fx`                                   tests for cosmo_fx
+:ref:`test_independent_samples_partitioner`      tests for cosmo_independent_samples_partitioner
+:ref:`test_index_unique`                         tests for cosmo_index_unique
+:ref:`test_interval_neighborhood`                tests for cosmo_interval_neighborhood
+:ref:`test_isequaln`                             tests for cosmo_isequaln
+:ref:`test_isfield`                              tests for cosmo_isfield
+:ref:`test_map_pca`                              tests for cosmo_map_pca
+:ref:`test_mask_dim_intersect`                   tests for test_mask_dim_intersect
+:ref:`test_match`                                tests for cosmo_match
+:ref:`test_measure_clusters`                     tests for cosmo_measure_clusters
+:ref:`test_meeg_baseline_correct`                tests for cosmo_meeg_baseline_correct
+:ref:`test_meeg_chan_neighborhood`               tests for cosmo_meeg_chan_neighborhood
+:ref:`test_meeg_chan_neighbors`                  tests for cosmo_meeg_chan_neighbors
+:ref:`test_meeg_chantype`                        tests for cosmo_meeg_chantype
+:ref:`test_meeg_find_layout`                     tests for cosmo_meeg_find_layout
+:ref:`test_meeg_io`                              tests for MEEG input/output
+:ref:`test_meeg_layout_collection`               tests for cosmo_meeg_layout_collection
+:ref:`test_meeg_read_layout`                     regression tests for meeg_read_layout
+:ref:`test_meeg_senstype_collection`             tests for cosmo_meeg_senstype_collection
+:ref:`test_meeg_source`                          tests for MEEG datasets in source space
+:ref:`test_montecarlo_cluster_stat`              tests for cosmo_montecarlo_cluster_stat
+:ref:`test_montecarlo_cluster_stat_distribution` probability uniformity tests for cosmo_montecarlo_cluster_stat
+:ref:`test_naive_bayes_classifier_searchlight`   tests for cosmo_naive_bayes_classifier_searchlight
+:ref:`test_neighborhood_split`                   tests for cosmo_neighborhood_split
+:ref:`test_normalize`                            tests for cosmo_normalize
+:ref:`test_oddeven_partitioner`                  tests for cosmo_oddeven_partitioner
+:ref:`test_parallel_get_nproc_available`         tests for cosmo_parallel_get_nproc_available
+:ref:`test_parcellfun`                           tests for cosmo_cartprod
+:ref:`test_partitions`                           tests for partitioning functions
+:ref:`test_pca`                                  tests for cosmo_pca
+:ref:`test_pdist`                                tests for cosmo_pdist
+:ref:`test_plot_slices`                          tests for plot_slices
+:ref:`test_publish_run_scripts`                  smoke tests for publish_run_scripts (using dry-run); currently no files are actually generated by this test function
+:ref:`test_rand`                                 tests for cosmo_rand
+:ref:`test_randomize_targets`                    tests for cosmo_randomize_targets
+:ref:`test_randperm`                             tests for cosmo_randperm
+:ref:`test_remove_useless_data`                  tests for cosmo_remove_useless_data
+:ref:`test_run_tests`                            tests for cosmo_run_tests
+:ref:`test_sample_unique`                        tests for cosmo_sample_unique
+:ref:`test_searchlight`                          tests for cosmo_searchlight
+:ref:`test_show_progress`                        tests for cosmo_show_progress
+:ref:`test_slice`                                tests for cosmo_slice
+:ref:`test_spherical_neighborhood`               tests for cosmo_spherical_neighborhood
+:ref:`test_split`                                tests for cosmo_split
+:ref:`test_squareform`                           tests for cosmo_squareform
+:ref:`test_stack`                                tests for cosmo_stack
+:ref:`test_stat`                                 tests for cosmo_stat
+:ref:`test_statcode`                             tests for cosmo_statcode
+:ref:`test_strjoin`                              tests for cosmo_strjoin
+:ref:`test_strsplit`                             tests for cosmo_strsplit
+:ref:`test_structjoin`                           tests for cosmo_structjoin
+:ref:`test_surface_io`                           tests for surface input/output
+:ref:`test_surficial_io_gifti`                   tests for GIFTI input/output
+:ref:`test_surficial_io_niml_dset`               tests for AFNI NIML input/output
+:ref:`test_surficial_neighborhood`               tests for cosmo_surficial_neighborhood
+:ref:`test_synthetic_dataset`                    tests for cosmo_synthetic_dataset
+:ref:`test_tail`                                 tests for cosmo_tail
+:ref:`test_target_dsm_corr_measure`              tests for cosmo_target_dsm_corr_measure
+:ref:`test_type`                                 tests for cosmo_type
+:ref:`test_vol_coordinates`                      tests for cosmo_vol_coordinates
+:ref:`test_vol_grid_convert`                     tests for cosmo_vol_grid_convert
+:ref:`test_warning`                              tests for cosmo_warning
+:ref:`test_wtf`                                  tests for cosmo_wtf
+================================================ ====================================================================================================================

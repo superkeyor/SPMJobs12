@@ -1,0 +1,7 @@
+.. _cosmo_dim_find:
+
+cosmo dim find
+==============
+
+.. include :: cosmo_dim_find.txt
+

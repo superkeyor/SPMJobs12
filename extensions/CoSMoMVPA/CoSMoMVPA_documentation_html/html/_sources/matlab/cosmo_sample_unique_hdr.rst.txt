@@ -1,0 +1,7 @@
+.. _cosmo_sample_unique_hdr:
+
+cosmo sample unique hdr
+=======================
+
+.. include :: cosmo_sample_unique_hdr.txt
+

@@ -1,0 +1,218 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test wtf &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="Demonstrations" href="../matindex_demo.html" />
+    <link rel="prev" title="test warning" href="test_warning.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../matindex_demo.html" title="Demonstrations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_warning.html" title="test warning"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-wtf">
+<span id="id1"></span><h1>test wtf<a class="headerlink" href="#test-wtf" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span><span class="p">=</span><span class="n">test_wtf</span>
+<span class="c">% tests for cosmo_wtf</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_wtf_basics</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">warning_state</span><span class="p">=</span><span class="n">cosmo_warning</span><span class="p">();</span>
+    <span class="n">warning_state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">cosmo_warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+    <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+    <span class="n">h</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">();</span>
+
+    <span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">e</span><span class="p">]=</span><span class="n">computer</span><span class="p">();</span>
+    <span class="n">computer_str</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s (maxsize=%d, endian=%s)&#39;</span><span class="p">,</span><span class="n">c</span><span class="p">,</span><span class="n">m</span><span class="p">,</span><span class="n">e</span><span class="p">);</span>
+    <span class="n">assert_contains</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="n">computer_str</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;computer&#39;</span><span class="p">),</span><span class="n">computer_str</span><span class="p">);</span>
+
+
+    <span class="k">if</span> <span class="n">environment_is_octave</span><span class="p">()</span>
+        <span class="n">env_string</span><span class="p">=</span><span class="s">&#39;octave&#39;</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">env_string</span><span class="p">=</span><span class="s">&#39;matlab&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">assert_contains</span><span class="p">(</span><span class="n">h</span><span class="p">,[</span><span class="s">&#39;environment: &#39;</span> <span class="n">env_string</span><span class="p">]);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;environment&#39;</span><span class="p">),</span><span class="n">env_string</span><span class="p">);</span>
+
+    <span class="n">external_cell</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">h</span><span class="p">,</span><span class="s">&#39;cosmo_externals: &#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;\n&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="p">);</span>
+    <span class="n">external_expected_cell</span><span class="p">=</span><span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-list&#39;</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">external_cell</span><span class="p">(:)),</span> <span class="n">sort</span><span class="p">(</span><span class="n">external_expected_cell</span><span class="p">(:)));</span>
+
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;illegal&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_wtf_warnings</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">rand_str_func</span><span class="p">=@()</span><span class="n">char</span><span class="p">(</span><span class="nb">ceil</span><span class="p">(</span><span class="nb">rand</span><span class="p">(</span><span class="mi">20</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">26</span><span class="o">+</span><span class="mi">64</span><span class="p">));</span>
+    <span class="n">warning_id</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s:%s&#39;</span><span class="p">,</span><span class="n">rand_str_func</span><span class="p">(),</span><span class="n">rand_str_func</span><span class="p">());</span>
+
+    <span class="n">warning_state</span><span class="p">=</span><span class="n">warning</span><span class="p">();</span>
+    <span class="n">warning_state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+
+    <span class="n">on_off_labels</span><span class="p">={</span><span class="s">&#39;on&#39;</span><span class="p">,</span><span class="s">&#39;off&#39;</span><span class="p">};</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">on_off_labels</span><span class="p">);</span>
+        <span class="n">label</span><span class="p">=</span><span class="n">on_off_labels</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">anti_label</span><span class="p">=</span><span class="n">on_off_labels</span><span class="p">{</span><span class="mi">3</span><span class="o">-</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="n">warning</span><span class="p">(</span><span class="n">anti_label</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+        <span class="n">warning</span><span class="p">(</span><span class="n">label</span><span class="p">,</span><span class="n">warning_id</span><span class="p">);</span>
+
+        <span class="n">w</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;warnings&#39;</span><span class="p">);</span>
+        <span class="n">assert_contains</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s: %s&#39;</span><span class="p">,</span><span class="n">warning_id</span><span class="p">,</span><span class="n">label</span><span class="p">));</span>
+        <span class="n">assert_not_contains</span><span class="p">(</span><span class="n">w</span><span class="p">,</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s: %s&#39;</span><span class="p">,</span><span class="n">warning_id</span><span class="p">,</span><span class="n">anti_label</span><span class="p">));</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_wtf_version_number</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">vn</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;version_number&#39;</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">vn</span><span class="p">));</span>
+
+    <span class="n">vs</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%d.&#39;</span><span class="p">,</span><span class="n">vn</span><span class="p">);</span>
+    <span class="n">vs</span><span class="p">=</span><span class="n">vs</span><span class="p">(</span><span class="mi">1</span><span class="p">:(</span><span class="k">end</span><span class="o">-</span><span class="mi">1</span><span class="p">));</span>
+
+    <span class="n">vs_expected</span><span class="p">=</span><span class="n">regexp</span><span class="p">(</span><span class="n">version</span><span class="p">(),</span><span class="s">&#39;^\S*&#39;</span><span class="p">,</span><span class="s">&#39;match&#39;</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">vs_expected</span><span class="p">{</span><span class="mi">1</span><span class="p">})</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span><span class="n">vs_expected</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+
+<span class="k">function</span> <span class="nf">test_wtf_is_matlab</span>
+    <span class="n">is_octave</span><span class="p">=</span><span class="n">environment_is_octave</span><span class="p">;</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">),</span><span class="o">~</span><span class="n">is_octave</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">),</span><span class="n">is_octave</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_contains</span><span class="p">(</span>haystack, needle<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assert_contains_helper</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">,</span> <span class="n">true</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_not_contains</span><span class="p">(</span>haystack, needle<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assert_contains_helper</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span> <span class="n">needle</span><span class="p">,</span> <span class="n">false</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_contains_helper</span><span class="p">(</span>haystack, needle, expected_tf<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">re</span><span class="p">=</span><span class="n">regexptranslate</span><span class="p">(</span><span class="s">&#39;escape&#39;</span><span class="p">,</span><span class="n">needle</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">regexp</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span><span class="n">re</span><span class="p">,</span><span class="s">&#39;once&#39;</span><span class="p">)),</span><span class="n">expected_tf</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">environment_is_octave</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">tf</span><span class="p">=</span><span class="n">logical</span><span class="p">(</span><span class="n">exist</span><span class="p">(</span><span class="s">&#39;OCTAVE_VERSION&#39;</span><span class="p">,</span> <span class="s">&#39;builtin&#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_warning.html"
+                        title="previous chapter">test warning</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="../matindex_demo.html"
+                        title="next chapter">Demonstrations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_wtf.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../matindex_demo.html" title="Demonstrations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_warning.html" title="test warning"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

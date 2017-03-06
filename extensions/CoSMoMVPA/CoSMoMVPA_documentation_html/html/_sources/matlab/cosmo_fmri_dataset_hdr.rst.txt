@@ -1,0 +1,7 @@
+.. _cosmo_fmri_dataset_hdr:
+
+cosmo fmri dataset hdr
+======================
+
+.. include :: cosmo_fmri_dataset_hdr.txt
+

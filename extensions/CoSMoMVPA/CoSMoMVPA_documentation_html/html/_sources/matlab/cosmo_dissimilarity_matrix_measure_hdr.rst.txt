@@ -1,0 +1,7 @@
+.. _cosmo_dissimilarity_matrix_measure_hdr:
+
+cosmo dissimilarity matrix measure hdr
+======================================
+
+.. include :: cosmo_dissimilarity_matrix_measure_hdr.txt
+

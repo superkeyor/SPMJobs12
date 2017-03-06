@@ -1,0 +1,7 @@
+.. _cosmo_make_temp_filename_skl:
+
+cosmo make temp filename skl
+============================
+
+.. include :: cosmo_make_temp_filename_skl.txt
+

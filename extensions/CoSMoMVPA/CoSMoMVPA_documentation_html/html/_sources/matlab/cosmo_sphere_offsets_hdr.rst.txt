@@ -1,0 +1,7 @@
+.. _cosmo_sphere_offsets_hdr:
+
+cosmo sphere offsets hdr
+========================
+
+.. include :: cosmo_sphere_offsets_hdr.txt
+

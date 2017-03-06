@@ -1,0 +1,345 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test pca &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test pdist" href="test_pdist.html" />
+    <link rel="prev" title="test partitions" href="test_partitions.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_pdist.html" title="test pdist"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_partitions.html" title="test partitions"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-pca">
+<span id="id1"></span><h1>test pca<a class="headerlink" href="#test-pca" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span>function test_suite=test_pca
+% tests for cosmo_pca
+%
+% #   For CoSMoMVPA&#39;s copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+    try % assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016
+        test_functions=localfunctions();
+    catch % no problem; early Matlab versions can use initTestSuite fine
+    end
+    initTestSuite;
+
+
+function [pca_samples,coef,mu,expl]=helper_cosmo_pca_wrapper(samples,...
+                                                            keep_count)
+    if isnan(keep_count)
+        args={};
+    else
+        args={keep_count};
+    end
+
+    [pca_samples,params]=cosmo_pca(samples,args{:});
+    coef=params.coef;
+    mu=params.mu;
+    expl=params.explained;
+
+function [pca_samples,coef,mu,expl]=helper_matlab_pca_wrapper(samples,...
+                                                            keep_count)
+    % PCA implementation using Matlab statistics toolbox
+    cosmo_check_external(&#39;!pca&#39;,true);
+
+    if isnan(keep_count)
+        args={};
+    else
+        args={&#39;NumComponents&#39;,keep_count};
+    end
+
+    [coef,pca_samples,unused,unused,expl,mu]=pca(samples,args{:});
+    expl=expl&#39;;
+
+
+
+function test_pca_more_samples_than_features
+    nsamples=ceil(rand()*10)+10;
+    nfeatures=nsamples+10;
+
+    nfeatures=5;
+    nsamples=2;
+
+    helper_test_pca_correspondence(nsamples,nfeatures)
+
+function test_pca_more_features_than_samples
+    nfeatures=ceil(rand()*10)+10;
+    nsamples=nfeatures+10;
+
+    helper_test_pca_correspondence(nsamples,nfeatures)
+
+function test_pca_col_vector
+    nfeatures=1;
+    nsamples=ceil(rand()*10)+10;
+
+    helper_test_pca_correspondence(nsamples,nfeatures)
+
+function test_pca_row_vector
+    nfeatures=ceil(rand()*10)+10;
+    nsamples=1;
+
+    helper_test_pca_correspondence(nsamples,nfeatures)
+
+
+function test_pca_near_square_samples
+    nfeatures=ceil(rand()*10)+10;
+    for nsamples=nfeatures+(-1:1);
+        helper_test_pca_correspondence(nsamples,nfeatures)
+    end
+
+
+
+function test_pca_too_many_components
+    nsamples=ceil(rand()*10)+10;
+    nfeatures=nsamples;
+    for nkeep=nfeatures+(-1:1)
+        handle=@()cosmo_pca(rand(nsamples,nfeatures),nkeep);
+        if nkeep&gt;nfeatures
+            assertExceptionThrown(handle,&#39;&#39;);
+        else
+            handle(); % should be ok
+        end
+    end
+
+function test_pca_regression
+    xs=[   2.032   -0.8918  -0.8258    1.163    1.157   -1.291   ;...
+           0.5838   1.844    1.166    -0.8484   3.493   -0.1991  ;...
+          -1.444   -0.2617  -1.921     3.085   -1.372    1.727   ;...
+          -0.5177   2.339    0.4412    1.856    0.4794   0.08323 ;...
+           1.191   -0.204   -0.2088    1.755   -0.9548   0.5012  ;...
+          -1.326    2.724    0.1476    0.5024   3.407   -0.4803  ];
+
+    s=[  -0.5008    2.8648   -0.7589   -0.5301    0.0144  ;...
+          3.5030    0.5915    0.2537    0.8888    0.0226  ;...
+         -3.8914   -1.6525   -0.7549    0.4558    0.0157  ;...
+          0.1140   -1.3350    1.0615   -0.7253    0.0293  ;...
+         -2.1851    1.0744    0.9553    0.2445   -0.0444  ;...
+          2.9603   -1.5432   -0.7566   -0.3338   -0.0376];
+
+    coef=[  0.0014    0.7569    0.3369   -0.0540    0.3234  ;...
+            0.4052   -0.5164    0.4105   -0.3355   -0.0290  ;...
+            0.3133    0.0275    0.6618    0.0901    0.1745  ;...
+           -0.4294   -0.2190   -0.0420   -0.5306    0.6797  ;...
+            0.7090    0.0436   -0.5070    0.0744    0.4815  ;...
+           -0.2251   -0.3313    0.1456    0.7677    0.4127];
+
+    mu=[0.0864    0.9248   -0.2001    1.2522    1.0349    0.0568];
+
+    explained=[64.7794   26.0994    6.0071    3.1059    0.0082];
+
+    for nkeep=[NaN,1:7]
+        if isnan(nkeep)
+            args={};
+            ncomp=5;
+        else
+            args={nkeep};
+            ncomp=min(nkeep,5);
+        end
+
+
+        if nkeep&gt;6
+            assertExceptionThrown(@()cosmo_pca(xs,args{:}),&#39;&#39;);
+        else
+            [xs_pca,param]=cosmo_pca(xs,args{:});
+
+            tolerance_arg={&#39;absolute&#39;,5e-3};
+            assertElementsAlmostEqual(xs_pca,s(:,1:ncomp),...
+                                        tolerance_arg{:});
+
+            expected_fieldnames={&#39;coef&#39;,&#39;explained&#39;,&#39;mu&#39;};
+            assertEqual(sort(fieldnames(param)),...
+                            sort(expected_fieldnames(:)));
+            assertElementsAlmostEqual(param.coef,coef(:,1:ncomp),...
+                                                tolerance_arg{:});
+            assertElementsAlmostEqual(param.mu,mu,...
+                                                tolerance_arg{:});
+            assertElementsAlmostEqual(param.explained,explained,...
+                                                tolerance_arg{:});
+
+        end
+    end
+
+
+function test_pca_basic_properties
+    nfeatures=ceil(rand()*10+10);
+    nsamples=ceil(rand()*10+10)+nfeatures;
+
+    x=randn(nsamples,nfeatures);
+    [y,param]=cosmo_pca(x);
+
+    % explained variance is on diagonal
+    d=y&#39;*y;
+    assertElementsAlmostEqual(100*diag(d)/trace(d),param.explained&#39;);
+
+    % components are orthogonal
+    d_zero_diag=d-diag(diag(d));
+    assertElementsAlmostEqual(d_zero_diag,zeros(nfeatures));
+
+    % average is computed correctly
+    assertElementsAlmostEqual(mean(x,1),param.mu);
+
+    % x can be reconstructed
+    assertElementsAlmostEqual(x,bsxfun(@plus,param.mu,y*param.coef&#39;));
+
+function test_pca_exceptions()
+    aet=@(varargin)assertExceptionThrown(@()...
+                    cosmo_pca(varargin{:}),&#39;&#39;);
+    aet(struct);
+    aet({1});
+    aet(randn([2 2 2 ]));
+
+function helper_test_pca_correspondence(nsamples,nfeatures)
+    if cosmo_skip_test_if_no_external(&#39;!pca&#39;)
+        return;
+    end
+
+    for nkeep=[NaN,-1,0,1,...
+                ceil(nsamples/2),ceil(nfeatures/2),...
+                nsamples-1,nfeatures-1,...
+                nsamples,nfeatures,nsamples+1,nfeatures+1]
+        helper_test_pca_correspondence_nkeep(nsamples,nfeatures,nkeep);
+    end
+
+function helper_test_pca_correspondence_nkeep(nsamples,nfeatures,nkeep)
+    x=rand(nsamples,nfeatures);
+    try
+        % if the following statement throws an exception, then
+        % matlab&#39;s pca must also throw an exception
+        [p1,c1,m1,e1]=helper_matlab_pca_wrapper(x,nkeep);
+    catch
+        % cosmo pca should also throw error
+        assertExceptionThrown(@()helper_cosmo_pca_wrapper(x,nkeep),&#39;&#39;);
+        return
+    end
+
+    % no error, verify that output match
+    [p2,c2,m2,e2]=helper_cosmo_pca_wrapper(x,nkeep);
+
+    tolerance_arg={&#39;relative&#39;,1e-5};
+    assertElementsAlmostEqual(p1,p2,tolerance_arg{:});
+    assertElementsAlmostEqual(c1,c2,tolerance_arg{:});
+    assertElementsAlmostEqual(m1,m2,tolerance_arg{:});
+    assertElementsAlmostEqual(e1,e2,tolerance_arg{:});
+
+
+function test_pca_retain_is_row_vector()
+    nsamples=ceil(10+rand()*10);
+    x=randn(nsamples);
+    [y,params]=cosmo_pca(x);
+    assertEqual(size(params.explained),[1 nsamples-1]);
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_partitions.html"
+                        title="previous chapter">test partitions</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_pdist.html"
+                        title="next chapter">test pdist</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_pca.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_pdist.html" title="test pdist"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_partitions.html" title="test partitions"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_fmri_deoblique:
+
+cosmo fmri deoblique
+====================
+
+.. include :: cosmo_fmri_deoblique.txt
+

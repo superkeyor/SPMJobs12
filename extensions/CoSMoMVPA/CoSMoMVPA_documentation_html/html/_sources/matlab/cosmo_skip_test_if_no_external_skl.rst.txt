@@ -1,0 +1,7 @@
+.. _cosmo_skip_test_if_no_external_skl:
+
+cosmo skip test if no external skl
+==================================
+
+.. include :: cosmo_skip_test_if_no_external_skl.txt
+

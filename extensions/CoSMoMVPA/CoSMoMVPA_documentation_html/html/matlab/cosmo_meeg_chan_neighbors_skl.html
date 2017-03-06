@@ -1,0 +1,708 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo meeg chan neighbors skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo meeg chantype skl" href="cosmo_meeg_chantype_skl.html" />
+    <link rel="prev" title="cosmo meeg chan neighborhood skl" href="cosmo_meeg_chan_neighborhood_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_chantype_skl.html" title="cosmo meeg chantype skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_chan_neighborhood_skl.html" title="cosmo meeg chan neighborhood skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-meeg-chan-neighbors-skl">
+<span id="id1"></span><h1>cosmo meeg chan neighbors skl<a class="headerlink" href="#cosmo-meeg-chan-neighbors-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>neighbors<span class="p">=</span><span class="nf">cosmo_meeg_chan_neighbors</span><span class="p">(</span>ds, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% find neighbors of MEEG channels</span>
+<span class="c">%</span>
+<span class="c">% neighbors=cosmo_meeg_chan_neighbors(ds, ...)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                  MEEG dataset struct</span>
+<span class="c">%   &#39;label&#39;, lab        Labels to return in output, one of:</span>
+<span class="c">%                       &#39;layout&#39;    : determine neighbors based on layout</span>
+<span class="c">%                                     associated with ds (default). All</span>
+<span class="c">%                                     labels in the layout are used as</span>
+<span class="c">%                                     center labels.</span>
+<span class="c">%                       &#39;dataset&#39;   : determine neighbors based on labels</span>
+<span class="c">%                                     present in ds. Only labels present in</span>
+<span class="c">%                                     ds are used as center labels</span>
+<span class="c">%                       {x1,...,xn} : use labels x1 ... xn</span>
+<span class="c">%   &#39;chantype&#39;, tp      (optional) channel type of neighbors, can be one of</span>
+<span class="c">%                       &#39;eeg&#39;, &#39;meg_planar&#39;, &#39;meg_axial&#39;, or</span>
+<span class="c">%                       &#39;meg_combined_from_planar&#39;.</span>
+<span class="c">%                       Use &#39;all&#39; to use all channel types associated with</span>
+<span class="c">%                       lab, and &#39;all_combined&#39; to use</span>
+<span class="c">%                       &#39;meg_combined_from_planar&#39; with all other channel</span>
+<span class="c">%                       types in ds except for &#39;meg_planar&#39;.</span>
+<span class="c">%                       If there is only one channel type associated with</span>
+<span class="c">%                       lab, then this argument is not required.</span>
+<span class="c">%   &#39;radius&#39;, r         } select neighbors either within radius r, grow</span>
+<span class="c">%   &#39;count&#39;, c          } the radius to get neighbors are c locations,</span>
+<span class="c">%   &#39;delaunay&#39;, true    } or use Delaunay triangulation to find direct</span>
+<span class="c">%                       } neighbors for each channel.</span>
+<span class="c">%                       } These three options are mutually exclusive</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   neighbors           Kx1 struct for K center labels, with fields:</span>
+<span class="c">%     .label            center label</span>
+<span class="c">%     .neighblabel      cell with labels of neighbors</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % get neighbors within radius of .3 for EEG dataset</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,...</span>
+<span class="c">%                                        &#39;sens&#39;,&#39;eeg1010&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     % show all channel labels</span>
+<span class="c">%     cosmo_disp(ds.a.fdim.values{1});</span>
+<span class="c">%     &gt; { &#39;TP10&#39;  &#39;TP7&#39;  &#39;TP8&#39; ... &#39;A2&#39;  &#39;M1&#39;  &#39;M2&#39;   }@1x94</span>
+<span class="c">%     %</span>
+<span class="c">%     % simulate the case where some channels are missing; here, every 7-th</span>
+<span class="c">%     % channels is removed</span>
+<span class="c">%     ds=cosmo_slice(ds,mod(ds.fa.chan,7)~=2,2);</span>
+<span class="c">%     ds=cosmo_dim_prune(ds);</span>
+<span class="c">%     %</span>
+<span class="c">%     % show remaining channel labels</span>
+<span class="c">%     cosmo_disp(ds.a.fdim.values{1});</span>
+<span class="c">%     &gt; { &#39;TP10&#39;  &#39;TP8&#39;  &#39;TP9&#39; ... &#39;A1&#39;  &#39;A2&#39;  &#39;M2&#39;   }@1x80</span>
+<span class="c">%     %</span>
+<span class="c">%     % get neighbors for the channel layout associated with this</span>
+<span class="c">%     % dataset. This layout (&#39;EEG1010.lay&#39;) has 88 channel positions,</span>
+<span class="c">%     % of which the last two are ignored because they are &#39;COMNT&#39; and</span>
+<span class="c">%     % &#39;SCALE&#39;</span>
+<span class="c">%     nbrs=cosmo_meeg_chan_neighbors(ds,&#39;radius&#39;,.3);</span>
+<span class="c">%     cosmo_disp(nbrs,&#39;edgeitems&#39;,1);</span>
+<span class="c">%     &gt; &lt;struct&gt;@86x1</span>
+<span class="c">%     &gt;    (1,1) .label</span>
+<span class="c">%     &gt;            &#39;Fp1&#39;</span>
+<span class="c">%     &gt;          .neighblabel</span>
+<span class="c">%     &gt;            { &#39;Fp1&#39;</span>
+<span class="c">%     &gt;               :</span>
+<span class="c">%     &gt;              &#39;FC1&#39; }@21x1</span>
+<span class="c">%     &gt;      :           :</span>
+<span class="c">%     &gt;    (86,1).label</span>
+<span class="c">%     &gt;            &#39;I2&#39;</span>
+<span class="c">%     &gt;          .neighblabel</span>
+<span class="c">%     &gt;            { &#39;P4&#39;</span>
+<span class="c">%     &gt;               :</span>
+<span class="c">%     &gt;              &#39;I2&#39; }@16x1</span>
+<span class="c">%     %</span>
+<span class="c">%     % since the dataset has only 80 channels, 74 of which are in the</span>
+<span class="c">%     % layout, using the dataset&#39;s labels only (with the &#39;labels&#39;</span>
+<span class="c">%     % argument) returns</span>
+<span class="c">%     % only neighbors for channels in the dataset</span>
+<span class="c">%     nbrs=cosmo_meeg_chan_neighbors(ds,&#39;radius&#39;,.3,...</span>
+<span class="c">%                                         &#39;label&#39;,&#39;dataset&#39;);</span>
+<span class="c">%     cosmo_disp(nbrs,&#39;edgeitems&#39;,1);</span>
+<span class="c">%     &gt; &lt;struct&gt;@74x1</span>
+<span class="c">%     &gt;    (1,1) .label</span>
+<span class="c">%     &gt;            &#39;Fp1&#39;</span>
+<span class="c">%     &gt;          .neighblabel</span>
+<span class="c">%     &gt;            { &#39;Fp1&#39;</span>
+<span class="c">%     &gt;               :</span>
+<span class="c">%     &gt;              &#39;FC1&#39; }@21x1</span>
+<span class="c">%     &gt;      :           :</span>
+<span class="c">%     &gt;    (74,1).label</span>
+<span class="c">%     &gt;            &#39;I2&#39;</span>
+<span class="c">%     &gt;          .neighblabel</span>
+<span class="c">%     &gt;            { &#39;P4&#39;</span>
+<span class="c">%     &gt;               :</span>
+<span class="c">%     &gt;              &#39;I2&#39; }@16x1</span>
+<span class="c">%</span>
+<span class="c">%     % get neighbors at 4 neighboring sensor location for</span>
+<span class="c">%     % planar neuromag306 channels</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     nbrs=cosmo_meeg_chan_neighbors(ds,...</span>
+<span class="c">%                     &#39;chantype&#39;,&#39;meg_planar&#39;,&#39;count&#39;,4);</span>
+<span class="c">%     cosmo_disp(nbrs,&#39;edgeitems&#39;,1);</span>
+<span class="c">%     &gt; &lt;struct&gt;@204x1</span>
+<span class="c">%     &gt;    (1,1)  .label</span>
+<span class="c">%     &gt;             &#39;MEG0113&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG0113&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0112&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0122&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0133&#39; }</span>
+<span class="c">%     &gt;      :            :</span>
+<span class="c">%     &gt;    (204,1).label</span>
+<span class="c">%     &gt;             &#39;MEG2643&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG2423&#39;</span>
+<span class="c">%     &gt;               &#39;MEG2422&#39;</span>
+<span class="c">%     &gt;               &#39;MEG2642&#39;</span>
+<span class="c">%     &gt;               &#39;MEG2643&#39; }</span>
+<span class="c">%</span>
+<span class="c">%     % get neighbors at 4 neighboring sensor location for</span>
+<span class="c">%     % planar neuromag306 channels, but with the center labels</span>
+<span class="c">%     % the set of combined planar channels</span>
+<span class="c">%     % (there are 8 channels in the .neighblabel fields, because</span>
+<span class="c">%     %  there are two planar channels per combined channel)</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     nbrs=cosmo_meeg_chan_neighbors(ds,...</span>
+<span class="c">%                     &#39;chantype&#39;,&#39;meg_combined_from_planar&#39;,&#39;count&#39;,4);</span>
+<span class="c">%     cosmo_disp(nbrs,&#39;edgeitems&#39;,1);</span>
+<span class="c">%     &gt; &lt;struct&gt;@102x1</span>
+<span class="c">%     &gt;    (1,1)  .label</span>
+<span class="c">%     &gt;             &#39;MEG0112+0113&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG0112&#39;</span>
+<span class="c">%     &gt;                  :</span>
+<span class="c">%     &gt;               &#39;MEG0343&#39; }@8x1</span>
+<span class="c">%     &gt;      :              :</span>
+<span class="c">%     &gt;    (102,1).label</span>
+<span class="c">%     &gt;             &#39;MEG2642+2643&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG2422&#39;</span>
+<span class="c">%     &gt;                  :</span>
+<span class="c">%     &gt;               &#39;MEG2643&#39; }@8x1</span>
+<span class="c">%</span>
+<span class="c">%     % As above, but now use both the axial and planar channels.</span>
+<span class="c">%     % Here the axial channels only have axial neighbors, and the planar</span>
+<span class="c">%     % channels only have planar neighbors</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     nbrs=cosmo_meeg_chan_neighbors(ds,...</span>
+<span class="c">%                            &#39;chantype&#39;,&#39;all&#39;,&#39;count&#39;,4);</span>
+<span class="c">%     cosmo_disp(nbrs,&#39;edgeitems&#39;,1);</span>
+<span class="c">%     &gt; &lt;struct&gt;@306x1</span>
+<span class="c">%     &gt;    (1,1)  .label</span>
+<span class="c">%     &gt;             &#39;MEG0111&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG0111&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0121&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0131&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0341&#39; }</span>
+<span class="c">%     &gt;      :            :</span>
+<span class="c">%     &gt;    (306,1).label</span>
+<span class="c">%     &gt;             &#39;MEG2643&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG2423&#39;</span>
+<span class="c">%     &gt;               &#39;MEG2422&#39;</span>
+<span class="c">%     &gt;               &#39;MEG2642&#39;</span>
+<span class="c">%     &gt;               &#39;MEG2643&#39; }</span>
+<span class="c">%</span>
+<span class="c">%     % As above, but now use both the axial and planar channels with</span>
+<span class="c">%     % center labels for the planar channels from the combined_planar set.</span>
+<span class="c">%     % Here the axial center channels have 4 axial neighbors each, while</span>
+<span class="c">%     % the planar_combined channels have 8 planar (uncombined) neigbors</span>
+<span class="c">%     % each.</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     nbrs=cosmo_meeg_chan_neighbors(ds,...</span>
+<span class="c">%                            &#39;chantype&#39;,&#39;all_combined&#39;,&#39;count&#39;,4);</span>
+<span class="c">%     cosmo_disp(nbrs,&#39;edgeitems&#39;,1);</span>
+<span class="c">%     &gt; &lt;struct&gt;@204x1</span>
+<span class="c">%     &gt;    (1,1)  .label</span>
+<span class="c">%     &gt;             &#39;MEG0111&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG0111&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0121&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0131&#39;</span>
+<span class="c">%     &gt;               &#39;MEG0341&#39; }</span>
+<span class="c">%     &gt;      :              :</span>
+<span class="c">%     &gt;    (204,1).label</span>
+<span class="c">%     &gt;             &#39;MEG2642+2643&#39;</span>
+<span class="c">%     &gt;           .neighblabel</span>
+<span class="c">%     &gt;             { &#39;MEG2422&#39;</span>
+<span class="c">%     &gt;                  :</span>
+<span class="c">%     &gt;               &#39;MEG2643&#39; }@8x1</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%  - this function returns a struct similar to FieldTrip&#39;s</span>
+<span class="c">%    ft_prepare_neighbors, but not identical:</span>
+<span class="c">%    * a center labels can be a neighbor of itself</span>
+<span class="c">%    * the neighbors are similar but not identical to FieldTrip&#39;s</span>
+<span class="c">%      ft_prepare_neighbors</span>
+<span class="c">%  - for searchlight and clustering purposes, use</span>
+<span class="c">%    cosmo_meeg_chan_neighborhood</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_meeg_chantype, ft_prepare_neighbours,</span>
+<span class="c">%           cosmo_meeg_chan_neighborhood</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">default</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;layout&#39;</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">default</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">)</span>
+        <span class="n">chantype</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">chantype</span><span class="p">;</span>
+        <span class="n">chantypes</span><span class="p">=</span><span class="n">get_chantypes</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">chantype</span><span class="p">);</span>
+        <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">chantypes</span><span class="p">);</span>
+        <span class="n">neighbors_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+            <span class="n">opt</span><span class="p">.</span><span class="n">chantype</span><span class="p">=</span><span class="n">chantypes</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">neighbors_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">get_neighbors_with_chantype</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">neighbors</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">neighbors_cell</span><span class="p">{:});</span>
+
+        <span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">chantype</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">)</span>
+            <span class="n">neighbors</span><span class="p">=</span><span class="n">add_missing_channels</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">neighbors</span><span class="p">);</span>
+        <span class="k">end</span>
+
+    <span class="k">else</span>
+        <span class="n">neighbors</span><span class="p">=</span><span class="n">get_neighbors_with_chantype</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">neighbors</span><span class="p">=</span><span class="n">reorder_neighbors</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">neighbors</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>full_neighbors<span class="p">=</span><span class="nf">add_missing_channels</span><span class="p">(</span>ds,neighbors<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds_label</span><span class="p">=</span><span class="n">get_dataset_channel_label</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">nbr_label</span><span class="p">={</span><span class="n">neighbors</span><span class="p">.</span><span class="n">label</span><span class="p">};</span>
+
+    <span class="n">missing</span><span class="p">=</span><span class="n">setdiff</span><span class="p">(</span><span class="n">ds_label</span><span class="p">,</span><span class="n">nbr_label</span><span class="p">);</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">missing</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span>
+        <span class="n">full_neighbors</span><span class="p">=</span><span class="n">neighbors</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+    <span class="n">label</span><span class="p">=</span><span class="n">missing</span><span class="p">(:);</span>
+    <span class="n">neighblabel</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">neighblabel</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">missing_neighbors</span><span class="p">=</span><span class="n">struct</span><span class="p">(</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="s">&#39;neighblabel&#39;</span><span class="p">,</span><span class="n">neighblabel</span><span class="p">);</span>
+    <span class="n">full_neighbors</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">neighbors</span><span class="p">,</span><span class="n">missing_neighbors</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>neighbors<span class="p">=</span><span class="nf">reorder_neighbors</span><span class="p">(</span>ds,neighbors<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds_label</span><span class="p">=</span><span class="n">get_dataset_channel_label</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">nbr_label</span><span class="p">={</span><span class="n">neighbors</span><span class="p">.</span><span class="n">label</span><span class="p">};</span>
+
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">ds_label</span><span class="p">)</span><span class="o">~=</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbr_label</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ds_cell</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">){</span><span class="n">x</span><span class="p">},</span><span class="n">ds_label</span><span class="p">,</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">nbr_cell</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">){</span><span class="n">x</span><span class="p">},</span><span class="n">nbr_label</span><span class="p">,</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="n">overlap</span><span class="p">=</span><span class="n">cosmo_overlap</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">,</span><span class="n">nbr_cell</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span> <span class="o">&amp;&amp;</span><span class="n">all</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">overlap</span><span class="p">,</span><span class="mi">2</span><span class="p">)));</span>
+
+    <span class="p">[</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="nb">find</span><span class="p">(</span><span class="n">overlap</span><span class="p">);</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="nb">j</span><span class="o">&#39;==</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">));</span>
+
+    <span class="c">% invert mapping</span>
+    <span class="n">ii</span><span class="p">=</span><span class="nb">i</span><span class="p">;</span>
+    <span class="n">ii</span><span class="p">(</span><span class="nb">i</span><span class="p">)=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">;</span>
+
+    <span class="n">neighbors</span><span class="p">=</span><span class="n">neighbors</span><span class="p">(</span><span class="n">ii</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">({</span><span class="n">neighbors</span><span class="p">.</span><span class="n">label</span><span class="p">}</span><span class="s">&#39;,ds_label(:)))</span>
+
+
+
+<span class="s">function chan_types=get_chantypes(ds, chantype)</span>
+<span class="s">    chan_types={chantype};</span>
+
+<span class="s">    switch chantype</span>
+<span class="s">        case &#39;</span><span class="n">all</span><span class="o">&#39;</span>
+            <span class="n">chan_types</span><span class="p">=</span><span class="n">get_all_chantypes_from_ds</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+        <span class="k">case</span> <span class="s">&#39;all_combined&#39;</span>
+            <span class="c">% replace meg_planar by meg_planar_combined</span>
+            <span class="n">chan_types</span><span class="p">=</span><span class="n">get_all_chantypes_from_ds</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+            <span class="nb">i</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">chan_types</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">));</span>
+            <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="o">~=</span><span class="mi">1</span>
+                <span class="n">error</span><span class="p">([</span><span class="s">&#39;dataset has no planar channels, therefore &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;&#39;&#39;%s&#39;&#39; is an invalid chantype&#39;</span><span class="p">],</span><span class="c">...</span>
+                            <span class="n">opt</span><span class="p">,</span><span class="n">chan_type</span><span class="p">);</span>
+            <span class="k">end</span>
+            <span class="n">chan_types</span><span class="p">{</span><span class="nb">i</span><span class="p">}=</span><span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>chan_types<span class="p">=</span><span class="nf">get_all_chantypes_from_ds</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">chan_types</span><span class="p">=</span><span class="n">unique</span><span class="p">(</span><span class="n">cosmo_meeg_chantype</span><span class="p">(</span><span class="n">ds</span><span class="p">));</span>
+    <span class="n">chan_types</span><span class="p">=</span><span class="n">setdiff</span><span class="p">(</span><span class="n">chan_types</span><span class="p">,{</span><span class="s">&#39;unknown&#39;</span><span class="p">});</span>
+
+
+<span class="k">function</span><span class="w"> </span>neighbors<span class="p">=</span><span class="nf">get_neighbors_with_chantype</span><span class="p">(</span>ds,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">layout</span><span class="p">,</span><span class="n">label_keep</span><span class="p">]=</span><span class="n">get_layout</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">ds_label</span><span class="p">=</span><span class="n">get_dataset_channel_label</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">label_keep</span><span class="p">)</span>
+        <span class="n">pos_msk</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">layout</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">ds_label</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">pos_msk</span><span class="p">=</span><span class="n">cosmo_overlap</span><span class="p">({</span><span class="n">ds_label</span><span class="p">},</span><span class="n">layout</span><span class="p">.</span><span class="n">child_label</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">nbr_msk</span><span class="p">=</span><span class="n">pairwise_neighbors</span><span class="p">(</span><span class="n">layout</span><span class="p">.</span><span class="n">pos</span><span class="p">,</span><span class="n">pos_msk</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">has_child</span><span class="p">=</span><span class="n">isfield</span><span class="p">(</span><span class="n">layout</span><span class="p">,</span><span class="s">&#39;child_label&#39;</span><span class="p">);</span>
+
+    <span class="n">label</span><span class="p">=</span><span class="n">layout</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">label</span><span class="p">);</span>
+
+    <span class="n">neighblabel</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">msk</span><span class="p">=</span><span class="n">nbr_msk</span><span class="p">(:,</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">has_child</span>
+            <span class="n">child_label</span><span class="p">=</span><span class="n">layout</span><span class="p">.</span><span class="n">child_label</span><span class="p">(</span><span class="n">msk</span><span class="p">);</span>
+            <span class="n">neighblabel</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">intersect</span><span class="p">(</span><span class="n">label_keep</span><span class="p">,</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">child_label</span><span class="p">{:}));</span>
+        <span class="k">else</span>
+            <span class="n">neighblabel</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">layout</span><span class="p">.</span><span class="n">label</span><span class="p">(</span><span class="n">msk</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">neighbors</span><span class="p">=</span><span class="n">struct</span><span class="p">(</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="s">&#39;neighblabel&#39;</span><span class="p">,</span><span class="n">neighblabel</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>[lay,label]<span class="p">=</span><span class="nf">get_layout</span><span class="p">(</span>ds, opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ignore_label</span><span class="p">={</span><span class="s">&#39;COMNT&#39;</span><span class="p">,</span><span class="s">&#39;SCALE&#39;</span><span class="p">};</span>
+
+    <span class="n">base_lay</span><span class="p">=</span><span class="n">cosmo_meeg_find_layout</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">ischar</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="k">switch</span> <span class="n">opt</span><span class="p">.</span><span class="n">label</span>
+            <span class="k">case</span> <span class="s">&#39;layout&#39;</span>
+                <span class="n">use_label</span><span class="p">=</span><span class="n">base_lay</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&#39;dataset&#39;</span>
+                <span class="n">use_label</span><span class="p">=</span><span class="n">get_dataset_channel_label</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+            <span class="k">otherwise</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal label %s, use one of: layout, dataset&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">elseif</span> <span class="n">iscellstr</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">label</span><span class="p">)</span>
+        <span class="n">use_label</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal label, a string or cellstring is required&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">in_label</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">base_lay</span><span class="p">.</span><span class="n">label</span><span class="p">,</span> <span class="n">use_label</span><span class="p">);</span>
+    <span class="n">not_in_ignore</span><span class="p">=</span><span class="o">~</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">base_lay</span><span class="p">.</span><span class="n">label</span><span class="p">,</span><span class="n">ignore_label</span><span class="p">);</span>
+    <span class="n">keep_msk</span><span class="p">=</span><span class="n">in_label</span> <span class="o">&amp;</span> <span class="n">not_in_ignore</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">base_lay</span><span class="p">,</span><span class="s">&#39;parent&#39;</span><span class="p">)</span>
+        <span class="n">child_label</span><span class="p">=</span><span class="n">base_lay</span><span class="p">.</span><span class="n">parent</span><span class="p">.</span><span class="n">child_label</span><span class="p">;</span>
+        <span class="n">overlap</span><span class="p">=</span><span class="n">cosmo_overlap</span><span class="p">(</span><span class="n">child_label</span><span class="p">,{</span><span class="n">use_label</span><span class="p">});</span>
+        <span class="n">keep_parent_msk</span><span class="p">=</span><span class="n">overlap</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span>
+        <span class="n">lay</span><span class="p">=</span><span class="n">slice_layout</span><span class="p">(</span><span class="n">base_lay</span><span class="p">.</span><span class="n">parent</span><span class="p">,</span><span class="n">keep_parent_msk</span><span class="p">);</span>
+        <span class="n">label</span><span class="p">=</span><span class="n">base_lay</span><span class="p">.</span><span class="n">label</span><span class="p">(</span><span class="n">keep_msk</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">lay</span><span class="p">=</span><span class="n">slice_layout</span><span class="p">(</span><span class="n">base_lay</span><span class="p">,</span><span class="n">keep_msk</span><span class="p">);</span>
+        <span class="n">label</span><span class="p">=[];</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>lay<span class="p">=</span><span class="nf">slice_layout</span><span class="p">(</span>lay, to_keep<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">nlabel</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">lay</span><span class="p">.</span><span class="n">label</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">keys</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">lay</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">value</span><span class="p">=</span><span class="n">lay</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+
+        <span class="n">nvalue</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">switch</span> <span class="n">nvalue</span>
+            <span class="k">case</span> <span class="n">nlabel</span>
+                <span class="n">lay</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">value</span><span class="p">(</span><span class="n">to_keep</span><span class="p">,:);</span>
+            <span class="k">case</span> <span class="p">{</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span>
+                <span class="c">% ok</span>
+            <span class="k">otherwise</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;layout field %s has %d values, must be 1 or %d&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">key</span><span class="p">,</span><span class="n">nvalue</span><span class="p">,</span> <span class="n">nlabel</span><span class="p">);</span>
+        <span class="k">end</span>
+
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">pairwise_neighbors</span><span class="p">(</span>pos,msk,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="nb">numel</span><span class="p">(</span><span class="n">msk</span><span class="p">));</span>
+
+    <span class="n">metric2func</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">metric2func</span><span class="p">.</span><span class="n">radius</span><span class="p">=@</span><span class="n">pairwise_euclidean_neighbors</span><span class="p">;</span>
+    <span class="n">metric2func</span><span class="p">.</span><span class="n">count</span><span class="p">=@</span><span class="n">pairwise_nearest_neighbors</span><span class="p">;</span>
+    <span class="n">metric2func</span><span class="p">.</span><span class="n">delaunay</span><span class="p">=@</span><span class="n">pairwise_delaunay_neighbors</span><span class="p">;</span>
+
+    <span class="n">metrics</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">metric2func</span><span class="p">);</span>
+    <span class="n">metric_msk</span><span class="p">=</span><span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="n">metrics</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">sum</span><span class="p">(</span><span class="n">metric_msk</span><span class="p">)</span><span class="o">~=</span><span class="mi">1</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Use one of these arguments to define neighbors: %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">metric</span><span class="p">=</span><span class="n">metrics</span><span class="p">{</span><span class="n">metric_msk</span><span class="p">};</span>
+    <span class="n">func</span><span class="p">=</span><span class="n">metric2func</span><span class="p">.(</span><span class="n">metric</span><span class="p">);</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">func</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="n">opt</span><span class="p">.(</span><span class="n">metric</span><span class="p">));</span>
+
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">pairwise_euclidean_neighbors</span><span class="p">(</span>pos,msk,radius<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">d</span><span class="p">=</span><span class="n">pairwise_euclidean_distance</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">d</span><span class="o">&lt;</span><span class="p">=</span><span class="n">radius</span><span class="p">;</span>
+    <span class="n">nbrs_msk</span><span class="p">(</span><span class="o">~</span><span class="n">msk</span><span class="p">,:)=</span><span class="n">false</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">pairwise_nearest_neighbors</span><span class="p">(</span>pos,msk,count<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">d</span><span class="p">=</span><span class="n">pairwise_euclidean_distance</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">nearest_neighbors_from_distance</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="n">count</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">pairwise_delaunay_neighbors</span><span class="p">(</span>pos,msk,steps<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% compute steps-th order neighbors</span>
+    <span class="n">raise_error_if_not_two_column_matrix</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">islogical</span><span class="p">(</span><span class="n">steps</span><span class="p">)</span>
+        <span class="n">steps</span><span class="p">=</span><span class="mi">0</span><span class="o">+</span><span class="n">steps</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">self_connectivity</span><span class="p">=</span><span class="mi">0</span><span class="o">+</span><span class="nb">diag</span><span class="p">(</span><span class="n">msk</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">connectivity</span><span class="p">=</span><span class="n">self_connectivity</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">steps</span><span class="o">&gt;</span><span class="mi">0</span>
+        <span class="c">% compute sum_{k=1:steps} direct_nbrs.^k</span>
+        <span class="n">direct_nbrs</span><span class="p">=</span><span class="mi">0</span><span class="o">+</span><span class="n">pairwise_delaunay_direct_neighbors</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">msk</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">steps</span>
+            <span class="n">connectivity</span><span class="p">=</span><span class="n">connectivity</span><span class="o">*</span><span class="p">(</span><span class="n">self_connectivity</span><span class="o">+</span><span class="n">direct_nbrs</span><span class="p">);</span>
+
+            <span class="c">% avoid large values</span>
+            <span class="n">connectivity</span><span class="p">(</span><span class="n">connectivity</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+
+            <span class="n">connectivity</span><span class="p">(</span><span class="o">~</span><span class="n">msk</span><span class="p">,:)=</span><span class="mi">0</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">connectivity</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">pairwise_delaunay_direct_neighbors</span><span class="p">(</span>pos,msk<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% avoid duplicate sensor positions</span>
+    <span class="p">[</span><span class="n">idxs</span><span class="p">,</span><span class="n">unq_pos</span><span class="p">]=</span><span class="n">cosmo_index_unique</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+    <span class="n">unq_nbrs_msk</span><span class="p">=</span><span class="n">pairwise_delaunay_direct_neighbors_unique</span><span class="p">(</span><span class="n">unq_pos</span><span class="p">,</span><span class="n">msk</span><span class="p">);</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+
+    <span class="n">nunq</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">idxs</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">([</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">nunq</span><span class="p">,</span><span class="nb">size</span><span class="p">(</span><span class="n">unq_nbrs_msk</span><span class="p">)));</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nunq</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nunq</span>
+            <span class="n">nbrs_msk</span><span class="p">(</span><span class="n">idxs</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="n">idxs</span><span class="p">{</span><span class="nb">j</span><span class="p">})=</span><span class="n">unq_nbrs_msk</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">j</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">pairwise_delaunay_direct_neighbors_unique</span><span class="p">(</span>pos,msk<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% act a bit like fieldtrip by stretching the coordinates (twice)</span>
+    <span class="n">stretch</span><span class="p">=[</span><span class="mi">1</span> <span class="p">.</span><span class="mi">5</span> <span class="mi">2</span><span class="p">];</span>
+
+    <span class="c">% delaunay without applying the mask</span>
+    <span class="n">f_pos</span><span class="p">=</span><span class="n">delaunay_with_stretch</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="n">stretch</span><span class="p">);</span>
+
+    <span class="c">% delaunay with applying the mask</span>
+    <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">msk</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">);</span>
+    <span class="n">pos_msk</span><span class="p">=</span><span class="n">pos</span><span class="p">(</span><span class="n">idx</span><span class="p">,:);</span>
+    <span class="n">f_msk</span><span class="p">=</span><span class="n">delaunay_with_stretch</span><span class="p">(</span><span class="n">pos_msk</span><span class="p">,</span><span class="n">stretch</span><span class="p">);</span>
+    <span class="n">f_msk_pos</span><span class="p">=</span><span class="n">idx</span><span class="p">(</span><span class="n">f_msk</span><span class="p">);</span>
+
+    <span class="c">% combine them</span>
+    <span class="n">f_all</span><span class="p">=[</span><span class="n">f_pos</span><span class="p">;</span> <span class="n">f_msk_pos</span><span class="p">];</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="n">nrow</span><span class="p">,</span><span class="n">ncol</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">f_all</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">ncol</span><span class="o">==</span><span class="mi">3</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncol</span>
+        <span class="nb">i</span><span class="p">=</span><span class="n">f_all</span><span class="p">(:,</span><span class="n">col</span><span class="p">);</span>
+        <span class="nb">j</span><span class="p">=</span><span class="n">f_all</span><span class="p">(:,</span><span class="nb">mod</span><span class="p">(</span><span class="n">col</span><span class="p">,</span><span class="mi">3</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nrow</span>
+            <span class="n">nbrs_msk</span><span class="p">(</span><span class="nb">i</span><span class="p">(</span><span class="n">row</span><span class="p">),</span><span class="nb">j</span><span class="p">(</span><span class="n">row</span><span class="p">))=</span><span class="n">true</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c">% make symmetric</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">nbrs_msk</span> <span class="o">|</span> <span class="n">nbrs_msk</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>d<span class="p">=</span><span class="nf">delaunay_with_stretch</span><span class="p">(</span>pos, stretches<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">nrows</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">nrows</span><span class="o">&lt;</span><span class="mi">3</span>
+        <span class="c">% minimal surface, cannot do Delaunay</span>
+        <span class="n">d</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+        <span class="n">d</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nrows</span><span class="p">)=</span><span class="mi">1</span><span class="p">:</span><span class="n">nrows</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">stretches</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+            <span class="n">stretch_pos</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">times</span><span class="p">,</span><span class="n">pos</span><span class="p">,[</span><span class="mi">1</span> <span class="n">stretches</span><span class="p">(</span><span class="n">k</span><span class="p">)]);</span>
+            <span class="n">ds</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">delaunay</span><span class="p">(</span><span class="n">stretch_pos</span><span class="p">(:,</span><span class="mi">1</span><span class="p">),</span><span class="n">stretch_pos</span><span class="p">(:,</span><span class="mi">2</span><span class="p">));</span>
+        <span class="k">end</span>
+        <span class="n">d</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ds</span><span class="p">{:});</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>nbrs_msk<span class="p">=</span><span class="nf">nearest_neighbors_from_distance</span><span class="p">(</span>d,msk,count<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% d is an n x n matrix with distances</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">d</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">nbrs_msk</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+
+    <span class="n">d_msk</span><span class="p">=</span><span class="n">d</span><span class="p">;</span>
+    <span class="n">d_msk</span><span class="p">(</span><span class="o">~</span><span class="n">msk</span><span class="p">,:)=</span><span class="n">Inf</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="n">sd</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">d_msk</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">last_row</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">count</span><span class="p">);</span>
+
+        <span class="n">radius</span><span class="p">=</span><span class="n">sd</span><span class="p">(</span><span class="n">last_row</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">while</span> <span class="n">last_row</span> <span class="o">&lt;</span> <span class="n">n</span> <span class="o">&amp;&amp;</span> <span class="n">sd</span><span class="p">(</span><span class="n">last_row</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">k</span><span class="p">)</span><span class="o">==</span><span class="n">radius</span>
+            <span class="n">last_row</span><span class="p">=</span><span class="n">last_row</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">last_row</span><span class="o">&lt;</span><span class="n">count</span> <span class="o">||</span> <span class="nb">isinf</span><span class="p">(</span><span class="n">sd</span><span class="p">(</span><span class="n">last_row</span><span class="p">,</span><span class="n">k</span><span class="p">))</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Cannot select %d channels: only %d are present&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">count</span><span class="p">,</span><span class="n">sum</span><span class="p">(</span><span class="n">msk</span><span class="p">));</span>
+        <span class="k">end</span>
+
+        <span class="n">nbrs_msk</span><span class="p">(</span><span class="nb">i</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">last_row</span><span class="p">,</span><span class="n">k</span><span class="p">),</span><span class="n">k</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="nb">diag</span><span class="p">(</span><span class="n">nbrs_msk</span><span class="p">)</span><span class="o">==</span><span class="n">msk</span><span class="p">(:)));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">nbrs_msk</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span><span class="p">=</span><span class="n">count</span><span class="p">));</span>
+
+
+<span class="k">function</span><span class="w"> </span>d<span class="p">=</span><span class="nf">pairwise_euclidean_distance</span><span class="p">(</span>pos<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">raise_error_if_not_two_column_matrix</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+
+    <span class="n">px</span><span class="p">=</span><span class="n">pos</span><span class="p">(:,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">py</span><span class="p">=</span><span class="n">pos</span><span class="p">(:,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">dx</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span><span class="n">px</span><span class="p">,</span><span class="n">px</span><span class="o">&#39;</span><span class="p">);</span>
+    <span class="n">dy</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span><span class="n">py</span><span class="p">,</span><span class="n">py</span><span class="o">&#39;</span><span class="p">);</span>
+
+    <span class="n">d</span><span class="p">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">dx</span><span class="o">.^</span><span class="mi">2</span><span class="o">+</span><span class="n">dy</span><span class="o">.^</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">raise_error_if_not_two_column_matrix</span><span class="p">(</span>pos<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">is_ok</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">pos</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="nb">numel</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span><span class="o">==</span><span class="mi">2</span><span class="p">;</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">is_ok</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;positions must be in Mx2 matrix&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>chan_labels<span class="p">=</span><span class="nf">get_dataset_channel_label</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function to get labels from dataset</span>
+    <span class="k">if</span> <span class="n">iscellstr</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="n">chan_labels</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="p">[</span><span class="n">unused</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">unused</span><span class="p">,</span> <span class="n">dim_name</span><span class="p">]=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;chan&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+        <span class="n">chan_labels</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.(</span><span class="n">dim_name</span><span class="p">).</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">};</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_meeg_chan_neighborhood_skl.html"
+                        title="previous chapter">cosmo meeg chan neighborhood skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_meeg_chantype_skl.html"
+                        title="next chapter">cosmo meeg chantype skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_meeg_chan_neighbors_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_chantype_skl.html" title="cosmo meeg chantype skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_chan_neighborhood_skl.html" title="cosmo meeg chan neighborhood skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

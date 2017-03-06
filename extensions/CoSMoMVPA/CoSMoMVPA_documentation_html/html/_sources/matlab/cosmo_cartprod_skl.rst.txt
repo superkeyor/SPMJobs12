@@ -1,0 +1,7 @@
+.. _cosmo_cartprod_skl:
+
+cosmo cartprod skl
+==================
+
+.. include :: cosmo_cartprod_skl.txt
+

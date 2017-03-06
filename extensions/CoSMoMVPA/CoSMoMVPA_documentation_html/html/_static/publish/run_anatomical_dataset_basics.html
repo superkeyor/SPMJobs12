@@ -1,0 +1,276 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>run_anatomical_dataset_basics</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_anatomical_dataset_basics.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Anatomical dataset basics</a></li><li><a href="#2">Show the dataset contents using cosmo_disp. Where can you see the</a></li><li><a href="#3">There are a lot of zero values in the dataset. Find all non-zero values</a></li><li><a href="#4">Using cosmo_plot_slices, show a saggital view of the dataset</a></li><li><a href="#5">ds.fa.i contains, for each feature (voxel), an index for the</a></li><li><a href="#6">Advanced exercise: set all voxels around a center voxel at</a></li></ul></div><h2>Anatomical dataset basics<a name="1"></a></h2><p>In this example, load a brain as a CoSMoMVPA datset and visualize it in matlab</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><pre class="codeinput"><span class="comment">% Set the path.</span>
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+
+<span class="comment">% Set filename</span>
+fn=fullfile(data_path, <span class="string">'brain.nii'</span>);
+
+<span class="comment">% Load with cosmo_fmri_dataset and assign to a variable 'ds'</span>
+<span class="comment">% &gt;@@&gt;</span>
+ds=cosmo_fmri_dataset(fn);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><h2>Show the dataset contents using cosmo_disp. Where can you see the<a name="2"></a></h2><p>number of voxels in the three spatial dimensions? &gt;@@&gt;</p><pre class="codeinput">cosmo_disp(ds)
+
+<span class="comment">% the number of voxels in the spatial dimensions are present in</span>
+<span class="comment">% ds.a.vol.dim, and are also indicated by the sizes of ds.a.fdim.values</span>
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Show a histogram of all values in the dataset. For bonus points add axis</span>
+<span class="comment">% labels.</span>
+<span class="comment">% Hint: all data is present in ds.samples</span>
+<span class="comment">% &gt;@@&gt;</span>
+hist(ds.samples,100)
+xlabel(<span class="string">'intensity'</span>);
+ylabel(<span class="string">'count'</span>);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><pre class="codeoutput">.a                                                                     
+  .vol                                                                 
+    .mat                                                               
+      [      0         0         1     -84.9                           
+        -0.938         0         0       124                           
+             0     0.938         0     -65.8                           
+             0         0         0         1 ]                         
+    .xform                                                             
+      'scanner_anat'                                                   
+    .dim                                                               
+      [ 256       256       160 ]                                      
+  .fdim                                                                
+    .labels                                                            
+      { 'i'                                                            
+        'j'                                                            
+        'k' }                                                          
+    .values                                                            
+      { [ 1         2         3  ...  254       255       256 ]@1x256  
+        [ 1         2         3  ...  254       255       256 ]@1x256  
+        [ 1         2         3  ...  158       159       160 ]@1x160 }
+.sa                                                                    
+  struct (empty)                                                       
+.samples                                                               
+  [ 0         0         0  ...  0         0         0 ]@1x10485760     
+.fa                                                                    
+  .i                                                                   
+    [ 1         2         3  ...  254       255       256 ]@1x10485760 
+  .j                                                                   
+    [ 1         1         1  ...  256       256       256 ]@1x10485760 
+  .k                                                                   
+    [ 1         1         1  ...  160       160       160 ]@1x10485760 
+</pre><img vspace="5" hspace="5" src="run_anatomical_dataset_basics_01.png" alt=""> <h2>There are a lot of zero values in the dataset. Find all non-zero values<a name="3"></a></h2><p>in ds.samples, and plot a histogram of those. What do the two bumps represent? &gt;@@&gt;</p><pre class="codeinput">nonzero_mask=ds.samples~=0;
+nonzero_samples=ds.samples(ds.samples~=0);
+hist(nonzero_samples,100);
+xlabel(<span class="string">'intensity'</span>);
+ylabel(<span class="string">'count'</span>);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><img vspace="5" hspace="5" src="run_anatomical_dataset_basics_02.png" alt=""> <h2>Using cosmo_plot_slices, show a saggital view of the dataset<a name="4"></a></h2><p>&gt;@@&gt;</p><pre class="codeinput">cosmo_plot_slices(ds);
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Make a copy of the dataset</span>
+ds_copy=ds;
+</pre><img vspace="5" hspace="5" src="run_anatomical_dataset_basics_03.png" alt=""> <h2>ds.fa.i contains, for each feature (voxel), an index for the<a name="5"></a></h2><p>anterior-posterior position of that voxel. Set all voxels that have a value of less than 100 for ds.fa.i to zero, and plot the results &gt;@@&gt;</p><pre class="codeinput">ds_copy.samples(ds.fa.i&lt;100)=0;
+cosmo_plot_slices(ds_copy)
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Store the results in a nifti file for visualization using cosmo_map2fmri</span>
+output_path=config.output_data_path;
+fn_out=fullfile(output_path,<span class="string">'anatomical_dataset_posterior.nii'</span>);
+<span class="comment">% &gt;@@&gt;</span>
+cosmo_map2fmri(ds_copy,fn_out);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><img vspace="5" hspace="5" src="run_anatomical_dataset_basics_04.png" alt=""> <h2>Advanced exercise: set all voxels around a center voxel at<a name="6"></a></h2><p>i=150,j=100,k=50 within a 40-voxel radius to zero, and display the result</p><pre class="codeinput">center_ijk=[150; 100; 50];
+radius=40;
+<span class="comment">% &gt;@@&gt;</span>
+ds_copy2=ds;
+all_ijk=[ds_copy2.fa.i; <span class="keyword">...</span>
+         ds_copy2.fa.j; <span class="keyword">...</span>
+         ds_copy2.fa.k];
+
+<span class="comment">% compute difference dimension-wise</span>
+delta=bsxfun(@minus,center_ijk,all_ijk);
+
+<span class="comment">% Pythogoras</span>
+squared_distance_from_center=sum(delta.^2,1);
+
+<span class="comment">% define mask</span>
+mask=squared_distance_from_center&lt;=radius^2;
+
+<span class="comment">% set voxels to zero</span>
+ds_copy2.samples(:,mask)=0;
+
+<span class="comment">% show result</span>
+cosmo_plot_slices(ds_copy2);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><img vspace="5" hspace="5" src="run_anatomical_dataset_basics_05.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Anatomical dataset basics
+% In this example, load a brain as a CoSMoMVPA datset and visualize it
+% in matlab
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+% Set the path.
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+% Set filename
+fn=fullfile(data_path, 'brain.nii');
+
+% Load with cosmo_fmri_dataset and assign to a variable 'ds'
+% >@@>
+ds=cosmo_fmri_dataset(fn);
+% <@@<
+
+%% Show the dataset contents using cosmo_disp. Where can you see the
+% number of voxels in the three spatial dimensions?
+% >@@>
+cosmo_disp(ds)
+
+% the number of voxels in the spatial dimensions are present in
+% ds.a.vol.dim, and are also indicated by the sizes of ds.a.fdim.values
+% <@@<
+
+% Show a histogram of all values in the dataset. For bonus points add axis
+% labels.
+% Hint: all data is present in ds.samples
+% >@@>
+hist(ds.samples,100)
+xlabel('intensity');
+ylabel('count');
+% <@@<
+
+%% There are a lot of zero values in the dataset. Find all non-zero values
+% in ds.samples, and plot a histogram of those. What do the two bumps
+% represent?
+% >@@>
+nonzero_mask=ds.samples~=0;
+nonzero_samples=ds.samples(ds.samples~=0);
+hist(nonzero_samples,100);
+xlabel('intensity');
+ylabel('count');
+% <@@<
+
+%% Using cosmo_plot_slices, show a saggital view of the dataset
+% >@@>
+cosmo_plot_slices(ds);
+% <@@<
+
+% Make a copy of the dataset
+ds_copy=ds;
+
+%% ds.fa.i contains, for each feature (voxel), an index for the
+% anterior-posterior position of that voxel.
+% Set all voxels that have a value of less than 100 for ds.fa.i to zero,
+% and plot the results
+% >@@>
+ds_copy.samples(ds.fa.i<100)=0;
+cosmo_plot_slices(ds_copy)
+% <@@<
+
+% Store the results in a nifti file for visualization using cosmo_map2fmri
+output_path=config.output_data_path;
+fn_out=fullfile(output_path,'anatomical_dataset_posterior.nii');
+% >@@>
+cosmo_map2fmri(ds_copy,fn_out);
+% <@@<
+
+
+%% Advanced exercise: set all voxels around a center voxel at
+% i=150,j=100,k=50 within a 40-voxel radius to zero, and display the result
+
+center_ijk=[150; 100; 50];
+radius=40;
+% >@@>
+ds_copy2=ds;
+all_ijk=[ds_copy2.fa.i; ...
+         ds_copy2.fa.j; ...
+         ds_copy2.fa.k];
+
+% compute difference dimension-wise
+delta=bsxfun(@minus,center_ijk,all_ijk);
+
+% Pythogoras
+squared_distance_from_center=sum(delta.^2,1);
+
+% define mask
+mask=squared_distance_from_center<=radius^2;
+
+% set voxels to zero
+ds_copy2.samples(:,mask)=0;
+
+% show result
+cosmo_plot_slices(ds_copy2);
+% <@@<
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

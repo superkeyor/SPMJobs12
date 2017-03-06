@@ -1,0 +1,9 @@
+.. _demo_surface_tfce:
+
+demo surface tfce
+=================
+
+:demo_up:`demo_surface_tfce`
+
+.. include :: demo_surface_tfce.txt
+

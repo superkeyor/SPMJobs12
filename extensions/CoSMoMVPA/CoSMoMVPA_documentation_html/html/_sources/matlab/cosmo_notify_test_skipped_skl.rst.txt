@@ -1,0 +1,7 @@
+.. _cosmo_notify_test_skipped_skl:
+
+cosmo notify test skipped skl
+=============================
+
+.. include :: cosmo_notify_test_skipped_skl.txt
+

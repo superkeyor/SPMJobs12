@@ -1,0 +1,7 @@
+.. _cosmo_classify_libsvm_hdr:
+
+cosmo classify libsvm hdr
+=========================
+
+.. include :: cosmo_classify_libsvm_hdr.txt
+

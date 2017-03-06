@@ -1,0 +1,7 @@
+.. _cosmo_meeg_senstype_collection_skl:
+
+cosmo meeg senstype collection skl
+==================================
+
+.. include :: cosmo_meeg_senstype_collection_skl.txt
+

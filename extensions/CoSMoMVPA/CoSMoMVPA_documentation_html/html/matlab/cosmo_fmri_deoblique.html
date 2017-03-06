@@ -1,0 +1,208 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo fmri deoblique &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo fmri orientation" href="cosmo_fmri_orientation.html" />
+    <link rel="prev" title="cosmo fmri dataset" href="cosmo_fmri_dataset.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_fmri_orientation.html" title="cosmo fmri orientation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_fmri_dataset.html" title="cosmo fmri dataset"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-fmri-deoblique">
+<span id="id1"></span><h1>cosmo fmri deoblique<a class="headerlink" href="#cosmo-fmri-deoblique" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>ds_plumb<span class="p">=</span><span class="nf">cosmo_fmri_deoblique</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="c">% de-oblique a dataset</span>
+<span class="c">%</span>
+<span class="c">% Input:</span>
+<span class="c">%     ds                fmri dataset struct</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % start with a simple dataset</span>
+<span class="c">%     x=cosmo_synthetic_dataset(&#39;size&#39;,&#39;huge&#39;,&#39;ntargets&#39;,1,&#39;nchunks&#39;,1);</span>
+<span class="c">%     % make dataset oblique (manually)</span>
+<span class="c">%     x.a.vol.mat(1,1)=.8;</span>
+<span class="c">%     x.a.vol.mat(2,1)=.6;</span>
+<span class="c">%     y=cosmo_fmri_deoblique(x);</span>
+<span class="c">%     cosmo_disp(x.a.vol)</span>
+<span class="c">%     &gt; .mat</span>
+<span class="c">%     &gt;   [ 0.8         0         0        -3</span>
+<span class="c">%     &gt;     0.6         2         0        -3</span>
+<span class="c">%     &gt;       0         0         2        -3</span>
+<span class="c">%     &gt;       0         0         0         1 ]</span>
+<span class="c">%     &gt; .dim</span>
+<span class="c">%     &gt;   [ 20        17        19 ]</span>
+<span class="c">%     &gt; .xform</span>
+<span class="c">%     &gt;   &#39;scanner_anat&#39;</span>
+<span class="c">%     cosmo_disp(y.a.vol)</span>
+<span class="c">%     &gt; .mat</span>
+<span class="c">%     &gt;   [ 1         0         0      -3.2</span>
+<span class="c">%     &gt;     0         2         0      -2.4</span>
+<span class="c">%     &gt;     0         0         2        -3</span>
+<span class="c">%     &gt;     0         0         0         1 ]</span>
+<span class="c">%     &gt; .dim</span>
+<span class="c">%     &gt;   [ 20        17        19 ]</span>
+<span class="c">%     &gt; .xform</span>
+<span class="c">%     &gt;   &#39;scanner_anat&#39;</span>
+<span class="c">%     %</span>
+<span class="c">%     % other attributes are unchanged:</span>
+<span class="c">%     assert(isequal({x.samples x.fa x.sa x.a.fdim},...</span>
+<span class="c">%                    {y.samples y.fa y.sa y.a.fdim}));</span>
+<span class="c">%     %</span>
+<span class="c">%     % a plump dataset does not change after de-obliqueing</span>
+<span class="c">%     z=cosmo_fmri_deoblique(y);</span>
+<span class="c">%     isequal(y,z)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - Using this function changes the location of the voxels in</span>
+<span class="c">%     world-space, that is world coordinates (x, y, z).</span>
+<span class="c">%   - This function is intended for AFNI and BrainVoyager, as these</span>
+<span class="c">%     programs prefer &#39;plump&#39; (non-oblique) volumes.</span>
+<span class="c">%   - When using this function, it is recommended to inspect the result</span>
+<span class="c">%     visually.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="c">% get canonical orthogonal matrix</span>
+<span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="n">rot_ortho</span><span class="p">]=</span><span class="n">cosmo_fmri_orientation</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+<span class="n">mat</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">;</span>
+
+
+<span class="c">% convert base1 -&gt; base0</span>
+<span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)=</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)</span><span class="o">+</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span><span class="o">&#39;</span><span class="p">;</span>
+
+<span class="c">% use pixel dimension to set non-zero elements</span>
+<span class="n">mat_ortho</span><span class="p">=</span><span class="n">mat</span><span class="p">;</span>
+<span class="n">pixdim</span><span class="p">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">.^</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">mat_ortho</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">times</span><span class="p">,</span><span class="n">rot_ortho</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">),</span><span class="n">pixdim</span><span class="p">);</span>
+
+<span class="c">% convert base0 -&gt; base1</span>
+<span class="n">mat_ortho</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)=</span><span class="n">mat_ortho</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">*-</span><span class="p">[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">]</span><span class="o">&#39;+</span><span class="n">mat_ortho</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+
+<span class="c">% ensure single element in rotation part</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">mat_ortho</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">~=</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">mat_ortho</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">~=</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">));</span>
+
+<span class="n">ds_plumb</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+<span class="n">ds_plumb</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=</span><span class="n">mat_ortho</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_fmri_dataset.html"
+                        title="previous chapter">cosmo fmri dataset</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_fmri_orientation.html"
+                        title="next chapter">cosmo fmri orientation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_fmri_deoblique.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_fmri_orientation.html" title="cosmo fmri orientation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_fmri_dataset.html" title="cosmo fmri dataset"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

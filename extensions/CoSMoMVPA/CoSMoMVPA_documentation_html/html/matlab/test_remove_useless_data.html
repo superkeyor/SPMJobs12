@@ -1,0 +1,230 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test remove useless data &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test run tests" href="test_run_tests.html" />
+    <link rel="prev" title="test randperm" href="test_randperm.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_run_tests.html" title="test run tests"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_randperm.html" title="test randperm"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-remove-useless-data">
+<span id="id1"></span><h1>test remove useless data<a class="headerlink" href="#test-remove-useless-data" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_remove_useless_data</span>
+<span class="c">% tests for cosmo_remove_useless_data</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span> <span class="nf">test_remove_useless_data_basics</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">)=</span><span class="n">NaN</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)=</span><span class="n">Inf</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">5</span><span class="p">,:)=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(:,</span><span class="mi">6</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">,[]);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">,[],[]);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,[]);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,[]);</span>
+
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">4</span> <span class="mi">5</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;variable&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;variable&#39;</span><span class="p">);</span>
+
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;finite&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;finite&#39;</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">test_remove_useless_data_vec</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">ds1</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds1</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">2</span><span class="p">)=</span><span class="n">NaN</span><span class="p">;</span>
+    <span class="n">ds1</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">4</span><span class="p">)=</span><span class="n">Inf</span><span class="p">;</span>
+
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds1</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds1</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds1</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;variable&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds1</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;finite&#39;</span><span class="p">);</span>
+
+    <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">ds2</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">2</span><span class="p">)=</span><span class="n">NaN</span><span class="p">;</span>
+    <span class="n">ds2</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">4</span><span class="p">)=</span><span class="n">Inf</span><span class="p">;</span>
+
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds2</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds2</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds2</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;variable&#39;</span><span class="p">);</span>
+    <span class="n">assert_equal_sliced</span><span class="p">(</span><span class="n">ds2</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">3</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;finite&#39;</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">test_remove_useless_data_exceptions</span>
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                    <span class="n">cosmo_remove_useless_data</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">struct</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">({});</span>
+
+    <span class="c">% must have samples</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">foo</span><span class="p">=[];</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="c">% input must be matrix</span>
+    <span class="n">data</span><span class="p">=</span><span class="nb">randn</span><span class="p">([</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">]);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">data</span><span class="p">;</span>
+
+    <span class="c">% last argument must be kosher</span>
+    <span class="n">data</span><span class="p">=</span><span class="nb">randn</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">struct</span><span class="p">());</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;variable&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">data</span><span class="p">;</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">struct</span><span class="p">());</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="s">&#39;variable&#39;</span><span class="p">);</span>
+
+
+
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_equal_sliced</span><span class="p">(</span>ds, select, dim, varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">ds_useful</span><span class="p">,</span><span class="n">msk</span><span class="p">]=</span><span class="n">cosmo_remove_useless_data</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">varargin</span><span class="p">{:});</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">islogical</span><span class="p">(</span><span class="n">msk</span><span class="p">));</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">select</span><span class="p">,</span><span class="n">dim</span><span class="p">),</span><span class="n">ds_useful</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="n">dim</span><span class="p">),</span><span class="n">ds_useful</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_randperm.html"
+                        title="previous chapter">test randperm</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_run_tests.html"
+                        title="next chapter">test run tests</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_remove_useless_data.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_run_tests.html" title="test run tests"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_randperm.html" title="test randperm"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

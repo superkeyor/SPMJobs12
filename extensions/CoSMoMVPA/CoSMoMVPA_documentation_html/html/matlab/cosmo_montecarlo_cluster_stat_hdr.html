@@ -1,0 +1,366 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo montecarlo cluster stat hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo naive bayes classifier searchlight hdr" href="cosmo_naive_bayes_classifier_searchlight_hdr.html" />
+    <link rel="prev" title="cosmo meta feature selection classifier hdr" href="cosmo_meta_feature_selection_classifier_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_naive_bayes_classifier_searchlight_hdr.html" title="cosmo naive bayes classifier searchlight hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meta_feature_selection_classifier_hdr.html" title="cosmo meta feature selection classifier hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-montecarlo-cluster-stat-hdr">
+<span id="id1"></span><h1>cosmo montecarlo cluster stat hdr<a class="headerlink" href="#cosmo-montecarlo-cluster-stat-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>ds_z<span class="p">=</span><span class="nf">cosmo_montecarlo_cluster_stat</span><span class="p">(</span>ds,nbrhood,varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% compute random-effect cluster statistics corrected for multiple comparisons</span>
+<span class="c">%</span>
+<span class="c">% ds_z=cosmo_montecarlo_cluster_stat(ds,nh,varargin)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                  dataset struct</span>
+<span class="c">%   nbrhood             neighborhood structure, typically from</span>
+<span class="c">%                       cosmo_cluster_neighborhood</span>
+<span class="c">%   &#39;niter&#39;,niter       number of null iterations. More null</span>
+<span class="c">%                       iterations leads to a more precise estimate of the</span>
+<span class="c">%                       cluster statistics, but also takes longer. Except</span>
+<span class="c">%                       for testing scenarios, this value should usually be</span>
+<span class="c">%                       at least 1000, but 10,000 or more is recommended</span>
+<span class="c">%                       for publication-quality analyses.</span>
+<span class="c">%   &#39;h0_mean&#39;           Mean under the null hypothesis</span>
+<span class="c">%                       Required if and only if a one-sample t-test is</span>
+<span class="c">%                       performed, i.e. all values in ds.sa.targets are the</span>
+<span class="c">%                       same and all values in ds.sa.chunks are different</span>
+<span class="c">%                       - If ds contains correlation differences, then</span>
+<span class="c">%                         h0_mean=0 is a typical value</span>
+<span class="c">%                       - If ds contains classification accuracies, then</span>
+<span class="c">%                         h0_mean=1/C, with C the number of classes</span>
+<span class="c">%                         (conditions), is a typical value (assuming that</span>
+<span class="c">%                         the partitioning scheme is balanced)</span>
+<span class="c">%   &#39;feature_stat&#39;,f    (optional) statistic for features, one of &#39;auto&#39; or</span>
+<span class="c">%                       &#39;none&#39;:</span>
+<span class="c">%                       - &#39;auto&#39;: Compute cluster-based statistics (one- or</span>
+<span class="c">%                                 two-sample t-test, one-way ANOVA, or</span>
+<span class="c">%                                 repeated measures ANOVA; see Notes</span>
+<span class="c">%                                 section below how to set the .sa.targets</span>
+<span class="c">%                                 and .sa.chunks attributes.</span>
+<span class="c">%                       - &#39;none&#39;: Do not compute statistics, but instead</span>
+<span class="c">%                                 use the input data from ds directly. In</span>
+<span class="c">%                                 this case:</span>
+<span class="c">%                                 * no statistic is computed;</span>
+<span class="c">%                                 * ds.samples must be a row vector.</span>
+<span class="c">%                                 * h0_mean is required.</span>
+<span class="c">%                                 * the &#39;null&#39; option is required</span>
+<span class="c">%                                 * &#39;niter&#39; must not be provided.</span>
+<span class="c">%                                 * when using the &#39;tfce&#39; cluster_stat</span>
+<span class="c">%                                   option (the default), &#39;dh&#39; must be</span>
+<span class="c">%                                   provided explicitly.</span>
+<span class="c">%                                 This option is intended for use when</span>
+<span class="c">%                                 null data and feature-wise statistics</span>
+<span class="c">%                                 have already been computed.</span>
+<span class="c">%                       Default: &#39;auto&#39;.</span>
+<span class="c">%   &#39;cluster_stat&#39;,s    (optional) statistic for clusters, one of &#39;tfce&#39;</span>
+<span class="c">%                       &#39;max&#39;, &#39;maxsum&#39;, &#39;maxsize&#39;. Default: &#39;tfce&#39;</span>
+<span class="c">%                       (Threshold-Free Cluster Enhancement; see</span>
+<span class="c">%                       References)</span>
+<span class="c">%   &#39;dh&#39;,dh             (optional) Threshold step (only if cluster_stat is</span>
+<span class="c">%                       &#39;tfce&#39;). The default value of dh=0.1 should be fine</span>
+<span class="c">%                       in most (if not all) cases.</span>
+<span class="c">%                       Exception: when using &#39;feature_stat&#39;,&#39;none&#39;,</span>
+<span class="c">%                       the &#39;dh&#39; option is required when using &#39;tfce&#39;.</span>
+<span class="c">%                       For typical use cases, a value so that 100*dh is</span>
+<span class="c">%                       in the same order of magnitude as the range</span>
+<span class="c">%                       (maximum minus minimum) of the input (in .samples)</span>
+<span class="c">%                       may be a reasonable compromise between speed and</span>
+<span class="c">%                       accuracy</span>
+<span class="c">%   &#39;p_uncorrected&#39;     (optional) Uncorrected (feature-wise) p-value (only</span>
+<span class="c">%                       if cluster_stat is not &#39;tfce&#39;)</span>
+<span class="c">%   &#39;null&#39;, null_data   (optional) 1xP cell with null datasets, for example</span>
+<span class="c">%                       from cosmo_randomize_targets. Each dataset in</span>
+<span class="c">%                       null_data{i} must have the same size as ds, but</span>
+<span class="c">%                       must contain null data. For example, if a</span>
+<span class="c">%                       one-sample t-test across participants is used to</span>
+<span class="c">%                       test classification  accuracies against chance</span>
+<span class="c">%                       level (with the &#39;h0_mean&#39; option), then each</span>
+<span class="c">%                       dataset null_data{i} should contain classification</span>
+<span class="c">%                       accuracies for each participant that were computed</span>
+<span class="c">%                       using randomized values for .sa.targets.</span>
+<span class="c">%                       If this option is provided, then null data is</span>
+<span class="c">%                       sampled from null_data. According to Stelzer et al</span>
+<span class="c">%                       (see References), about 100 null datasets per</span>
+<span class="c">%                       participant are sufficient for good estimates of</span>
+<span class="c">%                       data under the null hypothesis.</span>
+<span class="c">%                       If this option is not provided, null data is based</span>
+<span class="c">%                       on the contents of ds, which is less precise (more</span>
+<span class="c">%                       conservative, in other words has less power).</span>
+<span class="c">%                       Exception: when using &#39;feature_stat&#39;,&#39;none&#39;, then</span>
+<span class="c">%                       the recommendation for the number of null_data</span>
+<span class="c">%                       elements is the same as the recommendation of</span>
+<span class="c">%                       &#39;niter&#39; if the &#39;feature_stat&#39; option is not &#39;none&#39;.</span>
+<span class="c">%   &#39;progress&#39;,p        Show progress every p steps (default: 10). Use</span>
+<span class="c">%                       p=false to not show progress.</span>
+<span class="c">%   &#39;nproc&#39;, np         If the Matlab parallel processing toolbox, or the</span>
+<span class="c">%                       GNU Octave parallel package is available, use</span>
+<span class="c">%                       np parallel threads. (Multiple threads may speed</span>
+<span class="c">%                       up computations).</span>
+<span class="c">%                       If parallel processing is not available, or if</span>
+<span class="c">%                       this option is not provided, then a single thread</span>
+<span class="c">%                       is used.</span>
+<span class="c">%   &#39;seed&#39;,s            Use seed s for pseudo-random number generation. If</span>
+<span class="c">%                       this option is provided, then this function behaves</span>
+<span class="c">%                       deterministically. If this option is omitted (the</span>
+<span class="c">%                       default), then repeated calls with the same input</span>
+<span class="c">%                       may lead to slightly different results.</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   ds_z                Dataset struct with (two-tailed) z-scores for each</span>
+<span class="c">%                       feature corrected for multiple comparisons.</span>
+<span class="c">%                       The type of feature-wise statistic (one-sample</span>
+<span class="c">%                       t-test, two-sample t-test, one-way ANOVA, or</span>
+<span class="c">%                       repeated-measures ANOVA) depends on the contents of</span>
+<span class="c">%                       ds.sa.targets and ds.sa.chunks (see Notes).</span>
+<span class="c">%                       For example, at alpha=0.05, these can be</span>
+<span class="c">%                       interpreted as:</span>
+<span class="c">%                       - For a one-tailed test:</span>
+<span class="c">%                           z &lt; -1.6449   statistic is below expected mean</span>
+<span class="c">%                          |z|&lt;  1.6449   statistic is not significant</span>
+<span class="c">%                           z &gt;  1.6449   statistic is above expected mean</span>
+<span class="c">%                       - For a two-tailed test:</span>
+<span class="c">%                           z &lt; -1.9600  statistic is below expected mean</span>
+<span class="c">%                          |z|&lt;  1.9600  statistic is not significant</span>
+<span class="c">%                           z &gt;  1.9600  statistic is above expected mean</span>
+<span class="c">%                       where |z| denotes the absolute value of z.</span>
+<span class="c">%                       Use normcdf to convert the z-scores to p-values.</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % Generate tiny synthetic dataset representing 6 subjects, one</span>
+<span class="c">%     % condition, 6 voxels</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;ntargets&#39;,1,&#39;nchunks&#39;,6);</span>
+<span class="c">%     %</span>
+<span class="c">%     % Define clustering neighborhood</span>
+<span class="c">%     nh=cosmo_cluster_neighborhood(ds,&#39;progress&#39;,false);</span>
+<span class="c">%     %</span>
+<span class="c">%     % Set options for monte carlo based clustering statistic</span>
+<span class="c">%     opt=struct();</span>
+<span class="c">%     opt.cluster_stat=&#39;tfce&#39;;  % Threshold-Free Cluster Enhancement;</span>
+<span class="c">%                               % this is a (very reasonable) default</span>
+<span class="c">%     opt.niter=50;             % this is way too small except for testing;</span>
+<span class="c">%                               % should usually be &gt;=1000;</span>
+<span class="c">%                               % better is &gt;=10,000</span>
+<span class="c">%     opt.h0_mean=0;            % test against mean of zero</span>
+<span class="c">%     opt.seed=1;               % should usually not be used, unless exact</span>
+<span class="c">%                               % replication of results is required</span>
+<span class="c">%                               %  replication</span>
+<span class="c">%     opt.progress=false;       % do not show progress</span>
+<span class="c">%                               % (only for in this example)</span>
+<span class="c">%     %</span>
+<span class="c">%     % Apply cluster-based correction</span>
+<span class="c">%     z_ds=cosmo_montecarlo_cluster_stat(ds,nh,opt);</span>
+<span class="c">%     %</span>
+<span class="c">%     % Show z-scores of each feature corrected for multiple comparisons;</span>
+<span class="c">%     % One feature has abs(z_ds.samples)&gt;1.96, indicating it</span>
+<span class="c">%     % survives correction for multiple comparisons</span>
+<span class="c">%     cosmo_disp(z_ds.samples)</span>
+<span class="c">%     &gt; [ 0.994         0      2.05         0      1.41         0 ]</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - In the input dataset, ds.sa.targets should indicate the condition (or</span>
+<span class="c">%     class), whereas ds.sa.chunks should indicate (in)dependency of</span>
+<span class="c">%     measurements. In a second-level (group) analysis, ds.sa.chunks should</span>
+<span class="c">%     be set so that different subjects have different values in</span>
+<span class="c">%     ds.sa.chunks; and different conditions should have different values</span>
+<span class="c">%     in ds.sa.targets. The following table illustrates how .sa.targets and</span>
+<span class="c">%     .sa.chunks should be set to perform within- or between-group</span>
+<span class="c">%     statistical tests:</span>
+<span class="c">%</span>
+<span class="c">%     ds.sa.targets&#39;   ds.sa.chunks&#39;</span>
+<span class="c">%     --------------   -------------</span>
+<span class="c">%     [1 1 1 1 1 1]    [1 2 3 4 5 6]    Six subjects, one condition;</span>
+<span class="c">%                                       one-sample t-test against the null</span>
+<span class="c">%                                       hypothesis of a mean of h0_mean</span>
+<span class="c">%                                       (h0_mean is required)</span>
+<span class="c">%     [1 1 1 2 2 2]    [1 2 3 4 5 6]    Six subjects, two groups;</span>
+<span class="c">%                                       two-sample (unpaired) t-test</span>
+<span class="c">%                                       against the null hypothesis of no</span>
+<span class="c">%                                       differences between the two groups</span>
+<span class="c">%                                       (h0_mean is not allowed)</span>
+<span class="c">%     [1 1 2 2 3 3]    [1 2 3 4 5 6]    Six subjects, three groups;</span>
+<span class="c">%                                       one-way ANOVA against the null</span>
+<span class="c">%                                       hypothesis of no differences</span>
+<span class="c">%                                       between the three groups.</span>
+<span class="c">%                                       (h0_mean is not allowed)</span>
+<span class="c">%     [1 1 1 2 2 2]    [1 2 3 1 2 3]    Three subjects, two conditions;</span>
+<span class="c">%                                       paired t-test against the null</span>
+<span class="c">%                                       hypothesis of no differences</span>
+<span class="c">%                                       between samples with targets=1 and</span>
+<span class="c">%                                       those with targets=2.</span>
+<span class="c">%                                       (h0_mean is not allowed)</span>
+<span class="c">%     [1 1 2 2 3 3]    [1 2 1 2 1 2]    Two subjects, three conditions;</span>
+<span class="c">%                                       repeated-measures ANOVA against</span>
+<span class="c">%                                       the null hypothesis of no</span>
+<span class="c">%                                       differences between samples with</span>
+<span class="c">%                                       targets=1, targets=2, and targets=3</span>
+<span class="c">%                                       (h0_mean is not allowed)</span>
+<span class="c">%</span>
+<span class="c">%   - As illustrated above, if the &#39;h0_mean&#39; option is provided, then a</span>
+<span class="c">%     one-sample t-test against a mean of h0_mean is performed. Use-cases</span>
+<span class="c">%     involve testing one group of subjects against a mean of zero for</span>
+<span class="c">%     correlation differences (if maps were obtained using a searchlight</span>
+<span class="c">%     with cosmo_correlation_measure), or against a mean of 1/C (if maps</span>
+<span class="c">%     were obtained using a searchlight with classification analysis</span>
+<span class="c">%     with C classes, with each class occuring equally often in the</span>
+<span class="c">%     training set).</span>
+<span class="c">%   - The permutations used with the &#39;h0_mean&#39; option involve randomly</span>
+<span class="c">%     flipping the sign of samples (over all features) after subtracting</span>
+<span class="c">%     &#39;h0_mean&#39; (This preserves spatial smoothness in individual samples).</span>
+<span class="c">%     This approach is fast but somewhat conservative, and it becomes</span>
+<span class="c">%     more conservative with larger effect sizes. For the most accurate</span>
+<span class="c">%     (but also slowest to compute) results, use the &#39;null&#39; data option</span>
+<span class="c">%     instead.</span>
+<span class="c">%   - The number of iterations determines the precision of the estimates</span>
+<span class="c">%     z-scores. For publication-quality papers, 10,000 iterations is</span>
+<span class="c">%     recommended.</span>
+<span class="c">%   - The neighborhood used for clustering can, for almost all use cases,</span>
+<span class="c">%     be computed using cosmo_cluster_neighborhood.</span>
+<span class="c">%   - The rationale for returning z-scores (instead of p-values) that are</span>
+<span class="c">%     corrected for multiple comparisons is that extreme values are the</span>
+<span class="c">%     most significant; when visualized using an external package, a</span>
+<span class="c">%     threshold can be applied to see which features (e.g. voxels or nodes)</span>
+<span class="c">%     survive a particular cluster-corrected significance threshold.</span>
+<span class="c">%   - Versions of this function from before 23 November 2016 incorrectly</span>
+<span class="c">%     producted z-scores corresponding to one-tailed, rather than</span>
+<span class="c">%     two-tailed, probablity values.</span>
+<span class="c">%</span>
+<span class="c">% References:</span>
+<span class="c">%   - Stephen M. Smith, Thomas E. Nichols (2009), Threshold-free</span>
+<span class="c">%     cluster enhancement: Addressing problems of smoothing, threshold</span>
+<span class="c">%     dependence and localisation in cluster inference, NeuroImage, Volume</span>
+<span class="c">%     44, 83-98.</span>
+<span class="c">%   - Maris, E., Oostenveld, R. Nonparametric statistical testing of EEG-</span>
+<span class="c">%     and MEG-data. Journal of Neuroscience Methods (2007).</span>
+<span class="c">%   - Johannes Stelzer, Yi Chen and Robert Turner (2013). Statistical</span>
+<span class="c">%     inference and multiple testing correction in classification-based</span>
+<span class="c">%     multi-voxel pattern analysis (MVPA): Random permutations and cluster</span>
+<span class="c">%     size control. NeuroImage, Volume 65, 69-82.</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_cluster_neighborhood</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_meta_feature_selection_classifier_hdr.html"
+                        title="previous chapter">cosmo meta feature selection classifier hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_naive_bayes_classifier_searchlight_hdr.html"
+                        title="next chapter">cosmo naive bayes classifier searchlight hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_montecarlo_cluster_stat_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_naive_bayes_classifier_searchlight_hdr.html" title="cosmo naive bayes classifier searchlight hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meta_feature_selection_classifier_hdr.html" title="cosmo meta feature selection classifier hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

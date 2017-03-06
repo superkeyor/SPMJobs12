@@ -1,0 +1,228 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>demo fmri searchlight naive bayes &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="demo fmri searchlight rsm" href="demo_fmri_searchlight_rsm.html" />
+    <link rel="prev" title="demo fmri searchlight lda" href="demo_fmri_searchlight_lda.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="demo_fmri_searchlight_rsm.html" title="demo fmri searchlight rsm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="demo_fmri_searchlight_lda.html" title="demo fmri searchlight lda"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" accesskey="U">Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="demo-fmri-searchlight-naive-bayes">
+<span id="id1"></span><h1>demo fmri searchlight naive bayes<a class="headerlink" href="#demo-fmri-searchlight-naive-bayes" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="../_static/publish/demo_fmri_searchlight_naive_bayes.html">Matlab output: demo_fmri_searchlight_naive_bayes</a></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% Demo: fMRI searchlight with naive bayes classifier</span>
+<span class="c">%</span>
+<span class="c">% The data used here is available from http://cosmomvpa.org/datadb.zip</span>
+<span class="c">%</span>
+<span class="c">% This example uses the following dataset:</span>
+<span class="c">% + &#39;digit&#39;</span>
+<span class="c">%    A participant made finger pressed with the index and middle finger of</span>
+<span class="c">%    the right hand during 4 runs in an fMRI study. Each run was divided in</span>
+<span class="c">%    4 blocks with presses of each finger and analyzed with the GLM,</span>
+<span class="c">%    resulting in 2*4*4=32 t-values</span>
+<span class="c">%</span>
+<span class="c">% This example uses the cosmo_naive_bayes_classifier_searchlight, which is</span>
+<span class="c">% a fast alternative to using the regular searchlight with a</span>
+<span class="c">% crossvalidation measure and a classifier</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+
+
+<span class="c">%% Set data paths</span>
+<span class="c">% The function cosmo_config() returns a struct containing paths to tutorial</span>
+<span class="c">% data. (Alternatively the paths can be set manually without using</span>
+<span class="c">% cosmo_config.)</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+
+<span class="n">digit_study_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;digit&#39;</span><span class="p">);</span>
+<span class="n">readme_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">digit_study_path</span><span class="p">,</span><span class="s">&#39;README&#39;</span><span class="p">);</span>
+<span class="n">cosmo_type</span><span class="p">(</span><span class="n">readme_fn</span><span class="p">);</span>
+
+<span class="n">output_path</span><span class="p">=</span><span class="n">config</span><span class="p">.</span><span class="n">output_data_path</span><span class="p">;</span>
+
+<span class="c">% reset citation list</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-tic&#39;</span><span class="p">);</span>
+
+<span class="c">%% LDA classifier searchlight analysis</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="c">% This analysis identified brain regions where the categories can be</span>
+<span class="c">% distinguished using an odd-even partitioning scheme and a Naive Bayes</span>
+<span class="c">% classifier.</span>
+
+<span class="n">data_path</span><span class="p">=</span><span class="n">digit_study_path</span><span class="p">;</span>
+<span class="n">data_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;glm_T_stats_perblock+orig.HEAD&#39;</span><span class="p">);</span>
+<span class="n">mask_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;brain_mask+orig.HEAD&#39;</span><span class="p">);</span>
+
+<span class="n">targets</span><span class="p">=</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">16</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>    <span class="c">% class labels: 1 2 1 2 1 2 1 2 1 2 ... 1 2</span>
+<span class="n">chunks</span><span class="p">=</span><span class="nb">floor</span><span class="p">(((</span><span class="mi">1</span><span class="p">:</span><span class="mi">32</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">8</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="c">% run labels:   1 1 1 1 1 1 1 1 2 2 ... 4 4</span>
+
+<span class="n">ds_per_run</span> <span class="p">=</span> <span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">data_fn</span><span class="p">,</span> <span class="s">&#39;mask&#39;</span><span class="p">,</span> <span class="n">mask_fn</span><span class="p">,</span><span class="c">...</span>
+                                <span class="s">&#39;targets&#39;</span><span class="p">,</span><span class="n">targets</span><span class="p">,</span><span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="n">chunks</span><span class="p">);</span>
+
+<span class="c">% print dataset</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Dataset input:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds_per_run</span><span class="p">);</span>
+
+
+<span class="c">% set parameters for naive bayes searchlight (partitions) in a</span>
+<span class="c">% measure_args struct.</span>
+<span class="n">measure_args</span> <span class="p">=</span> <span class="n">struct</span><span class="p">();</span>
+
+<span class="c">% Set partition scheme. odd_even is fast; for publication-quality analysis</span>
+<span class="c">% nfold_partitioner is recommended.</span>
+<span class="c">% Alternatives are:</span>
+<span class="c">% - cosmo_nfold_partitioner    (take-one-chunk-out crossvalidation)</span>
+<span class="c">% - cosmo_nchoosek_partitioner (take-K-chunks-out  &quot;             &quot;).</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">partitions</span> <span class="p">=</span> <span class="n">cosmo_oddeven_partitioner</span><span class="p">(</span><span class="n">ds_per_run</span><span class="p">);</span>
+
+<span class="c">% print measure and arguments</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Searchlight measure arguments:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="c">% Define a neighborhood with approximately 100 voxels in each searchlight.</span>
+<span class="n">nvoxels_per_searchlight</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds_per_run</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;count&#39;</span><span class="p">,</span><span class="n">nvoxels_per_searchlight</span><span class="p">);</span>
+
+
+<span class="c">%% Run the searchlight</span>
+<span class="c">%</span>
+<span class="n">nb_results</span> <span class="p">=</span> <span class="n">cosmo_naive_bayes_classifier_searchlight</span><span class="p">(</span><span class="n">ds_per_run</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">nbrhood</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+<span class="c">%% Show results</span>
+<span class="c">% print output dataset</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Dataset output:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">nb_results</span><span class="p">);</span>
+
+<span class="c">% Plot the output</span>
+<span class="n">cosmo_plot_slices</span><span class="p">(</span><span class="n">nb_results</span><span class="p">);</span>
+
+<span class="c">% Define output location</span>
+<span class="n">output_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="s">&#39;naive_bayes_searchlight+orig&#39;</span><span class="p">);</span>
+
+<span class="c">% Store results to disc</span>
+<span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">nb_results</span><span class="p">,</span> <span class="n">output_fn</span><span class="p">);</span>
+
+<span class="c">% Show citation information</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-cite&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="demo_fmri_searchlight_lda.html"
+                        title="previous chapter">demo fmri searchlight lda</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="demo_fmri_searchlight_rsm.html"
+                        title="next chapter">demo fmri searchlight rsm</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/demo_fmri_searchlight_naive_bayes.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="demo_fmri_searchlight_rsm.html" title="demo fmri searchlight rsm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="demo_fmri_searchlight_lda.html" title="demo fmri searchlight lda"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" >Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

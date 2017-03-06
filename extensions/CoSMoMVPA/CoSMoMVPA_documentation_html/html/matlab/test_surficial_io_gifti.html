@@ -1,0 +1,338 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test surficial io gifti &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test surficial io niml dset" href="test_surficial_io_niml_dset.html" />
+    <link rel="prev" title="test surface io" href="test_surface_io.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_surficial_io_niml_dset.html" title="test surficial io niml dset"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_surface_io.html" title="test surface io"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-surficial-io-gifti">
+<span id="id1"></span><h1>test surficial io gifti<a class="headerlink" href="#test-surficial-io-gifti" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_surficial_io_gifti</span>
+<span class="c">% tests for GIFTI input/output</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_gifti_dataset_io</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;gifti&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;surface&#39;</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}=</span><span class="mi">1</span><span class="o">+</span><span class="p">[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">5</span> <span class="mi">3</span><span class="p">];</span>
+
+    <span class="n">encodings</span><span class="p">=</span><span class="n">get_gifti_encodings</span><span class="p">();</span>
+    <span class="n">orders</span><span class="p">=</span><span class="n">get_indexing_orders</span><span class="p">();</span>
+
+    <span class="n">fn</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;_tmp&#39;</span><span class="p">,</span><span class="s">&#39;.gii&#39;</span><span class="p">);</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete</span><span class="p">(</span><span class="n">fn</span><span class="p">));</span>
+
+    <span class="c">% only test subset</span>
+    <span class="n">ntest</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">n_encodings</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">encodings</span><span class="p">);</span>
+    <span class="n">n_orders</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">orders</span><span class="p">);</span>
+
+    <span class="n">rp</span><span class="p">=</span><span class="n">randperm</span><span class="p">(</span><span class="n">n_encodings</span><span class="o">*</span><span class="n">n_orders</span><span class="p">);</span>
+    <span class="n">test_idxs</span><span class="p">=</span><span class="n">rp</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ntest</span><span class="p">);</span>
+
+    <span class="n">counter</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">encodings</span><span class="p">)</span>
+        <span class="n">encoding</span><span class="p">=</span><span class="n">encodings</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">orders</span><span class="p">)</span>
+            <span class="n">counter</span><span class="p">=</span><span class="n">counter</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="o">~</span><span class="n">any</span><span class="p">(</span><span class="n">test_idxs</span><span class="o">==</span><span class="n">counter</span><span class="p">)</span>
+                <span class="k">continue</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="n">order</span><span class="p">=</span><span class="n">orders</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+
+            <span class="n">cosmo_map2surface</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;encoding&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="p">);</span>
+            <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_surface_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+            <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds2</span><span class="p">);</span>
+
+            <span class="n">g_str</span><span class="p">=</span><span class="n">get_gifti_string</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">order</span><span class="p">);</span>
+            <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">);</span>
+            <span class="n">fprintf</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="s">&#39;%s&#39;</span><span class="p">,</span><span class="n">g_str</span><span class="p">);</span>
+            <span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">);</span>
+
+            <span class="n">ds3</span><span class="p">=</span><span class="n">cosmo_surface_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+            <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds3</span><span class="p">);</span>
+
+            <span class="n">g</span><span class="p">=</span><span class="n">gifti</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+            <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">double</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">cdata</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;absolute&#39;</span><span class="p">,</span><span class="mf">1e-5</span><span class="p">);</span>
+            <span class="n">node_indices</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">);</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">double</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">indices</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="n">node_indices</span><span class="p">);</span>
+
+            <span class="n">g2</span><span class="p">=</span><span class="n">cosmo_map2surface</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-gii&#39;</span><span class="p">);</span>
+            <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">cdata</span><span class="p">,</span><span class="n">g2</span><span class="p">.</span><span class="n">cdata</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;absolute&#39;</span><span class="p">,</span><span class="mf">1e-5</span><span class="p">);</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">g</span><span class="p">.</span><span class="n">indices</span><span class="p">,</span><span class="n">g2</span><span class="p">.</span><span class="n">indices</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_dataset_equal</span><span class="p">(</span>x,y<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="s">&#39;absolute&#39;</span><span class="p">,</span><span class="mf">1e-5</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span><span class="n">sort</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">y</span><span class="p">)));</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">fa</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_gifti_string</span><span class="p">(</span>encoding, indexing_order<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">header</span><span class="p">=</span><span class="n">get_header</span><span class="p">();</span>
+    <span class="n">body</span><span class="p">=</span><span class="n">get_data_arrays</span><span class="p">(</span><span class="n">encoding</span><span class="p">,</span> <span class="n">indexing_order</span><span class="p">);</span>
+    <span class="n">footer</span><span class="p">=</span><span class="n">get_footer</span><span class="p">();</span>
+
+    <span class="n">string</span><span class="p">=[</span><span class="n">header</span> <span class="n">body</span> <span class="n">footer</span><span class="p">];</span>
+
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_header</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">string</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;&lt;!DOCTYPE GIFTI SYSTEM &quot;http://gifti.projects.nitr&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;c.org/gifti.dtd&quot;&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;&lt;GIFTI Version=&quot;1.0&quot;  NumberOfDataArrays=&quot;3&quot;&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;   &lt;MetaData&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;      &lt;MD&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;         &lt;Name&gt;&lt;![CDATA[UniqueID]]&gt;&lt;/Name&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;         &lt;Value&gt;&lt;![CDATA[XYZ_Uj6iYZUAV3HKbGirxcn-c&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;A]]&gt;&lt;/Value&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;      &lt;/MD&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;   &lt;/MetaData&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;   &lt;LabelTable/&gt;\n&#39;</span><span class="c">...</span>
+                <span class="p">]);</span>
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_footer</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">string</span><span class="p">=</span><span class="s">&#39;&lt;/GIFTI&gt;&#39;</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>encodings<span class="p">=</span><span class="nf">get_gifti_encodings</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">encodings</span><span class="p">={</span><span class="s">&#39;ASCII&#39;</span><span class="p">,</span><span class="s">&#39;Base64Binary&#39;</span><span class="p">,</span><span class="s">&#39;GZipBase64Binary&#39;</span><span class="p">};</span>
+
+<span class="k">function</span><span class="w"> </span>orders<span class="p">=</span><span class="nf">get_indexing_orders</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">orders</span><span class="p">={</span><span class="s">&#39;ColumnMajorOrder&#39;</span><span class="p">,</span><span class="s">&#39;RowMajorOrder&#39;</span><span class="p">};</span>
+
+
+<span class="k">function</span> <span class="nf">string</span><span class="p">=</span><span class="n">get_data_array_helper</span><span class="p">(</span><span class="n">data_str</span><span class="p">,</span> <span class="n">encoding</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="c">...</span>
+                                               <span class="n">indexing_order</span><span class="p">,</span> <span class="n">intent</span><span class="p">)</span>
+    <span class="n">check_one</span><span class="p">(</span><span class="s">&#39;encoding&#39;</span><span class="p">,</span><span class="n">encoding</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">get_gifti_encodings</span><span class="p">());</span>
+    <span class="n">check_one</span><span class="p">(</span><span class="s">&#39;data_type&#39;</span><span class="p">,</span><span class="n">data_type</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;NIFTI_TYPE_INT32&#39;</span><span class="p">,</span><span class="s">&#39;NIFTI_TYPE_FLOAT32&#39;</span><span class="p">});</span>
+    <span class="n">check_one</span><span class="p">(</span><span class="s">&#39;indexing_order&#39;</span><span class="p">,</span><span class="n">indexing_order</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">get_indexing_orders</span><span class="p">());</span>
+
+
+
+    <span class="n">string</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="c">...</span>
+                <span class="s">&#39;   &lt;DataArray Intent=&quot;%s&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              DataType=&quot;%s&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              ArrayIndexingOrder=&quot;%s&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              Dimensionality=&quot;1&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              Dim0=&quot;6&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              Encoding=&quot;%s&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              Endian=&quot;LittleEndian&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              ExternalFileName=&quot;&quot;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;              ExternalFileOffset=&quot;&quot;&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;      &lt;MetaData&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;         &lt;MD&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;            &lt;Name&gt;&lt;![CDATA[Name]]&gt;&lt;/Name&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;            &lt;Value&gt;&lt;![CDATA[numeric]]&gt;&lt;/Value&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;         &lt;/MD&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;      &lt;/MetaData&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;      &lt;Data&gt;\n%s&#39;</span><span class="c">...</span>
+                <span class="s">&#39;      &lt;/Data&gt;\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;   &lt;/DataArray&gt;\n&#39;</span><span class="c">...</span>
+                <span class="p">],</span> <span class="n">intent</span><span class="p">,</span> <span class="n">data_type</span><span class="p">,</span> <span class="n">indexing_order</span><span class="p">,</span> <span class="n">encoding</span><span class="p">,</span> <span class="n">data_str</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_data_arrays</span><span class="p">(</span>encoding, indexing_order<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">switch</span> <span class="n">encoding</span>
+        <span class="k">case</span> <span class="s">&#39;ASCII&#39;</span>
+            <span class="n">data</span><span class="p">={</span><span class="n">sprintf</span><span class="p">([</span> <span class="s">&#39;        2.031686\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        -3.684948\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        -1.050449\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        1.349442\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        -0.261723\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        -0.203955\n&#39;</span><span class="c">...</span>
+                  <span class="p">]),</span><span class="c">...</span>
+                  <span class="n">sprintf</span><span class="p">([</span> <span class="s">&#39;        0.583806\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        1.723501\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        -1.326491\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        -0.397334\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        2.338657\n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;        0.482345\n&#39;</span><span class="c">...</span>
+                  <span class="p">]),</span><span class="c">...</span>
+                  <span class="n">sprintf</span><span class="p">([</span> <span class="s">&#39;         1 \n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;         4  \n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;         7 \n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;         8 \n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;         5 \n&#39;</span><span class="c">...</span>
+                            <span class="s">&#39;         3 \n&#39;</span><span class="c">...</span>
+                  <span class="p">])};</span>
+        <span class="k">case</span> <span class="s">&#39;Base64Binary&#39;</span>
+            <span class="n">data</span><span class="p">={</span><span class="s">&#39;JQcCQDDWa8AddYa/hLqsP48Ahr6U2VC+&#39;</span><span class="p">,</span><span class="c">...</span>
+                  <span class="s">&#39;T3QVP66b3D91yqm/XW/Lvo6sFUDt9fY+&#39;</span><span class="p">,</span><span class="c">...</span>
+                  <span class="s">&#39;AQAAAAQAAAAHAAAACAAAAAUAAAADAAAA&#39;</span><span class="p">,</span><span class="c">...</span>
+                  <span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;GZipBase64Binary&#39;</span>
+            <span class="n">data</span><span class="p">={</span>  <span class="s">&#39;eAEBGADn/yUHAkAw1mvAHXWGv4S6rD+PAIa+lNlQvnPfCu4=&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;eAEBGADn/090FT+um9w/dcqpv11vy76OrBVA7fX2PpcYDR0=&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;eAEBGADn/wEAAAAEAAAABwAAAAgAAAAFAAAAAwAAAAGEAB0=&#39;</span><span class="c">...</span>
+                    <span class="p">};</span>
+    <span class="k">end</span>
+
+    <span class="n">narrays</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+    <span class="n">arrays_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">narrays</span><span class="p">);</span>
+
+    <span class="n">data_types</span><span class="p">={</span><span class="s">&#39;NIFTI_TYPE_FLOAT32&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;NIFTI_TYPE_FLOAT32&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;NIFTI_TYPE_INT32&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">};</span>
+    <span class="n">intents</span><span class="p">={</span><span class="s">&#39;NIFTI_INTENT_NONE&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;NIFTI_INTENT_NONE&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;NIFTI_INTENT_NODE_INDEX&#39;</span><span class="p">};</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">data_types</span><span class="p">)</span><span class="o">==</span><span class="n">narrays</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">intents</span><span class="p">)</span><span class="o">==</span><span class="n">narrays</span><span class="p">);</span>
+
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">narrays</span>
+        <span class="n">arrays_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">get_data_array_helper</span><span class="p">(</span><span class="n">data</span><span class="p">{</span><span class="n">k</span><span class="p">},</span> <span class="n">encoding</span><span class="p">,</span> <span class="c">...</span>
+                                            <span class="n">data_types</span><span class="p">{</span><span class="n">k</span><span class="p">},</span> <span class="c">...</span>
+                                            <span class="n">indexing_order</span><span class="p">,</span> <span class="n">intents</span><span class="p">{</span><span class="n">k</span><span class="p">});</span>
+    <span class="k">end</span>
+
+    <span class="n">string</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">arrays_cell</span><span class="p">{:});</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_one</span><span class="p">(</span>label, value, allowed<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">strmatch</span><span class="p">(</span><span class="n">value</span><span class="p">,</span> <span class="n">allowed</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal value for %s: %s&#39;</span><span class="p">,</span> <span class="n">label</span><span class="p">,</span> <span class="n">value</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_surface_io.html"
+                        title="previous chapter">test surface io</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_surficial_io_niml_dset.html"
+                        title="next chapter">test surficial io niml dset</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_surficial_io_gifti.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_surficial_io_niml_dset.html" title="test surficial io niml dset"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_surface_io.html" title="test surface io"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

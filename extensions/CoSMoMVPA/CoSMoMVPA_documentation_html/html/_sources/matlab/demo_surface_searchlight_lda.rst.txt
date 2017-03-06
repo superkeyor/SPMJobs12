@@ -1,0 +1,9 @@
+.. _demo_surface_searchlight_lda:
+
+demo surface searchlight lda
+============================
+
+:demo_up:`demo_surface_searchlight_lda`
+
+.. include :: demo_surface_searchlight_lda.txt
+

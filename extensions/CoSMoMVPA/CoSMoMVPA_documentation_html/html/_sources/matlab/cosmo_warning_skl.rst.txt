@@ -1,0 +1,7 @@
+.. _cosmo_warning_skl:
+
+cosmo warning skl
+=================
+
+.. include :: cosmo_warning_skl.txt
+

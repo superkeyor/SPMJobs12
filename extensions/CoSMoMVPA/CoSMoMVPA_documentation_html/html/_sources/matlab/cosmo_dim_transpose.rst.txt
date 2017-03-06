@@ -1,0 +1,7 @@
+.. _cosmo_dim_transpose:
+
+cosmo dim transpose
+===================
+
+.. include :: cosmo_dim_transpose.txt
+

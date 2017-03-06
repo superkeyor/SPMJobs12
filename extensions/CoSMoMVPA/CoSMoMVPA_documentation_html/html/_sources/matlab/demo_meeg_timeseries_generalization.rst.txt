@@ -1,0 +1,9 @@
+.. _demo_meeg_timeseries_generalization:
+
+demo meeg timeseries generalization
+===================================
+
+:demo_up:`demo_meeg_timeseries_generalization`
+
+.. include :: demo_meeg_timeseries_generalization.txt
+

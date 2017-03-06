@@ -1,0 +1,214 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Volumetric fMRI Searchlight</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_splithalf_correlations_searchlight.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Volumetric fMRI Searchlight</h1><!--introduction--><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Load data</a></li><li><a href="#2">Define spherical neighborhood for each feature (voxel)</a></li><li><a href="#3">Run a searchlight with the cosmo_correlation_measure</a></li><li><a href="#4">Visualize and store the results in a NIFTI file</a></li></ul></div><h2>Load data<a name="1"></a></h2><pre class="codeinput">config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+
+<span class="comment">% In this exercise, output (NIFTI files) will be written to this directory</span>
+output_data_path=config.output_data_path;
+
+<span class="comment">% file locations for both halves</span>
+half1_fn=fullfile(data_path,<span class="string">'glm_T_stats_odd.nii'</span>);
+half2_fn=fullfile(data_path,<span class="string">'glm_T_stats_even.nii'</span>);
+mask_fn=fullfile(data_path, <span class="string">'brain_mask.nii'</span>);
+
+<span class="comment">% load two halves as CoSMoMVPA dataset structs.</span>
+half1_ds=cosmo_fmri_dataset(half1_fn,<span class="string">'mask'</span>,mask_fn,<span class="keyword">...</span>
+                                     <span class="string">'targets'</span>,(1:6)',<span class="keyword">...</span>
+                                     <span class="string">'chunks'</span>,repmat(1,6,1));
+half2_ds=cosmo_fmri_dataset(half2_fn,<span class="string">'mask'</span>,mask_fn,<span class="keyword">...</span>
+                                     <span class="string">'targets'</span>,(1:6)',<span class="keyword">...</span>
+                                     <span class="string">'chunks'</span>,repmat(2,6,1));
+ds=cosmo_stack({half1_ds,half2_ds});
+
+<span class="comment">% remove constant features (caused by liberal masking)</span>
+ds=cosmo_remove_useless_data(ds);
+</pre><h2>Define spherical neighborhood for each feature (voxel)<a name="2"></a></h2><pre class="codeinput">radius=3; <span class="comment">% searchlight radius in voxels</span>
+
+<span class="comment">% Using cosmo_spherical_neighborhood, define a neighborhood with</span>
+<span class="comment">% a radius of 3 voxels for each voxel. Assign the result to</span>
+<span class="comment">% a variable named 'nbrhood'</span>
+<span class="comment">% &gt;@@&gt;</span>
+nbrhood=cosmo_spherical_neighborhood(ds,<span class="string">'radius'</span>,radius);
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Compute the number of elements in each element of nbrhood.neighbors,</span>
+<span class="comment">% and assign the result to a variable 'roi_sizes'</span>
+<span class="comment">% &gt;@@&gt;</span>
+roi_sizes=cellfun(@numel,nbrhood.neighbors);
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Plot a histogram of 'roi_sizes'</span>
+<span class="comment">% &gt;@@&gt;</span>
+hist(roi_sizes,100)
+<span class="comment">% &lt;@@&lt;</span>
+</pre><pre class="codeoutput">+00:00:09 [####################] -00:00:00  mean size 111.5
+</pre><img vspace="5" hspace="5" src="run_splithalf_correlations_searchlight_01.png" alt=""> <h2>Run a searchlight with the cosmo_correlation_measure<a name="3"></a></h2><pre class="codeinput"><span class="comment">% Use cosmo_searchlight with 'ds' as the dataset input,</span>
+<span class="comment">% a function handle of cosmo_correlation_measure as the measure,</span>
+<span class="comment">% and the spherical neighborhood just defined to run a searchlight.</span>
+<span class="comment">% Assign the result to a variable 'ds_corr'.</span>
+<span class="comment">% &gt;@@&gt;</span>
+ds_corr=cosmo_searchlight(ds,nbrhood,@cosmo_correlation_measure);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><pre class="codeoutput">+00:00:42 [####################] -00:00:00  
+</pre><h2>Visualize and store the results in a NIFTI file<a name="4"></a></h2><pre class="codeinput"><span class="comment">% Visualize the results using cosmo_plot_slices</span>
+<span class="comment">% Hint: this function takes datasets with one sample directly as input</span>
+<span class="comment">% &gt;@@&gt;</span>
+cosmo_plot_slices(ds_corr)
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Set output filename</span>
+output_fn=fullfile(output_data_path,<span class="keyword">...</span>
+            sprintf(<span class="string">'splithalf_correlation_searchlight_r%.0f.nii'</span>,radius));
+
+<span class="comment">% Write output to a NIFTI file using cosmo_map2fmri</span>
+<span class="comment">% &gt;@@&gt;</span>
+cosmo_map2fmri(ds_corr, output_fn);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><img vspace="5" hspace="5" src="run_splithalf_correlations_searchlight_02.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Volumetric fMRI Searchlight
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+%% Load data
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+% In this exercise, output (NIFTI files) will be written to this directory
+output_data_path=config.output_data_path;
+
+% file locations for both halves
+half1_fn=fullfile(data_path,'glm_T_stats_odd.nii');
+half2_fn=fullfile(data_path,'glm_T_stats_even.nii');
+mask_fn=fullfile(data_path, 'brain_mask.nii');
+
+% load two halves as CoSMoMVPA dataset structs.
+half1_ds=cosmo_fmri_dataset(half1_fn,'mask',mask_fn,...
+                                     'targets',(1:6)',...
+                                     'chunks',repmat(1,6,1));
+half2_ds=cosmo_fmri_dataset(half2_fn,'mask',mask_fn,...
+                                     'targets',(1:6)',...
+                                     'chunks',repmat(2,6,1));
+ds=cosmo_stack({half1_ds,half2_ds});
+
+% remove constant features (caused by liberal masking)
+ds=cosmo_remove_useless_data(ds);
+
+%% Define spherical neighborhood for each feature (voxel)
+
+radius=3; % searchlight radius in voxels
+
+% Using cosmo_spherical_neighborhood, define a neighborhood with
+% a radius of 3 voxels for each voxel. Assign the result to
+% a variable named 'nbrhood'
+% >@@>
+nbrhood=cosmo_spherical_neighborhood(ds,'radius',radius);
+% <@@<
+
+% Compute the number of elements in each element of nbrhood.neighbors,
+% and assign the result to a variable 'roi_sizes'
+% >@@>
+roi_sizes=cellfun(@numel,nbrhood.neighbors);
+% <@@<
+
+% Plot a histogram of 'roi_sizes'
+% >@@>
+hist(roi_sizes,100)
+% <@@<
+
+%% Run a searchlight with the cosmo_correlation_measure
+
+% Use cosmo_searchlight with 'ds' as the dataset input,
+% a function handle of cosmo_correlation_measure as the measure,
+% and the spherical neighborhood just defined to run a searchlight.
+% Assign the result to a variable 'ds_corr'.
+% >@@>
+ds_corr=cosmo_searchlight(ds,nbrhood,@cosmo_correlation_measure);
+% <@@<
+
+%% Visualize and store the results in a NIFTI file
+
+% Visualize the results using cosmo_plot_slices
+% Hint: this function takes datasets with one sample directly as input
+% >@@>
+cosmo_plot_slices(ds_corr)
+% <@@<
+
+% Set output filename
+output_fn=fullfile(output_data_path,...
+            sprintf('splithalf_correlation_searchlight_r%.0f.nii',radius));
+
+% Write output to a NIFTI file using cosmo_map2fmri
+% >@@>
+cosmo_map2fmri(ds_corr, output_fn);
+% <@@<
+
+##### SOURCE END #####
+--></body></html>

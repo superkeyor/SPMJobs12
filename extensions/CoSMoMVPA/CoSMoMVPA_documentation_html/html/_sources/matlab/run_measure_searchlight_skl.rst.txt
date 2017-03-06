@@ -1,0 +1,7 @@
+.. _run_measure_searchlight_skl:
+
+run measure searchlight skl
+===========================
+
+.. include :: run_measure_searchlight_skl.txt
+

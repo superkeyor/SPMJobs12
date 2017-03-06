@@ -1,0 +1,7 @@
+.. _run_fmri_correlation_searchlight_trivial_skl:
+
+run fmri correlation searchlight trivial skl
+============================================
+
+.. include :: run_fmri_correlation_searchlight_trivial_skl.txt
+

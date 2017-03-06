@@ -1,0 +1,7 @@
+.. _test_surficial_io_gifti:
+
+test surficial io gifti
+=======================
+
+.. include :: test_surficial_io_gifti.txt
+

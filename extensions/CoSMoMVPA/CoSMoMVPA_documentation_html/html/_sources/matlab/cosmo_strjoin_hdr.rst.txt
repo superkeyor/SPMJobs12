@@ -1,0 +1,7 @@
+.. _cosmo_strjoin_hdr:
+
+cosmo strjoin hdr
+=================
+
+.. include :: cosmo_strjoin_hdr.txt
+

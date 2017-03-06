@@ -1,0 +1,7 @@
+.. _cosmo_wizard_set_config:
+
+cosmo wizard set config
+=======================
+
+.. include :: cosmo_wizard_set_config.txt
+

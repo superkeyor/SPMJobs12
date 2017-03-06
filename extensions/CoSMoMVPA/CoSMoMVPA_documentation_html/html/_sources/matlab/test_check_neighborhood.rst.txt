@@ -1,0 +1,7 @@
+.. _test_check_neighborhood:
+
+test check neighborhood
+=======================
+
+.. include :: test_check_neighborhood.txt
+

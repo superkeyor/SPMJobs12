@@ -1,0 +1,196 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run splithalf correlations searchlight &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="run splithalf correlations single sub" href="run_splithalf_correlations_single_sub.html" />
+    <link rel="prev" title="run splithalf correlations" href="run_splithalf_correlations.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="run_splithalf_correlations_single_sub.html" title="run splithalf correlations single sub"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run_splithalf_correlations.html" title="run splithalf correlations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_run.html" accesskey="U">Runnable examples</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-splithalf-correlations-searchlight">
+<span id="id1"></span><h1>run splithalf correlations searchlight<a class="headerlink" href="#run-splithalf-correlations-searchlight" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="../_static/publish/run_splithalf_correlations_searchlight.html">Matlab output: run_splithalf_correlations_searchlight</a></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% Volumetric fMRI Searchlight</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="c">%% Load data</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;ak6&#39;</span><span class="p">,</span><span class="s">&#39;s01&#39;</span><span class="p">);</span>
+
+<span class="c">% In this exercise, output (NIFTI files) will be written to this directory</span>
+<span class="n">output_data_path</span><span class="p">=</span><span class="n">config</span><span class="p">.</span><span class="n">output_data_path</span><span class="p">;</span>
+
+<span class="c">% file locations for both halves</span>
+<span class="n">half1_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;glm_T_stats_odd.nii&#39;</span><span class="p">);</span>
+<span class="n">half2_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;glm_T_stats_even.nii&#39;</span><span class="p">);</span>
+<span class="n">mask_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s">&#39;brain_mask.nii&#39;</span><span class="p">);</span>
+
+<span class="c">% load two halves as CoSMoMVPA dataset structs.</span>
+<span class="n">half1_ds</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">half1_fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">mask_fn</span><span class="p">,</span><span class="c">...</span>
+                                     <span class="s">&#39;targets&#39;</span><span class="p">,(</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="c">...</span>
+                                     <span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">half2_ds</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">half2_fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">mask_fn</span><span class="p">,</span><span class="c">...</span>
+                                     <span class="s">&#39;targets&#39;</span><span class="p">,(</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="c">...</span>
+                                     <span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">({</span><span class="n">half1_ds</span><span class="p">,</span><span class="n">half2_ds</span><span class="p">});</span>
+
+<span class="c">% remove constant features (caused by liberal masking)</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_remove_useless_data</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="c">%% Define spherical neighborhood for each feature (voxel)</span>
+
+<span class="n">radius</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span> <span class="c">% searchlight radius in voxels</span>
+
+<span class="c">% Using cosmo_spherical_neighborhood, define a neighborhood with</span>
+<span class="c">% a radius of 3 voxels for each voxel. Assign the result to</span>
+<span class="c">% a variable named &#39;nbrhood&#39;</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="n">radius</span><span class="p">);</span>
+
+<span class="c">% Compute the number of elements in each element of nbrhood.neighbors,</span>
+<span class="c">% and assign the result to a variable &#39;roi_sizes&#39;</span>
+<span class="n">roi_sizes</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">);</span>
+
+<span class="c">% Plot a histogram of &#39;roi_sizes&#39;</span>
+<span class="n">hist</span><span class="p">(</span><span class="n">roi_sizes</span><span class="p">,</span><span class="mi">100</span><span class="p">)</span>
+
+<span class="c">%% Run a searchlight with the cosmo_correlation_measure</span>
+
+<span class="c">% Use cosmo_searchlight with &#39;ds&#39; as the dataset input,</span>
+<span class="c">% a function handle of cosmo_correlation_measure as the measure,</span>
+<span class="c">% and the spherical neighborhood just defined to run a searchlight.</span>
+<span class="c">% Assign the result to a variable &#39;ds_corr&#39;.</span>
+<span class="n">ds_corr</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,@</span><span class="n">cosmo_correlation_measure</span><span class="p">);</span>
+
+<span class="c">%% Visualize and store the results in a NIFTI file</span>
+
+<span class="c">% Visualize the results using cosmo_plot_slices</span>
+<span class="c">% Hint: this function takes datasets with one sample directly as input</span>
+<span class="n">cosmo_plot_slices</span><span class="p">(</span><span class="n">ds_corr</span><span class="p">)</span>
+
+<span class="c">% Set output filename</span>
+<span class="n">output_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">output_data_path</span><span class="p">,</span><span class="c">...</span>
+            <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;splithalf_correlation_searchlight_r%.0f.nii&#39;</span><span class="p">,</span><span class="n">radius</span><span class="p">));</span>
+
+<span class="c">% Write output to a NIFTI file using cosmo_map2fmri</span>
+<span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds_corr</span><span class="p">,</span> <span class="n">output_fn</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run_splithalf_correlations.html"
+                        title="previous chapter">run splithalf correlations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="run_splithalf_correlations_single_sub.html"
+                        title="next chapter">run splithalf correlations single sub</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/run_splithalf_correlations_searchlight.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="run_splithalf_correlations_single_sub.html" title="run splithalf correlations single sub"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run_splithalf_correlations.html" title="run splithalf correlations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_run.html" >Runnable examples</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

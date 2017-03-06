@@ -1,0 +1,370 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Searchlight analysis in the volume</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_sphere_offsets_searchlight.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Searchlight analysis in the volume</h1><!--introduction--><p>This analysis is quite bare-bones - data is simulated to come directly from load_nii rather than through fmri_dataset, and voxel indices in each searchlight are computed directly in this script rather than using a helper function such as spherical_voxel_selection.</p><p>Note: for running searchlights it is recommended to use       cosmo_searchlight and cosmo_spherical_neighborhood</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Define input files and searchlight radius</a></li><li><a href="#2">Load the data and extract the data in the mask</a></li><li><a href="#3">Searchlight data 'contrast' definition</a></li><li><a href="#4">Define voxel offset positions in the searchlight</a></li><li><a href="#5">Prepare for output</a></li><li><a href="#6">Run the searchlight</a></li><li><a href="#7">Save the results</a></li><li><a href="#8">Plot the results as axial slices</a></li></ul></div><h2>Define input files and searchlight radius<a name="1"></a></h2><pre class="codeinput">radius=3; <span class="comment">% in voxel units</span>
+
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+
+
+half1_fn=fullfile(data_path,<span class="string">'glm_T_stats_odd.nii'</span>);
+half2_fn=fullfile(data_path,<span class="string">'glm_T_stats_even.nii'</span>);
+mask_fn=fullfile(data_path,<span class="string">'brain_mask.nii'</span>);
+</pre><h2>Load the data and extract the data in the mask<a name="2"></a></h2><pre class="codeinput">ni_samples1=load_nii(half1_fn);
+ni_samples2=load_nii(half2_fn);
+ni_mask=load_nii(mask_fn);
+
+<span class="comment">% Get the volume data</span>
+half1_samples=ni_samples1.img;
+half2_samples=ni_samples2.img;
+mask=ni_mask.img;
+
+<span class="comment">% combine the two halves, and define the masks</span>
+samples=cat(4, half1_samples, half2_samples);
+nsamples=size(samples,4); <span class="comment">% should be 6</span>
+half1_samples_mask=(1:nsamples)&lt;=nsamples/2;
+half2_samples_mask=~half1_samples_mask;
+</pre><h2>Searchlight data 'contrast' definition<a name="3"></a></h2><p>Define how correlations values are going to be weighted mean zero, positive on diagonal, negative elsewhere. Note that this matrix has a mean of zero, so under the null hypothesis that correlations are equal on and off the diagonal, weighting these correlations by the contrast matrix and then summing them should give a mean of zero as well.</p><pre class="codeinput">contrast_matrix=eye(6)-1/6;
+</pre><h2>Define voxel offset positions in the searchlight<a name="4"></a></h2><p>get the sphere offsets</p><pre class="codeinput">sphere_offsets=cosmo_sphere_offsets(radius);
+noffsets=size(sphere_offsets,1);
+</pre><h2>Prepare for output<a name="5"></a></h2><p>allocate space for data in searchlight once, then overwrite in for-loop below</p><pre class="codeinput">sphere_data=zeros(nsamples,noffsets);
+
+voldim=size(mask);
+output=zeros(voldim);
+visited=false(voldim);
+</pre><h2>Run the searchlight<a name="6"></a></h2><pre class="codeinput"><span class="comment">% for pretty progress reporting</span>
+prev_msg=<span class="string">''</span>;
+clock_start=clock();
+
+<span class="comment">% run over voxels in all three spatial dimensions</span>
+<span class="keyword">for</span> ii=1:voldim(1)
+    <span class="keyword">for</span> jj=1:voldim(2)
+        <span class="keyword">for</span> kk=1:voldim(3)
+
+            <span class="comment">% if outside the mask, continue with next voxel</span>
+            <span class="comment">% &gt;@@&gt;</span>
+            <span class="keyword">if</span> ~mask(ii,jj,kk)
+                <span class="keyword">continue</span>
+            <span class="keyword">end</span>
+            <span class="comment">% &lt;@@&lt;</span>
+
+            <span class="comment">% fill up the sphere_data matrix with data from the sphere</span>
+            <span class="comment">% centered around location (ii, jj, kk).</span>
+            <span class="comment">% for every valid position increment row_pos first, then</span>
+            <span class="comment">% fill it with the sample data for of that position.</span>
+            <span class="comment">% (a valid position p=[i, j, k] has 1 &lt;= p(m) &lt;= voldim(m) for</span>
+            <span class="comment">% m=1, 2 and 3, and is not outside the mask).</span>
+            row_pos=0;
+            sphere_data(:)=NaN; <span class="comment">% not necessary, but used to check validity of data</span>
+            <span class="comment">% &gt;@@&gt;</span>
+            <span class="keyword">for</span> mm=1:noffsets
+                ii_pos=ii+sphere_offsets(mm,1);
+                jj_pos=jj+sphere_offsets(mm,2);
+                kk_pos=kk+sphere_offsets(mm,3);
+
+                <span class="keyword">if</span> ii_pos&lt;1 || ii_pos&gt;voldim(1) || <span class="keyword">...</span>
+                        jj_pos&lt;1 || kk_pos&gt;voldim(2) || <span class="keyword">...</span>
+                        kk_pos&lt;1 || kk_pos&gt;voldim(3) || <span class="keyword">...</span>
+                        ~mask(ii_pos,jj_pos,kk_pos)
+                    <span class="keyword">continue</span>
+                <span class="keyword">end</span>
+                <span class="comment">% go one position down</span>
+                row_pos=row_pos+1;
+
+                <span class="comment">% overwrite existing data</span>
+                sphere_data(:,row_pos)=samples(ii_pos, jj_pos, kk_pos, :);
+            <span class="keyword">end</span>
+            <span class="comment">%&lt;@@&lt;</span>
+
+            <span class="comment">% get data only as far down as we got voxels.</span>
+            selected_sphere_data=sphere_data(:, 1:row_pos);
+
+            <span class="comment">% a little sanity check</span>
+            <span class="keyword">if</span> any(isnan(selected_sphere_data))
+                error(<span class="string">'found NaN - this should not happen'</span>);
+            <span class="keyword">end</span>
+
+            <span class="comment">% take the data from the two halves using the</span>
+            <span class="comment">% half_{1,2}samples_mask</span>
+            <span class="comment">% &gt;@@&gt;</span>
+            half1=selected_sphere_data(half1_samples_mask,:);
+            half2=selected_sphere_data(half2_samples_mask,:);
+            <span class="comment">% &lt;@@&lt;</span>
+            <span class="comment">% Compute correlations, fisher transform, then weigh them.</span>
+            <span class="comment">% Store the sum of the weighted transformed correlations in the</span>
+            <span class="comment">% 'output' array.</span>
+            <span class="comment">%</span>
+            <span class="comment">% Use cosmo_corr instead of corr for faster computations</span>
+            <span class="comment">% &gt;@@&gt;</span>
+            c=cosmo_corr(half1',half2');
+            fisher_c=atanh(c);
+            weighted_c=contrast_matrix.*fisher_c;
+
+            output(ii,jj,kk)=sum(weighted_c(:));
+            <span class="comment">% &lt;@@&lt;</span>
+
+            <span class="comment">% set this voxel as visited</span>
+            visited(ii,jj,kk)=true;
+        <span class="keyword">end</span>
+    <span class="keyword">end</span>
+    <span class="comment">% Keep us updated on progress</span>
+    msg=sprintf(<span class="string">'%d slices: mean %.3f'</span>, ii, mean(output(visited)));
+    prev_msg=cosmo_show_progress(clock_start,ii/voldim(1),msg,prev_msg);
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">+00:02:39 [####################] -00:00:00  80 slices: mean 0.343
+</pre><h2>Save the results<a name="7"></a></h2><pre class="codeinput">ni_output=ni_samples1;
+ni_output.img=output;
+ni_output.hdr.dime.dim(5)=1;
+
+<span class="comment">% use the following lines to store the output as a NIFTI file</span>
+<span class="comment">% &gt;&gt; save_nii(ni_output,fullfile(data_path,'sphere_offsets_searchlight.nii'));</span>
+</pre><h2>Plot the results as axial slices<a name="8"></a></h2><pre class="codeinput">nslices=voldim(3);
+nrows=floor(.8*sqrt(nslices));
+ncols=ceil(nslices/nrows);
+
+output_range=[-1 1]*2;
+<span class="keyword">for</span> k=1:nslices
+    subplot(nrows, ncols, k);
+    <span class="comment">% orient with top side anterior</span>
+    imagesc(output(:,end:-1:1,k)', output_range);
+    title(sprintf(<span class="string">'slice %d'</span>, k));
+    axis <span class="string">off</span>
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="run_sphere_offsets_searchlight_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Searchlight analysis in the volume
+%
+% This analysis is quite bare-bones - data is simulated to come directly
+% from load_nii rather than through fmri_dataset, and voxel indices in each
+% searchlight are computed directly in this script rather than using
+% a helper function such as spherical_voxel_selection.
+%
+% Note: for running searchlights it is recommended to use
+%       cosmo_searchlight and cosmo_spherical_neighborhood
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+%% Define input files and searchlight radius
+radius=3; % in voxel units
+
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+
+half1_fn=fullfile(data_path,'glm_T_stats_odd.nii');
+half2_fn=fullfile(data_path,'glm_T_stats_even.nii');
+mask_fn=fullfile(data_path,'brain_mask.nii');
+
+%% Load the data and extract the data in the mask
+ni_samples1=load_nii(half1_fn);
+ni_samples2=load_nii(half2_fn);
+ni_mask=load_nii(mask_fn);
+
+% Get the volume data
+half1_samples=ni_samples1.img;
+half2_samples=ni_samples2.img;
+mask=ni_mask.img;
+
+% combine the two halves, and define the masks
+samples=cat(4, half1_samples, half2_samples);
+nsamples=size(samples,4); % should be 6
+half1_samples_mask=(1:nsamples)<=nsamples/2;
+half2_samples_mask=~half1_samples_mask;
+
+%% Searchlight data 'contrast' definition
+% Define how correlations values are going to be weighted
+% mean zero, positive on diagonal, negative elsewhere.
+% Note that this matrix has a mean of zero, so under the null hypothesis
+% that correlations are equal on and off the diagonal, weighting these
+% correlations by the contrast matrix and then summing them should
+% give a mean of zero as well.
+contrast_matrix=eye(6)-1/6;
+
+%% Define voxel offset positions in the searchlight
+% get the sphere offsets
+sphere_offsets=cosmo_sphere_offsets(radius);
+noffsets=size(sphere_offsets,1);
+
+%% Prepare for output
+% allocate space for data in searchlight once, then overwrite in for-loop below
+sphere_data=zeros(nsamples,noffsets);
+
+voldim=size(mask);
+output=zeros(voldim);
+visited=false(voldim);
+
+%% Run the searchlight
+
+% for pretty progress reporting
+prev_msg='';
+clock_start=clock();
+
+% run over voxels in all three spatial dimensions
+for ii=1:voldim(1)
+    for jj=1:voldim(2)
+        for kk=1:voldim(3)
+
+            % if outside the mask, continue with next voxel
+            % >@@>
+            if ~mask(ii,jj,kk)
+                continue
+            end
+            % <@@<
+
+            % fill up the sphere_data matrix with data from the sphere
+            % centered around location (ii, jj, kk).
+            % for every valid position increment row_pos first, then
+            % fill it with the sample data for of that position.
+            % (a valid position p=[i, j, k] has 1 <= p(m) <= voldim(m) for
+            % m=1, 2 and 3, and is not outside the mask).
+            row_pos=0;
+            sphere_data(:)=NaN; % not necessary, but used to check validity of data
+            % >@@>
+            for mm=1:noffsets
+                ii_pos=ii+sphere_offsets(mm,1);
+                jj_pos=jj+sphere_offsets(mm,2);
+                kk_pos=kk+sphere_offsets(mm,3);
+
+                if ii_pos<1 || ii_pos>voldim(1) || ...
+                        jj_pos<1 || kk_pos>voldim(2) || ...
+                        kk_pos<1 || kk_pos>voldim(3) || ...
+                        ~mask(ii_pos,jj_pos,kk_pos)
+                    continue
+                end
+                % go one position down
+                row_pos=row_pos+1;
+
+                % overwrite existing data
+                sphere_data(:,row_pos)=samples(ii_pos, jj_pos, kk_pos, :);
+            end
+            %<@@<
+
+            % get data only as far down as we got voxels.
+            selected_sphere_data=sphere_data(:, 1:row_pos);
+
+            % a little sanity check
+            if any(isnan(selected_sphere_data))
+                error('found NaN - this should not happen');
+            end
+
+            % take the data from the two halves using the
+            % half_{1,2}samples_mask
+            % >@@>
+            half1=selected_sphere_data(half1_samples_mask,:);
+            half2=selected_sphere_data(half2_samples_mask,:);
+            % <@@<
+            % Compute correlations, fisher transform, then weigh them.
+            % Store the sum of the weighted transformed correlations in the
+            % 'output' array.
+            %
+            % Use cosmo_corr instead of corr for faster computations
+            % >@@>
+            c=cosmo_corr(half1',half2');
+            fisher_c=atanh(c);
+            weighted_c=contrast_matrix.*fisher_c;
+
+            output(ii,jj,kk)=sum(weighted_c(:));
+            % <@@<
+
+            % set this voxel as visited
+            visited(ii,jj,kk)=true;
+        end
+    end
+    % Keep us updated on progress
+    msg=sprintf('%d slices: mean %.3f', ii, mean(output(visited)));
+    prev_msg=cosmo_show_progress(clock_start,ii/voldim(1),msg,prev_msg);
+end
+
+%% Save the results
+ni_output=ni_samples1;
+ni_output.img=output;
+ni_output.hdr.dime.dim(5)=1;
+
+% use the following lines to store the output as a NIFTI file
+% >> save_nii(ni_output,fullfile(data_path,'sphere_offsets_searchlight.nii'));
+
+
+%% Plot the results as axial slices
+nslices=voldim(3);
+nrows=floor(.8*sqrt(nslices));
+ncols=ceil(nslices/nrows);
+
+output_range=[-1 1]*2;
+for k=1:nslices
+    subplot(nrows, ncols, k);
+    % orient with top side anterior
+    imagesc(output(:,end:-1:1,k)', output_range);
+    title(sprintf('slice %d', k));
+    axis off
+end
+
+
+
+##### SOURCE END #####
+--></body></html>

@@ -1,0 +1,322 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo slice hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo sphere offsets hdr" href="cosmo_sphere_offsets_hdr.html" />
+    <link rel="prev" title="cosmo show progress hdr" href="cosmo_show_progress_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_sphere_offsets_hdr.html" title="cosmo sphere offsets hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_show_progress_hdr.html" title="cosmo show progress hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-slice-hdr">
+<span id="id1"></span><h1>cosmo slice hdr<a class="headerlink" href="#cosmo-slice-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>ds<span class="p">=</span><span class="nf">cosmo_slice</span><span class="p">(</span>ds, to_select, dim, type_or_check<span class="p">)</span><span class="w"></span>
+<span class="c">% Slice a dataset by samples (the default) or features</span>
+<span class="c">%</span>
+<span class="c">% sliced_ds=cosmo_slice(ds, elements_to_select[, dim][check|&#39;struct&#39;])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                    One of:</span>
+<span class="c">%                         - dataset struct to be sliced, with PxQ field</span>
+<span class="c">%                           .samples and optionally fields .fa, .sa and .a.</span>
+<span class="c">%                         - PxQ cell</span>
+<span class="c">%                         - PxQ logical or numeric array</span>
+<span class="c">%   elements_to_select    either a binary mask or a list of indices of</span>
+<span class="c">%                         the samples (if dim==1) or features (if dim==2)</span>
+<span class="c">%                         to select. If a binary mask then the number of</span>
+<span class="c">%                         elements should match the size of ds in the</span>
+<span class="c">%                         dim-th dimension.</span>
+<span class="c">%   dim                   Slicing dimension: along samples (dim==1) or</span>
+<span class="c">%                         features (dim==2). (default: 1).</span>
+<span class="c">%   check                 Boolean that indicates that if ds is a dataset,</span>
+<span class="c">%                         whether it should be checked for proper</span>
+<span class="c">%                         structure. (default: true).</span>
+<span class="c">%   &#39;struct&#39;              If provided and ds is a struct, then</span>
+<span class="c">%                         all fields of ds, which are assumed to be cell</span>
+<span class="c">%                         or arrays,  are sliced.</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   sliced_ds             - If ds is a cell or array then sliced_ds is</span>
+<span class="c">%                           the result of slicing ds along the dim-th</span>
+<span class="c">%                           dimension. The result is of size NxQ (if</span>
+<span class="c">%                           dim==1) or PxN (if dim==2), where N is the</span>
+<span class="c">%                           number of non-zero values in</span>
+<span class="c">%                           elements_to_select.</span>
+<span class="c">%                         - If ds is a dataset struct then</span>
+<span class="c">%                           sliced_ds.samples is the result of slicing</span>
+<span class="c">%                           ds.samples.</span>
+<span class="c">%                           If present, fields .sa (if dim==1) or</span>
+<span class="c">%                           .fa (dim==2) are sliced as well.</span>
+<span class="c">%                         - when ds is a struct and the &#39;struct&#39; option was</span>
+<span class="c">%                           given, then all fields in ds are sliced.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % make a simple dataset</span>
+<span class="c">%     ds=struct();</span>
+<span class="c">%     ds.samples=reshape(1:12,4,3); % 4 samples, 3 features</span>
+<span class="c">%     % sample attributes</span>
+<span class="c">%     ds.sa.chunks=[1 1 2 2]&#39;;</span>
+<span class="c">%     ds.sa.targets=[1 2 1 2]&#39;;</span>
+<span class="c">%     % feature attributes</span>
+<span class="c">%     ds.fa.i=[3 8 13];</span>
+<span class="c">%     ds.fa.roi={&#39;vt&#39;,&#39;loc&#39;,&#39;v1&#39;};</span>
+<span class="c">%     % dataset attributes</span>
+<span class="c">%     ds.a.note=&#39;an example&#39;;</span>
+<span class="c">%     % display dataset</span>
+<span class="c">%     cosmo_disp(ds);</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [ 1         5         9</span>
+<span class="c">%     &gt;     2         6        10</span>
+<span class="c">%     &gt;     3         7        11</span>
+<span class="c">%     &gt;     4         8        12 ]</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .chunks</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt;   .targets</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 3         8        13 ]</span>
+<span class="c">%     &gt;   .roi</span>
+<span class="c">%     &gt;     { &#39;vt&#39;  &#39;loc&#39;  &#39;v1&#39; }</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .note</span>
+<span class="c">%     &gt;     &#39;an example&#39;</span>
+<span class="c">%     %</span>
+<span class="c">%     % (snippet) select samples (row) in a dataset</span>
+<span class="c">%     % ds is a dataset struct</span>
+<span class="c">%     sample_ids=[3 2];</span>
+<span class="c">%     % select third and second sample (in that order)</span>
+<span class="c">%     sliced_ds=cosmo_slice(ds,sample_ids,1);</span>
+<span class="c">%     %</span>
+<span class="c">%     cosmo_disp(sliced_ds);</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [ 3         7        11</span>
+<span class="c">%     &gt;     2         6        10 ]</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .chunks</span>
+<span class="c">%     &gt;     [ 2</span>
+<span class="c">%     &gt;       1 ]</span>
+<span class="c">%     &gt;   .targets</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 3         8        13 ]</span>
+<span class="c">%     &gt;   .roi</span>
+<span class="c">%     &gt;     { &#39;vt&#39;  &#39;loc&#39;  &#39;v1&#39; }</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .note</span>
+<span class="c">%     &gt;     &#39;an example&#39;</span>
+<span class="c">%     %</span>
+<span class="c">%     % select third and second feature (in that order)</span>
+<span class="c">%     sliced_ds=cosmo_slice(ds, [3 2], 2);</span>
+<span class="c">%     cosmo_disp(sliced_ds);</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [  9         5</span>
+<span class="c">%     &gt;     10         6</span>
+<span class="c">%     &gt;     11         7</span>
+<span class="c">%     &gt;     12         8 ]</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .chunks</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt;   .targets</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 13         8 ]</span>
+<span class="c">%     &gt;   .roi</span>
+<span class="c">%     &gt;     { &#39;v1&#39;  &#39;loc&#39; }</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .note</span>
+<span class="c">%     &gt;     &#39;an example&#39;</span>
+<span class="c">%     %</span>
+<span class="c">%     % using a logical mask, select features with odd value for .i</span>
+<span class="c">%     msk=mod(ds.fa.i,2)==1;</span>
+<span class="c">%     disp(msk)</span>
+<span class="c">%     &gt; [1 0 1]</span>
+<span class="c">%     sliced_ds=cosmo_slice(ds, msk, 2);</span>
+<span class="c">%     cosmo_disp(sliced_ds);</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [ 1         9</span>
+<span class="c">%     &gt;     2        10</span>
+<span class="c">%     &gt;     3        11</span>
+<span class="c">%     &gt;     4        12 ]</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .chunks</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt;   .targets</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 3        13 ]</span>
+<span class="c">%     &gt;   .roi</span>
+<span class="c">%     &gt;     { &#39;vt&#39;  &#39;v1&#39; }</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .note</span>
+<span class="c">%     &gt;     &#39;an example&#39;</span>
+<span class="c">%</span>
+<span class="c">%     % slice all fields in a struct</span>
+<span class="c">%     s=struct();</span>
+<span class="c">%     s.a_field=[1 2 3; 4 5 6];</span>
+<span class="c">%     s.another_field={&#39;this&#39;,&#39;is&#39;,&#39;fun&#39;};</span>
+<span class="c">%     cosmo_disp(s);</span>
+<span class="c">%     &gt; .a_field</span>
+<span class="c">%     &gt;   [ 1         2         3</span>
+<span class="c">%     &gt;     4         5         6 ]</span>
+<span class="c">%     &gt; .another_field</span>
+<span class="c">%     &gt;   { &#39;this&#39;  &#39;is&#39;  &#39;fun&#39; }</span>
+<span class="c">%     %</span>
+<span class="c">%     % select first, third, third, and second column (dim=2)</span>
+<span class="c">%     t=cosmo_slice(s, [1 3 3 2], 2, &#39;struct&#39;);</span>
+<span class="c">%     cosmo_disp(t);</span>
+<span class="c">%     &gt; .a_field</span>
+<span class="c">%     &gt;   [ 1         3         3         2</span>
+<span class="c">%     &gt;     4         6         6         5 ]</span>
+<span class="c">%     &gt; .another_field</span>
+<span class="c">%     &gt;   { &#39;this&#39;  &#39;fun&#39;  &#39;fun&#39;  &#39;is&#39; }</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - do_check=false may be preferred for slice-intensive operations such</span>
+<span class="c">%     as when used in searchlights</span>
+<span class="c">%   - this function does not support arrays with more than two dimensions.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_show_progress_hdr.html"
+                        title="previous chapter">cosmo show progress hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_sphere_offsets_hdr.html"
+                        title="next chapter">cosmo sphere offsets hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_slice_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_sphere_offsets_hdr.html" title="cosmo sphere offsets hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_show_progress_hdr.html" title="cosmo show progress hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _test_meeg_senstype_collection:
+
+test meeg senstype collection
+=============================
+
+.. include :: test_meeg_senstype_collection.txt
+

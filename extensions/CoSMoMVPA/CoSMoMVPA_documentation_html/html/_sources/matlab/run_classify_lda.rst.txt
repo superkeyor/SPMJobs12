@@ -1,0 +1,9 @@
+.. _run_classify_lda:
+
+run classify lda
+================
+
+:run_up:`run_classify_lda`
+
+.. include :: run_classify_lda.txt
+

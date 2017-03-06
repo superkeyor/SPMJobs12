@@ -1,0 +1,7 @@
+.. _cosmo_distatis_skl:
+
+cosmo distatis skl
+==================
+
+.. include :: cosmo_distatis_skl.txt
+

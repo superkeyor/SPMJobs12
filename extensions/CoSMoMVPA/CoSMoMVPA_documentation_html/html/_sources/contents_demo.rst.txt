@@ -1,0 +1,127 @@
+.. _`contents_demo.rst`:
+
+Demonstrations - full listings
+==============================
+
+.. contents::
+    :local:
+    :depth: 1
+
+demo_fmri_correlation_searchlight
++++++++++++++++++++++++++++++++++
+
+ :demo:`demo_fmri_correlation_searchlight`
+
+.. include:: matlab/demo_fmri_correlation_searchlight.txt
+
+
+
+demo_fmri_distatis
+++++++++++++++++++
+
+ :demo:`demo_fmri_distatis`
+
+.. include:: matlab/demo_fmri_distatis.txt
+
+
+
+demo_fmri_rois
+++++++++++++++
+
+ :demo:`demo_fmri_rois`
+
+.. include:: matlab/demo_fmri_rois.txt
+
+
+
+demo_fmri_searchlight_lda
++++++++++++++++++++++++++
+
+ :demo:`demo_fmri_searchlight_lda`
+
+.. include:: matlab/demo_fmri_searchlight_lda.txt
+
+
+
+demo_fmri_searchlight_naive_bayes
++++++++++++++++++++++++++++++++++
+
+ :demo:`demo_fmri_searchlight_naive_bayes`
+
+.. include:: matlab/demo_fmri_searchlight_naive_bayes.txt
+
+
+
+demo_fmri_searchlight_rsm
++++++++++++++++++++++++++
+
+ :demo:`demo_fmri_searchlight_rsm`
+
+.. include:: matlab/demo_fmri_searchlight_rsm.txt
+
+
+
+demo_meeg_dataset_operations
+++++++++++++++++++++++++++++
+
+ :demo:`demo_meeg_dataset_operations`
+
+.. include:: matlab/demo_meeg_dataset_operations.txt
+
+
+
+demo_meeg_timefreq_searchlight
+++++++++++++++++++++++++++++++
+
+ :demo:`demo_meeg_timefreq_searchlight`
+
+.. include:: matlab/demo_meeg_timefreq_searchlight.txt
+
+
+
+demo_meeg_timelock_searchlight
+++++++++++++++++++++++++++++++
+
+ :demo:`demo_meeg_timelock_searchlight`
+
+.. include:: matlab/demo_meeg_timelock_searchlight.txt
+
+
+
+demo_meeg_timeseries_classification
++++++++++++++++++++++++++++++++++++
+
+ :demo:`demo_meeg_timeseries_classification`
+
+.. include:: matlab/demo_meeg_timeseries_classification.txt
+
+
+
+demo_meeg_timeseries_generalization
++++++++++++++++++++++++++++++++++++
+
+ :demo:`demo_meeg_timeseries_generalization`
+
+.. include:: matlab/demo_meeg_timeseries_generalization.txt
+
+
+
+demo_surface_searchlight_lda
+++++++++++++++++++++++++++++
+
+ :demo:`demo_surface_searchlight_lda`
+
+.. include:: matlab/demo_surface_searchlight_lda.txt
+
+
+
+demo_surface_tfce
++++++++++++++++++
+
+ :demo:`demo_surface_tfce`
+
+.. include:: matlab/demo_surface_tfce.txt
+
+
+
+

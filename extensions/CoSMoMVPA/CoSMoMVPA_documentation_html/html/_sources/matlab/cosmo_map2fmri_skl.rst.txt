@@ -1,0 +1,7 @@
+.. _cosmo_map2fmri_skl:
+
+cosmo map2fmri skl
+==================
+
+.. include :: cosmo_map2fmri_skl.txt
+

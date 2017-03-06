@@ -1,0 +1,469 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CoSMoMVPA unit tests &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="test align" href="matlab/test_align.html" />
+    <link rel="prev" title="run cfy skl" href="matlab/run_cfy_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="matlab/test_align.html" title="test align"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="matlab/run_cfy_skl.html" title="run cfy skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" accesskey="U">CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmomvpa-unit-tests">
+<span id="matindex-test"></span><h1>CoSMoMVPA unit tests<a class="headerlink" href="#cosmomvpa-unit-tests" title="Permalink to this headline">¶</a></h1>
+<div class="toctree-wrapper compound">
+</div>
+<table border="1" class="docutils">
+<colgroup>
+<col width="29%" />
+<col width="71%" />
+</colgroup>
+<tbody valign="top">
+<tr class="row-odd"><td>&nbsp;</td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-even"><td><strong>All functions</strong></td>
+<td>&nbsp;</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_align.html#test-align"><span class="std std-ref">test align</span></a></td>
+<td>tests for cosmo_align</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_anova_feature_selector.html#test-anova-feature-selector"><span class="std std-ref">test anova feature selector</span></a></td>
+<td>tests for cosmo_anova_feature_selector</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_average_samples.html#test-average-samples"><span class="std std-ref">test average samples</span></a></td>
+<td>tests for cosmo_average_samples</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_balance_partitions.html#test-balance-partitions"><span class="std std-ref">test balance partitions</span></a></td>
+<td>tests for cosmo_balance_partitions</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_cartprod.html#test-cartprod"><span class="std std-ref">test cartprod</span></a></td>
+<td>tests for cosmo_cartprod</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_check_dataset.html#test-check-dataset"><span class="std std-ref">test check dataset</span></a></td>
+<td>tests for cosmo_check_dataset</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_check_external.html#test-check-external"><span class="std std-ref">test check external</span></a></td>
+<td>tests for cosmo_check_external</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_check_neighborhood.html#test-check-neighborhood"><span class="std std-ref">test check neighborhood</span></a></td>
+<td>tests for cosmo_check_neighborhood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_check_partitions.html#test-check-partitions"><span class="std std-ref">test check partitions</span></a></td>
+<td>tests for cosmo_check_partitions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_chunkize.html#test-chunkize"><span class="std std-ref">test chunkize</span></a></td>
+<td>tests for cosmo_chunkize</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_classify.html#test-classify"><span class="std std-ref">test classify</span></a></td>
+<td>tests for cosmo_classify_* functions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_cluster_neighborhood.html#test-cluster-neighborhood"><span class="std std-ref">test cluster neighborhood</span></a></td>
+<td>tests for cosmo_cluster_neighborhood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_clusterize.html#test-clusterize"><span class="std std-ref">test clusterize</span></a></td>
+<td>tests for cosmo_clusterize</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_config.html#test-config"><span class="std std-ref">test config</span></a></td>
+<td>tests for cosmo_config</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_confusion_matrix.html#test-confusion-matrix"><span class="std std-ref">test confusion matrix</span></a></td>
+<td>tests for cosmo_confusion_matrix</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_convert_neighborhood.html#test-convert-neighborhood"><span class="std std-ref">test convert neighborhood</span></a></td>
+<td>tests for cosmo_convert_neighborhood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_corr.html#test-corr"><span class="std std-ref">test corr</span></a></td>
+<td>tests for cosmo_corr</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_correlation_measure.html#test-correlation-measure"><span class="std std-ref">test correlation measure</span></a></td>
+<td>tests for cosmo_correlation_measure</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_cosmo_dataset_operations.html#test-cosmo-dataset-operations"><span class="std std-ref">test cosmo dataset operations</span></a></td>
+<td>tests for slicing and stacking</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_cosmo_fmri_dataset.html#test-cosmo-fmri-dataset"><span class="std std-ref">test cosmo fmri dataset</span></a></td>
+<td>tests for cosmo_fmri_dataset</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_cross_neighborhood.html#test-cross-neighborhood"><span class="std std-ref">test cross neighborhood</span></a></td>
+<td>tests for cosmo_cross_neighborhood</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_crossvalidate.html#test-crossvalidate"><span class="std std-ref">test crossvalidate</span></a></td>
+<td>tests for test_crossvalidate</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_crossvalidation_measure.html#test-crossvalidation-measure"><span class="std std-ref">test crossvalidation measure</span></a></td>
+<td>tests for cosmo_crossvalidation_measure</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dim_find.html#test-dim-find"><span class="std std-ref">test dim find</span></a></td>
+<td>tests for cosmo_dim_find</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_dim_generalization_measure.html#test-dim-generalization-measure"><span class="std std-ref">test dim generalization measure</span></a></td>
+<td>tests for cosmo_dim_generalization_measure</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dim_insert.html#test-dim-insert"><span class="std std-ref">test dim insert</span></a></td>
+<td>tests for cosmo_dim_insert</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_dim_match.html#test-dim-match"><span class="std std-ref">test dim match</span></a></td>
+<td>tests for cosmo_dim_match</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dim_prune.html#test-dim-prune"><span class="std std-ref">test dim prune</span></a></td>
+<td>tests for cosmo_dim_prune</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_dim_remove.html#test-dim-remove"><span class="std std-ref">test dim remove</span></a></td>
+<td>tests for cosmo_dim_remove</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dim_rename.html#test-dim-rename"><span class="std std-ref">test dim rename</span></a></td>
+<td>tests for cosmo_dim_rename</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_dim_slice.html#test-dim-slice"><span class="std std-ref">test dim slice</span></a></td>
+<td>tests for cosmo_dim_slice</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dim_transpose.html#test-dim-transpose"><span class="std std-ref">test dim transpose</span></a></td>
+<td>tests for cosmo_dim_transpose</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_dir.html#test-dir"><span class="std std-ref">test dir</span></a></td>
+<td>tests for cosmo_dir</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dir_minimal.html#test-dir-minimal"><span class="std std-ref">test dir minimal</span></a></td>
+<td>tests for cosmo_dir</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_disp.html#test-disp"><span class="std std-ref">test disp</span></a></td>
+<td>tests for cosmo_disp</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_dissimilarity_matrix_measure.html#test-dissimilarity-matrix-measure"><span class="std std-ref">test dissimilarity matrix measure</span></a></td>
+<td>tests for cosmo_dissimilarity_matrix_measure</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_distatis.html#test-distatis"><span class="std std-ref">test distatis</span></a></td>
+<td>tests for cosmo_distatis</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_external_neuroelf.html#test-external-neuroelf"><span class="std std-ref">test external neuroelf</span></a></td>
+<td>regression tests for external &#8220;neuroelf&#8221; toolbox</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_external_surfing.html#test-external-surfing"><span class="std std-ref">test external surfing</span></a></td>
+<td>regression tests for external &#8220;surfing&#8221; toolbox</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_find_local_extrema.html#test-find-local-extrema"><span class="std std-ref">test find local extrema</span></a></td>
+<td>tests for cosmo_find_local_extrema</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_flatten.html#test-flatten"><span class="std std-ref">test flatten</span></a></td>
+<td>tests for cosmo_flatten</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_fmri_convert_xform.html#test-fmri-convert-xform"><span class="std std-ref">test fmri convert xform</span></a></td>
+<td>tests for cosmo_fmri_convert_xform</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_fmri_dataset.html#test-fmri-dataset"><span class="std std-ref">test fmri dataset</span></a></td>
+<td>tests for cosmo_fmri_dataset</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_fmri_deoblique.html#test-fmri-deoblique"><span class="std std-ref">test fmri deoblique</span></a></td>
+<td>tests for cosmo_fmri_deoblique</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_fmri_io.html#test-fmri-io"><span class="std std-ref">test fmri io</span></a></td>
+<td>tests for fmri input/output</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_fmri_orientation.html#test-fmri-orientation"><span class="std std-ref">test fmri orientation</span></a></td>
+<td>tests for cosmo_fmri_orientation</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_fx.html#test-fx"><span class="std std-ref">test fx</span></a></td>
+<td>tests for cosmo_fx</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_independent_samples_partitioner.html#test-independent-samples-partitioner"><span class="std std-ref">test independent samples partitioner</span></a></td>
+<td>tests for cosmo_independent_samples_partitioner</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_index_unique.html#test-index-unique"><span class="std std-ref">test index unique</span></a></td>
+<td>tests for cosmo_index_unique</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_interval_neighborhood.html#test-interval-neighborhood"><span class="std std-ref">test interval neighborhood</span></a></td>
+<td>tests for cosmo_interval_neighborhood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_isequaln.html#test-isequaln"><span class="std std-ref">test isequaln</span></a></td>
+<td>tests for cosmo_isequaln</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_isfield.html#test-isfield"><span class="std std-ref">test isfield</span></a></td>
+<td>tests for cosmo_isfield</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_map_pca.html#test-map-pca"><span class="std std-ref">test map pca</span></a></td>
+<td>tests for cosmo_map_pca</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_mask_dim_intersect.html#test-mask-dim-intersect"><span class="std std-ref">test mask dim intersect</span></a></td>
+<td>tests for test_mask_dim_intersect</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_match.html#test-match"><span class="std std-ref">test match</span></a></td>
+<td>tests for cosmo_match</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_measure_clusters.html#test-measure-clusters"><span class="std std-ref">test measure clusters</span></a></td>
+<td>tests for cosmo_measure_clusters</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_meeg_baseline_correct.html#test-meeg-baseline-correct"><span class="std std-ref">test meeg baseline correct</span></a></td>
+<td>tests for cosmo_meeg_baseline_correct</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_meeg_chan_neighborhood.html#test-meeg-chan-neighborhood"><span class="std std-ref">test meeg chan neighborhood</span></a></td>
+<td>tests for cosmo_meeg_chan_neighborhood</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_meeg_chan_neighbors.html#test-meeg-chan-neighbors"><span class="std std-ref">test meeg chan neighbors</span></a></td>
+<td>tests for cosmo_meeg_chan_neighbors</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_meeg_chantype.html#test-meeg-chantype"><span class="std std-ref">test meeg chantype</span></a></td>
+<td>tests for cosmo_meeg_chantype</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_meeg_find_layout.html#test-meeg-find-layout"><span class="std std-ref">test meeg find layout</span></a></td>
+<td>tests for cosmo_meeg_find_layout</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_meeg_io.html#test-meeg-io"><span class="std std-ref">test meeg io</span></a></td>
+<td>tests for MEEG input/output</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_meeg_layout_collection.html#test-meeg-layout-collection"><span class="std std-ref">test meeg layout collection</span></a></td>
+<td>tests for cosmo_meeg_layout_collection</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_meeg_read_layout.html#test-meeg-read-layout"><span class="std std-ref">test meeg read layout</span></a></td>
+<td>regression tests for meeg_read_layout</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_meeg_senstype_collection.html#test-meeg-senstype-collection"><span class="std std-ref">test meeg senstype collection</span></a></td>
+<td>tests for cosmo_meeg_senstype_collection</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_meeg_source.html#test-meeg-source"><span class="std std-ref">test meeg source</span></a></td>
+<td>tests for MEEG datasets in source space</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_montecarlo_cluster_stat.html#test-montecarlo-cluster-stat"><span class="std std-ref">test montecarlo cluster stat</span></a></td>
+<td>tests for cosmo_montecarlo_cluster_stat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_montecarlo_cluster_stat_distribution.html#test-montecarlo-cluster-stat-distribution"><span class="std std-ref">test montecarlo cluster stat distribution</span></a></td>
+<td>probability uniformity tests for cosmo_montecarlo_cluster_stat</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_naive_bayes_classifier_searchlight.html#test-naive-bayes-classifier-searchlight"><span class="std std-ref">test naive bayes classifier searchlight</span></a></td>
+<td>tests for cosmo_naive_bayes_classifier_searchlight</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_neighborhood_split.html#test-neighborhood-split"><span class="std std-ref">test neighborhood split</span></a></td>
+<td>tests for cosmo_neighborhood_split</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_normalize.html#test-normalize"><span class="std std-ref">test normalize</span></a></td>
+<td>tests for cosmo_normalize</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_oddeven_partitioner.html#test-oddeven-partitioner"><span class="std std-ref">test oddeven partitioner</span></a></td>
+<td>tests for cosmo_oddeven_partitioner</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_parallel_get_nproc_available.html#test-parallel-get-nproc-available"><span class="std std-ref">test parallel get nproc available</span></a></td>
+<td>tests for cosmo_parallel_get_nproc_available</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_parcellfun.html#test-parcellfun"><span class="std std-ref">test parcellfun</span></a></td>
+<td>tests for cosmo_cartprod</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_partitions.html#test-partitions"><span class="std std-ref">test partitions</span></a></td>
+<td>tests for partitioning functions</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_pca.html#test-pca"><span class="std std-ref">test pca</span></a></td>
+<td>tests for cosmo_pca</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_pdist.html#test-pdist"><span class="std std-ref">test pdist</span></a></td>
+<td>tests for cosmo_pdist</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_plot_slices.html#test-plot-slices"><span class="std std-ref">test plot slices</span></a></td>
+<td>tests for plot_slices</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_publish_run_scripts.html#test-publish-run-scripts"><span class="std std-ref">test publish run scripts</span></a></td>
+<td>smoke tests for publish_run_scripts (using dry-run); currently no files are actually generated by this test function</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_rand.html#test-rand"><span class="std std-ref">test rand</span></a></td>
+<td>tests for cosmo_rand</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_randomize_targets.html#test-randomize-targets"><span class="std std-ref">test randomize targets</span></a></td>
+<td>tests for cosmo_randomize_targets</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_randperm.html#test-randperm"><span class="std std-ref">test randperm</span></a></td>
+<td>tests for cosmo_randperm</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_remove_useless_data.html#test-remove-useless-data"><span class="std std-ref">test remove useless data</span></a></td>
+<td>tests for cosmo_remove_useless_data</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_run_tests.html#test-run-tests"><span class="std std-ref">test run tests</span></a></td>
+<td>tests for cosmo_run_tests</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_sample_unique.html#test-sample-unique"><span class="std std-ref">test sample unique</span></a></td>
+<td>tests for cosmo_sample_unique</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_searchlight.html#test-searchlight"><span class="std std-ref">test searchlight</span></a></td>
+<td>tests for cosmo_searchlight</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_show_progress.html#test-show-progress"><span class="std std-ref">test show progress</span></a></td>
+<td>tests for cosmo_show_progress</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_slice.html#test-slice"><span class="std std-ref">test slice</span></a></td>
+<td>tests for cosmo_slice</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_spherical_neighborhood.html#test-spherical-neighborhood"><span class="std std-ref">test spherical neighborhood</span></a></td>
+<td>tests for cosmo_spherical_neighborhood</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_split.html#test-split"><span class="std std-ref">test split</span></a></td>
+<td>tests for cosmo_split</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_squareform.html#test-squareform"><span class="std std-ref">test squareform</span></a></td>
+<td>tests for cosmo_squareform</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_stack.html#test-stack"><span class="std std-ref">test stack</span></a></td>
+<td>tests for cosmo_stack</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_stat.html#test-stat"><span class="std std-ref">test stat</span></a></td>
+<td>tests for cosmo_stat</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_statcode.html#test-statcode"><span class="std std-ref">test statcode</span></a></td>
+<td>tests for cosmo_statcode</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_strjoin.html#test-strjoin"><span class="std std-ref">test strjoin</span></a></td>
+<td>tests for cosmo_strjoin</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_strsplit.html#test-strsplit"><span class="std std-ref">test strsplit</span></a></td>
+<td>tests for cosmo_strsplit</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_structjoin.html#test-structjoin"><span class="std std-ref">test structjoin</span></a></td>
+<td>tests for cosmo_structjoin</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_surface_io.html#test-surface-io"><span class="std std-ref">test surface io</span></a></td>
+<td>tests for surface input/output</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_surficial_io_gifti.html#test-surficial-io-gifti"><span class="std std-ref">test surficial io gifti</span></a></td>
+<td>tests for GIFTI input/output</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_surficial_io_niml_dset.html#test-surficial-io-niml-dset"><span class="std std-ref">test surficial io niml dset</span></a></td>
+<td>tests for AFNI NIML input/output</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_surficial_neighborhood.html#test-surficial-neighborhood"><span class="std std-ref">test surficial neighborhood</span></a></td>
+<td>tests for cosmo_surficial_neighborhood</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_synthetic_dataset.html#test-synthetic-dataset"><span class="std std-ref">test synthetic dataset</span></a></td>
+<td>tests for cosmo_synthetic_dataset</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_tail.html#test-tail"><span class="std std-ref">test tail</span></a></td>
+<td>tests for cosmo_tail</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_target_dsm_corr_measure.html#test-target-dsm-corr-measure"><span class="std std-ref">test target dsm corr measure</span></a></td>
+<td>tests for cosmo_target_dsm_corr_measure</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_type.html#test-type"><span class="std std-ref">test type</span></a></td>
+<td>tests for cosmo_type</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_vol_coordinates.html#test-vol-coordinates"><span class="std std-ref">test vol coordinates</span></a></td>
+<td>tests for cosmo_vol_coordinates</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_vol_grid_convert.html#test-vol-grid-convert"><span class="std std-ref">test vol grid convert</span></a></td>
+<td>tests for cosmo_vol_grid_convert</td>
+</tr>
+<tr class="row-even"><td><a class="reference internal" href="matlab/test_warning.html#test-warning"><span class="std std-ref">test warning</span></a></td>
+<td>tests for cosmo_warning</td>
+</tr>
+<tr class="row-odd"><td><a class="reference internal" href="matlab/test_wtf.html#test-wtf"><span class="std std-ref">test wtf</span></a></td>
+<td>tests for cosmo_wtf</td>
+</tr>
+</tbody>
+</table>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="matlab/run_cfy_skl.html"
+                        title="previous chapter">run cfy skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="matlab/test_align.html"
+                        title="next chapter">test align</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/matindex_test.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="matlab/test_align.html" title="test align"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="matlab/run_cfy_skl.html" title="run cfy skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_strsplit_hdr:
+
+cosmo strsplit hdr
+==================
+
+.. include :: cosmo_strsplit_hdr.txt
+

@@ -1,0 +1,203 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo classify nn &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo classify svm" href="cosmo_classify_svm.html" />
+    <link rel="prev" title="cosmo classify naive bayes" href="cosmo_classify_naive_bayes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_classify_svm.html" title="cosmo classify svm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_classify_naive_bayes.html" title="cosmo classify naive bayes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-classify-nn">
+<span id="id1"></span><h1>cosmo classify nn<a class="headerlink" href="#cosmo-classify-nn" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>predicted<span class="p">=</span><span class="nf">cosmo_classify_nn</span><span class="p">(</span>samples_train, targets_train, samples_test, unused<span class="p">)</span><span class="w"></span>
+<span class="c">% nearest neighbor classifier</span>
+<span class="c">%</span>
+<span class="c">% predicted=cosmo_classify_nn(samples_train, targets_train, samples_test[, opt])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   samples_train      PxR training data for P samples and R features</span>
+<span class="c">%   targets_train      Px1 training data classes</span>
+<span class="c">%   samples_test       QxR test data</span>
+<span class="c">%   opt                (currently ignored)</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   predicted          Qx1 predicted data classes for samples_test</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;ntargets&#39;,5,&#39;nchunks&#39;,15);</span>
+<span class="c">%     test_chunk=1;</span>
+<span class="c">%     te=cosmo_slice(ds,ds.sa.chunks==test_chunk);</span>
+<span class="c">%     tr=cosmo_slice(ds,ds.sa.chunks~=test_chunk);</span>
+<span class="c">%     pred=cosmo_classify_nn(tr.samples,tr.sa.targets,te.samples,struct);</span>
+<span class="c">%     % show targets and predicted labels (100% accuracy)</span>
+<span class="c">%     disp([te.sa.targets pred])</span>
+<span class="c">%     &gt;      1     1</span>
+<span class="c">%     &gt;      2     2</span>
+<span class="c">%     &gt;      3     3</span>
+<span class="c">%     &gt;      4     4</span>
+<span class="c">%     &gt;      5     5</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_crossvalidate, cosmo_crossvalidation_measure</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="p">[</span><span class="n">ntrain</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples_train</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">ntest</span><span class="p">,</span> <span class="n">nfeatures_</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples_test</span><span class="p">);</span>
+    <span class="n">ntrain_</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">targets_train</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">nfeatures</span><span class="o">~=</span><span class="n">nfeatures_</span> <span class="o">||</span> <span class="n">ntrain_</span><span class="o">~=</span><span class="n">ntrain</span><span class="p">,</span> <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal input size&#39;</span><span class="p">);</span> <span class="k">end</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">predicted</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">ntest</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntest</span>
+        <span class="c">% for each sample in the test set:</span>
+        <span class="c">%</span>
+        <span class="c">% - compute its squared euclidian distance to each sample in</span>
+        <span class="c">%   the train set, and store this in a vector</span>
+        <span class="c">%   squared_distances (which must have size ntrain x 1).</span>
+        <span class="c">%   For two vectors a=[a_1, a_2, ..., a_N] and b=[b_1, b_2, ..., b_N],</span>
+        <span class="c">%   the squared euclidean distance between a and b is:</span>
+        <span class="c">%       (a_1 - b_1)^2 + (a_2 - b_2)^2 + ... + (a_N - b_N)^2</span>
+        <span class="c">%</span>
+        <span class="c">% - assign the class label of the sample in the training set that has</span>
+        <span class="c">%   the smallest squared distance.</span>
+        <span class="c">%</span>
+        <span class="c">% compute difference to each sample in the training set</span>
+        <span class="n">delta</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span> <span class="n">samples_train</span><span class="p">,</span> <span class="n">samples_test</span><span class="p">(</span><span class="n">k</span><span class="p">,:));</span>
+
+        <span class="c">% compute distance (sqrt is unnecessary because monotonic)</span>
+        <span class="n">squared_distances</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">delta</span><span class="o">.^</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="c">% the following code is equivalent to (but slower than) the code above:</span>
+        <span class="c">%   squared_distances=zeros(ntrain,1);</span>
+        <span class="c">%   for j=1:ntrain</span>
+        <span class="c">%       elementwise_delta=samples_train(j,:)-samples_test(j,:);</span>
+        <span class="c">%       squared_elementwise_delta=elementwise_delta.^2;</span>
+        <span class="c">%       squared_distance=sum(squared_elementwise_delta);</span>
+        <span class="c">%       squared_distances(j)=squared_distance;</span>
+        <span class="c">%   end</span>
+
+        <span class="p">[</span><span class="n">unused</span><span class="p">,</span> <span class="nb">i</span><span class="p">]=</span><span class="n">min</span><span class="p">(</span><span class="n">squared_distances</span><span class="p">);</span>
+        <span class="n">predicted</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">targets_train</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_classify_naive_bayes.html"
+                        title="previous chapter">cosmo classify naive bayes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_classify_svm.html"
+                        title="next chapter">cosmo classify svm</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_classify_nn.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_classify_svm.html" title="cosmo classify svm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_classify_naive_bayes.html" title="cosmo classify naive bayes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

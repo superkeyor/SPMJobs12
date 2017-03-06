@@ -1,0 +1,438 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo neighborhood split skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo nfold partitioner skl" href="cosmo_nfold_partitioner_skl.html" />
+    <link rel="prev" title="cosmo nchoosek partitioner skl" href="cosmo_nchoosek_partitioner_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_nfold_partitioner_skl.html" title="cosmo nfold partitioner skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_nchoosek_partitioner_skl.html" title="cosmo nchoosek partitioner skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-neighborhood-split-skl">
+<span id="id1"></span><h1>cosmo neighborhood split skl<a class="headerlink" href="#cosmo-neighborhood-split-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[nh_split,masks]<span class="p">=</span><span class="nf">cosmo_neighborhood_split</span><span class="p">(</span>nh, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% partitions a neighborhood in a cell with (smaller) neigborhoods</span>
+<span class="c">%</span>
+<span class="c">% cosmo_neighborhood_split(nh, ...)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   nh                  neighborhood struct with fields .neighbors and</span>
+<span class="c">%                       .origin</span>
+<span class="c">%   &#39;divisions&#39;, d      Number of divisions along each feature dimension.</span>
+<span class="c">%                       For example, if d=4 for an fMRI dataset (with</span>
+<span class="c">%                       three feature dimensions corresponding to the three</span>
+<span class="c">%                       spatial dimensions), then the output will have</span>
+<span class="c">%                       at most 4^3=64 neighborhood structs and masks.</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   nh_split            Cell with neighborhood structs. When all elements</span>
+<span class="c">%                       in nh_split are combined they should contain the</span>
+<span class="c">%                       same information in .neighbors and .fa as in the</span>
+<span class="c">%                       input nh, but with a re-indexing of the feature ids</span>
+<span class="c">%                       corresponding to the masks.</span>
+<span class="c">%   masks               Cell with mask datasets, corresponding to the</span>
+<span class="c">%                       features returned in neighborhoods in nh_split.</span>
+<span class="c">%                       When the dataset derived from the input</span>
+<span class="c">%                       neighborhood nh is masked by the k-th mask, then</span>
+<span class="c">%                       the indices in the resulting dataset match the</span>
+<span class="c">%                       indices in .neighbors</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % the following example shows how a neighborhood can be split in</span>
+<span class="c">%     % parts, a searchlight run on each part, and the different outputs</span>
+<span class="c">%     % joined together. This gives identical results as running the</span>
+<span class="c">%     % searchlight on the entire dataset</span>
+<span class="c">%     %</span>
+<span class="c">%     % generate a tiny dataset with 6 voxels</span>
+<span class="c">%     ds=cosmo_synthetic_dataset();</span>
+<span class="c">%     %</span>
+<span class="c">%     % define tiny neighborhoods with radii of 1 voxel</span>
+<span class="c">%     % (more typical values are ~3 voxels)</span>
+<span class="c">%     nh=cosmo_spherical_neighborhood(ds,&#39;radius&#39;,1,&#39;progress&#39;,false);</span>
+<span class="c">%     %</span>
+<span class="c">%     % Use a simple &#39;measure&#39; that just averages data along the feature</span>
+<span class="c">%     % dimension. (Any other measure can be used as well)</span>
+<span class="c">%     averager=@(x,opt)cosmo_structjoin(&#39;samples&#39;,mean(x.samples,2));</span>
+<span class="c">%     %</span>
+<span class="c">%     % disable progress reporting for the searchlight</span>
+<span class="c">%     opt=struct();</span>
+<span class="c">%     opt.progress=false;</span>
+<span class="c">%     %</span>
+<span class="c">%     % run the searchlight</span>
+<span class="c">%     result=cosmo_searchlight(ds,nh,averager,opt);</span>
+<span class="c">%     %</span>
+<span class="c">%     % show output from searchlight</span>
+<span class="c">%     cosmo_disp({result.samples; result.fa});</span>
+<span class="c">%     &gt; { [ 0.768     0.368        -1      1.45    0.0342     -0.32</span>
+<span class="c">%     &gt;     0.526      1.77     0.937      1.08      1.07      1.49</span>
+<span class="c">%     &gt;      0.46     -1.25    -0.152    0.0899     0.795    -0.522</span>
+<span class="c">%     &gt;      1.23     0.685     0.954     0.606      1.19     0.335</span>
+<span class="c">%     &gt;     0.914   -0.0442    0.0295     0.664     0.274    -0.221</span>
+<span class="c">%     &gt;     0.633      1.24     0.797     0.861      1.54      1.02 ]</span>
+<span class="c">%     &gt;   .nvoxels</span>
+<span class="c">%     &gt;     [ 3         4         3         3         4         3 ]</span>
+<span class="c">%     &gt;   .radius</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt;   .center_ids</span>
+<span class="c">%     &gt;     [ 1         2         3         4         5         6 ]</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     &gt;   .j</span>
+<span class="c">%     &gt;     [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt;   .k</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]   }</span>
+<span class="c">%     %</span>
+<span class="c">%     [nh_splits,masks_split]=cosmo_neighborhood_split(nh);</span>
+<span class="c">%     n_split=numel(nh_splits);</span>
+<span class="c">%     %</span>
+<span class="c">%     % Allocate space for searchlight output from each part</span>
+<span class="c">%     res2_cell=cell(1,n_split);</span>
+<span class="c">%     %</span>
+<span class="c">%     for k=1:n_split</span>
+<span class="c">%         % get the k-th neighborhood</span>
+<span class="c">%         nh_sel=nh_splits{k};</span>
+<span class="c">%         %</span>
+<span class="c">%         % slice the dataset to select only the features indexed by</span>
+<span class="c">%         % the nh_sel neighborhood.</span>
+<span class="c">%         %</span>
+<span class="c">%         % (when using fmri datasets, it is also possible to use</span>
+<span class="c">%         %  cosmo_fmri_dataset with a filename and the mask from masks,</span>
+<span class="c">%         %  as in:</span>
+<span class="c">%         %</span>
+<span class="c">%         %     ds_sel=cosmo_fmri_dataset(&#39;data.nii&#39;,&#39;mask&#39;,masks_split{k});</span>
+<span class="c">%         %</span>
+<span class="c">%         %  Such an approach may result in significant reduction of memory</span>
+<span class="c">%         %  usage, if the file format supports loading partial files</span>
+<span class="c">%         %  (currently unzipped NIFTI (.nii), ANALYZE (.hdr) and AFNI)))</span>
+<span class="c">%         ds_sel=cosmo_slice(ds,masks_split{k}.samples,2);</span>
+<span class="c">%         %</span>
+<span class="c">%         % run the searchlight for this split, and store the result</span>
+<span class="c">%         res2_cell{k}=cosmo_searchlight(ds_sel,nh_sel,averager,opt);</span>
+<span class="c">%     end</span>
+<span class="c">%     %</span>
+<span class="c">%     % join the results along the second (feature) dimension</span>
+<span class="c">%     result2=cosmo_stack(res2_cell,2);</span>
+<span class="c">%     %</span>
+<span class="c">%     % show the results; they are identical to the original output, modulo</span>
+<span class="c">%     % a possible permutation of the features.</span>
+<span class="c">%     cosmo_disp({result2.samples; result2.fa});</span>
+<span class="c">%     &gt; { [ 0.768     0.368      1.45    0.0342        -1     -0.32</span>
+<span class="c">%     &gt;     0.526      1.77      1.08      1.07     0.937      1.49</span>
+<span class="c">%     &gt;      0.46     -1.25    0.0899     0.795    -0.152    -0.522</span>
+<span class="c">%     &gt;      1.23     0.685     0.606      1.19     0.954     0.335</span>
+<span class="c">%     &gt;     0.914   -0.0442     0.664     0.274    0.0295    -0.221</span>
+<span class="c">%     &gt;     0.633      1.24     0.861      1.54     0.797      1.02 ]</span>
+<span class="c">%     &gt;   .center_ids</span>
+<span class="c">%     &gt;     [ 1         2         3         4         1         2 ]</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 1         2         1         2         3         3 ]</span>
+<span class="c">%     &gt;   .j</span>
+<span class="c">%     &gt;     [ 1         1         2         2         1         2 ]</span>
+<span class="c">%     &gt;   .k</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt;   .nvoxels</span>
+<span class="c">%     &gt;     [ 3         4         3         4         3         3 ]</span>
+<span class="c">%     &gt;   .radius</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]   }</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - typical use cases of this function are:</span>
+<span class="c">%     * searchlights on fMRI dataset with many samples and features</span>
+<span class="c">%       (i.e. too many to load all of them in memory). In this case, and</span>
+<span class="c">%       if the file format supports it (NIFTI, ANALYZE, AFNI), parts</span>
+<span class="c">%       of the data can be loaded with cosmo_fmri_datset, where the masks</span>
+<span class="c">%       are based on the second output from this function</span>
+<span class="c">%     * parallel searchlights on a cluster using multiple computing nodes.</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_searchlight, cosmo_fmri_dataset</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">defaults</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">divisions</span><span class="p">=</span><span class="mi">4</span><span class="p">;</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+    <span class="n">validate_input</span><span class="p">(</span><span class="n">nh</span><span class="p">,</span> <span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% see how big each block is along each dimension</span>
+    <span class="p">[</span><span class="n">first</span><span class="p">,</span><span class="n">last</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">]=</span><span class="n">get_dim_range</span><span class="p">(</span><span class="n">nh</span><span class="p">);</span>
+
+    <span class="n">min_first</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">first</span><span class="p">,[],</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">max_last</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">last</span><span class="p">,[],</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">max_size</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">last</span><span class="o">-</span><span class="n">first</span><span class="p">,[],</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">extent</span><span class="p">=</span><span class="n">max_last</span><span class="o">-</span><span class="n">min_first</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c">% Examples of how max_size, step and extent are related:</span>
+    <span class="c">% max_size=1, step=5, extent=25, 5 div: 1-5, 6-10, 11-15, 16-20, 21-25</span>
+    <span class="c">% max_size=1, step=4, extent=20, 5 div: 1-4,  5-8,  9-12, 13-16, 17-20</span>
+    <span class="c">% max_size=2, step=5, extent=26, 5 div: 1-6, 6-11, 11-16, 16-21, 21-26</span>
+    <span class="c">% max_size=2, step=4, extent=21, 5 div: 1-5,  5-9,  9-13, 13-17, 17-21</span>
+    <span class="c">% max_size=3, step=4, extent=22, 5 div: 1-6, 5-10,  9-14, 13-18, 17-22</span>
+
+    <span class="c">% first element:                step+max_size-1     elements</span>
+    <span class="c">% all other (div-1) elements:   step                elements</span>
+
+    <span class="n">step</span><span class="p">=</span><span class="nb">ceil</span><span class="p">((</span><span class="n">extent</span><span class="o">+</span><span class="mi">1</span><span class="o">-</span><span class="n">max_size</span><span class="p">)</span><span class="o">/</span><span class="n">opt</span><span class="p">.</span><span class="n">divisions</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">step</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span><span class="p">));</span>
+
+    <span class="c">% for each element in nh.neighbors, assign it to a block</span>
+    <span class="c">% indexed by ndim integers (where ndim is the number of dimensions)</span>
+    <span class="n">dim_pos</span><span class="p">=</span><span class="nb">floor</span><span class="p">(</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">rdivide</span><span class="p">,</span><span class="n">first</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">step</span><span class="p">))</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c">% get the indices for each block.</span>
+    <span class="c">% idxs{k}=[a_k1, ..., a_kN] means that nh.neighbors{a_k1}, ...,</span>
+    <span class="c">% nh.neighbors{a_kN} all refer to neighboring features</span>
+    <span class="c">%</span>
+    <span class="p">[</span><span class="n">idxs</span><span class="p">,</span><span class="n">unq</span><span class="p">]=</span><span class="n">cosmo_index_unique</span><span class="p">(</span><span class="n">dim_pos</span><span class="o">&#39;</span><span class="p">);</span>
+
+    <span class="n">nsplit</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">unq</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">nh_split</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nsplit</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">masks</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nsplit</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">keep_split_mask</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">nsplit</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">split_id</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsplit</span>
+        <span class="n">msk</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">);</span>
+        <span class="n">idx</span><span class="p">=</span><span class="n">idxs</span><span class="p">{</span><span class="n">split_id</span><span class="p">};</span>
+        <span class="n">n_nbrs</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">idx</span><span class="p">);</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_nbrs</span>
+            <span class="n">nb</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">idx</span><span class="p">(</span><span class="nb">j</span><span class="p">)};</span>
+            <span class="n">msk</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nb</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="n">any</span><span class="p">(</span><span class="n">msk</span><span class="p">)</span>
+            <span class="c">% skip empty neighbors</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">keep_split_mask</span><span class="p">(</span><span class="n">split_id</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+
+
+        <span class="n">m_k</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">m_k</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">msk</span><span class="p">;</span>
+        <span class="n">m_k</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+        <span class="n">m_k</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">fa</span><span class="p">;</span>
+
+        <span class="n">nh_k</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">nh_k</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">m_k</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+        <span class="n">nh_k</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">m_k</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;struct&#39;</span><span class="p">);</span>
+        <span class="n">nh_k</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+        <span class="n">nh_k</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">nh</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span> <span class="n">idx</span><span class="p">,</span> <span class="mi">2</span><span class="p">,</span> <span class="s">&#39;struct&#39;</span><span class="p">);</span>
+
+        <span class="n">all2some</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">);</span>
+        <span class="n">all2some</span><span class="p">(</span><span class="n">msk</span><span class="p">)=</span><span class="mi">1</span><span class="p">:</span><span class="n">sum</span><span class="p">(</span><span class="n">msk</span><span class="p">);</span>
+        <span class="n">neighbors</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n_nbrs</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_nbrs</span>
+            <span class="n">some</span><span class="p">=</span><span class="n">all2some</span><span class="p">(</span><span class="n">nh</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">idx</span><span class="p">(</span><span class="nb">j</span><span class="p">)});</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">some</span><span class="o">~=</span><span class="mi">0</span><span class="p">));</span>
+            <span class="n">neighbors</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="n">some</span><span class="p">;</span>
+        <span class="k">end</span>
+        <span class="n">nh_k</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">neighbors</span><span class="p">;</span>
+
+        <span class="n">nh_split</span><span class="p">{</span><span class="n">split_id</span><span class="p">}=</span><span class="n">nh_k</span><span class="p">;</span>
+        <span class="n">masks</span><span class="p">{</span><span class="n">split_id</span><span class="p">}=</span><span class="n">m_k</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% only keep non-empty masks</span>
+    <span class="n">nh_split</span><span class="p">=</span><span class="n">nh_split</span><span class="p">(</span><span class="n">keep_split_mask</span><span class="p">);</span>
+    <span class="n">masks</span><span class="p">=</span><span class="n">masks</span><span class="p">(</span><span class="n">keep_split_mask</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>[first,last,nfeatures]<span class="p">=</span><span class="nf">get_dim_range</span><span class="p">(</span>nh<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% for each feature dimension, find the minimum and maximum value</span>
+    <span class="c">% in each neighborhood</span>
+    <span class="c">% If nh has N neighbors and M dimensions, then the output of first and</span>
+    <span class="c">% last in M x N.</span>
+    <span class="n">fdim</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">;</span>
+    <span class="n">labels</span><span class="p">=</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">;</span>
+
+    <span class="n">n_labels</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">labels</span><span class="p">);</span>
+    <span class="n">n_neighbors</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">nh</span><span class="p">.</span><span class="n">neighbors</span><span class="p">);</span>
+
+    <span class="n">fa</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">fa</span><span class="p">;</span>
+
+    <span class="c">% pre-store values for each feature attribute</span>
+    <span class="n">fa_idxs_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n_labels</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_labels</span>
+        <span class="n">label</span><span class="p">=</span><span class="n">labels</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">fa_idxs</span><span class="p">=</span><span class="n">fa</span><span class="p">.(</span><span class="n">label</span><span class="p">);</span>
+        <span class="n">fa_idxs_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">fa_idxs</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">first</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">n_labels</span><span class="p">,</span><span class="n">n_neighbors</span><span class="p">);</span>
+    <span class="n">last</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">n_labels</span><span class="p">,</span><span class="n">n_neighbors</span><span class="p">);</span>
+    <span class="n">nfeatures</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+
+
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_neighbors</span>
+        <span class="n">nb</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+
+        <span class="n">mx_nb</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">nb</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">mx_nb</span><span class="o">&gt;</span><span class="n">nfeatures</span>
+            <span class="n">nfeatures</span><span class="p">=</span><span class="n">mx_nb</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_labels</span>
+            <span class="c">% (this is a timing-critical part of the loop)</span>
+            <span class="n">nb_values</span><span class="p">=</span><span class="n">fa_idxs_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}(</span><span class="n">nb</span><span class="p">);</span>
+
+            <span class="n">first</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">j</span><span class="p">)=</span><span class="n">min</span><span class="p">(</span><span class="n">nb_values</span><span class="p">);</span>
+            <span class="n">last</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="nb">j</span><span class="p">)=</span><span class="n">max</span><span class="p">(</span><span class="n">nb_values</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>opt<span class="p">=</span><span class="nf">validate_input</span><span class="p">(</span>nh, opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% some checks on the input</span>
+    <span class="n">cosmo_check_neighborhood</span><span class="p">(</span><span class="n">nh</span><span class="p">);</span>
+
+    <span class="n">allowed_fieldnames</span><span class="p">={</span><span class="s">&#39;divisions&#39;</span><span class="p">};</span>
+    <span class="n">delta</span><span class="p">=</span><span class="n">setdiff</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">opt</span><span class="p">),</span> <span class="n">allowed_fieldnames</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">delta</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal field %s&#39;</span><span class="p">,</span> <span class="n">delta</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+    <span class="k">end</span>
+
+    <span class="n">divisions</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">divisions</span><span class="p">;</span>
+    <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">divisions</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="nb">isscalar</span><span class="p">(</span><span class="n">divisions</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="nb">isfinite</span><span class="p">(</span><span class="n">divisions</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="n">divisions</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;count must be finite scalar &gt;1&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+    <span class="n">origin_labels</span><span class="p">={</span><span class="s">&#39;origin.fa&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;origin.a.fdim.labels&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;origin.a.fdim.values&#39;</span><span class="p">};</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">all</span><span class="p">(</span><span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">nh</span><span class="p">,</span><span class="n">origin_labels</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;origin has missing labels&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">is_numeric_vector</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">isvector</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">all</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(</span><span class="n">is_numeric_vector</span><span class="p">,</span> <span class="n">nh</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;elements in .a.fdim.values must be numeric vectors&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_nchoosek_partitioner_skl.html"
+                        title="previous chapter">cosmo nchoosek partitioner skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_nfold_partitioner_skl.html"
+                        title="next chapter">cosmo nfold partitioner skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_neighborhood_split_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_nfold_partitioner_skl.html" title="cosmo nfold partitioner skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_nchoosek_partitioner_skl.html" title="cosmo nchoosek partitioner skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

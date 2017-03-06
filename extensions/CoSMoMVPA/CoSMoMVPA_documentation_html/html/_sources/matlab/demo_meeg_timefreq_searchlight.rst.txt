@@ -1,0 +1,9 @@
+.. _demo_meeg_timefreq_searchlight:
+
+demo meeg timefreq searchlight
+==============================
+
+:demo_up:`demo_meeg_timefreq_searchlight`
+
+.. include :: demo_meeg_timefreq_searchlight.txt
+

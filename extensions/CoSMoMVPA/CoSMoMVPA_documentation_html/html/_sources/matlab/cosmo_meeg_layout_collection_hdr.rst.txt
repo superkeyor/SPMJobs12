@@ -1,0 +1,7 @@
+.. _cosmo_meeg_layout_collection_hdr:
+
+cosmo meeg layout collection hdr
+================================
+
+.. include :: cosmo_meeg_layout_collection_hdr.txt
+

@@ -1,0 +1,282 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo pca skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo pdist skl" href="cosmo_pdist_skl.html" />
+    <link rel="prev" title="cosmo parcellfun skl" href="cosmo_parcellfun_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_pdist_skl.html" title="cosmo pdist skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_parcellfun_skl.html" title="cosmo parcellfun skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-pca-skl">
+<span id="id1"></span><h1>cosmo pca skl<a class="headerlink" href="#cosmo-pca-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[pca_samples,params]<span class="p">=</span><span class="nf">cosmo_pca</span><span class="p">(</span>samples,retain<span class="p">)</span><span class="w"></span>
+<span class="c">% Principal Component Analysis</span>
+<span class="c">%</span>
+<span class="c">% [pca_samples,params]=cosmo_pca(samples[,retain])</span>
+<span class="c">%</span>
+<span class="c">% Input:</span>
+<span class="c">%   samples                 M x N  numeric matrix</span>
+<span class="c">%   retain                  (optional) number of components to retain;</span>
+<span class="c">%                           must be less than or equal to N. Default: N</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   pca_samples             M x retain samples in Principal Component</span>
+<span class="c">%                           space, after samples have been centered</span>
+<span class="c">%   params                  struct with fields:</span>
+<span class="c">%     .coef                 M x retain Principal Component coefficients</span>
+<span class="c">%     .mu                   M x 1 column-wise average of samples</span>
+<span class="c">%                           It holds that:</span>
+<span class="c">%                             samples=bsxfun(@plus,params.mu,...</span>
+<span class="c">%                                                 pca_samples*params.coef&#39;)</span>
+<span class="c">%     .explained            1 x N Percentage of explained variance</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     samples=[      2.0317   -0.8918   -0.8258;...</span>
+<span class="c">%                    0.5838    1.8439    1.1656;...</span>
+<span class="c">%                   -1.4437   -0.2617   -1.9207;...</span>
+<span class="c">%                   -0.5177    2.3387    0.4412;...</span>
+<span class="c">%                    1.1908   -0.2040   -0.2088;...</span>
+<span class="c">%                   -1.3265    2.7235    0.1476];</span>
+<span class="c">%     %</span>
+<span class="c">%     % apply PCA, keeping two dimensions</span>
+<span class="c">%     [pca_samples,params]=cosmo_pca(samples,2);</span>
+<span class="c">%     %</span>
+<span class="c">%     % show samples in PC space</span>
+<span class="c">%     cosmo_disp(pca_samples);</span>
+<span class="c">%     &gt; [  -2.64     0.654</span>
+<span class="c">%     &gt;    0.923      1.43</span>
+<span class="c">%     &gt;   -0.723     -2.48</span>
+<span class="c">%     &gt;     1.64     0.265</span>
+<span class="c">%     &gt;    -1.46     0.569</span>
+<span class="c">%     &gt;     2.27    -0.438 ]</span>
+<span class="c">%     %</span>
+<span class="c">%     % show parameters</span>
+<span class="c">%     cosmo_disp(params);</span>
+<span class="c">%     &gt; .coef</span>
+<span class="c">%     &gt;   [ -0.512     0.744</span>
+<span class="c">%     &gt;      0.794     0.219</span>
+<span class="c">%     &gt;      0.328     0.632 ]</span>
+<span class="c">%     &gt; .mu</span>
+<span class="c">%     &gt;   [ 0.0864     0.925      -0.2 ]</span>
+<span class="c">%     &gt; .explained</span>
+<span class="c">%     &gt;   [    66</span>
+<span class="c">%     &gt;      33.3</span>
+<span class="c">%     &gt;     0.676 ]</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span>
+        <span class="n">retain</span><span class="p">=[];</span>
+    <span class="k">end</span>
+
+    <span class="n">verify_parameters</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">retain</span><span class="p">)</span>
+    <span class="n">ndim</span><span class="p">=</span><span class="n">get_number_of_components</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">retain</span><span class="p">);</span>
+
+    <span class="c">% subtract mean</span>
+    <span class="n">mu</span><span class="p">=</span><span class="n">mean</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">samples_demu</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span> <span class="n">samples</span><span class="p">,</span> <span class="n">mu</span><span class="p">);</span>
+
+    <span class="c">% singular value decomposition</span>
+    <span class="p">[</span><span class="n">u</span><span class="p">,</span><span class="n">s</span><span class="p">,</span><span class="n">w</span><span class="p">]=</span><span class="n">svd</span><span class="p">(</span><span class="n">samples_demu</span><span class="p">,</span><span class="s">&#39;econ&#39;</span><span class="p">);</span>
+
+    <span class="c">% extract eigen values</span>
+    <span class="p">[</span><span class="n">nrow</span><span class="p">,</span><span class="n">ncol</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples</span><span class="p">);</span>
+    <span class="n">samples_is_vector</span><span class="p">=</span><span class="n">nrow</span><span class="o">==</span><span class="mi">1</span> <span class="o">||</span> <span class="n">ncol</span><span class="o">==</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">samples_is_vector</span>
+        <span class="c">% single eigen value</span>
+        <span class="n">eigvals</span><span class="p">=</span><span class="n">s</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="c">% take diagonal</span>
+        <span class="n">eigvals</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">ndim</span><span class="o">==</span><span class="mi">0</span>
+        <span class="c">% seperate case for zero dimensions</span>
+        <span class="n">pca_samples</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">coef</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">ncol</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">pca_samples_rand_sign</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">times</span><span class="p">,</span><span class="n">u</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">ndim</span><span class="p">),</span><span class="n">eigvals</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ndim</span><span class="p">)</span><span class="o">&#39;</span><span class="p">);</span>
+        <span class="p">[</span><span class="n">coef</span><span class="p">,</span><span class="n">sgn</span><span class="p">]=</span><span class="n">max_abs_positive_columnwise</span><span class="p">(</span><span class="n">w</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">ndim</span><span class="p">));</span>
+        <span class="n">pca_samples</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">times</span><span class="p">,</span><span class="n">pca_samples_rand_sign</span><span class="p">,</span><span class="n">sgn</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% store coefficients</span>
+    <span class="n">params</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">params</span><span class="p">.</span><span class="n">coef</span><span class="p">=</span><span class="n">coef</span><span class="p">;</span>
+    <span class="n">params</span><span class="p">.</span><span class="n">mu</span><span class="p">=</span><span class="n">mu</span><span class="p">;</span>
+
+
+    <span class="n">nexpl</span><span class="p">=</span><span class="n">min</span><span class="p">([</span><span class="n">nrow</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">ncol</span><span class="p">]);</span>
+    <span class="k">if</span> <span class="n">nrow</span><span class="o">==</span><span class="mi">1</span> <span class="o">||</span> <span class="n">ncol</span><span class="o">==</span><span class="mi">0</span>
+        <span class="c">% special case for empty vecto with explained variance</span>
+        <span class="n">params</span><span class="p">.</span><span class="n">explained</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">explained_ratio</span><span class="p">=</span><span class="n">eigvals</span><span class="o">&#39;.^</span><span class="mi">2</span><span class="p">;</span>
+        <span class="n">params</span><span class="p">.</span><span class="n">explained</span><span class="p">=</span><span class="mi">100</span><span class="o">*</span><span class="n">explained_ratio</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nexpl</span><span class="p">)</span><span class="o">/</span><span class="n">sum</span><span class="p">(</span><span class="n">explained_ratio</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>ncomp<span class="p">=</span><span class="nf">get_number_of_components</span><span class="p">(</span>samples,retain<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">max_retain</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">retain</span><span class="p">)</span>
+        <span class="n">retain</span><span class="p">=</span><span class="n">max_retain</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">retain</span><span class="o">&gt;</span><span class="n">max_retain</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;retain argument %d must be less than %d&#39;</span><span class="p">,</span><span class="c">...</span>
+                                <span class="n">retain</span><span class="p">,</span><span class="n">max_retain</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="p">[</span><span class="n">nrow</span><span class="p">,</span><span class="n">ncol</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples</span><span class="p">);</span>
+    <span class="n">ncomp</span><span class="p">=</span><span class="n">min</span><span class="p">([</span><span class="n">nrow</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">ncol</span><span class="p">,</span><span class="n">retain</span><span class="p">]);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>[coef_pos,sgn]<span class="p">=</span><span class="nf">max_abs_positive_columnwise</span><span class="p">(</span>coef<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% swap sign for each column in which the maximum absolute value is</span>
+    <span class="c">% negative. sgn contains the sign used in each column (-1 or 1)</span>
+    <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">max</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">coef</span><span class="p">),[],</span><span class="mi">1</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">nrows</span><span class="p">,</span><span class="n">ncols</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">coef</span><span class="p">);</span>
+    <span class="n">mx_idx</span><span class="p">=(</span><span class="mi">0</span><span class="p">:(</span><span class="n">ncols</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span><span class="o">*</span><span class="n">nrows</span><span class="o">+</span><span class="nb">i</span><span class="p">;</span>
+    <span class="n">mx</span><span class="p">=</span><span class="n">coef</span><span class="p">(</span><span class="n">mx_idx</span><span class="p">);</span>
+
+    <span class="n">sgn</span><span class="p">=(</span><span class="n">mx</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">coef_pos</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">times</span><span class="p">,</span><span class="n">coef</span><span class="p">,</span><span class="n">sgn</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">verify_parameters</span><span class="p">(</span>samples,retain<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">samples</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;samples argument must be numeric&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">samples</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">2</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;samples argument must be a matrix&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="nb">isempty</span><span class="p">(</span><span class="n">retain</span><span class="p">)</span> <span class="o">||</span> <span class="c">...</span>
+                    <span class="p">(</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">retain</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                     <span class="n">retain</span><span class="o">&gt;</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                     <span class="nb">isequal</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">retain</span><span class="p">),</span><span class="n">retain</span><span class="p">)))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;retain argument must be positive integer&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_parcellfun_skl.html"
+                        title="previous chapter">cosmo parcellfun skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_pdist_skl.html"
+                        title="next chapter">cosmo pdist skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_pca_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_pdist_skl.html" title="cosmo pdist skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_parcellfun_skl.html" title="cosmo parcellfun skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

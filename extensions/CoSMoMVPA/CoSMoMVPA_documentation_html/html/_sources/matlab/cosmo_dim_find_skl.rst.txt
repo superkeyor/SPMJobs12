@@ -1,0 +1,7 @@
+.. _cosmo_dim_find_skl:
+
+cosmo dim find skl
+==================
+
+.. include :: cosmo_dim_find_skl.txt
+

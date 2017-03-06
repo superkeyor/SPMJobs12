@@ -1,0 +1,7 @@
+.. _test_plot_slices:
+
+test plot slices
+================
+
+.. include :: test_plot_slices.txt
+

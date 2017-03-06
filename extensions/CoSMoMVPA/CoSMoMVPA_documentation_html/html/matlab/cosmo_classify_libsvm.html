@@ -1,0 +1,314 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo classify libsvm &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo classify matlabsvm" href="cosmo_classify_matlabsvm.html" />
+    <link rel="prev" title="cosmo classify lda" href="cosmo_classify_lda.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_classify_matlabsvm.html" title="cosmo classify matlabsvm"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_classify_lda.html" title="cosmo classify lda"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-classify-libsvm">
+<span id="id1"></span><h1>cosmo classify libsvm<a class="headerlink" href="#cosmo-classify-libsvm" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>predicted<span class="p">=</span><span class="nf">cosmo_classify_libsvm</span><span class="p">(</span>samples_train, targets_train, samples_test, opt<span class="p">)</span><span class="w"></span>
+<span class="c">% libsvm-based SVM classifier</span>
+<span class="c">%</span>
+<span class="c">% predicted=cosmo_classify_libsvm(samples_train, targets_train, samples_test, opt)</span>
+<span class="c">%</span>
+<span class="c">% Inputs</span>
+<span class="c">%   samples_train      PxR training data for P samples and R features</span>
+<span class="c">%   targets_train      Px1 training data classes</span>
+<span class="c">%   samples_test       QxR test data</span>
+<span class="c">%   opt                (optional) struct with options for svmtrain</span>
+<span class="c">%     .autoscale       If true (default), z-scoring is done on the training</span>
+<span class="c">%                      set; the test set is z-scored using the mean and std</span>
+<span class="c">%                      estimates from the training set.</span>
+<span class="c">%     ?                any option supported by libsvm&#39;s svmtrain.</span>
+<span class="c">%</span>
+<span class="c">% Output</span>
+<span class="c">%   predicted          Qx1 predicted data classes for samples_test</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%  - this function requires libsvm version 3.18 or later:</span>
+<span class="c">%    https://github.com/cjlin1/libsvm</span>
+<span class="c">%  - by default a linear kernel is used (&#39;-t 0&#39;)</span>
+<span class="c">%  - this function uses LIBSVM&#39;s svmtrain function, which has the same</span>
+<span class="c">%    name as matlab&#39;s builtin version. Use of this function is not</span>
+<span class="c">%    supported when matlab&#39;s svmtrain precedes in the matlab path; in</span>
+<span class="c">%    that case, adjust the path or use cosmo_classify_matlabsvm instead.</span>
+<span class="c">%  - for a guide on svm classification, see</span>
+<span class="c">%      http://www.csie.ntu.edu.tw/~cjlin/papers/guide/guide.pdf</span>
+<span class="c">%  - By default this function performs z-scoring of the data. To switch</span>
+<span class="c">%    this off, set &#39;autoscale&#39; to false</span>
+<span class="c">%  - cosmo_crossvalidate and cosmo_crossvalidation_measure</span>
+<span class="c">%    provide an option &#39;normalization&#39; to perform data scaling</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% See also svmtrain, svmclassify, cosmo_classify_svm,</span>
+<span class="c">%          cosmo_classify_matlabsvm</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">4</span>
+        <span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="k">end</span>
+
+    <span class="c">% support repeated testing on different data after training every time</span>
+    <span class="c">% on the same data. This is achieved by caching the training data</span>
+    <span class="c">% and associated model</span>
+    <span class="k">persistent</span> <span class="n">cached_targets_train</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_samples_train</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_opt</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_model</span><span class="p">;</span>
+
+    <span class="n">cache_limit</span><span class="p">=</span><span class="mf">1e5</span><span class="p">;</span> <span class="c">% avoid caching huge training sets</span>
+
+    <span class="k">if</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">cached_targets_train</span><span class="p">,</span> <span class="n">targets_train</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+            <span class="nb">isequal</span><span class="p">(</span><span class="n">cached_opt</span><span class="p">,</span> <span class="n">opt</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+            <span class="nb">numel</span><span class="p">(</span><span class="n">samples_train</span><span class="p">)</span> <span class="o">&lt;</span> <span class="n">cache_limit</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+            <span class="nb">isequal</span><span class="p">(</span><span class="n">cached_samples_train</span><span class="p">,</span> <span class="n">samples_train</span><span class="p">)</span>
+        <span class="c">% use cache</span>
+        <span class="n">model</span><span class="p">=</span><span class="n">cached_model</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">model</span><span class="p">=</span><span class="n">train</span><span class="p">(</span><span class="n">samples_train</span><span class="p">,</span><span class="n">targets_train</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+                <span class="c">% store model</span>
+        <span class="n">cached_targets_train</span><span class="p">=</span><span class="n">targets_train</span><span class="p">;</span>
+        <span class="n">cached_samples_train</span><span class="p">=</span><span class="n">samples_train</span><span class="p">;</span>
+        <span class="n">cached_opt</span><span class="p">=</span><span class="n">opt</span><span class="p">;</span>
+        <span class="n">cached_model</span><span class="p">=</span><span class="n">model</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">predicted</span><span class="p">=</span><span class="n">test</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">samples_test</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>model<span class="p">=</span><span class="nf">train</span><span class="p">(</span>samples_train,targets_train,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">ntrain</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples_train</span><span class="p">);</span>
+
+    <span class="n">model</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">nfeatures</span><span class="p">=</span><span class="n">nfeatures</span><span class="p">;</span>
+    <span class="n">model</span><span class="p">.</span><span class="n">normalize</span><span class="p">=[];</span> <span class="c">% off by default</span>
+
+    <span class="c">% check input size</span>
+    <span class="n">ntrain_</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">targets_train</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">ntrain_</span><span class="o">~=</span><span class="n">ntrain</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal input size&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% construct options string for svmtrain</span>
+    <span class="n">opt_str</span><span class="p">=</span><span class="n">libsvm_opt2str</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% auto-scale is the default</span>
+    <span class="n">autoscale</span><span class="p">=</span> <span class="o">~</span><span class="n">isstruct</span><span class="p">(</span><span class="n">opt</span><span class="p">)</span> <span class="o">||</span> <span class="c">...</span>
+                <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;autoscale&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="c">...</span>
+                <span class="nb">isempty</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">autoscale</span><span class="p">)</span> <span class="o">||</span> <span class="c">...</span>
+                <span class="n">opt</span><span class="p">.</span><span class="n">autoscale</span><span class="p">;</span>
+
+    <span class="c">% perform autoscale if necessary</span>
+    <span class="k">if</span> <span class="n">autoscale</span>
+        <span class="p">[</span><span class="n">samples_train</span><span class="p">,</span> <span class="n">params</span><span class="p">]=</span><span class="n">cosmo_normalize</span><span class="p">(</span><span class="n">samples_train</span><span class="p">,</span> <span class="c">...</span>
+                                                    <span class="s">&#39;zscore&#39;</span><span class="p">,</span> <span class="mi">1</span><span class="p">);</span>
+        <span class="n">model</span><span class="p">.</span><span class="n">normalize</span><span class="p">=</span><span class="n">params</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">train_func</span><span class="p">=@()</span><span class="n">svmtrain</span><span class="p">(</span><span class="n">targets_train</span><span class="p">(:),</span> <span class="c">...</span>
+                            <span class="n">samples_train</span><span class="p">,</span> <span class="c">...</span>
+                            <span class="n">opt_str</span><span class="p">);</span>
+
+    <span class="n">model</span><span class="p">.</span><span class="n">libsvm_model</span><span class="p">=</span><span class="n">eval_with_check_external</span><span class="p">(</span><span class="n">train_func</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>output<span class="p">=</span><span class="nf">eval_with_check_external</span><span class="p">(</span>func<span class="p">)</span><span class="w"></span>
+<span class="c">% Evaluates func() in try-catch block. If it fails, this may be due</span>
+<span class="c">% to missing libsvm and/or libsvm conflicting with Matlab&#39;s svm.</span>
+<span class="c">% Therefore first cosmo_check_external is called, which will give an</span>
+<span class="c">% informative error message if that is the case. Otherwise the original</span>
+<span class="c">% message is shown.</span>
+
+    <span class="k">try</span>
+        <span class="n">output</span><span class="p">=</span><span class="n">func</span><span class="p">();</span>
+    <span class="k">catch</span>
+        <span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;libsvm&#39;</span><span class="p">);</span>
+        <span class="n">rethrow</span><span class="p">(</span><span class="n">lasterror</span><span class="p">());</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>predicted<span class="p">=</span><span class="nf">test</span><span class="p">(</span>model, samples_test<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">ntest</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">samples_test</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">nfeatures</span><span class="o">~=</span><span class="n">model</span><span class="p">.</span><span class="n">nfeatures</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;Number of features in train set (%d) and &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;test set (%d) do not match&#39;</span><span class="p">],</span><span class="c">...</span>
+                    <span class="n">model</span><span class="p">.</span><span class="n">nfeatures</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">model</span><span class="p">.</span><span class="n">normalize</span><span class="p">)</span>
+        <span class="n">samples_test</span><span class="p">=</span><span class="n">cosmo_normalize</span><span class="p">(</span><span class="n">samples_test</span><span class="p">,</span> <span class="n">model</span><span class="p">.</span><span class="n">normalize</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">test_opt_str</span><span class="p">=</span><span class="s">&#39;-q&#39;</span><span class="p">;</span> <span class="c">% quiet (no output)</span>
+    <span class="n">test_func</span><span class="p">=@()</span><span class="n">svmpredict</span><span class="p">(</span><span class="n">NaN</span><span class="p">(</span><span class="n">ntest</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="n">samples_test</span><span class="p">,</span> <span class="c">...</span>
+                            <span class="n">model</span><span class="p">.</span><span class="n">libsvm_model</span><span class="p">,</span> <span class="n">test_opt_str</span><span class="p">);</span>
+    <span class="n">predicted</span><span class="p">=</span><span class="n">eval_with_check_external</span><span class="p">(</span><span class="n">test_func</span><span class="p">);</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>opt_str<span class="p">=</span><span class="nf">libsvm_opt2str</span><span class="p">(</span>opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">cached_opt</span>
+    <span class="k">persistent</span> <span class="n">cached_opt_str</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span> <span class="n">cached_opt</span><span class="p">)</span>
+        <span class="n">default_opt</span><span class="p">={</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;q&#39;</span><span class="p">;</span><span class="c">...</span>
+                        <span class="s">&#39;0&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">};</span>
+        <span class="n">n_default</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">default_opt</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+        <span class="n">libsvm_opt_keys</span><span class="p">={</span><span class="s">&#39;s&#39;</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;d&#39;</span><span class="p">,</span><span class="s">&#39;g&#39;</span><span class="p">,</span><span class="s">&#39;r&#39;</span><span class="p">,</span><span class="s">&#39;c&#39;</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">,</span><span class="c">...</span>
+                         <span class="s">&#39;m&#39;</span><span class="p">,</span><span class="s">&#39;e&#39;</span><span class="p">,</span><span class="s">&#39;h&#39;</span><span class="p">,</span><span class="s">&#39;n&#39;</span><span class="p">,</span><span class="s">&#39;wi&#39;</span><span class="p">,</span><span class="s">&#39;v&#39;</span><span class="p">};</span>
+        <span class="n">opt_struct</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+        <span class="n">keys</span><span class="p">=</span><span class="n">intersect</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">opt_struct</span><span class="p">),</span><span class="n">libsvm_opt_keys</span><span class="p">);</span>
+        <span class="n">n_keys</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">);</span>
+
+        <span class="n">use_defaults</span><span class="p">=</span><span class="n">true</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n_default</span><span class="p">);</span>
+
+        <span class="n">libsvm_opt</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">n_keys</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_keys</span>
+            <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">default_pos</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">default_opt</span><span class="p">(</span><span class="mi">1</span><span class="p">,:),(</span><span class="n">key</span><span class="p">)),</span><span class="mi">1</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">default_pos</span><span class="p">)</span>
+                <span class="n">use_defaults</span><span class="p">(</span><span class="n">default_pos</span><span class="p">)=</span><span class="n">false</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="n">value</span><span class="p">=</span><span class="n">opt_struct</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+            <span class="k">if</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">value</span><span class="p">)</span>
+                <span class="n">value</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%d&#39;</span><span class="p">,</span><span class="n">value</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="n">libsvm_opt</span><span class="p">(:,</span><span class="n">k</span><span class="p">)={</span><span class="n">key</span><span class="p">;</span><span class="n">value</span><span class="p">};</span>
+        <span class="k">end</span>
+
+        <span class="n">all_opt</span><span class="p">=[</span><span class="n">libsvm_opt</span> <span class="n">default_opt</span><span class="p">(:,</span> <span class="n">use_defaults</span><span class="p">)];</span>
+
+        <span class="n">cached_opt_str</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;-%s %s &#39;</span><span class="p">,</span> <span class="n">all_opt</span><span class="p">{:});</span>
+        <span class="n">cached_opt</span><span class="p">=</span><span class="n">opt</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">opt_str</span><span class="p">=</span><span class="n">cached_opt_str</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_classify_lda.html"
+                        title="previous chapter">cosmo classify lda</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_classify_matlabsvm.html"
+                        title="next chapter">cosmo classify matlabsvm</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_classify_libsvm.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_classify_matlabsvm.html" title="cosmo classify matlabsvm"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_classify_lda.html" title="cosmo classify lda"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

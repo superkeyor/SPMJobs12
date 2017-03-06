@@ -1,0 +1,7 @@
+.. _cosmo_tail_skl:
+
+cosmo tail skl
+==============
+
+.. include :: cosmo_tail_skl.txt
+

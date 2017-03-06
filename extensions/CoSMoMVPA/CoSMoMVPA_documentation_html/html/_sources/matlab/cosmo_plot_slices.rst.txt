@@ -1,0 +1,7 @@
+.. _cosmo_plot_slices:
+
+cosmo plot slices
+=================
+
+.. include :: cosmo_plot_slices.txt
+

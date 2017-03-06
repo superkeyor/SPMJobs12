@@ -1,0 +1,207 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Dataset Basics</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_load_datasets.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Dataset Basics</h1><!--introduction--><p>Load datasets using cosmo_fmri_dataset</p><p>This function loads data stored in a nifti file and return a dataset struct where the data are stored in the 2-D array in field dataset.samples</p><p>For each of the three masks ('brain','ev','vt'), print the number of voxels when loading the dataset with that mask.</p><p>Hint: the number of voxels is given by the number of columns in dataset.samples</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set the datapath</a></li><li><a href="#2">Compute number of voxels in each mask</a></li></ul></div><h2>Set the datapath<a name="1"></a></h2><pre class="codeinput">config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+</pre><h2>Compute number of voxels in each mask<a name="2"></a></h2><p>Hints: -In order not to get overwhelmed, solve a simple problem first and then generalize from it.   -First write some code in which you load data with full brain mask. Generalization:   -Next, you could just copy and alter that code such that you do the   same thing with the other masks   -A more elegant solution would be to put the three mask names into a   cell array and to write a loop that performs the same set of operations   on the members of the cell array (i.e. the three different mask names</p><pre class="codeinput"><span class="comment">% Let's start with the simple approach.</span>
+<span class="comment">% Set the filename</span>
+<span class="comment">% &gt;@@&gt;</span>
+mask_fn = fullfile(data_path, <span class="string">'brain_mask.nii'</span>);
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Load the dataset and store in struct 'ds'</span>
+<span class="comment">% &gt;@@&gt;</span>
+ds=cosmo_fmri_dataset(mask_fn);
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Compute number of features that are greater than zero</span>
+<span class="comment">% hint: use ds.samples</span>
+nfeatures=sum(ds.samples&gt;0);
+
+fprintf(<span class="string">'There are %d voxels in the whole brain mask\n'</span>, nfeatures);
+<span class="comment">% &lt;@@&lt;</span>
+
+<span class="comment">% Now do the same with the EV and VT masks.</span>
+<span class="comment">% &gt;@@&gt;</span>
+mask_fn = fullfile(data_path, <span class="string">'vt_mask.nii'</span>);
+ds=cosmo_fmri_dataset(mask_fn);
+nfeatures=sum(ds.samples&gt;0);
+
+fprintf(<span class="string">'There are %d voxels in the ventral-temporal mask\n'</span>, nfeatures);
+
+mask_fn = fullfile(data_path, <span class="string">'ev_mask.nii'</span>);
+ds=cosmo_fmri_dataset(mask_fn);
+nfeatures=sum(ds.samples&gt;0);
+fprintf(<span class="string">'There are %d voxels in the early-visual brain mask\n'</span>, nfeatures);
+
+<span class="comment">% &lt;@@&lt;</span>
+<span class="comment">%</span>
+<span class="comment">% And here is space for the more elegant solution in which you define a</span>
+<span class="comment">% list of mask names and apply the operation in a loop for all masks in the</span>
+<span class="comment">% list</span>
+maskNames = {<span class="string">'brain_mask.nii'</span>, <span class="string">'vt_mask.nii'</span>, <span class="string">'ev_mask.nii'</span>};
+data_fn = fullfile(data_path, <span class="string">'glm_T_stats_perrun.nii'</span>);
+
+<span class="keyword">for</span> iMask=1:numel(maskNames)
+    <span class="comment">% &gt;@@&gt;</span>
+    mask_fn=fullfile(data_path, maskNames{iMask});
+    ds=cosmo_fmri_dataset(mask_fn);
+    nfeatures=sum(ds.samples&gt;0);
+    fprintf(<span class="string">'There are %6d voxels in the mask ''%s''\n'</span>, nfeatures, maskNames{iMask});
+    <span class="comment">% &lt;@@&lt;</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">There are 43822 voxels in the whole brain mask
+There are 400 voxels in the ventral-temporal mask
+There are 300 voxels in the early-visual brain mask
+There are  43822 voxels in the mask 'brain_mask.nii'
+There are    400 voxels in the mask 'vt_mask.nii'
+There are    300 voxels in the mask 'ev_mask.nii'
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Dataset Basics
+% Load datasets using cosmo_fmri_dataset
+%
+% This function loads data stored in a nifti file and return a dataset struct
+% where the data are stored in the 2-D array in field dataset.samples
+%
+% For each of the three masks ('brain','ev','vt'),
+% print the number of voxels when loading the dataset with that mask.
+%
+% Hint: the number of voxels is given by the number of columns in
+% dataset.samples
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+%% Set the datapath
+%
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+%% Compute number of voxels in each mask
+% Hints:
+% -In order not to get overwhelmed, solve a simple problem first and then
+% generalize from it.
+%   -First write some code in which you load data with full brain mask.
+% Generalization:
+%   -Next, you could just copy and alter that code such that you do the
+%   same thing with the other masks
+%   -A more elegant solution would be to put the three mask names into a
+%   cell array and to write a loop that performs the same set of operations
+%   on the members of the cell array (i.e. the three different mask names
+
+% Let's start with the simple approach.
+% Set the filename
+% >@@>
+mask_fn = fullfile(data_path, 'brain_mask.nii');
+% <@@<
+
+% Load the dataset and store in struct 'ds'
+% >@@>
+ds=cosmo_fmri_dataset(mask_fn);
+% <@@<
+
+% Compute number of features that are greater than zero
+% hint: use ds.samples
+nfeatures=sum(ds.samples>0);
+
+fprintf('There are %d voxels in the whole brain mask\n', nfeatures);
+% <@@<
+
+% Now do the same with the EV and VT masks.
+% >@@>
+mask_fn = fullfile(data_path, 'vt_mask.nii');
+ds=cosmo_fmri_dataset(mask_fn);
+nfeatures=sum(ds.samples>0);
+
+fprintf('There are %d voxels in the ventral-temporal mask\n', nfeatures);
+
+mask_fn = fullfile(data_path, 'ev_mask.nii');
+ds=cosmo_fmri_dataset(mask_fn);
+nfeatures=sum(ds.samples>0);
+fprintf('There are %d voxels in the early-visual brain mask\n', nfeatures);
+
+% <@@<
+%
+% And here is space for the more elegant solution in which you define a
+% list of mask names and apply the operation in a loop for all masks in the
+% list
+maskNames = {'brain_mask.nii', 'vt_mask.nii', 'ev_mask.nii'};
+data_fn = fullfile(data_path, 'glm_T_stats_perrun.nii');
+
+for iMask=1:numel(maskNames)
+    % >@@>
+    mask_fn=fullfile(data_path, maskNames{iMask});
+    ds=cosmo_fmri_dataset(mask_fn);
+    nfeatures=sum(ds.samples>0);
+    fprintf('There are %6d voxels in the mask ''%s''\n', nfeatures, maskNames{iMask});
+    % <@@<
+end
+
+##### SOURCE END #####
+--></body></html>

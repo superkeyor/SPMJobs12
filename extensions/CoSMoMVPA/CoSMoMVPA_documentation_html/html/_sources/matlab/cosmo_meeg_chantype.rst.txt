@@ -1,0 +1,7 @@
+.. _cosmo_meeg_chantype:
+
+cosmo meeg chantype
+===================
+
+.. include :: cosmo_meeg_chantype.txt
+

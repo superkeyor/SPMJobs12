@@ -1,0 +1,7 @@
+.. _cosmo_publish_run_scripts:
+
+cosmo publish run scripts
+=========================
+
+.. include :: cosmo_publish_run_scripts.txt
+

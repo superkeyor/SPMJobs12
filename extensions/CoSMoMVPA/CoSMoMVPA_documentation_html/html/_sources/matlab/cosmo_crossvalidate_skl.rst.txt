@@ -1,0 +1,7 @@
+.. _cosmo_crossvalidate_skl:
+
+cosmo crossvalidate skl
+=======================
+
+.. include :: cosmo_crossvalidate_skl.txt
+

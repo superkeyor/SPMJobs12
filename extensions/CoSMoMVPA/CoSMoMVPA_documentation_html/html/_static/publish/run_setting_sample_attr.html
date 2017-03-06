@@ -1,0 +1,407 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>run_setting_sample_attr</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_setting_sample_attr.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h2>Contents</h2><div><ul><li><a href="#1">Dataset Basics (setting sample attributes)</a></li><li><a href="#2">Load the dataset 'glm_T_stats_perrun.nii' masked with 'brain_mask.nii'</a></li><li><a href="#3">set targets</a></li><li><a href="#4">set chunks</a></li><li><a href="#5">Show the results</a></li><li><a href="#6">print the dataset</a></li><li><a href="#7">print the sample attributes</a></li><li><a href="#8">print targets and chunks next to each other</a></li></ul></div><h2>Dataset Basics (setting sample attributes)<a name="1"></a></h2><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><pre class="codeinput"><span class="comment">% Set the targets and the chunks</span>
+<span class="comment">%</span>
+<span class="comment">% There are 10 runs with 6 volumes per run. The runs are vertically stacked one</span>
+<span class="comment">% above the other. The six volumes in each run correspond to the stimuli:</span>
+<span class="comment">% 'monkey','lemur','mallard','warbler','ladybug','lunamoth', in that order. Add</span>
+<span class="comment">% numeric targets labels (samples atribute) such that 1 corresponds to 'monkey',</span>
+<span class="comment">% 2 corresponds to 'lemur', etc. Then add numeric chunks (another samples</span>
+<span class="comment">% attribute) so that 1 corresponds to run1, 2 corresponds to run2, etc.</span>
+
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+</pre><h2>Load the dataset 'glm_T_stats_perrun.nii' masked with 'brain_mask.nii'<a name="2"></a></h2><p>&gt;@@&gt;</p><pre class="codeinput">mask_fn = fullfile(data_path, <span class="string">'brain_mask.nii'</span>);
+data_fn = fullfile(data_path, <span class="string">'glm_T_stats_perrun.nii'</span>);
+ds=cosmo_fmri_dataset(data_fn, <span class="string">'mask'</span>, mask_fn);
+<span class="comment">% &lt;@@&lt;</span>
+</pre><h2>set targets<a name="3"></a></h2><pre class="codeinput"><span class="comment">%remember that targets are part of ds.sa and that they are stored in a</span>
+<span class="comment">%column vector</span>
+<span class="comment">% &gt;@@&gt;</span>
+ds.sa.targets = repmat(1:6, [1, 10])'; <span class="comment">%10 times labels 1 to 6, column vector</span>
+<span class="comment">% &lt;@@&lt;</span>
+</pre><h2>set chunks<a name="4"></a></h2><pre class="codeinput"><span class="comment">%remember that chunks are part of ds.sa and that they are stored in a</span>
+<span class="comment">%column vector</span>
+<span class="comment">% &gt;@@&gt;</span>
+chunks = repmat(1:10, [6, 1]);
+chunks = chunks(:); <span class="comment">%flatten matrix to a column vector</span>
+ds.sa.chunks = chunks;
+<span class="comment">% &lt;@@&lt;</span>
+</pre><h2>Show the results<a name="5"></a></h2><h2>print the dataset<a name="6"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nDataset:\n'</span>)
+cosmo_disp(ds)
+</pre><pre class="codeoutput">
+Dataset:
+.a                                                                        
+  .vol                                                                    
+    .mat                                                                  
+      [ -3         0         0       121                                  
+         0         3         0      -114                                  
+         0         0         3     -11.1                                  
+         0         0         0         1 ]                                
+    .xform                                                                
+      'scanner_anat'                                                      
+    .dim                                                                  
+      [ 80        80        43 ]                                          
+  .fdim                                                                   
+    .labels                                                               
+      { 'i'                                                               
+        'j'                                                               
+        'k' }                                                             
+    .values                                                               
+      { [ 1         2         3  ...  78        79        80 ]@1x80       
+        [ 1         2         3  ...  78        79        80 ]@1x80       
+        [ 1         2         3  ...  41        42        43 ]@1x43 }     
+.sa                                                                       
+  .targets                                                                
+    [ 1                                                                   
+      2                                                                   
+      3                                                                   
+      :                                                                   
+      4                                                                   
+      5                                                                   
+      6 ]@60x1                                                            
+  .chunks                                                                 
+    [  1                                                                  
+       1                                                                  
+       1                                                                  
+       :                                                                  
+      10                                                                  
+      10                                                                  
+      10 ]@60x1                                                           
+.samples                                                                  
+  [  0.933  0.000495       2.1  ...   0.681     0.626     0.421           
+    -0.772     0.117      1.73  ...   0.723     0.892       1.7           
+     0.621      1.52     -0.25  ...  -0.341    -0.832    -0.546           
+       :        :         :             :         :         :             
+     -2.37     -1.92    -0.879  ...   0.784      0.67     0.522           
+    -0.261     0.351   -0.0767  ...    2.81      2.27    -0.947           
+     -1.29    -0.964    -0.966  ...   0.827     0.833     0.991 ]@60x43822
+.fa                                                                       
+  .i                                                                      
+    [ 35        36        44  ...  46        47        47 ]@1x43822       
+  .j                                                                      
+    [ 17        17        17  ...  35        35        36 ]@1x43822       
+  .k                                                                      
+    [ 1         1         1  ...  39        39        39 ]@1x43822        
+</pre><h2>print the sample attributes<a name="7"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nSample attributes (in full):\n'</span>)
+cosmo_disp(ds.sa,<span class="string">'edgeitems'</span>,Inf); <span class="comment">%'edgeitems determine how much of a</span>
+                                   <span class="comment">% matrix is displayed. Try different values.</span>
+</pre><pre class="codeoutput">
+Sample attributes (in full):
+.targets
+  [ 1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6   
+    1   
+    2   
+    3   
+    4   
+    5   
+    6 ] 
+.chunks 
+  [  1  
+     1  
+     1  
+     1  
+     1  
+     1  
+     2  
+     2  
+     2  
+     2  
+     2  
+     2  
+     3  
+     3  
+     3  
+     3  
+     3  
+     3  
+     4  
+     4  
+     4  
+     4  
+     4  
+     4  
+     5  
+     5  
+     5  
+     5  
+     5  
+     5  
+     6  
+     6  
+     6  
+     6  
+     6  
+     6  
+     7  
+     7  
+     7  
+     7  
+     7  
+     7  
+     8  
+     8  
+     8  
+     8  
+     8  
+     8  
+     9  
+     9  
+     9  
+     9  
+     9  
+     9  
+    10  
+    10  
+    10  
+    10  
+    10  
+    10 ]
+</pre><h2>print targets and chunks next to each other<a name="8"></a></h2><pre class="codeinput">fprintf(<span class="string">'\nTargets and chunks attributes (in full):\n'</span>)
+nsamples=size(ds.samples,1);
+fprintf(<span class="string">'sample #   target   chunk\n'</span>);
+index_target_chunks=[(1:nsamples)', ds.sa.targets,ds.sa.chunks];
+cosmo_disp(index_target_chunks,<span class="string">'edgeitems'</span>,Inf);
+</pre><pre class="codeoutput">
+Targets and chunks attributes (in full):
+sample #   target   chunk
+[  1         1         1  
+   2         2         1  
+   3         3         1  
+   4         4         1  
+   5         5         1  
+   6         6         1  
+   7         1         2  
+   8         2         2  
+   9         3         2  
+  10         4         2  
+  11         5         2  
+  12         6         2  
+  13         1         3  
+  14         2         3  
+  15         3         3  
+  16         4         3  
+  17         5         3  
+  18         6         3  
+  19         1         4  
+  20         2         4  
+  21         3         4  
+  22         4         4  
+  23         5         4  
+  24         6         4  
+  25         1         5  
+  26         2         5  
+  27         3         5  
+  28         4         5  
+  29         5         5  
+  30         6         5  
+  31         1         6  
+  32         2         6  
+  33         3         6  
+  34         4         6  
+  35         5         6  
+  36         6         6  
+  37         1         7  
+  38         2         7  
+  39         3         7  
+  40         4         7  
+  41         5         7  
+  42         6         7  
+  43         1         8  
+  44         2         8  
+  45         3         8  
+  46         4         8  
+  47         5         8  
+  48         6         8  
+  49         1         9  
+  50         2         9  
+  51         3         9  
+  52         4         9  
+  53         5         9  
+  54         6         9  
+  55         1        10  
+  56         2        10  
+  57         3        10  
+  58         4        10  
+  59         5        10  
+  60         6        10 ]
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Dataset Basics (setting sample attributes)
+%
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+% Set the targets and the chunks
+%
+% There are 10 runs with 6 volumes per run. The runs are vertically stacked one
+% above the other. The six volumes in each run correspond to the stimuli:
+% 'monkey','lemur','mallard','warbler','ladybug','lunamoth', in that order. Add
+% numeric targets labels (samples atribute) such that 1 corresponds to 'monkey',
+% 2 corresponds to 'lemur', etc. Then add numeric chunks (another samples
+% attribute) so that 1 corresponds to run1, 2 corresponds to run2, etc.
+
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+%% Load the dataset 'glm_T_stats_perrun.nii' masked with 'brain_mask.nii'
+% >@@>
+mask_fn = fullfile(data_path, 'brain_mask.nii');
+data_fn = fullfile(data_path, 'glm_T_stats_perrun.nii');
+ds=cosmo_fmri_dataset(data_fn, 'mask', mask_fn);
+% <@@<
+%% set targets
+%remember that targets are part of ds.sa and that they are stored in a
+%column vector
+% >@@>
+ds.sa.targets = repmat(1:6, [1, 10])'; %10 times labels 1 to 6, column vector
+% <@@<
+%% set chunks
+%remember that chunks are part of ds.sa and that they are stored in a
+%column vector
+% >@@>
+chunks = repmat(1:10, [6, 1]);
+chunks = chunks(:); %flatten matrix to a column vector
+ds.sa.chunks = chunks;
+% <@@<
+
+%% Show the results
+
+%% print the dataset
+fprintf('\nDataset:\n')
+cosmo_disp(ds)
+
+%% print the sample attributes
+fprintf('\nSample attributes (in full):\n')
+cosmo_disp(ds.sa,'edgeitems',Inf); %'edgeitems determine how much of a
+                                   % matrix is displayed. Try different values.
+
+%% print targets and chunks next to each other
+fprintf('\nTargets and chunks attributes (in full):\n')
+nsamples=size(ds.samples,1);
+fprintf('sample #   target   chunk\n');
+index_target_chunks=[(1:nsamples)', ds.sa.targets,ds.sa.chunks];
+cosmo_disp(index_target_chunks,'edgeitems',Inf);
+
+##### SOURCE END #####
+--></body></html>

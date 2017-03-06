@@ -1,0 +1,668 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo map2meeg skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo map2surface skl" href="cosmo_map2surface_skl.html" />
+    <link rel="prev" title="cosmo map2fmri skl" href="cosmo_map2fmri_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_map2surface_skl.html" title="cosmo map2surface skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_map2fmri_skl.html" title="cosmo map2fmri skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-map2meeg-skl">
+<span id="id1"></span><h1>cosmo map2meeg skl<a class="headerlink" href="#cosmo-map2meeg-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>hdr<span class="p">=</span><span class="nf">cosmo_map2meeg</span><span class="p">(</span>ds, fn<span class="p">)</span><span class="w"></span>
+<span class="c">% maps a dataset to a FieldTrip or EEGlab structure or file</span>
+<span class="c">%</span>
+<span class="c">% hdr=cosmo_map2meeg(ds[, fn])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%    ds               dataset struct with field .samples with MEEG data</span>
+<span class="c">%    fn               output filename or extension. If a filename,</span>
+<span class="c">%                     the following extentions are supported:</span>
+<span class="c">%                       .mat :        FieldTrip time-locked or</span>
+<span class="c">%                                     time-frequency  data at  either the</span>
+<span class="c">%                                     sensor or source level.</span>
+<span class="c">%                       .txt :        exported EEGLab with timelocked data.</span>
+<span class="c">%                       .daterp       time-locked               }</span>
+<span class="c">%                       .icaerp       ICA time-locked           } EEGLab</span>
+<span class="c">%                       .dattimef     time-freq                 }</span>
+<span class="c">%                       .icatimef     ICA time-freq             }</span>
+<span class="c">%                       .datitc       inter-trial coherence     }</span>
+<span class="c">%                       .icaitc       ICA inter-trial coherence }</span>
+<span class="c">%                     To avoid writing a file, but get output in the hdr</span>
+<span class="c">%                     field, use one of the extensions above but with the</span>
+<span class="c">%                     dot (&#39;.&#39;) replaced by a hyphen (&#39;-&#39;), for example</span>
+<span class="c">%                     &#39;-dattimef&#39; for time-freq data.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%    hdr        FieldTrip or EEGLAB struct with the MEEG data</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%    - a typical use case is to use this function to map the dataset to a</span>
+<span class="c">%      FieldTrip struct, then use FieldTrip to visualize the data</span>
+<span class="c">%    - there is currently no support for writing EEGLAB &#39;ersp&#39; data.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % convert a dataset struct to a FieldTrip struct</span>
+<span class="c">%     ft=cosmo_map2meeg(ds);</span>
+<span class="c">%</span>
+<span class="c">%     % store a dataset in FieldTrip file</span>
+<span class="c">%     cosmo_map2meeg(ds,&#39;fieldtrip_data.mat&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % store a timeseries dataset in an EEGlab text file</span>
+<span class="c">%     cosmo_map2meeg(ds,&#39;eeglab_data.txt&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % convert a dataset structure to a FieldTrip structure</span>
+<span class="c">%     ft=cosmo_map2meeg(ds,&#39;-mat&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % convert a time-lock dataset to an EEGLAB structure</span>
+<span class="c">%     eeglab_daterp=cosmo_map2meg(ds,&#39;-daterp&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % write EEGLAB time-frequency data</span>
+<span class="c">%     cosmo_map2meeg(ds,&#39;timefreq.dattimef&#39;);</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span>
+        <span class="n">fn</span><span class="p">=</span><span class="s">&#39;-mat&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;meeg&#39;</span><span class="p">);</span>
+
+    <span class="c">% for now only support ft-like output</span>
+    <span class="p">[</span><span class="n">ext</span><span class="p">,</span><span class="n">img_format</span><span class="p">,</span><span class="n">write_to_file</span><span class="p">]=</span><span class="n">find_img_format</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+
+    <span class="n">builder</span><span class="p">=</span><span class="n">img_format</span><span class="p">.</span><span class="n">builder</span><span class="p">;</span>
+    <span class="n">hdr</span><span class="p">=</span><span class="n">builder</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+
+    <span class="c">% if filename was provided, store to file</span>
+    <span class="k">if</span> <span class="n">write_to_file</span>
+        <span class="n">writer</span><span class="p">=</span><span class="n">img_format</span><span class="p">.</span><span class="n">writer</span><span class="p">;</span>
+        <span class="c">% write the file</span>
+        <span class="n">writer</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span> <span class="n">hdr</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>[ext,img_format,write_to_file]<span class="p">=</span><span class="nf">find_img_format</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">ischar</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;filename must be non-empty string&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">write_to_file</span><span class="p">=</span><span class="n">fn</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">~=</span><span class="s">&#39;-&#39;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">write_to_file</span>
+        <span class="n">ext</span><span class="p">=</span><span class="n">get_filename_extension</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">ext</span><span class="p">=</span><span class="n">fn</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">all_formats</span><span class="p">=</span><span class="n">get_all_supported_img_formats</span><span class="p">();</span>
+    <span class="n">keys</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">all_formats</span><span class="p">);</span>
+
+    <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">ext</span><span class="p">},</span><span class="n">all_formats</span><span class="p">.(</span><span class="n">x</span><span class="p">).</span><span class="n">exts</span><span class="p">),</span><span class="n">keys</span><span class="p">));</span>
+    <span class="n">n_match</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">idx</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">n_match</span><span class="o">&lt;</span><span class="p">=</span><span class="mi">1</span><span class="p">);</span> <span class="c">% cannot have multiple matches</span>
+
+    <span class="k">if</span> <span class="n">n_match</span><span class="o">==</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Image format not found for extension &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span><span class="n">ext</span><span class="p">)</span>
+    <span class="k">end</span>
+
+    <span class="n">img_format</span><span class="p">=</span><span class="n">all_formats</span><span class="p">.(</span><span class="n">keys</span><span class="p">{</span><span class="n">idx</span><span class="p">});</span>
+
+<span class="k">function</span><span class="w"> </span>ext<span class="p">=</span><span class="nf">get_filename_extension</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">fn_parts</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">fn_parts</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">2</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Filename needs extension&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+    <span class="n">ext</span><span class="p">=</span><span class="n">fn_parts</span><span class="p">{</span><span class="k">end</span><span class="p">};</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>all_formats<span class="p">=</span><span class="nf">get_all_supported_img_formats</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">all_formats</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="c">% EEGLAB text</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">eeglab_txt</span><span class="p">.</span><span class="n">exts</span><span class="p">={</span><span class="s">&#39;txt&#39;</span><span class="p">};</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">eeglab_txt</span><span class="p">.</span><span class="n">builder</span><span class="p">=@</span><span class="n">build_ft</span><span class="p">;</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">eeglab_txt</span><span class="p">.</span><span class="n">writer</span><span class="p">=@</span><span class="n">write_eeglab_txt</span><span class="p">;</span>
+
+    <span class="c">% EEGLAB matlab</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">eeglab</span><span class="p">.</span><span class="n">exts</span><span class="p">={</span>  <span class="s">&#39;daterp&#39;</span><span class="p">,</span><span class="c">...</span>
+                               <span class="s">&#39;icaerp&#39;</span><span class="p">,</span><span class="c">...</span>
+                               <span class="s">&#39;dattimef&#39;</span><span class="p">,</span><span class="c">...</span>
+                               <span class="s">&#39;icatimef&#39;</span><span class="p">,</span><span class="c">...</span>
+                               <span class="s">&#39;datitc&#39;</span><span class="p">,</span><span class="c">...</span>
+                               <span class="s">&#39;icaitc&#39;</span><span class="p">};</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">eeglab</span><span class="p">.</span><span class="n">builder</span><span class="p">=@</span><span class="n">build_eeglab</span><span class="p">;</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">eeglab</span><span class="p">.</span><span class="n">writer</span><span class="p">=@</span><span class="n">write_struct_as_mat</span><span class="p">;</span>
+
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">ft</span><span class="p">.</span><span class="n">exts</span><span class="p">={</span><span class="s">&#39;mat&#39;</span><span class="p">};</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">ft</span><span class="p">.</span><span class="n">builder</span><span class="p">=@</span><span class="n">build_ft</span><span class="p">;</span>
+    <span class="n">all_formats</span><span class="p">.</span><span class="n">ft</span><span class="p">.</span><span class="n">writer</span><span class="p">=@</span><span class="n">write_struct_as_mat</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">write_struct_as_mat</span><span class="p">(</span>fn,hdr<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% use matlab save</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;-mat&#39;</span><span class="p">,</span><span class="s">&#39;-struct&#39;</span><span class="p">,</span><span class="s">&#39;hdr&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">choose_equal_or_exception</span><span class="p">(</span>value,if_true,if_false,desc<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">if_true</span><span class="p">)</span>
+        <span class="n">tf</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="n">if_false</span><span class="p">)</span>
+        <span class="n">tf</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;value for %s is not supported&#39;</span><span class="p">,</span> <span class="n">desc</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="c">% EEGLAB text</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="k">function</span><span class="w"> </span><span class="nf">write_eeglab_txt</span><span class="p">(</span>fn, hdr<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">is_ft_timelock</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Only time-lock data is supported for EEGlab data&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% prepare header</span>
+    <span class="n">header</span><span class="p">=[</span><span class="n">cosmo_strjoin</span><span class="p">([{</span><span class="s">&#39; &#39;</span><span class="p">},</span> <span class="n">hdr</span><span class="p">.</span><span class="n">label</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">,{</span><span class="s">&#39;&#39;</span><span class="p">}],</span><span class="s">&#39;\t&#39;</span><span class="p">)</span> <span class="s">&#39;\n&#39;</span><span class="p">];</span>
+
+    <span class="c">% prepare body</span>
+    <span class="n">data</span><span class="p">=</span><span class="n">hdr</span><span class="p">.</span><span class="n">trial</span><span class="p">;</span>
+    <span class="p">[</span><span class="n">ntrial</span><span class="p">,</span> <span class="n">nchan</span><span class="p">,</span> <span class="n">ntime</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+    <span class="n">arr</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">ntrial</span><span class="o">*</span><span class="n">ntime</span><span class="p">,</span><span class="n">nchan</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% set time dimension - and convert seconds to miliseconds</span>
+    <span class="n">arr</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)=</span><span class="nb">repmat</span><span class="p">(</span><span class="n">hdr</span><span class="p">.</span><span class="n">time</span><span class="p">(:)</span><span class="o">*</span><span class="mi">1000</span><span class="p">,</span><span class="n">ntrial</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">arr</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)=</span><span class="nb">reshape</span><span class="p">(</span><span class="nb">shiftdim</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="n">ntime</span><span class="o">*</span><span class="n">ntrial</span><span class="p">,</span><span class="n">nchan</span><span class="p">);</span>
+
+    <span class="c">% prepare pattern to write data in array</span>
+    <span class="n">arr_pat</span><span class="p">=[</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="nb">repmat</span><span class="p">({</span><span class="s">&#39;%.4f&#39;</span><span class="p">},</span><span class="mi">1</span><span class="p">,</span><span class="n">nchan</span><span class="o">+</span><span class="mi">1</span><span class="p">),</span><span class="s">&#39;\t&#39;</span><span class="p">)</span> <span class="s">&#39;\n&#39;</span><span class="p">];</span>
+
+    <span class="c">% write data</span>
+    <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">);</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="n">header</span><span class="p">);</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="n">arr_pat</span><span class="p">,</span><span class="n">arr</span><span class="o">&#39;</span><span class="p">);</span> <span class="c">% transpose because order is row then column</span>
+    <span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">);</span>
+
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="c">% EEGLAB</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">build_eeglab</span><span class="p">(</span>ds,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">fdim</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">;</span>
+    <span class="n">fdim_labels</span><span class="p">=</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">(:);</span>
+    <span class="n">fdim_values</span><span class="p">=</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">(:);</span>
+
+    <span class="n">has_ica</span><span class="p">=</span><span class="n">choose_equal_or_exception</span><span class="p">(</span><span class="n">fdim_labels</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="s">&#39;comp&#39;</span><span class="p">,</span><span class="s">&#39;chan&#39;</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;fdim channel label&#39;</span><span class="p">);</span>
+    <span class="n">has_freq</span><span class="p">=</span><span class="n">choose_equal_or_exception</span><span class="p">(</span><span class="n">fdim_labels</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">),</span><span class="c">...</span>
+                                        <span class="p">{</span><span class="s">&#39;freq&#39;</span><span class="p">;</span><span class="s">&#39;time&#39;</span><span class="p">},{</span><span class="s">&#39;time&#39;</span><span class="p">},</span><span class="c">...</span>
+                                        <span class="s">&#39;fdim dimension labels&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">has_ica</span>
+        <span class="n">chan_prefix</span><span class="p">=</span><span class="s">&#39;comp&#39;</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">chan_prefix</span><span class="p">=</span><span class="s">&#39;chan&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% preparet output</span>
+    <span class="n">s</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="c">% set frequency, if present</span>
+    <span class="k">if</span> <span class="n">has_freq</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">freqs</span><span class="p">=</span><span class="n">fdim_values</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+        <span class="n">freq_sz</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">s</span><span class="p">.</span><span class="n">freqs</span><span class="p">);</span>
+
+        <span class="n">datatype_candidates</span><span class="p">={</span><span class="s">&#39;timef&#39;</span><span class="p">,</span><span class="s">&#39;itc&#39;</span><span class="p">};</span>
+        <span class="n">msk</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">contains_string</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span><span class="n">x</span><span class="p">),</span><span class="n">datatype_candidates</span><span class="p">);</span>
+        <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">msk</span><span class="p">);</span>
+
+        <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;this should not happen&#39;</span><span class="p">)</span> <span class="c">% weird data</span>
+        <span class="n">datatype</span><span class="p">=</span><span class="n">datatype_candidates</span><span class="p">{</span><span class="n">idx</span><span class="p">};</span>
+
+        <span class="n">chan_suffix</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;_%s&#39;</span><span class="p">,</span><span class="n">datatype</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">freq_sz</span><span class="p">=[];</span>
+        <span class="n">datatype</span><span class="p">=</span><span class="s">&#39;erp&#39;</span><span class="p">;</span>
+        <span class="n">chan_suffix</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% set datatype</span>
+    <span class="n">s</span><span class="p">.</span><span class="n">datatype</span><span class="p">=</span><span class="n">upper</span><span class="p">(</span><span class="n">datatype</span><span class="p">);</span>
+
+    <span class="c">% deal with feature dimensions</span>
+    <span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ntime</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">fdim_values</span><span class="p">{</span><span class="k">end</span><span class="p">});</span>
+    <span class="n">each_chan_sz</span><span class="p">=[</span><span class="n">nsamples</span><span class="p">,</span><span class="n">freq_sz</span><span class="p">,</span><span class="n">ntime</span><span class="p">];</span> <span class="c">% with or without freq</span>
+
+    <span class="n">chan_names</span><span class="p">=</span><span class="n">fdim_values</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+    <span class="n">nchan</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">chan_names</span><span class="p">);</span>
+
+    <span class="c">% unflattten the array</span>
+    <span class="n">arr</span><span class="p">=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">nchan</span><span class="o">==</span><span class="nb">size</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nchan</span>
+        <span class="n">chan_arr</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">arr</span><span class="p">(:,</span><span class="n">k</span><span class="p">,:),</span><span class="n">each_chan_sz</span><span class="p">);</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s%d%s&#39;</span><span class="p">,</span><span class="n">chan_prefix</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">chan_suffix</span><span class="p">);</span>
+
+        <span class="c">% it seems that for freq data, single trial data is the last</span>
+        <span class="c">% dimension, whereas for erp data, single trial data is the first</span>
+        <span class="c">% dimension.</span>
+        <span class="k">if</span> <span class="n">has_freq</span>
+            <span class="n">chan_arr</span><span class="p">=</span><span class="nb">shiftdim</span><span class="p">(</span><span class="n">chan_arr</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+         <span class="c">% note: no shift for erp data, as time is already the first</span>
+         <span class="c">% dimension</span>
+        <span class="k">end</span>
+        <span class="n">s</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">chan_arr</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">has_ica</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">chanlabels</span><span class="p">=</span><span class="n">chan_names</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">s</span><span class="p">.</span><span class="n">times</span><span class="p">=</span><span class="n">fdim_values</span><span class="p">{</span><span class="k">end</span><span class="p">};</span>
+    <span class="n">s</span><span class="p">=</span><span class="n">set_parameters_if_present</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">contains_string</span><span class="p">(</span>haystack,needle<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tf</span><span class="p">=</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">strfind</span><span class="p">(</span><span class="n">haystack</span><span class="p">,</span><span class="n">needle</span><span class="p">));</span>
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">set_parameters_if_present</span><span class="p">(</span>s,ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.meeg.parameters&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">parameters</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">parameters</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="c">% FieldTrip</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">is_ft_timelock</span><span class="p">(</span>ft<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tf</span><span class="p">=</span><span class="n">isstruct</span><span class="p">(</span><span class="n">ft</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+            <span class="n">isfield</span><span class="p">(</span><span class="n">ft</span><span class="p">,</span><span class="s">&#39;dimord&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+            <span class="n">cosmo_match</span><span class="p">({</span><span class="n">ft</span><span class="p">.</span><span class="n">dimord</span><span class="p">},</span> <span class="p">{</span><span class="s">&#39;rpt_chan_time&#39;</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;subj_chan_time&#39;</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;chan_time&#39;</span><span class="p">});</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>samples_field<span class="p">=</span><span class="nf">ft_detect_samples_field</span><span class="p">(</span>ds, is_without_samples_dim<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">nfreq</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">,{</span><span class="s">&#39;freq&#39;</span><span class="p">}));</span>
+    <span class="n">ntime</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">,{</span><span class="s">&#39;time&#39;</span><span class="p">}));</span>
+    <span class="n">nchan</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">,{</span><span class="s">&#39;chan&#39;</span><span class="p">}));</span>
+
+    <span class="n">has_samples_field</span><span class="p">=</span><span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.meeg.samples_field&#39;</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">is_ds_source_struct</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">is_without_samples_dim</span>
+            <span class="n">main_field</span><span class="p">=</span><span class="s">&#39;avg&#39;</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">main_field</span><span class="p">=</span><span class="s">&#39;trial&#39;</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">cosmo_match</span><span class="p">({</span><span class="s">&#39;mom&#39;</span><span class="p">},</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">)</span>
+            <span class="n">sub_field</span><span class="p">=</span><span class="s">&#39;mom&#39;</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">sub_field</span><span class="p">=</span><span class="s">&#39;pow&#39;</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">samples_field</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s.%s&#39;</span><span class="p">,</span><span class="n">main_field</span><span class="p">,</span><span class="n">sub_field</span><span class="p">);</span>
+
+        <span class="k">return</span>
+    <span class="k">else</span>
+        <span class="k">if</span> <span class="n">nchan</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">ntime</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span>
+            <span class="k">if</span> <span class="n">nfreq</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span>
+                <span class="c">% time-freq data</span>
+                <span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;powspctrm&#39;</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="k">if</span> <span class="n">is_without_samples_dim</span>
+                <span class="c">% time-locked, single sample</span>
+                <span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;avg&#39;</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="k">end</span>
+
+
+            <span class="k">if</span> <span class="o">~</span><span class="n">has_samples_field</span>
+                <span class="c">% time-locked, multiple trials</span>
+                <span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;trial&#39;</span><span class="p">;</span>
+                <span class="k">return</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+    <span class="c">% fallback option</span>
+    <span class="n">samples_field</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_field</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">is_ds_source_struct</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tf</span><span class="p">=</span><span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;fa&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="s">&#39;pos&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.fdim.labels&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="n">cosmo_match</span><span class="p">({</span><span class="s">&#39;pos&#39;</span><span class="p">},</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>[ft, samples_label, dim_labels]<span class="p">=</span><span class="nf">get_ft_samples</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">arr</span><span class="p">,</span> <span class="n">dim_labels</span><span class="p">]=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">ds</span><span class="p">,[],</span><span class="s">&#39;set_missing_to&#39;</span><span class="p">,</span><span class="n">NaN</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;matrix_labels&#39;</span><span class="p">,{</span><span class="s">&#39;pos&#39;</span><span class="p">});</span>
+
+    <span class="n">is_without_samples_dim</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.meeg.samples_label&#39;</span><span class="p">)</span>
+        <span class="n">samples_label</span><span class="p">={</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_label</span><span class="p">};</span>
+    <span class="k">else</span>
+        <span class="k">if</span> <span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
+            <span class="n">samples_label</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">samples_label</span><span class="p">={</span><span class="s">&#39;rpt&#39;</span><span class="p">};</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">is_without_samples_dim</span><span class="p">=</span><span class="nb">isempty</span><span class="p">(</span><span class="n">samples_label</span><span class="p">);</span>
+
+    <span class="c">% store the data</span>
+    <span class="n">samples_field</span><span class="p">=</span><span class="n">ft_detect_samples_field</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">is_without_samples_dim</span><span class="p">);</span>
+
+    <span class="n">samples_field_keys</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">samples_field</span><span class="p">,</span><span class="s">&#39;.&#39;</span><span class="p">);</span>
+    <span class="n">nsubfields</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">samples_field_keys</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">xor</span><span class="p">(</span><span class="n">nsubfields</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">,</span><span class="n">is_ds_source_struct</span><span class="p">(</span><span class="n">ds</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;Found sample field %s, which is incompatible &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;with the dataset being in source space or not. &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;This is not supported&#39;</span><span class="p">],</span><span class="n">samples_field</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">switch</span> <span class="n">nsubfields</span>
+        <span class="k">case</span> <span class="mi">0</span>
+            <span class="c">% non-source data</span>
+            <span class="n">ft</span><span class="p">=</span><span class="n">get_ft_sensor_samples_from_array</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span> <span class="n">samples_label</span><span class="p">,</span> <span class="c">...</span>
+                                        <span class="n">samples_field_keys</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+
+        <span class="k">case</span> <span class="mi">1</span>
+            <span class="c">% source data</span>
+            <span class="n">ft</span><span class="p">=</span><span class="n">get_ft_source_samples_from_array</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">arr</span><span class="p">,</span> <span class="c">...</span>
+                                        <span class="n">samples_field_keys</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="c">...</span>
+                                        <span class="n">samples_field_keys</span><span class="p">{</span><span class="mi">2</span><span class="p">});</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;Found sample field %s with more than one &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;subfield %s&#39;</span><span class="p">],</span><span class="n">samples_field</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>ft<span class="p">=</span><span class="nf">get_ft_sensor_samples_from_array</span><span class="p">(</span>arr, samples_label, key<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">samples_label</span><span class="p">)</span>
+        <span class="n">arr_size</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+        <span class="n">size_at_least_2d</span><span class="p">=[</span><span class="n">arr_size</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="mi">1</span><span class="p">];</span>
+        <span class="n">arr_ft</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="n">size_at_least_2d</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">arr_ft</span><span class="p">=</span><span class="n">arr</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ft</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">ft</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">arr_ft</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>ft<span class="p">=</span><span class="nf">get_ft_source_samples_from_array</span><span class="p">(</span>ds, arr, key, sub_key<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ft</span><span class="p">=</span><span class="n">init_ft_source_fields</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="n">arr_size</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">arr</span><span class="p">);</span>
+    <span class="n">nsamples</span><span class="p">=</span><span class="n">arr_size</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">remainder_size</span><span class="p">=</span><span class="n">arr_size</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">);</span>
+
+
+    <span class="k">switch</span> <span class="n">sub_key</span>
+        <span class="k">case</span> <span class="s">&#39;pow&#39;</span>
+            <span class="n">converter</span><span class="p">=@</span><span class="n">convert_ft_source_vector2array</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s">&#39;mom&#39;</span>
+            <span class="n">converter</span><span class="p">=@</span><span class="n">convert_ft_source_vector2cell</span><span class="p">;</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;unsupported key %s&#39;</span><span class="p">,</span> <span class="n">sub_key</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">arr_sample_mat</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">arr</span><span class="p">,</span><span class="n">nsamples</span><span class="p">,[]);</span>
+    <span class="n">struct_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nsamples</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+        <span class="n">struct_cell</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="n">converter</span><span class="p">(</span><span class="n">arr_sample_mat</span><span class="p">(</span><span class="nb">j</span><span class="p">,:),</span><span class="n">remainder_size</span><span class="p">,</span> <span class="c">...</span>
+                                                <span class="n">ft</span><span class="p">.</span><span class="n">inside</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">arr_struct</span><span class="p">=</span><span class="n">struct</span><span class="p">(</span><span class="n">sub_key</span><span class="p">,</span><span class="n">struct_cell</span><span class="p">);</span>
+    <span class="n">ft</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">arr_struct</span><span class="p">;</span>
+
+    <span class="n">key2method</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">key2method</span><span class="p">.</span><span class="n">avg</span><span class="p">=</span><span class="s">&#39;average&#39;</span><span class="p">;</span>
+    <span class="n">key2method</span><span class="p">.</span><span class="n">trial</span><span class="p">=</span><span class="s">&#39;rawtrial&#39;</span><span class="p">;</span>
+
+    <span class="n">ft</span><span class="p">.</span><span class="n">method</span><span class="p">=</span><span class="n">key2method</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">arr</span><span class="p">=</span><span class="n">convert_ft_source_vector2array</span><span class="p">(</span><span class="n">arr_vec</span><span class="p">,</span> <span class="n">remainder_size</span><span class="p">,</span> <span class="c">...</span>
+                                                <span class="n">is_inside</span><span class="p">)</span>
+    <span class="n">arr</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">arr_vec</span><span class="p">,[</span><span class="n">remainder_size</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="n">arr</span><span class="p">(</span><span class="o">~</span><span class="n">is_inside</span><span class="p">)=</span><span class="n">NaN</span><span class="p">;</span>
+
+
+<span class="k">function</span> <span class="nf">arr_cell</span><span class="p">=</span><span class="n">convert_ft_source_vector2cell</span><span class="p">(</span><span class="n">arr_vec</span><span class="p">,</span><span class="n">remainder_size</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">is_inside</span><span class="p">)</span>
+    <span class="n">nsensors</span><span class="p">=</span><span class="n">remainder_size</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">remainder_remainder_size</span><span class="p">=[</span><span class="n">remainder_size</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+
+    <span class="n">arr_sens_mat</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">arr_vec</span><span class="p">,</span><span class="n">nsensors</span><span class="p">,[]);</span>
+    <span class="n">arr_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nsensors</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsensors</span>
+        <span class="k">if</span> <span class="n">is_inside</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+            <span class="n">arr_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">arr_sens_mat</span><span class="p">(</span><span class="n">k</span><span class="p">,:),</span><span class="c">...</span>
+                                        <span class="n">remainder_remainder_size</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>ft<span class="p">=</span><span class="nf">ds_copy_fields_with_matching_sample_size</span><span class="p">(</span>ft,ds,keys<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">value</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+            <span class="k">if</span> <span class="nb">size</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="n">nsamples</span>
+                <span class="n">ft</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">value</span><span class="p">;</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>ft<span class="p">=</span><span class="nf">init_ft_source_fields</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ft</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="c">% for MEEG source data, set the .inside field</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">is_ds_source_struct</span><span class="p">(</span><span class="n">ds</span><span class="p">));</span>
+    <span class="p">[</span><span class="n">dim</span><span class="p">,</span><span class="n">pos_index</span><span class="p">]=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;pos&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+
+    <span class="c">% set the inside field</span>
+    <span class="n">inside_ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">inside_ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(:)=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">inside_arr</span><span class="p">=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">inside_ds</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;matrix_labels&#39;</span><span class="p">,{</span><span class="s">&#39;pos&#39;</span><span class="p">});</span>
+
+    <span class="n">inside_arr_pos_first</span><span class="p">=</span><span class="nb">shiftdim</span><span class="p">(</span><span class="n">inside_arr</span><span class="p">,</span><span class="n">pos_index</span><span class="p">);</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">inside_arr_pos_first</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">inside_matrix_pos_first</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">inside_arr_pos_first</span><span class="p">,</span><span class="n">n</span><span class="p">,[]);</span>
+    <span class="n">ft</span><span class="p">.</span><span class="n">inside</span><span class="p">=</span><span class="n">any</span><span class="p">(</span><span class="n">inside_matrix_pos_first</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.meeg.dim&#39;</span><span class="p">)</span>
+        <span class="n">ft</span><span class="p">.</span><span class="n">dim</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">dim</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="c">% use regular grid to determine</span>
+        <span class="n">ds_vol</span><span class="p">=</span><span class="n">cosmo_vol_grid_convert</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;tovol&#39;</span><span class="p">);</span>
+        <span class="n">ft</span><span class="p">.</span><span class="n">dim</span><span class="p">=</span><span class="n">ds_vol</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">dim</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>ft<span class="p">=</span><span class="nf">build_ft</span><span class="p">(</span>ds,unused<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% get fieldtrip-specific fields from header</span>
+    <span class="p">[</span><span class="n">ft</span><span class="p">,</span> <span class="n">samples_label</span><span class="p">,</span> <span class="n">dim_labels</span><span class="p">]=</span><span class="n">get_ft_samples</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+
+    <span class="c">% set dimord</span>
+    <span class="n">underscore2dash</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="n">strrep</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39;-&#39;</span><span class="p">);</span>
+
+    <span class="n">dimord_labels</span><span class="p">=[</span><span class="n">samples_label</span><span class="p">;</span> <span class="c">...</span>
+                    <span class="n">cellfun</span><span class="p">(</span><span class="n">underscore2dash</span><span class="p">,</span><span class="n">dim_labels</span><span class="p">(:),</span><span class="c">...</span>
+                                            <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">)];</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">is_ds_source_struct</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="n">ft</span><span class="p">.</span><span class="n">dimord</span><span class="p">=</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">dimord_labels</span><span class="p">,</span><span class="s">&#39;_&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% store each feature attribute dimension value</span>
+    <span class="n">ndim</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">dim</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ndim</span>
+        <span class="n">dim_label</span><span class="p">=</span><span class="n">dim_labels</span><span class="p">{</span><span class="n">dim</span><span class="p">};</span>
+        <span class="n">dim_value</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">dim</span><span class="p">};</span>
+        <span class="k">switch</span> <span class="n">dim_label</span>
+            <span class="k">case</span> <span class="s">&#39;mom&#39;</span>
+                <span class="c">% ignore</span>
+                <span class="k">continue</span>
+            <span class="k">case</span> <span class="s">&#39;chan&#39;</span>
+                <span class="n">dim_label</span><span class="p">=</span><span class="s">&#39;label&#39;</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&#39;pos&#39;</span>
+                <span class="n">dim_value</span><span class="p">=</span><span class="n">dim_value</span><span class="o">&#39;</span><span class="p">;</span>
+            <span class="k">otherwise</span>
+                <span class="c">% time or freq; fieldtrip will puke with column vector</span>
+                <span class="n">dim_value</span><span class="p">=</span><span class="n">dim_value</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="k">end</span>
+        <span class="n">ft</span><span class="p">.(</span><span class="n">dim_label</span><span class="p">)=</span><span class="n">dim_value</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ft</span><span class="p">=</span><span class="n">ds_copy_fields_with_matching_sample_size</span><span class="p">(</span><span class="n">ft</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="p">{</span><span class="s">&#39;rpt&#39;</span><span class="p">,</span><span class="s">&#39;trialinfo&#39;</span><span class="p">,</span><span class="s">&#39;cumtapcnt&#39;</span><span class="p">});</span>
+
+    <span class="c">% if fieldtrip is present</span>
+    <span class="k">if</span> <span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;fieldtrip&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="nb">isequal</span><span class="p">(</span><span class="n">ft_datatype</span><span class="p">(</span><span class="n">ft</span><span class="p">),</span><span class="s">&#39;unknown&#39;</span><span class="p">)</span>
+        <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;fieldtrip does not approve of this dataset&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_map2fmri_skl.html"
+                        title="previous chapter">cosmo map2fmri skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_map2surface_skl.html"
+                        title="next chapter">cosmo map2surface skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_map2meeg_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_map2surface_skl.html" title="cosmo map2surface skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_map2fmri_skl.html" title="cosmo map2fmri skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

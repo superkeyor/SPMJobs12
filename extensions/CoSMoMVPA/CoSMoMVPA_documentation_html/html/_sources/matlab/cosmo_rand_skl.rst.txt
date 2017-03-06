@@ -1,0 +1,7 @@
+.. _cosmo_rand_skl:
+
+cosmo rand skl
+==============
+
+.. include :: cosmo_rand_skl.txt
+

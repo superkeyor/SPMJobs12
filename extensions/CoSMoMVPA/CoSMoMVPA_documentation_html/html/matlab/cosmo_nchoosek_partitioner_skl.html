@@ -1,0 +1,700 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo nchoosek partitioner skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo neighborhood split skl" href="cosmo_neighborhood_split_skl.html" />
+    <link rel="prev" title="cosmo naive bayes classifier searchlight skl" href="cosmo_naive_bayes_classifier_searchlight_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_neighborhood_split_skl.html" title="cosmo neighborhood split skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_naive_bayes_classifier_searchlight_skl.html" title="cosmo naive bayes classifier searchlight skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-nchoosek-partitioner-skl">
+<span id="id1"></span><h1>cosmo nchoosek partitioner skl<a class="headerlink" href="#cosmo-nchoosek-partitioner-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>partitions <span class="p">=</span><span class="w"> </span><span class="nf">cosmo_nchoosek_partitioner</span><span class="p">(</span>chunks_or_ds, k, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% partitions for into nchoosek(n,k) parititions with optional grouping schemas.</span>
+<span class="c">%</span>
+<span class="c">% partitions=cosmo_nchoosek_partitioner(chunks, k, group_values1, test_group_by1,...)</span>
+<span class="c">%</span>
+<span class="c">% Input</span>
+<span class="c">%  - chunks          Px1 chunk indices for P samples. It can also be a</span>
+<span class="c">%                    dataset struct with field .sa.chunks</span>
+<span class="c">%  - k               When an integer, k chunks are in each test partition.</span>
+<span class="c">%                    When between 0 and 1, this is interpreted as</span>
+<span class="c">%                    round(k*nchunks) where nchunks is the number of unique</span>
+<span class="c">%                    chunks in chunks.</span>
+<span class="c">%                    A special case, mostly aimed at split-half</span>
+<span class="c">%                    correlations, is when k==&#39;half&#39;; this sets k to .5,</span>
+<span class="c">%                    and if k is even, it treats train_indices and</span>
+<span class="c">%                    test_indices as symmetrical, meaning it returns only</span>
+<span class="c">%                    half the number of partitions (avoiding duplicates).</span>
+<span class="c">%                    If k is odd then train and test indices have</span>
+<span class="c">%                    (k+1)/nchunks and (k-1)/nchunks elements,</span>
+<span class="c">%                    respectively, or vice versa.</span>
+<span class="c">%  - group_values*   } Intended for cross-participant or cross-condition</span>
+<span class="c">%  - test_group_by*  } generalizability analyses.</span>
+<span class="c">%                      Pairs of these determine a subsequent level group</span>
+<span class="c">%                      partition scheme. Each group_values can be</span>
+<span class="c">%                      a cell with the labels for a test group, or,</span>
+<span class="c">%                      if chunks is a string, the name of a sample</span>
+<span class="c">%                      attribute whose values are used as labels.</span>
+<span class="c">%                      Each test_group_by indicates which values in</span>
+<span class="c">%                      group_values are used as a test value in the</span>
+<span class="c">%                      cross-validation scheme (and all other ones are used</span>
+<span class="c">%                      as training value). If empty it is set to the unique</span>
+<span class="c">%                      values in group_values.</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%  - partitions      A struct with fields:</span>
+<span class="c">%     .train_indices } Each of these is an 1xQ cell for Q partitions, where</span>
+<span class="c">%     .test_indices  } Q=nchoosek(nchunks,k)). It contains all possible</span>
+<span class="c">%                      combinations with k test indices and (nchunks-k)</span>
+<span class="c">%                      training indices (except when k==&#39;half&#39;, see above).</span>
+<span class="c">%                    If group_values* and test_group_by* are specified,</span>
+<span class="c">%                    then the number of output partitions is multiplied</span>
+<span class="c">%                    by the product of the number of values in</span>
+<span class="c">%                    test_group_by*.</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % make a simple dataset with 4 chunks, 2 samples each</span>
+<span class="c">%     % assume two targets (i.e. conditions, say piano versus guitar)</span>
+<span class="c">%     ds=struct();</span>
+<span class="c">%     ds.samples=randn(8,99); % 8 samples, 99</span>
+<span class="c">%     ds.sa.targets=[1 1 1 1 2 2 2 2]&#39;;</span>
+<span class="c">%     ds.sa.chunks=2+[1 2 3 4 4 3 2 1]&#39;;</span>
+<span class="c">%     cosmo_check_dataset(ds); % sanity check</span>
+<span class="c">%     %</span>
+<span class="c">%     % take-one-chunk out partitioning</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 2    [ 1    [ 1    [ 1</span>
+<span class="c">%     &gt;       3      3      2      2</span>
+<span class="c">%     &gt;       4      4      4      3</span>
+<span class="c">%     &gt;       5      5      5      6</span>
+<span class="c">%     &gt;       6      6      7      7</span>
+<span class="c">%     &gt;       7 ]    8 ]    8 ]    8 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 2    [ 3    [ 4</span>
+<span class="c">%     &gt;       8 ]    7 ]    6 ]    5 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % take-two chunks out partitioning</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,2);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 2    [ 2    [ 1    [ 1    [ 1</span>
+<span class="c">%     &gt;       4      4      3      4      3      2</span>
+<span class="c">%     &gt;       5      5      6      5      6      7</span>
+<span class="c">%     &gt;       6 ]    7 ]    7 ]    8 ]    8 ]    8 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 1    [ 1    [ 2    [ 2    [ 3</span>
+<span class="c">%     &gt;       2      3      4      3      4      4</span>
+<span class="c">%     &gt;       7      6      5      6      5      5</span>
+<span class="c">%     &gt;       8 ]    8 ]    8 ]    7 ]    7 ]    6 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % take-half-of-the-chunks out partitioning</span>
+<span class="c">%     % (this effectively gives same chunks as above)</span>
+<span class="c">%     p_alt=cosmo_nchoosek_partitioner(ds,.5);</span>
+<span class="c">%     isequal(p, p_alt)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%     %</span>
+<span class="c">%     % do half split (for correlation measure); this leaves out</span>
+<span class="c">%     % mirror partitions of train and test indices</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,&#39;half&#39;);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 1    [ 1</span>
+<span class="c">%     &gt;       2      3      4</span>
+<span class="c">%     &gt;       7      6      5</span>
+<span class="c">%     &gt;       8 ]    8 ]    8 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 2    [ 2</span>
+<span class="c">%     &gt;       4      4      3</span>
+<span class="c">%     &gt;       5      5      6</span>
+<span class="c">%     &gt;       6 ]    7 ]    7 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % test on samples with chunk=3 only using take-one-fold out</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;chunks&#39;,3);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 2</span>
+<span class="c">%     &gt;       3</span>
+<span class="c">%     &gt;       4</span>
+<span class="c">%     &gt;       5</span>
+<span class="c">%     &gt;       6</span>
+<span class="c">%     &gt;       7 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1</span>
+<span class="c">%     &gt;       8 ] }</span>
+<span class="c">%     % test on samples with chunk=[3 4] only using take-one-fold out;</span>
+<span class="c">%     % only samples with chunks=1 or 2 are used for training</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;chunks&#39;,{[3 4]});</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 3</span>
+<span class="c">%     &gt;       4      4</span>
+<span class="c">%     &gt;       5      5</span>
+<span class="c">%     &gt;       6 ]    6 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 2</span>
+<span class="c">%     &gt;       8 ]    7 ] }</span>
+<span class="c">%     % test separately on samples with chunk=3 and samples with chunk=4;</span>
+<span class="c">%     % in some folds, samples with chunks=1,2,4 are used for training, in</span>
+<span class="c">%     % other folds samples with chunks=1,2,3 are used for training</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;chunks&#39;,{[3],[4]});</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 2    [ 1</span>
+<span class="c">%     &gt;       3      3</span>
+<span class="c">%     &gt;       4      4</span>
+<span class="c">%     &gt;       5      5</span>
+<span class="c">%     &gt;       6      6</span>
+<span class="c">%     &gt;       7 ]    8 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 2</span>
+<span class="c">%     &gt;       8 ]    7 ] }</span>
+<span class="c">%     &gt;</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">%     % make a slightly more complicated dataset: with three chunks,</span>
+<span class="c">%     % suppose there are two modalities (e.g. (1) visual and (2)</span>
+<span class="c">%     % auditory stimulation) which are stored in an</span>
+<span class="c">%     % additional field &#39;modality&#39;</span>
+<span class="c">%     ds=struct();</span>
+<span class="c">%     ds.samples=randn(12,99);</span>
+<span class="c">%     ds.sa.chunks  =[1 1 1 1 2 2 2 2 3 3 3 3]&#39;;</span>
+<span class="c">%     ds.sa.targets =[1 2 1 2 1 2 1 2 1 2 1 2]&#39;;</span>
+<span class="c">%     ds.sa.modality=[1 1 2 2 1 1 2 2 1 1 2 2]&#39;;</span>
+<span class="c">%     cosmo_check_dataset(ds);</span>
+<span class="c">%     %</span>
+<span class="c">%     % take-one-chunk out, test on samples with modality=1 (and train</span>
+<span class="c">%     % on samples with other modalities, i.e. modality=2)</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;modality&#39;,1);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [  7    [  3    [ 3</span>
+<span class="c">%     &gt;        8       4      4</span>
+<span class="c">%     &gt;       11      11      7</span>
+<span class="c">%     &gt;       12 ]    12 ]    8 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 5    [  9</span>
+<span class="c">%     &gt;       2 ]    6 ]    10 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % take-one-chunk out, test on samples with modality=2</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;modality&#39;,2);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [  5    [  1    [ 1</span>
+<span class="c">%     &gt;        6       2      2</span>
+<span class="c">%     &gt;        9       9      5</span>
+<span class="c">%     &gt;       10 ]    10 ]    6 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 7    [ 11</span>
+<span class="c">%     &gt;       4 ]    8 ]    12 ] }</span>
+<span class="c">%     % take-one-chunk out, test on samples with modality=1 (and train on</span>
+<span class="c">%     % modality=2) and vice verse</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;modality&#39;,[]);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [  7    [  3    [ 3    [  5    [  1    [ 1</span>
+<span class="c">%     &gt;        8       4      4       6       2      2</span>
+<span class="c">%     &gt;       11      11      7       9       9      5</span>
+<span class="c">%     &gt;       12 ]    12 ]    8 ]    10 ]    10 ]    6 ] }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 5    [  9    [ 3    [ 7    [ 11</span>
+<span class="c">%     &gt;       2 ]    6 ]    10 ]    4 ]    8 ]    12 ] }</span>
+<span class="c">%</span>
+<span class="c">%     % between-subject classification: 3 chunks, 2 modalities, 5 subjects</span>
+<span class="c">%     ds=struct();</span>
+<span class="c">%     ds.samples=randn(60,99);</span>
+<span class="c">%     ds.sa.targets=repmat([1 2],1,30)&#39;;</span>
+<span class="c">%     ds.sa.chunks=repmat([1 1 1 1 2 2 2 2 3 3 3 3],1,5)&#39;;</span>
+<span class="c">%     ds.sa.modality=repmat([1 1 2 2],1,15)&#39;;</span>
+<span class="c">%     ds.sa.subject=kron(1:5,ones(1,12))&#39;;</span>
+<span class="c">%     cosmo_check_dataset(ds);</span>
+<span class="c">%     %</span>
+<span class="c">%     % test on subject 1, train on other subjects using take-one-chunk out</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;subject&#39;,1);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 17         [ 13         [ 13</span>
+<span class="c">%     &gt;       18           14           14</span>
+<span class="c">%     &gt;       19           15           15</span>
+<span class="c">%     &gt;        :            :            :</span>
+<span class="c">%     &gt;       58           58           54</span>
+<span class="c">%     &gt;       59           59           55</span>
+<span class="c">%     &gt;       60 ]@32x1    60 ]@32x1    56 ]@32x1 }</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 5    [  9</span>
+<span class="c">%     &gt;       2      6      10</span>
+<span class="c">%     &gt;       3      7      11</span>
+<span class="c">%     &gt;       4 ]    8 ]    12 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % test on each subject after training on each other subject</span>
+<span class="c">%     % in each fold, the test data is from one subject and one chunk,</span>
+<span class="c">%     % and the train data from all other subjects and all other chunks.</span>
+<span class="c">%     % since there are 5 subjects and 3 chunks, there are 15 folds.</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;subject&#39;,[]);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 17         [ 13         [ 13        ... [  5         [  1         [  1</span>
+<span class="c">%     &gt;       18           14           14               6            2            2</span>
+<span class="c">%     &gt;       19           15           15               7            3            3</span>
+<span class="c">%     &gt;        :            :            :               :            :            :</span>
+<span class="c">%     &gt;       58           58           54              46           46           42</span>
+<span class="c">%     &gt;       59           59           55              47           47           43</span>
+<span class="c">%     &gt;       60 ]@32x1    60 ]@32x1    56 ]@32x1       48 ]@32x1    48 ]@32x1    44 ]@32x1   }@1x15</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 5    [  9   ... [ 49    [ 53    [ 57</span>
+<span class="c">%     &gt;       2      6      10         50      54      58</span>
+<span class="c">%     &gt;       3      7      11         51      55      59</span>
+<span class="c">%     &gt;       4 ]    8 ]    12 ]       52 ]    56 ]    60 ]   }@1x15</span>
+<span class="c">%     %</span>
+<span class="c">%     % as above, but test on modality=2 (and train on other values for</span>
+<span class="c">%     % modality, i.e. modality=1)</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;subject&#39;,[],&#39;modality&#39;,2);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 17         [ 13         [ 13        ... [  5         [  1         [  1</span>
+<span class="c">%     &gt;       18           14           14               6            2            2</span>
+<span class="c">%     &gt;       21           21           17               9            9            5</span>
+<span class="c">%     &gt;        :            :            :               :            :            :</span>
+<span class="c">%     &gt;       54           50           50              42           38           38</span>
+<span class="c">%     &gt;       57           57           53              45           45           41</span>
+<span class="c">%     &gt;       58 ]@16x1    58 ]@16x1    54 ]@16x1       46 ]@16x1    46 ]@16x1    42 ]@16x1   }@1x15</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 7    [ 11   ... [ 51    [ 55    [ 59</span>
+<span class="c">%     &gt;       4 ]    8 ]    12 ]       52 ]    56 ]    60 ]   }@1x15</span>
+<span class="c">%     %</span>
+<span class="c">%     % as above, but test on each modality after training on the other</span>
+<span class="c">%     % modality. There are 30 folds (5 subjects, 3 chunks, 2 modalities).</span>
+<span class="c">%     p=cosmo_nchoosek_partitioner(ds,1,&#39;subject&#39;,[],&#39;modality&#39;,[]);</span>
+<span class="c">%     cosmo_disp(p);</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 19         [ 15         [ 15        ... [  5         [  1         [  1</span>
+<span class="c">%     &gt;       20           16           16               6            2            2</span>
+<span class="c">%     &gt;       23           23           19               9            9            5</span>
+<span class="c">%     &gt;        :            :            :               :            :            :</span>
+<span class="c">%     &gt;       56           52           52              42           38           38</span>
+<span class="c">%     &gt;       59           59           55              45           45           41</span>
+<span class="c">%     &gt;       60 ]@16x1    60 ]@16x1    56 ]@16x1       46 ]@16x1    46 ]@16x1    42 ]@16x1   }@1x30</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 5    [  9   ... [ 51    [ 55    [ 59</span>
+<span class="c">%     &gt;       2 ]    6 ]    10 ]       52 ]    56 ]    60 ]   }@1x30</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%    - When k=1 and two input arguments, this function behaves equivalently</span>
+<span class="c">%      to cosmo_nfold_partitioner. Thus, in the most simple case</span>
+<span class="c">%      (nfold-partitioning), cosmo_nfold_partitioner with k=1 can be used</span>
+<span class="c">%      as well as this function.</span>
+<span class="c">%    - This function does not consider any .sa.targets (trial condition)</span>
+<span class="c">%      or .samples information.</span>
+<span class="c">%    - As shown in the examples below, this function can be used for</span>
+<span class="c">%      cross-modal and/or cross-participant cross-validation.</span>
+<span class="c">%    - For cross-validation it is recommended to balance partitions using</span>
+<span class="c">%      cosmo_balance_partitions.</span>
+<span class="c">%   - this function can be used for cross-decoding analyses. Doing so may</span>
+<span class="c">%     require a re-assignment of .sa.targets, and adding another sample</span>
+<span class="c">%     attribute to specify which samples are used for training and testing.</span>
+<span class="c">%     For example, consider the following dataset with six unique</span>
+<span class="c">%     conditions as specified in the sample attribute field .sa:</span>
+<span class="c">%</span>
+<span class="c">%       .targets    .chunks     .labels</span>
+<span class="c">%       1           1           &#39;vis_dog&#39;</span>
+<span class="c">%       2           1           &#39;vis_cat&#39;</span>
+<span class="c">%       3           1           &#39;vis_frog&#39;</span>
+<span class="c">%       4           1           &#39;aud_dog&#39;</span>
+<span class="c">%       5           1           &#39;aud_cat&#39;</span>
+<span class="c">%       6           1           &#39;aud_frog&#39;</span>
+<span class="c">%       1           2           &#39;vis_dog&#39;</span>
+<span class="c">%       2           2           &#39;vis_cat&#39;</span>
+<span class="c">%       :           :               :</span>
+<span class="c">%       6           8           &#39;aud_frog&#39;</span>
+<span class="c">%</span>
+<span class="c">%    This dataset has 8 chunks, each with 6 conditions: three for visual</span>
+<span class="c">%    stimuli of dogs, cats, and frogs, and three for auditory stimuli for</span>
+<span class="c">%    the same animals. The field .labels is not required, but used for a</span>
+<span class="c">%    human-readable description of the condition of each sample.</span>
+<span class="c">%</span>
+<span class="c">%    Suppose that one wants to do cross-decoding to see</span>
+<span class="c">%    if discrimination of animals generalizes between the visual and</span>
+<span class="c">%    auditory modalities.</span>
+<span class="c">%    To do so, the user has to:</span>
+<span class="c">%       * change the .targets field, to indicate the anima species,</span>
+<span class="c">%       * add another field (here &#39;modality&#39;) indicating which samples are</span>
+<span class="c">%         used for the cross-decoding</span>
+<span class="c">%</span>
+<span class="c">%    In this example, the sample attribute field .sa can be set as follows:</span>
+<span class="c">%</span>
+<span class="c">%       .targets    .chunks     .labels     .modality</span>
+<span class="c">%       1           1           &#39;vis_dog&#39;   1</span>
+<span class="c">%       2           1           &#39;vis_cat&#39;   1</span>
+<span class="c">%       3           1           &#39;vis_frog&#39;  1</span>
+<span class="c">%       1           1           &#39;aud_dog&#39;   2</span>
+<span class="c">%       2           1           &#39;aud_cat&#39;   2</span>
+<span class="c">%       3           1           &#39;aud_frog&#39;  2</span>
+<span class="c">%       1           2           &#39;vis_dog&#39;   1</span>
+<span class="c">%       2           2           &#39;vis_cat&#39;   1</span>
+<span class="c">%       :           :               :</span>
+<span class="c">%       6           8           &#39;aud_frog&#39;  2</span>
+<span class="c">%</span>
+<span class="c">%    so that:</span>
+<span class="c">%     * .modality corresponds to the visual (=1) and auditory (=2)</span>
+<span class="c">%       modality.</span>
+<span class="c">%     * .targets corresponds to the dog (=1), cat (=2), and frog (=3)</span>
+<span class="c">%       species.</span>
+<span class="c">%</span>
+<span class="c">%    With this re-assignment of .targets, testing on the auditory modality</span>
+<span class="c">%    and training on the visual modality with take-one-chunk out</span>
+<span class="c">%    cross-validation can be done using:</span>
+<span class="c">%</span>
+<span class="c">%       test_modality=2; % train on all other modalities (here: only 1)</span>
+<span class="c">%       partitions=cosmo_nchoosek_partitioner(ds,1,...</span>
+<span class="c">%                                   &#39;modality&#39;,test_modality);</span>
+<span class="c">%</span>
+<span class="c">%    If test_modality is set to empty ([]), then both modalities are used</span>
+<span class="c">%    for training and for testing (in separate folds).</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_nfold_partitioner, cosmo_balance_partitions</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="c">% if the first input is a dataset, get the chunks from it</span>
+    <span class="n">is_ds</span><span class="p">=</span><span class="n">isstruct</span><span class="p">(</span><span class="n">chunks_or_ds</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">is_ds</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">chunks_or_ds</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">chunks_or_ds</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="s">&#39;chunks&#39;</span><span class="p">)</span>
+            <span class="c">% it is a dataset</span>
+            <span class="n">ds</span><span class="p">=</span><span class="n">chunks_or_ds</span><span class="p">;</span>
+            <span class="n">chunks</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal struct input&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">else</span>
+        <span class="n">chunks</span><span class="p">=</span><span class="n">chunks_or_ds</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% use helper function defined below</span>
+    <span class="n">partitions</span><span class="p">=</span><span class="n">nchoosek_partitioner</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">3</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="nb">mod</span><span class="p">(</span><span class="n">nargin</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">~=</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Need even number of arguments&#39;</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">nsamples</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">chunks</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">:(</span><span class="n">nargin</span><span class="o">-</span><span class="mi">2</span><span class="p">);</span>
+            <span class="c">% loop over grouping values</span>
+            <span class="n">group_values</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">test_group_by</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">};</span>
+
+            <span class="c">% get sample attribute, if input was dataset</span>
+            <span class="k">if</span> <span class="n">ischar</span><span class="p">(</span><span class="n">group_values</span><span class="p">)</span>
+                <span class="k">if</span> <span class="n">is_ds</span>
+                    <span class="n">group_values</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">group_values</span><span class="p">);</span>
+                <span class="k">else</span>
+                    <span class="n">error</span><span class="p">(</span><span class="s">&#39;String for group value requires dataset input&#39;</span><span class="p">);</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+
+            <span class="c">% check number of values matches</span>
+            <span class="n">ngroup_by</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">group_values</span><span class="p">);</span>
+            <span class="k">if</span> <span class="n">ngroup_by</span> <span class="o">~=</span> <span class="n">nsamples</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;group_by has %d values, expected %d&#39;</span><span class="p">,</span> <span class="c">...</span>
+                                <span class="n">ngroup_by</span><span class="p">,</span> <span class="n">nsamples</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">test_group_by</span><span class="p">)</span>
+                <span class="n">test_group_by</span><span class="p">=</span><span class="n">num2cell</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">group_values</span><span class="p">));</span>
+            <span class="k">elseif</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">test_group_by</span><span class="p">)</span>
+                <span class="n">test_group_by</span><span class="p">={</span><span class="n">test_group_by</span><span class="p">};</span>
+            <span class="k">end</span>
+
+            <span class="c">% update partitions using helper function below</span>
+            <span class="n">partitions</span><span class="p">=</span><span class="n">group_by</span><span class="p">(</span><span class="n">partitions</span><span class="p">,</span> <span class="n">group_values</span><span class="p">,</span> <span class="n">test_group_by</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>partitions<span class="p">=</span><span class="nf">group_by</span><span class="p">(</span>partitions, group_values, test_group_by<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function to group partitions</span>
+    <span class="c">% the output has N times as many partitions as the input,</span>
+    <span class="c">% where N=numel(test_by).</span>
+
+    <span class="n">npartitions</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">);</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="n">iscell</span><span class="p">(</span><span class="n">test_group_by</span><span class="p">));</span>
+    <span class="c">% see which values to split on</span>
+    <span class="n">ntest_group_by</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">test_group_by</span><span class="p">);</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">train_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ntest_group_by</span><span class="p">);</span>
+    <span class="n">test_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ntest_group_by</span><span class="p">);</span>
+
+    <span class="c">% run for each unique value in group_by_values</span>
+    <span class="k">for</span> <span class="n">m</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntest_group_by</span>
+        <span class="n">test_by</span><span class="p">=</span><span class="n">test_group_by</span><span class="p">{</span><span class="n">m</span><span class="p">};</span>
+
+        <span class="c">% allocate space for this iteration</span>
+        <span class="n">train_indices_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">npartitions</span><span class="p">);</span>
+        <span class="n">test_indices_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">npartitions</span><span class="p">);</span>
+
+        <span class="c">% some filtered partitions may be empty, so keep track of the</span>
+        <span class="c">% last position where a value was stored</span>
+        <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">npartitions</span>
+            <span class="c">% get testing chunk indices</span>
+            <span class="n">p_test</span><span class="p">=</span><span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+
+            <span class="c">% see which ones match the group_by_value</span>
+            <span class="n">msk_test</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">group_values</span><span class="p">(</span><span class="n">p_test</span><span class="p">),</span><span class="n">test_by</span><span class="p">);</span>
+
+            <span class="c">% keep just those indices</span>
+            <span class="n">p_test_masked</span><span class="p">=</span><span class="n">p_test</span><span class="p">(</span><span class="n">msk_test</span><span class="p">);</span>
+
+            <span class="c">% the same for training, but different from test_by</span>
+            <span class="n">p_train</span><span class="p">=</span><span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+            <span class="n">msk_train</span><span class="p">=</span><span class="o">~</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">group_values</span><span class="p">(</span><span class="n">p_train</span><span class="p">),</span><span class="n">test_by</span><span class="p">);</span>
+            <span class="n">p_train_masked</span><span class="p">=</span><span class="n">p_train</span><span class="p">(</span><span class="n">msk_train</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">p_test_masked</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">p_train_masked</span><span class="p">)</span>
+                <span class="c">% both training and test set are non-empty, so keep result</span>
+                <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">test_indices_cell</span><span class="p">{</span><span class="n">pos</span><span class="p">}=</span><span class="n">p_test_masked</span><span class="p">;</span>
+                <span class="n">train_indices_cell</span><span class="p">{</span><span class="n">pos</span><span class="p">}=</span><span class="n">p_train_masked</span><span class="p">;</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+        <span class="c">% store the test-indices for m-th group_by_value</span>
+        <span class="n">test_indices</span><span class="p">{</span><span class="n">m</span><span class="p">}=</span><span class="n">test_indices_cell</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">pos</span><span class="p">);</span>
+        <span class="n">train_indices</span><span class="p">{</span><span class="n">m</span><span class="p">}=</span><span class="n">train_indices_cell</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">pos</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="c">% concatenate results for training and test indices</span>
+    <span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">train_indices</span><span class="p">{:});</span>
+    <span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">test_indices</span><span class="p">{:});</span>
+
+
+
+
+
+<span class="k">function</span><span class="w"> </span>partitions<span class="p">=</span><span class="nf">nchoosek_partitioner</span><span class="p">(</span>chunks,k<span class="p">)</span><span class="w"></span>
+<span class="c">% straightfoward partitioner</span>
+
+
+
+
+<span class="p">[</span><span class="n">unq</span><span class="p">,</span><span class="n">unused</span><span class="p">,</span><span class="n">chunk_indices</span><span class="p">]=</span><span class="n">unique</span><span class="p">(</span><span class="n">chunks</span><span class="p">);</span>
+<span class="n">nchunks</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">unq</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="n">nchunks</span><span class="o">&lt;</span><span class="mi">2</span>
+    <span class="n">error</span><span class="p">([</span><span class="s">&#39;at least two unique values for .sa.chunks are required, &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;found %d.&#39;</span><span class="p">],</span> <span class="n">nchunks</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c">% deal with special &#39;half&#39; case</span>
+<span class="n">is_symmetric</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+<span class="k">if</span> <span class="n">ischar</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="s">&#39;half&#39;</span><span class="p">)</span>
+        <span class="n">k</span><span class="p">=.</span><span class="mi">5</span><span class="p">;</span>
+        <span class="n">is_symmetric</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal string k&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+<span class="k">if</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;k must be a scalar&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">k</span> <span class="o">~=</span> <span class="nb">round</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+        <span class="n">k</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="n">nchunks</span><span class="o">*</span><span class="n">k</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">any</span><span class="p">(</span><span class="n">k</span><span class="o">==</span><span class="mi">1</span><span class="p">:(</span><span class="n">nchunks</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal k=%d: test class count should be between 1 and %d&#39;</span><span class="p">,</span> <span class="c">...</span>
+                    <span class="n">k</span><span class="p">,</span> <span class="n">nchunks</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">end</span>
+<span class="k">else</span>
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal parameter for k&#39;</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c">% little optimization: if just two chunks, the split is easy</span>
+<span class="k">if</span> <span class="n">all</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">chunks</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span><span class="p">]))</span>
+    <span class="n">chunk_msk1</span><span class="p">=</span><span class="n">chunks</span><span class="o">==</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">chunk1_idxs</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">chunk_msk1</span><span class="p">);</span>
+    <span class="n">chunk2_idxs</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="o">~</span><span class="n">chunk_msk1</span><span class="p">);</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="k">if</span> <span class="n">is_symmetric</span>
+        <span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">={</span><span class="n">chunk1_idxs</span><span class="p">};</span>
+        <span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">={</span><span class="n">chunk2_idxs</span><span class="p">};</span>
+    <span class="k">else</span>
+        <span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">={</span><span class="n">chunk1_idxs</span><span class="p">,</span><span class="n">chunk2_idxs</span><span class="p">};</span>
+        <span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">={</span><span class="n">chunk2_idxs</span><span class="p">,</span><span class="n">chunk1_idxs</span><span class="p">};</span>
+    <span class="k">end</span>
+    <span class="k">return</span>
+<span class="k">end</span>
+
+<span class="n">npartitions</span><span class="p">=</span><span class="nb">nchoosek</span><span class="p">(</span><span class="n">nchunks</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+<span class="n">combis</span><span class="p">=</span><span class="nb">nchoosek</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nchunks</span><span class="p">,</span><span class="n">k</span><span class="p">);</span> <span class="c">% make all combinations</span>
+
+<span class="k">if</span> <span class="n">is_symmetric</span> <span class="o">&amp;&amp;</span> <span class="nb">mod</span><span class="p">(</span><span class="n">nchunks</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span>
+    <span class="c">% when nclasses is even, return the first half of the permutations:</span>
+    <span class="c">% the current implementation of nchoosek results is that</span>
+    <span class="c">% combis(k,:) and combis(npartitions+1-k) are complementary</span>
+    <span class="c">% (i.e. together they make up 1:nchunks). In principle this could</span>
+    <span class="c">% change in the future leading to wrong results (if Mathworks, in its</span>
+    <span class="c">% infinite wisdom, decides to change the implementation of nchoosek),</span>
+    <span class="c">% so to be sure we check that the output matches what is expected.</span>
+    <span class="c">% The rationale is that this reduces computation time of subsequent</span>
+    <span class="c">% analyses by half, in particular for commonly used split half</span>
+    <span class="c">% correlations.</span>
+    <span class="n">nhalf</span><span class="p">=</span><span class="n">npartitions</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">check_combis</span><span class="p">=[</span><span class="n">combis</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nhalf</span><span class="p">,:)</span> <span class="n">combis</span><span class="p">(</span><span class="n">npartitions</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:(</span><span class="n">nhalf</span><span class="o">+</span><span class="mi">1</span><span class="p">),:)];</span>
+
+    <span class="c">% each row, when sorted, should be 1:nchunks</span>
+    <span class="n">matches</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">eq</span><span class="p">,</span><span class="n">sort</span><span class="p">(</span><span class="n">check_combis</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="mi">1</span><span class="p">:</span><span class="n">nchunks</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">matches</span><span class="p">(:)),</span><span class="s">&#39;nchoosek behaves weirdly&#39;</span><span class="p">);</span>
+
+    <span class="c">% we&#39;re good - just take the second half and update npartitions</span>
+    <span class="n">combis</span><span class="p">=</span><span class="n">combis</span><span class="p">(</span><span class="n">npartitions</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:(</span><span class="n">nhalf</span><span class="o">+</span><span class="mi">1</span><span class="p">),:);</span>
+    <span class="n">npartitions</span><span class="p">=</span><span class="n">nhalf</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="c">% allocate space for output</span>
+<span class="n">train_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">npartitions</span><span class="p">);</span>
+<span class="n">test_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">npartitions</span><span class="p">);</span>
+
+<span class="c">% make all partitions</span>
+<span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">npartitions</span>
+    <span class="n">combi</span><span class="p">=</span><span class="n">combis</span><span class="p">(</span><span class="nb">j</span><span class="p">,:);</span>
+    <span class="n">sample_count</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">chunk_indices</span><span class="p">,</span><span class="n">combi</span><span class="p">);</span>
+    <span class="n">test_indices</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="nb">find</span><span class="p">(</span><span class="n">sample_count</span><span class="p">);</span>
+    <span class="n">train_indices</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="nb">find</span><span class="p">(</span><span class="o">~</span><span class="n">sample_count</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="n">partitions</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">=</span><span class="n">train_indices</span><span class="p">;</span>
+<span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">=</span><span class="n">test_indices</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_naive_bayes_classifier_searchlight_skl.html"
+                        title="previous chapter">cosmo naive bayes classifier searchlight skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_neighborhood_split_skl.html"
+                        title="next chapter">cosmo neighborhood split skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_nchoosek_partitioner_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_neighborhood_split_skl.html" title="cosmo neighborhood split skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_naive_bayes_classifier_searchlight_skl.html" title="cosmo naive bayes classifier searchlight skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_spherical_neighborhood_hdr:
+
+cosmo spherical neighborhood hdr
+================================
+
+.. include :: cosmo_spherical_neighborhood_hdr.txt
+

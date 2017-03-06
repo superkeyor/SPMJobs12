@@ -1,0 +1,7 @@
+.. _test_slice:
+
+test slice
+==========
+
+.. include :: test_slice.txt
+

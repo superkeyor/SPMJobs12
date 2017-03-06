@@ -1,0 +1,7 @@
+.. _cosmo_cluster_neighborhood_hdr:
+
+cosmo cluster neighborhood hdr
+==============================
+
+.. include :: cosmo_cluster_neighborhood_hdr.txt
+

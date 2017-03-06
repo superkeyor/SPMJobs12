@@ -1,0 +1,7 @@
+.. _cosmo_type_skl:
+
+cosmo type skl
+==============
+
+.. include :: cosmo_type_skl.txt
+

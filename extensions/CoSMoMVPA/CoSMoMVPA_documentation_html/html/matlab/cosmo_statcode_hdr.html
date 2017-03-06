@@ -1,0 +1,159 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo statcode hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo strjoin hdr" href="cosmo_strjoin_hdr.html" />
+    <link rel="prev" title="cosmo stat hdr" href="cosmo_stat_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_strjoin_hdr.html" title="cosmo strjoin hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_stat_hdr.html" title="cosmo stat hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-statcode-hdr">
+<span id="id1"></span><h1>cosmo statcode hdr<a class="headerlink" href="#cosmo-statcode-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>stat_repr<span class="p">=</span><span class="nf">cosmo_statcode</span><span class="p">(</span>ds, output_format<span class="p">)</span><span class="w"></span>
+<span class="c">% Convert statcode for different analysis packages</span>
+<span class="c">%</span>
+<span class="c">% stat_repr=cosmo_statcode(ds[, output_format])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds             dataset struct with N samples, or Nx1 cell with strings</span>
+<span class="c">%                  with statistic labels, or AFNI, BV or NIFTI header</span>
+<span class="c">%                  struct for N samples.</span>
+<span class="c">%   output_format  Optional; one of &#39;afni&#39;, &#39;bv&#39;, or &#39;nifti&#39;; or empty.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   stat_repr      - If output_format is empty or omitted: an Nx1 cell</span>
+<span class="c">%                    with a string representation of the statistic in each</span>
+<span class="c">%                    sample, e.g. &#39;Ftest(123,2)&#39; or &#39;Zscore()&#39; or empty.</span>
+<span class="c">%                  - If output_format==&#39;afni&#39;: struct with field</span>
+<span class="c">%                    .BRICK_STATAUX.</span>
+<span class="c">%                  - If output_format==&#39;bv&#39;: Nx1 cell with structs, each</span>
+<span class="c">%                    with fieldnames .name, .DF1 and .DF2.</span>
+<span class="c">%                  - If output_format==&#39;nifti&#39;: struct with fieldnames</span>
+<span class="c">%                    .intent_code and .intent_p{1,2,3} if all stat codes</span>
+<span class="c">%                    are the same; empty otherwise (NIFTI does not support</span>
+<span class="c">%                    different stat codes for different samples).</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - this function is intended for fmri datasets</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_stat_hdr.html"
+                        title="previous chapter">cosmo stat hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_strjoin_hdr.html"
+                        title="next chapter">cosmo strjoin hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_statcode_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_strjoin_hdr.html" title="cosmo strjoin hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_stat_hdr.html" title="cosmo stat hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_fmri_dataset_skl:
+
+cosmo fmri dataset skl
+======================
+
+.. include :: cosmo_fmri_dataset_skl.txt
+

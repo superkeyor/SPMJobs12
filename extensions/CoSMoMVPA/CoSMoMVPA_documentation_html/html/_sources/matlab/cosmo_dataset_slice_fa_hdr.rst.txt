@@ -1,0 +1,7 @@
+.. _cosmo_dataset_slice_fa_hdr:
+
+cosmo dataset slice fa hdr
+==========================
+
+.. include :: cosmo_dataset_slice_fa_hdr.txt
+

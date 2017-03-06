@@ -1,0 +1,7 @@
+.. _cosmo_balance_partitions:
+
+cosmo balance partitions
+========================
+
+.. include :: cosmo_balance_partitions.txt
+

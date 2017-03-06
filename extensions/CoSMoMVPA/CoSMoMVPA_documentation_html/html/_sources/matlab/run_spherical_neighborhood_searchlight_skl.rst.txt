@@ -1,0 +1,7 @@
+.. _run_spherical_neighborhood_searchlight_skl:
+
+run spherical neighborhood searchlight skl
+==========================================
+
+.. include :: run_spherical_neighborhood_searchlight_skl.txt
+

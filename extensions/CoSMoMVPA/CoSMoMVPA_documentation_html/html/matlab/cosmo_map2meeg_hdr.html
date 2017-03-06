@@ -1,0 +1,183 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo map2meeg hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo map2surface hdr" href="cosmo_map2surface_hdr.html" />
+    <link rel="prev" title="cosmo map2fmri hdr" href="cosmo_map2fmri_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_map2surface_hdr.html" title="cosmo map2surface hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_map2fmri_hdr.html" title="cosmo map2fmri hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-map2meeg-hdr">
+<span id="id1"></span><h1>cosmo map2meeg hdr<a class="headerlink" href="#cosmo-map2meeg-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>hdr<span class="p">=</span><span class="nf">cosmo_map2meeg</span><span class="p">(</span>ds, fn<span class="p">)</span><span class="w"></span>
+<span class="c">% maps a dataset to a FieldTrip or EEGlab structure or file</span>
+<span class="c">%</span>
+<span class="c">% hdr=cosmo_map2meeg(ds[, fn])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%    ds               dataset struct with field .samples with MEEG data</span>
+<span class="c">%    fn               output filename or extension. If a filename,</span>
+<span class="c">%                     the following extentions are supported:</span>
+<span class="c">%                       .mat :        FieldTrip time-locked or</span>
+<span class="c">%                                     time-frequency  data at  either the</span>
+<span class="c">%                                     sensor or source level.</span>
+<span class="c">%                       .txt :        exported EEGLab with timelocked data.</span>
+<span class="c">%                       .daterp       time-locked               }</span>
+<span class="c">%                       .icaerp       ICA time-locked           } EEGLab</span>
+<span class="c">%                       .dattimef     time-freq                 }</span>
+<span class="c">%                       .icatimef     ICA time-freq             }</span>
+<span class="c">%                       .datitc       inter-trial coherence     }</span>
+<span class="c">%                       .icaitc       ICA inter-trial coherence }</span>
+<span class="c">%                     To avoid writing a file, but get output in the hdr</span>
+<span class="c">%                     field, use one of the extensions above but with the</span>
+<span class="c">%                     dot (&#39;.&#39;) replaced by a hyphen (&#39;-&#39;), for example</span>
+<span class="c">%                     &#39;-dattimef&#39; for time-freq data.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%    hdr        FieldTrip or EEGLAB struct with the MEEG data</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%    - a typical use case is to use this function to map the dataset to a</span>
+<span class="c">%      FieldTrip struct, then use FieldTrip to visualize the data</span>
+<span class="c">%    - there is currently no support for writing EEGLAB &#39;ersp&#39; data.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % convert a dataset struct to a FieldTrip struct</span>
+<span class="c">%     ft=cosmo_map2meeg(ds);</span>
+<span class="c">%</span>
+<span class="c">%     % store a dataset in FieldTrip file</span>
+<span class="c">%     cosmo_map2meeg(ds,&#39;fieldtrip_data.mat&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % store a timeseries dataset in an EEGlab text file</span>
+<span class="c">%     cosmo_map2meeg(ds,&#39;eeglab_data.txt&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % convert a dataset structure to a FieldTrip structure</span>
+<span class="c">%     ft=cosmo_map2meeg(ds,&#39;-mat&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % convert a time-lock dataset to an EEGLAB structure</span>
+<span class="c">%     eeglab_daterp=cosmo_map2meg(ds,&#39;-daterp&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % write EEGLAB time-frequency data</span>
+<span class="c">%     cosmo_map2meeg(ds,&#39;timefreq.dattimef&#39;);</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_map2fmri_hdr.html"
+                        title="previous chapter">cosmo map2fmri hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_map2surface_hdr.html"
+                        title="next chapter">cosmo map2surface hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_map2meeg_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_map2surface_hdr.html" title="cosmo map2surface hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_map2fmri_hdr.html" title="cosmo map2fmri hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

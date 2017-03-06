@@ -1,0 +1,7 @@
+.. _cosmo_slice_skl:
+
+cosmo slice skl
+===============
+
+.. include :: cosmo_slice_skl.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_cartprod:
+
+cosmo cartprod
+==============
+
+.. include :: cosmo_cartprod.txt
+

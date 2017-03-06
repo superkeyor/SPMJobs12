@@ -1,0 +1,239 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test cosmo fmri dataset &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test cross neighborhood" href="test_cross_neighborhood.html" />
+    <link rel="prev" title="test cosmo dataset operations" href="test_cosmo_dataset_operations.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_cross_neighborhood.html" title="test cross neighborhood"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_cosmo_dataset_operations.html" title="test cosmo dataset operations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-cosmo-fmri-dataset">
+<span id="id1"></span><h1>test cosmo fmri dataset<a class="headerlink" href="#test-cosmo-fmri-dataset" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_cosmo_fmri_dataset</span>
+<span class="c">% tests for cosmo_fmri_dataset</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_init</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+
+    <span class="n">assertTrue</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">setxor</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">ds</span><span class="p">),</span><span class="c">...</span>
+               <span class="p">{</span><span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">,</span><span class="s">&#39;fa&#39;</span><span class="p">}))</span><span class="o">==</span><span class="mi">0</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_nifti</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ni</span><span class="p">=</span><span class="n">generate_test_nifti_struct</span><span class="p">();</span>
+    <span class="n">g</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;normal&#39;</span><span class="p">);</span>
+
+    <span class="n">tmpfn</span><span class="p">=</span><span class="s">&#39;__tmp1_.nii&#39;</span><span class="p">;</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete</span><span class="p">(</span><span class="n">tmpfn</span><span class="p">));</span>
+    <span class="n">save_nii</span><span class="p">(</span><span class="n">ni</span><span class="p">,</span><span class="n">tmpfn</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">tmpfn</span><span class="p">,</span><span class="s">&#39;targets&#39;</span><span class="p">,</span><span class="n">g</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="c">...</span>
+                                <span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="n">g</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">);</span>
+
+
+
+    <span class="n">assertTrue</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">setxor</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">ds</span><span class="p">),</span><span class="c">...</span>
+               <span class="n">fieldnames</span><span class="p">(</span><span class="n">g</span><span class="p">)))</span><span class="o">==</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="s">&#39;relative&#39;</span><span class="p">,</span><span class="mf">1e-6</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">)</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">,</span> <span class="n">g</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">)</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_io</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;normal&#39;</span><span class="p">);</span>
+    <span class="n">tmpfn</span><span class="p">=</span><span class="s">&#39;__tmp2_.nii&#39;</span><span class="p">;</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete</span><span class="p">(</span><span class="n">tmpfn</span><span class="p">));</span>
+
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">tmpfn</span><span class="p">);</span>
+
+    <span class="n">es</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">tmpfn</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="n">es</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="s">&#39;relative&#39;</span><span class="p">,</span><span class="mf">1e-6</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">,</span><span class="n">es</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>ni<span class="p">=</span><span class="nf">generate_test_nifti_struct</span><span class="p">()</span><span class="w"></span>
+<span class="c">% Generates a struct that behaves like a NIFTI struct</span>
+    <span class="n">ni</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;normal&#39;</span><span class="p">);</span>
+    <span class="n">ni</span><span class="p">.</span><span class="n">img</span><span class="p">=</span><span class="nb">shiftdim</span><span class="p">(</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">ds</span><span class="p">),</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">hdr</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="n">dime</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">dime</span><span class="p">.</span><span class="n">datatype</span><span class="p">=</span><span class="mi">16</span><span class="p">;</span> <span class="c">%single</span>
+    <span class="n">dime</span><span class="p">.</span><span class="n">dim</span><span class="p">=[</span><span class="mi">4</span> <span class="mi">3</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">dime</span><span class="p">.</span><span class="n">pixdim</span><span class="p">=[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span><span class="p">];</span>
+    <span class="n">fns</span><span class="p">={</span><span class="s">&#39;intent_p1&#39;</span><span class="p">,</span><span class="s">&#39;intent_p2&#39;</span><span class="p">,</span><span class="s">&#39;intent_p3&#39;</span><span class="p">,</span><span class="s">&#39;intent_code&#39;</span><span class="p">,</span><span class="c">...</span>
+        <span class="s">&#39;slice_start&#39;</span><span class="p">,</span><span class="s">&#39;slice_duration&#39;</span><span class="p">,</span><span class="s">&#39;slice_end&#39;</span><span class="p">,</span><span class="c">...</span>
+        <span class="s">&#39;scl_slope&#39;</span><span class="p">,</span><span class="s">&#39;scl_inter&#39;</span><span class="p">,</span><span class="s">&#39;slice_code&#39;</span><span class="p">,</span><span class="s">&#39;cal_max&#39;</span><span class="p">,</span><span class="c">...</span>
+        <span class="s">&#39;cal_min&#39;</span><span class="p">,</span><span class="s">&#39;toffset&#39;</span><span class="p">};</span>
+
+    <span class="n">dime</span><span class="p">=</span><span class="n">nifti_helper_set_all</span><span class="p">(</span><span class="n">dime</span><span class="p">,</span><span class="n">fns</span><span class="p">);</span>
+    <span class="n">dime</span><span class="p">.</span><span class="n">xyzt_units</span><span class="p">=</span><span class="mi">10</span><span class="p">;</span>
+    <span class="n">hdr</span><span class="p">.</span><span class="n">dime</span><span class="p">=</span><span class="n">dime</span><span class="p">;</span>
+
+    <span class="n">hk</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">sizeof_hdr</span><span class="p">=</span><span class="mi">348</span><span class="p">;</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">data_type</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">db_name</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">extents</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">session_error</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">regular</span><span class="p">=</span><span class="s">&#39;r&#39;</span><span class="p">;</span>
+    <span class="n">hk</span><span class="p">.</span><span class="n">dim_info</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">hdr</span><span class="p">.</span><span class="n">hk</span><span class="p">=</span><span class="n">hk</span><span class="p">;</span>
+
+    <span class="n">hist</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">hist</span><span class="p">.</span><span class="n">sform_code</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">hist</span><span class="p">.</span><span class="n">originator</span><span class="p">=[</span><span class="mi">2</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">3</span><span class="p">];</span>
+    <span class="n">hist</span><span class="p">=</span><span class="n">nifti_helper_set_all</span><span class="p">(</span><span class="n">hist</span><span class="p">,{</span><span class="s">&#39;descrip&#39;</span><span class="p">,</span><span class="s">&#39;aux_file&#39;</span><span class="p">},</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">hist</span><span class="p">=</span><span class="n">nifti_helper_set_all</span><span class="p">(</span><span class="n">hist</span><span class="p">,{</span><span class="s">&#39;qform_code&#39;</span><span class="p">,</span><span class="s">&#39;quatern_b&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;quatern_d&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;qoffset_x&#39;</span><span class="p">,</span><span class="s">&#39;qoffset_y&#39;</span><span class="p">,</span><span class="s">&#39;qoffset_z&#39;</span><span class="p">});</span>
+    <span class="n">hist</span><span class="p">=</span><span class="n">nifti_helper_set_all</span><span class="p">(</span><span class="n">hist</span><span class="p">,{</span><span class="s">&#39;intent_name&#39;</span><span class="p">},</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="n">hist</span><span class="p">.</span><span class="n">srow_x</span><span class="p">=[</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">hist</span><span class="p">.</span><span class="n">srow_y</span><span class="p">=[</span><span class="mi">0</span> <span class="mi">2</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">hist</span><span class="p">.</span><span class="n">srow_z</span><span class="p">=[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">2</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+
+    <span class="n">hist</span><span class="p">.</span><span class="n">quatern_c</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">hdr</span><span class="p">.</span><span class="n">hist</span><span class="p">=</span><span class="n">hist</span><span class="p">;</span>
+
+    <span class="n">ni</span><span class="p">.</span><span class="n">hdr</span><span class="p">=</span><span class="n">hdr</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">nifti_helper_set_all</span><span class="p">(</span>s, fns, v<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% sets all fields in fns in struct s to v</span>
+    <span class="c">% if v is omitted it is set to 0.</span>
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">3</span><span class="p">,</span> <span class="n">v</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span> <span class="k">end</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">fns</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">fn</span><span class="p">=</span><span class="n">fns</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">s</span><span class="p">.(</span><span class="n">fn</span><span class="p">)=</span><span class="n">v</span><span class="p">;</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_cosmo_dataset_operations.html"
+                        title="previous chapter">test cosmo dataset operations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_cross_neighborhood.html"
+                        title="next chapter">test cross neighborhood</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_cosmo_fmri_dataset.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_cross_neighborhood.html" title="test cross neighborhood"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_cosmo_dataset_operations.html" title="test cosmo dataset operations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

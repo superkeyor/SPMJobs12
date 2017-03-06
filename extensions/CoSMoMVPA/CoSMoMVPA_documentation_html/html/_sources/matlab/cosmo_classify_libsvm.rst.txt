@@ -1,0 +1,7 @@
+.. _cosmo_classify_libsvm:
+
+cosmo classify libsvm
+=====================
+
+.. include :: cosmo_classify_libsvm.txt
+

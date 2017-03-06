@@ -1,0 +1,7 @@
+.. _test_check_external:
+
+test check external
+===================
+
+.. include :: test_check_external.txt
+

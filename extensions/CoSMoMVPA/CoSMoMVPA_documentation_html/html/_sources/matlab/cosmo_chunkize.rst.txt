@@ -1,0 +1,7 @@
+.. _cosmo_chunkize:
+
+cosmo chunkize
+==============
+
+.. include :: cosmo_chunkize.txt
+

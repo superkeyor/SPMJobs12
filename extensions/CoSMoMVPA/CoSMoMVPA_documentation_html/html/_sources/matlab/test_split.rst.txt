@@ -1,0 +1,7 @@
+.. _test_split:
+
+test split
+==========
+
+.. include :: test_split.txt
+

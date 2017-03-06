@@ -1,0 +1,7 @@
+.. _cosmo_map2meeg:
+
+cosmo map2meeg
+==============
+
+.. include :: cosmo_map2meeg.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_meeg_baseline_correct_skl:
+
+cosmo meeg baseline correct skl
+===============================
+
+.. include :: cosmo_meeg_baseline_correct_skl.txt
+

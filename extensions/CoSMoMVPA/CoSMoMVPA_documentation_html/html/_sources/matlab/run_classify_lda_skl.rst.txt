@@ -1,0 +1,7 @@
+.. _run_classify_lda_skl:
+
+run classify lda skl
+====================
+
+.. include :: run_classify_lda_skl.txt
+

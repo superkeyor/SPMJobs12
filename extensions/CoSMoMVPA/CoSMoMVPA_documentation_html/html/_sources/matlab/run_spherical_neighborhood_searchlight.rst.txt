@@ -1,0 +1,9 @@
+.. _run_spherical_neighborhood_searchlight:
+
+run spherical neighborhood searchlight
+======================================
+
+:run_up:`run_spherical_neighborhood_searchlight`
+
+.. include :: run_spherical_neighborhood_searchlight.txt
+

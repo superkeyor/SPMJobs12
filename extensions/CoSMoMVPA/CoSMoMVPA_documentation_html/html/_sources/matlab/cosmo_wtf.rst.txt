@@ -1,0 +1,7 @@
+.. _cosmo_wtf:
+
+cosmo wtf
+=========
+
+.. include :: cosmo_wtf.txt
+

@@ -1,0 +1,257 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run classify lda skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="run classify naive bayes skl" href="run_classify_naive_bayes_skl.html" />
+    <link rel="prev" title="run anatomical dataset basics skl" href="run_anatomical_dataset_basics_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="run_classify_naive_bayes_skl.html" title="run classify naive bayes skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run_anatomical_dataset_basics_skl.html" title="run anatomical dataset basics skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" accesskey="U">Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-classify-lda-skl">
+<span id="id1"></span><h1>run classify lda skl<a class="headerlink" href="#run-classify-lda-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% odd-even classification with LDA classifier</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="c">%% Define data</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;ak6&#39;</span><span class="p">,</span><span class="s">&#39;s01&#39;</span><span class="p">);</span>
+
+<span class="c">% Load the dataset with VT mask</span>
+<span class="n">ds</span> <span class="p">=</span> <span class="n">cosmo_fmri_dataset</span><span class="p">([</span><span class="n">data_path</span> <span class="s">&#39;/glm_T_stats_perrun.nii&#39;</span><span class="p">],</span> <span class="c">...</span>
+                     <span class="s">&#39;mask&#39;</span><span class="p">,</span> <span class="p">[</span><span class="n">data_path</span> <span class="s">&#39;/vt_mask.nii&#39;</span><span class="p">]);</span>
+
+<span class="c">% remove constant features</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_remove_useless_data</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="c">%% set sample attributes</span>
+
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span> <span class="p">=</span> <span class="nb">repmat</span><span class="p">((</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="mi">10</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span> <span class="p">=</span> <span class="nb">floor</span><span class="p">(((</span><span class="mi">1</span><span class="p">:</span><span class="mi">60</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span><span class="o">&#39;+</span><span class="mi">1</span><span class="p">;</span>
+
+<span class="c">% Add labels as sample attributes</span>
+<span class="n">classes</span> <span class="p">=</span> <span class="p">{</span><span class="s">&#39;monkey&#39;</span><span class="p">,</span><span class="s">&#39;lemur&#39;</span><span class="p">,</span><span class="s">&#39;mallard&#39;</span><span class="p">,</span><span class="s">&#39;warbler&#39;</span><span class="p">,</span><span class="s">&#39;ladybug&#39;</span><span class="p">,</span><span class="s">&#39;lunamoth&#39;</span><span class="p">};</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span> <span class="p">=</span> <span class="nb">repmat</span><span class="p">(</span><span class="n">classes</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+
+<span class="c">%% Part 1: bird classification; train on even runs, test on odd runs</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="c">% slice into odd and even runs using ds.sa.chunks attribute, and</span>
+<span class="c">% store in new dataset structs called &#39;ds_even&#39; and &#39;ds_odd&#39;.</span>
+<span class="c">% (hint: use the &#39;mod&#39; function (remainder after division) to see which</span>
+<span class="c">% chunks are even or odd)</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">%% discriminate between mallards and warblers</span>
+<span class="n">categories</span><span class="p">={</span><span class="s">&#39;mallard&#39;</span><span class="p">,</span><span class="s">&#39;warbler&#39;</span><span class="p">};</span>
+
+<span class="c">% select samples where .sa.labels match on of the categories</span>
+<span class="c">% for the even and odd runs seperately. Slice the dataset twice and store</span>
+<span class="c">% the result in &#39;ds_even_birds&#39; and &#39;ds_odd_birds&#39;</span>
+<span class="c">% (use cosmo_match with .sa.labels and categories to define a mask,</span>
+<span class="c">% then cosmo_slice to select the data)</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% show the data</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Even data:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds_even_birds</span><span class="p">);</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Odd data:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds_odd_birds</span><span class="p">);</span>
+
+<span class="c">% train on even, test on odd</span>
+<span class="c">%</span>
+<span class="c">% Use cosmo_classify_lda to get predicted targets for the odd runs when</span>
+<span class="c">% training on the even runs, and assign these predictions to</span>
+<span class="c">% a variable &#39;test_pred&#39;.</span>
+<span class="c">% (hint: use .samples and .sa.targets from ds_even_birds, and</span>
+<span class="c">%        use .samples from ds_odd_birds)</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% show real and predicted labels</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\ntarget predicted\n&#39;</span><span class="p">);</span>
+<span class="nb">disp</span><span class="p">([</span><span class="n">test_targets</span> <span class="n">test_pred</span><span class="p">])</span>
+
+<span class="c">% compare the predicted labels for the odd</span>
+<span class="c">% runs with the actual targets to compute the accuracy. Store the accuracy</span>
+<span class="c">% in a variable &#39;accuracy&#39;.</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nLDA birds even-odd: accuracy %.3f\n&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">);</span>
+
+<span class="c">% compare with naive bayes classification</span>
+<span class="c">% (hint: do classification as above, but use cosmo_classify_naive_bayes)</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nNaive Bayes birds even-odd: accuracy %.3f\n&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">);</span>
+
+
+<span class="c">%% Part 2: all categories; train/test on even/odd runs and vice versa</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="c">% This is as above, but without slicing to get the samples with bird</span>
+<span class="c">% species. In other words, just use &#39;ds_even&#39; and &#39;ds_odd&#39;</span>
+<span class="c">%</span>
+<span class="c">% First, train on even, test on odd</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nLDA all categories even-odd: accuracy %.3f\n&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">);</span>
+
+<span class="c">% Now train on odd, test on even</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nLDA all categories odd-even: accuracy %.3f\n&#39;</span><span class="p">,</span> <span class="n">accuracy</span><span class="p">);</span>
+
+
+<span class="c">%% Part 3: build confusion matrix</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="c">% manually build the confusion matrix for the six categories</span>
+
+<span class="c">% first, allocate space for the confusion matrix</span>
+<span class="n">nclasses</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">classes</span><span class="p">);</span> <span class="c">% should be 6</span>
+<span class="n">confusion_matrix</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nclasses</span><span class="p">);</span> <span class="c">% 6x6 matrix</span>
+
+<span class="c">% sanity check to ensure targets are in range 1..6</span>
+<span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">test_targets</span><span class="p">),(</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="o">&#39;</span><span class="p">));</span>
+
+<span class="c">% in confusion matrix, the i-th row and j-th column should contain</span>
+<span class="c">% the number of times that a sample with test_targets==i was predicted as</span>
+<span class="c">% test_pred==j. Use a nested for-loop (a for-loop in a for-loop) to count</span>
+<span class="c">% this for all combinations of i (1 to 6) and j (1 to 6)</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% CoSMoMVPA can generate the confusion matrix using cosmo_confusion_matrix;</span>
+<span class="c">% the check below ensures that your solution matches the one produced by</span>
+<span class="c">% CoSMoMVPA</span>
+<span class="n">confusion_matrix_alt</span><span class="p">=</span><span class="n">cosmo_confusion_matrix</span><span class="p">(</span><span class="n">test_targets</span><span class="p">,</span><span class="n">test_pred</span><span class="p">);</span>
+<span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">,</span><span class="n">confusion_matrix_alt</span><span class="p">)</span>
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;your confusion matrix does not match the expected output&#39;</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="n">figure</span>
+<span class="n">imagesc</span><span class="p">(</span><span class="n">confusion_matrix</span><span class="p">,[</span><span class="mi">0</span> <span class="mi">5</span><span class="p">])</span>
+<span class="n">title</span><span class="p">(</span><span class="s">&#39;confusion matrix&#39;</span><span class="p">);</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;XTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">classes</span><span class="p">);</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;YTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">classes</span><span class="p">);</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="s">&#39;target&#39;</span><span class="p">);</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="s">&#39;predicted&#39;</span><span class="p">);</span>
+<span class="n">colorbar</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run_anatomical_dataset_basics_skl.html"
+                        title="previous chapter">run anatomical dataset basics skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="run_classify_naive_bayes_skl.html"
+                        title="next chapter">run classify naive bayes skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/run_classify_lda_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="run_classify_naive_bayes_skl.html" title="run classify naive bayes skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run_anatomical_dataset_basics_skl.html" title="run anatomical dataset basics skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" >Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

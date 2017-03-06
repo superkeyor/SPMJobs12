@@ -1,0 +1,7 @@
+.. _cosmo_classify_nn:
+
+cosmo classify nn
+=================
+
+.. include :: cosmo_classify_nn.txt
+

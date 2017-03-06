@@ -1,0 +1,7 @@
+.. _cosmo_squareform:
+
+cosmo squareform
+================
+
+.. include :: cosmo_squareform.txt
+

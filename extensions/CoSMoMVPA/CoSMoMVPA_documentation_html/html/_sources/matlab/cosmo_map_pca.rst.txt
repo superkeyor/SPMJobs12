@@ -1,0 +1,7 @@
+.. _cosmo_map_pca:
+
+cosmo map pca
+=============
+
+.. include :: cosmo_map_pca.txt
+

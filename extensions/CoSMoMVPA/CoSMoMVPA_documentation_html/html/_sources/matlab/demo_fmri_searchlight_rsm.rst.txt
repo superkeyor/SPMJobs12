@@ -1,0 +1,9 @@
+.. _demo_fmri_searchlight_rsm:
+
+demo fmri searchlight rsm
+=========================
+
+:demo_up:`demo_fmri_searchlight_rsm`
+
+.. include :: demo_fmri_searchlight_rsm.txt
+

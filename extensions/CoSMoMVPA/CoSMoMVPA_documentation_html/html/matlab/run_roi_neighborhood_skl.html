@@ -1,0 +1,344 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run roi neighborhood skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="run rsa visualize skl" href="run_rsa_visualize_skl.html" />
+    <link rel="prev" title="run permutation test skl" href="run_permutation_test_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="run_rsa_visualize_skl.html" title="run rsa visualize skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run_permutation_test_skl.html" title="run permutation test skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" accesskey="U">Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-roi-neighborhood-skl">
+<span id="id1"></span><h1>run roi neighborhood skl<a class="headerlink" href="#run-roi-neighborhood-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% ROI neighborhood example</span>
+<span class="c">%</span>
+<span class="c">% This example shows how to define and use neighborhoods, and shows</span>
+<span class="c">% how they can be used with the cosmo_searchlight function</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="c">%% Load data (without mask)</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;ak6&#39;</span><span class="p">,</span><span class="s">&#39;s01&#39;</span><span class="p">);</span>
+
+<span class="n">data_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;glm_T_stats_perrun.nii&#39;</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">data_fn</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;targets&#39;</span><span class="p">,</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">10</span><span class="p">),</span><span class="c">...</span>
+                        <span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="nb">floor</span><span class="p">(((</span><span class="mi">1</span><span class="p">:</span><span class="mi">60</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">6</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span>
+
+
+<span class="c">%% Define a neighborhood struct for two ROIs</span>
+
+<span class="c">% Use EV and VT masks</span>
+<span class="n">roi_names</span><span class="p">={</span><span class="s">&#39;ev&#39;</span><span class="p">,</span><span class="s">&#39;vt&#39;</span><span class="p">};</span>
+<span class="n">nrois</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">roi_names</span><span class="p">);</span>
+
+<span class="c">% Start with empty struct</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+<span class="c">% Add a feature attribute with the labels to neighborhood</span>
+<span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">roi_names</span><span class="p">=</span><span class="n">roi_names</span><span class="p">;</span>
+
+<span class="c">% For illustrative purposes as a single dataset attribute</span>
+<span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">some_attribute</span><span class="p">=</span><span class="s">&#39;useless&#39;</span><span class="p">;</span>
+
+<span class="c">% Set the origin field - this is not required, but is useful to avoid</span>
+<span class="c">% mistakes where neighborhoods are used with a different dataset than</span>
+<span class="c">% intended</span>
+<span class="n">nbrhood</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">;</span>
+<span class="n">nbrhood</span><span class="p">.</span><span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+
+<span class="c">% Add a field &#39;.neighbors&#39; to the nbrhood, which is initialized to a cell</span>
+<span class="c">% with two elements (one for each ROI).</span>
+<span class="c">% In the for-loop below, the cell is filled with feature indices</span>
+<span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nrois</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c">% Add the feature indices of each ROI to the neighborhood</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nrois</span>
+    <span class="c">% name of ROI</span>
+    <span class="n">roi_name</span><span class="p">=</span><span class="n">roi_names</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+    <span class="c">% filename of mask volume</span>
+    <span class="n">roi_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s_mask.nii&#39;</span><span class="p">,</span><span class="n">roi_name</span><span class="p">));</span>
+
+    <span class="c">% load roi mask volume and assign to variable named &#39;ds_roi&#39;</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+    <span class="c">% safety check to ensure that the feature attributes match</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">ds_roi</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">));</span>
+
+    <span class="c">% find the indices where the voxels in the ROI have non-zero values,</span>
+    <span class="c">% and assign to a variable named &#39;nonzero_idxs&#39;</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+    <span class="c">% store the non-zero indices in the k-th element of</span>
+    <span class="c">% &#39;nbrhood.neighbors&#39;</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="k">end</span>
+
+<span class="c">% show &#39;nbrhood&#39; using cosmo_disp</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">%% Part 1: &#39;manual&#39; saerchlight using a neighborhood and a measure</span>
+
+<span class="c">% This part shows how a &#39;searchlight&#39; can be imitated using a neighborhood</span>
+<span class="c">% and a measure. The main idea here is:</span>
+<span class="c">% - nbrhood.neighbors contains a cell, each element with indices of</span>
+<span class="c">%   features</span>
+<span class="c">% - apply the measure to subsets of the dataset gives a &#39;partial&#39; dataset,</span>
+<span class="c">%   in the sense that the measure only returns .sa and .samples.</span>
+<span class="c">%   Then the outputs from each application of the measure are stacked</span>
+<span class="c">%   to get the output in each subset of the dataset for each</span>
+<span class="c">%   feature in nbrhood. The stacked output dataset is still &#39;partial&#39;</span>
+<span class="c">%   (only with .sa and .samples, but without .fa and .a)</span>
+<span class="c">% - the neighborhood struct gives .fa and .a, so combining these with</span>
+<span class="c">%   the stacked dataset to get a full dataset with</span>
+<span class="c">%   .samples, .fa, .sa., and .a</span>
+<span class="c">%</span>
+
+<span class="c">% Define a measure and arguments for n-fold</span>
+<span class="c">% cross-validation with LDA classifier</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_nfold_partitioner</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+
+<span class="c">% it is assumed that nbrhood was defined in the previous section. Here</span>
+<span class="c">% see how many rois there are.</span>
+<span class="n">nrois</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">);</span> <span class="c">% should be 2 in this example</span>
+
+<span class="c">% When applying the measure to data in a single ROI, the output is a</span>
+<span class="c">% dataset structure. Allocate a cell of size 1 x &#39;nrois&#39; to store</span>
+<span class="c">% these dataset; assign it to a variable &#39;each_measure_output&#39;</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% Now loop over the elements in nbrhood.neighbors to apply the measure to</span>
+<span class="c">% each ROI</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nrois</span>
+    <span class="c">% get the feature indices for the k-th ROI, and store in variable named</span>
+    <span class="c">% &#39;feature_idxs&#39;</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+    <span class="c">% slice the &#39;ds&#39; dataset using these feature_idxs along the second</span>
+    <span class="c">% (feature) dimension to select the data in the k-th ROI. Assign the</span>
+    <span class="c">% result to a variable named &#39;ds_roi&#39;</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+    <span class="c">% safety check (for this exercise)</span>
+    <span class="c">% if this throws an error then you did something wrong</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">ds_roi</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="nb">numel</span><span class="p">(</span><span class="n">feature_idxs</span><span class="p">));</span>
+
+    <span class="c">% apply the measure and store the result in the k-th element of</span>
+    <span class="c">% &#39;each_measure_output&#39;</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="k">end</span>
+
+<span class="c">% Stack the datasets in &#39;each_measure_output&#39; using cosmo_stack along</span>
+<span class="c">% the second dimension, to get a dataset where .samples is 1 x nrois.</span>
+<span class="c">% Assign the result to a variable &#39;full_output&#39;</span>
+<span class="c">% Hint: the second argument of cosmo_stack must be 2</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% From the &#39;nbrhood&#39; now copy the contents of the .fa. and .a fields</span>
+<span class="c">% to &#39;full_output&#39; to get a full dataset with .samples, .a, .fa and .sa</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% Show the result</span>
+<span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">full_output</span><span class="p">);</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nOutput of cross-validation:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">full_output</span><span class="p">)</span>
+
+
+<span class="c">%% Part 2: use cosmo_searchlight to replicate Part 1</span>
+
+<span class="c">% the cosmo_searchlight routine uses a neighborhood and a measure</span>
+<span class="c">% and applies them in a similar way as in Part 1</span>
+
+<span class="c">% Use cosmo_searchlight with arguments:</span>
+<span class="c">%  - the input dataset (&#39;ds&#39;)</span>
+<span class="c">%  - the neighborhood struct (&#39;nbrhood&#39;)</span>
+<span class="c">%  - the function handle of the measure (&#39;measure&#39;)</span>
+<span class="c">%  - the arguments to the measure (&#39;measure_args&#39;)</span>
+<span class="c">% Assign the result to the variable &#39;full_output_alt&#39; and display it</span>
+<span class="c">% contents using cosmo_disp</span>
+
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+
+<span class="c">%% Part 3: use cosmo_searchlight for split-half correlation differences</span>
+
+<span class="c">% This is a variation of part 2, showing how split-half correlation</span>
+<span class="c">% differences can be computed using a searchlight</span>
+<span class="c">%</span>
+<span class="c">% Note: this dataset has 10 chunks. The correlation measure will,</span>
+<span class="c">% by default, *not* do a &#39;simple&#39; odd-even partitioning, but instead will</span>
+<span class="c">% use all possible splits of the 10 chunks in two groups of 5, yielding</span>
+<span class="c">% nchoosek(10,5) = 10! / (5!*5!) = 252 splits. Correlation diffences are</span>
+<span class="c">% computed for each split and then averaged.</span>
+<span class="c">% (to override this, you can specify a &#39;partitions&#39; argument with, for</span>
+<span class="c">% example, the output of cosmo_oddeven_partitioner(ds,&#39;half&#39;) ).</span>
+
+<span class="c">% Set the variable &#39;measure&#39; to a function handle referring to</span>
+<span class="c">% cosmo_correlation_measure</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% Run the searchlight using cosmo_searchlight, which takes the dataset,</span>
+<span class="c">% neighborhood and measure arguments. (No additional measure arguments are</span>
+<span class="c">% required for the correlation measure)</span>
+<span class="n">corr_output</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">measure</span><span class="p">);</span>
+
+<span class="c">% Show the result</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">corr_output</span><span class="p">);</span>
+
+<span class="c">%% Part 4: (advanced) use cosmo_searchlight to get confusion matrices</span>
+
+<span class="c">% This exercise is like part 2 (classifation), but now</span>
+<span class="c">% classification confusions are computed and visualized</span>
+<span class="c">%</span>
+<span class="c">% set arguments for the measure, ensuring that the predictions (instead</span>
+<span class="c">% of classification accuracies) are returned</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_nfold_partitioner</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">output</span><span class="p">=</span><span class="s">&#39;predictions&#39;</span><span class="p">;</span>
+
+<span class="c">% apply searchlight using the dataset, neighborhood, measure, and measure</span>
+<span class="c">% arguments; store the result in &#39;ds_confusion&#39;</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% show contents of ds_confusion</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds_confusion</span><span class="p">);</span>
+
+<span class="c">% convert to array form (nclasses x nclasses x nrois, with nclasses=6 and</span>
+<span class="c">% nrois=2) and assign the result to a variable &#39;mx_confusion&#39;</span>
+<span class="c">% Hint: use cosmo_confusion_matrix and apply it to &#39;ds_confusion&#39; directly</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% visualize the confusion matrices</span>
+
+<span class="n">classes</span><span class="p">=</span> <span class="p">{</span><span class="s">&#39;monkey&#39;</span><span class="p">,</span><span class="s">&#39;lemur&#39;</span><span class="p">,</span><span class="s">&#39;mallard&#39;</span><span class="p">,</span><span class="s">&#39;warbler&#39;</span><span class="p">,</span><span class="s">&#39;ladybug&#39;</span><span class="p">,</span><span class="s">&#39;lunamoth&#39;</span><span class="p">};</span>
+<span class="n">nmatrices</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">mx_confusion</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nmatrices</span>
+    <span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run_permutation_test_skl.html"
+                        title="previous chapter">run permutation test skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="run_rsa_visualize_skl.html"
+                        title="next chapter">run rsa visualize skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/run_roi_neighborhood_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="run_rsa_visualize_skl.html" title="run rsa visualize skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run_permutation_test_skl.html" title="run permutation test skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" >Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_synthetic_dataset_skl:
+
+cosmo synthetic dataset skl
+===========================
+
+.. include :: cosmo_synthetic_dataset_skl.txt
+

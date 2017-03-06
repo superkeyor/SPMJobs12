@@ -1,0 +1,7 @@
+.. _cosmo_check_partitions_skl:
+
+cosmo check partitions skl
+==========================
+
+.. include :: cosmo_check_partitions_skl.txt
+

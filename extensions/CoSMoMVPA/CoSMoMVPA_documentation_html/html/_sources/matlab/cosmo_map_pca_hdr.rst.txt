@@ -1,0 +1,7 @@
+.. _cosmo_map_pca_hdr:
+
+cosmo map pca hdr
+=================
+
+.. include :: cosmo_map_pca_hdr.txt
+

@@ -1,0 +1,176 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run setting sample attr skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="run sphere offsets skl" href="run_sphere_offsets_skl.html" />
+    <link rel="prev" title="run rsm measure searchlight skl" href="run_rsm_measure_searchlight_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="run_sphere_offsets_skl.html" title="run sphere offsets skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run_rsm_measure_searchlight_skl.html" title="run rsm measure searchlight skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" accesskey="U">Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-setting-sample-attr-skl">
+<span id="id1"></span><h1>run setting sample attr skl<a class="headerlink" href="#run-setting-sample-attr-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% Dataset Basics (setting sample attributes)</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="c">% Set the targets and the chunks</span>
+<span class="c">%</span>
+<span class="c">% There are 10 runs with 6 volumes per run. The runs are vertically stacked one</span>
+<span class="c">% above the other. The six volumes in each run correspond to the stimuli:</span>
+<span class="c">% &#39;monkey&#39;,&#39;lemur&#39;,&#39;mallard&#39;,&#39;warbler&#39;,&#39;ladybug&#39;,&#39;lunamoth&#39;, in that order. Add</span>
+<span class="c">% numeric targets labels (samples atribute) such that 1 corresponds to &#39;monkey&#39;,</span>
+<span class="c">% 2 corresponds to &#39;lemur&#39;, etc. Then add numeric chunks (another samples</span>
+<span class="c">% attribute) so that 1 corresponds to run1, 2 corresponds to run2, etc.</span>
+
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;ak6&#39;</span><span class="p">,</span><span class="s">&#39;s01&#39;</span><span class="p">);</span>
+
+<span class="c">%% Load the dataset &#39;glm_T_stats_perrun.nii&#39; masked with &#39;brain_mask.nii&#39;</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="c">%% set targets</span>
+<span class="c">%remember that targets are part of ds.sa and that they are stored in a</span>
+<span class="c">%column vector</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="c">%% set chunks</span>
+<span class="c">%remember that chunks are part of ds.sa and that they are stored in a</span>
+<span class="c">%column vector</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">%% Show the results</span>
+
+<span class="c">%% print the dataset</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nDataset:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+
+<span class="c">%% print the sample attributes</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nSample attributes (in full):\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="s">&#39;edgeitems&#39;</span><span class="p">,</span><span class="n">Inf</span><span class="p">);</span> <span class="c">%&#39;edgeitems determine how much of a</span>
+                                   <span class="c">% matrix is displayed. Try different values.</span>
+
+<span class="c">%% print targets and chunks next to each other</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;\nTargets and chunks attributes (in full):\n&#39;</span><span class="p">)</span>
+<span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;sample #   target   chunk\n&#39;</span><span class="p">);</span>
+<span class="n">index_target_chunks</span><span class="p">=[(</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span> <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">];</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">index_target_chunks</span><span class="p">,</span><span class="s">&#39;edgeitems&#39;</span><span class="p">,</span><span class="n">Inf</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run_rsm_measure_searchlight_skl.html"
+                        title="previous chapter">run rsm measure searchlight skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="run_sphere_offsets_skl.html"
+                        title="next chapter">run sphere offsets skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/run_setting_sample_attr_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="run_sphere_offsets_skl.html" title="run sphere offsets skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run_rsm_measure_searchlight_skl.html" title="run rsm measure searchlight skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" >Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

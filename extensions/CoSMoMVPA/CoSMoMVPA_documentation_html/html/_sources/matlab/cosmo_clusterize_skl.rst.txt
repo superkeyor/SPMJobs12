@@ -1,0 +1,7 @@
+.. _cosmo_clusterize_skl:
+
+cosmo clusterize skl
+====================
+
+.. include :: cosmo_clusterize_skl.txt
+

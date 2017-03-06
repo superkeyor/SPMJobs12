@@ -1,0 +1,9 @@
+.. _demo_fmri_correlation_searchlight:
+
+demo fmri correlation searchlight
+=================================
+
+:demo_up:`demo_fmri_correlation_searchlight`
+
+.. include :: demo_fmri_correlation_searchlight.txt
+

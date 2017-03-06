@@ -1,0 +1,294 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo interval neighborhood skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo isequaln skl" href="cosmo_isequaln_skl.html" />
+    <link rel="prev" title="cosmo index unique skl" href="cosmo_index_unique_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_isequaln_skl.html" title="cosmo isequaln skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_index_unique_skl.html" title="cosmo index unique skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-interval-neighborhood-skl">
+<span id="id1"></span><h1>cosmo interval neighborhood skl<a class="headerlink" href="#cosmo-interval-neighborhood-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>nbrhood<span class="p">=</span><span class="nf">cosmo_interval_neighborhood</span><span class="p">(</span>ds, label, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% compute neighborhoods stretching intervals</span>
+<span class="c">%</span>
+<span class="c">% nbrhood=cosmo_interval_neighborhood(ds, label, &#39;radius&#39;, radius)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds            dataset struct</span>
+<span class="c">%   label         dimension label in ds.a.fdim.labels</span>
+<span class="c">%   &#39;radius&#39;, r   neighborhood radius</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   nbrhood       struct with fields:</span>
+<span class="c">%     .a          } dataset and feature attributes of neighborhood</span>
+<span class="c">%     .fa         }</span>
+<span class="c">%     .neighbors  If ds has N values in the dimension label, then</span>
+<span class="c">%                 neighbors is a Nx1 cell with indices of features</span>
+<span class="c">%                 where the indices differ at most radius from each other.</span>
+<span class="c">%</span>
+<span class="c">% Examples</span>
+<span class="c">%     % Illustrate the &#39;time&#39; dimension in MEEG time-frequency dataset,</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timefreq&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     %</span>
+<span class="c">%     % neighborhoods with bins 5 (=2*1+1) frequency bands wide</span>
+<span class="c">%     % (every neighborhood contains all channels and time points)</span>
+<span class="c">%     nbrhood=cosmo_interval_neighborhood(ds,&#39;freq&#39;,&#39;radius&#39;,2);</span>
+<span class="c">%     cosmo_disp(nbrhood.a.fdim)</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;freq&#39; }</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { [ 2         4         6  ...  10        12        14 ]@1x7 }</span>
+<span class="c">%     cosmo_disp(nbrhood.fa.freq)</span>
+<span class="c">%     &gt; [ 1         2         3  ...  5         6         7 ]@1x7</span>
+<span class="c">%     cosmo_disp(nbrhood.neighbors)</span>
+<span class="c">%     &gt; { [ 1         2         3  ...  9.48e+03  9.48e+03  9.49e+03 ]@1x4590</span>
+<span class="c">%     &gt;   [ 1         2         3  ...  9.79e+03  9.79e+03  9.79e+03 ]@1x6120</span>
+<span class="c">%     &gt;   [ 1         2         3  ...  1.01e+04  1.01e+04  1.01e+04 ]@1x7650</span>
+<span class="c">%     &gt;                                       :</span>
+<span class="c">%     &gt;   [ 613       614       615  ...  1.07e+04  1.07e+04  1.07e+04 ]@1x7650</span>
+<span class="c">%     &gt;   [ 919       920       921  ...  1.07e+04  1.07e+04  1.07e+04 ]@1x6120</span>
+<span class="c">%     &gt;   [ 1.22e+03  1.23e+03  1.23e+03  ...  1.07e+04  1.07e+04  1.07e+04 ]@1x4590 }@7x1</span>
+<span class="c">%</span>
+<span class="c">%     % ds is an MEEG dataset with a time dimension</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timelock&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     %</span>
+<span class="c">%     % Neighborhoods just the frequency bin itself</span>
+<span class="c">%     % (every neighborhood contains all channels)</span>
+<span class="c">%     nbrhood=cosmo_interval_neighborhood(ds,&#39;time&#39;,&#39;radius&#39;,2);</span>
+<span class="c">%     cosmo_disp(nbrhood.a.fdim)</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;time&#39; }</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { [ -0.2     -0.15      -0.1  ...  0      0.05       0.1 ]@1x7 }</span>
+<span class="c">%     cosmo_disp(nbrhood.fa.time)</span>
+<span class="c">%     &gt; [ 1         2         3  ...  5         6         7 ]@1x7</span>
+<span class="c">%     cosmo_disp(nbrhood.neighbors)</span>
+<span class="c">%     &gt; { [ 1         2         3  ...  916       917       918 ]@1x918</span>
+<span class="c">%     &gt;   [ 1         2         3  ...  1.22e+03  1.22e+03  1.22e+03 ]@1x1224</span>
+<span class="c">%     &gt;   [ 1         2         3  ...  1.53e+03  1.53e+03  1.53e+03 ]@1x1530</span>
+<span class="c">%     &gt;                                      :</span>
+<span class="c">%     &gt;   [ 613       614       615  ...  2.14e+03  2.14e+03  2.14e+03 ]@1x1530</span>
+<span class="c">%     &gt;   [ 919       920       921  ...  2.14e+03  2.14e+03  2.14e+03 ]@1x1224</span>
+<span class="c">%     &gt;   [ 1.22e+03  1.23e+03  1.23e+03  ...  2.14e+03  2.14e+03  2.14e+03 ]@1x918 }@7x1</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - to combine neighborhoods from different dimensions (such as</span>
+<span class="c">%     time, freq, chan, use cosmo_neighborhood</span>
+<span class="c">%   - the output can be used for a searchlight using cosmo_searchlight</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_neighborhood, cosmo_searchlight</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">radius</span><span class="p">=</span><span class="n">get_radius</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:});</span>
+
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="c">% find dimension index</span>
+    <span class="p">[</span><span class="n">dim</span><span class="p">,</span><span class="n">index</span><span class="p">,</span><span class="n">attr_name</span><span class="p">,</span><span class="n">dim_name</span><span class="p">]=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">label</span><span class="p">);</span>
+
+    <span class="c">% get dimension values</span>
+    <span class="n">dim_values</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.(</span><span class="n">dim_name</span><span class="p">).</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">};</span>
+    <span class="n">nvalues</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">dim_values</span><span class="p">);</span>
+
+    <span class="c">% get feature attribute values</span>
+    <span class="n">fa_values</span><span class="p">=</span><span class="n">ds</span><span class="p">.(</span><span class="n">attr_name</span><span class="p">).(</span><span class="n">label</span><span class="p">);</span>
+
+    <span class="c">% get unique feature attributes</span>
+    <span class="p">[</span><span class="n">fa_idxs</span><span class="p">,</span><span class="n">fa_unq</span><span class="p">]=</span><span class="n">cosmo_index_unique</span><span class="p">(</span><span class="n">fa_values</span><span class="p">(:));</span>
+    <span class="n">nunq</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">fa_unq</span><span class="p">);</span>
+
+    <span class="c">% cosmo_index_unique should return a sorted array of values</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">issorted</span><span class="p">(</span><span class="n">fa_unq</span><span class="p">));</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">neighbors</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nvalues</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% mapping from all values to the ones present in fa</span>
+    <span class="n">all2unq</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nvalues</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">all2unq</span><span class="p">(</span><span class="n">fa_unq</span><span class="p">)=</span><span class="mi">1</span><span class="p">:</span><span class="n">nunq</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="n">center_id</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nvalues</span>
+        <span class="n">first_pos</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">center_id</span><span class="o">-</span><span class="n">radius</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">last_pos</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">center_id</span><span class="o">+</span><span class="n">radius</span><span class="p">,</span><span class="n">nvalues</span><span class="p">);</span>
+
+        <span class="n">around_unq</span><span class="p">=</span><span class="n">all2unq</span><span class="p">(</span><span class="n">first_pos</span><span class="p">:</span><span class="n">last_pos</span><span class="p">);</span>
+        <span class="n">around_unq</span><span class="p">=</span><span class="n">around_unq</span><span class="p">(</span><span class="n">around_unq</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">);</span> <span class="c">% remove empty ones</span>
+
+        <span class="n">neighbors</span><span class="p">{</span><span class="n">center_id</span><span class="p">}=</span><span class="n">sort</span><span class="p">(</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">fa_idxs</span><span class="p">{</span><span class="n">around_unq</span><span class="p">}))</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% store results</span>
+    <span class="n">nbrhood</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+
+    <span class="n">a_dim</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">a_dim</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="n">label</span><span class="p">};</span>
+    <span class="n">a_dim</span><span class="p">.</span><span class="n">values</span><span class="p">={</span><span class="n">dim_values</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">};</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.(</span><span class="n">dim_name</span><span class="p">)=</span><span class="n">a_dim</span><span class="p">;</span>
+
+    <span class="n">nbrhood</span><span class="p">.(</span><span class="n">attr_name</span><span class="p">)=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="n">values</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nvalues</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">dim</span><span class="o">==</span><span class="mi">1</span>
+        <span class="n">values</span><span class="p">=</span><span class="n">values</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="n">other_dim_name</span><span class="p">=</span><span class="s">&#39;fdim&#39;</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">other_dim_name</span><span class="p">=</span><span class="s">&#39;sdim&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">nbrhood</span><span class="p">.(</span><span class="n">attr_name</span><span class="p">).(</span><span class="n">label</span><span class="p">)=</span><span class="n">values</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="n">other_dim_name</span><span class="p">);</span>
+        <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="n">other_dim_name</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">neighbors</span><span class="p">;</span>
+
+    <span class="n">origin</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+    <span class="n">origin</span><span class="p">.(</span><span class="n">attr_name</span><span class="p">)=</span><span class="n">ds</span><span class="p">.(</span><span class="n">attr_name</span><span class="p">);</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">origin</span><span class="p">=</span><span class="n">origin</span><span class="p">;</span>
+
+    <span class="n">cosmo_check_neighborhood</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>radius<span class="p">=</span><span class="nf">get_radius</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">nargin</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">varargin</span><span class="p">{</span><span class="mi">1</span><span class="p">})</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;Usage: %s(...,&#39;&#39;radius&#39;&#39;,r)\n&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;(Note that as of Jan 2015 the syntax for this &#39;</span><span class="c">...</span>
+                <span class="s">&#39;function has changed)&#39;</span><span class="p">],</span><span class="c">...</span>
+                <span class="n">mfilename</span><span class="p">());</span>
+    <span class="k">end</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Missing option &#39;&#39;radius&#39;&#39;&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">radius</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">radius</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">||</span> <span class="n">radius</span><span class="o">&lt;</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;radius must be positive scalar&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_index_unique_skl.html"
+                        title="previous chapter">cosmo index unique skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_isequaln_skl.html"
+                        title="next chapter">cosmo isequaln skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_interval_neighborhood_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_isequaln_skl.html" title="cosmo isequaln skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_index_unique_skl.html" title="cosmo index unique skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

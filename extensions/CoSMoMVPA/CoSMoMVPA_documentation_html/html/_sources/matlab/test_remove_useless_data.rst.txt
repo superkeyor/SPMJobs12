@@ -1,0 +1,7 @@
+.. _test_remove_useless_data:
+
+test remove useless data
+========================
+
+.. include :: test_remove_useless_data.txt
+

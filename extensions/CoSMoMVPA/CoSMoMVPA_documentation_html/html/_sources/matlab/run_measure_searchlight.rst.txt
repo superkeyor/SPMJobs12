@@ -1,0 +1,9 @@
+.. _run_measure_searchlight:
+
+run measure searchlight
+=======================
+
+:run_up:`run_measure_searchlight`
+
+.. include :: run_measure_searchlight.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_mask_dim_intersect_hdr:
+
+cosmo mask dim intersect hdr
+============================
+
+.. include :: cosmo_mask_dim_intersect_hdr.txt
+

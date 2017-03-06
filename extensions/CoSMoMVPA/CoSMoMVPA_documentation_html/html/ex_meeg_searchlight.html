@@ -1,0 +1,162 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MEEG Searchlights &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="MEEG time generalization" href="ex_meeg_time_generalization.html" />
+    <link rel="prev" title="Representational similarity analysis" href="ex_rsa_tutorial.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ex_meeg_time_generalization.html" title="MEEG time generalization"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_rsa_tutorial.html" title="Representational similarity analysis"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="meeg-searchlights">
+<span id="ex-meeg-searchlight"></span><h1>MEEG Searchlights<a class="headerlink" href="#meeg-searchlights" title="Permalink to this headline">¶</a></h1>
+<p>This exercise requires a separate dataset named <cite>meg-obj6</cite>; see <a class="reference internal" href="download.html#download"><span class="std std-ref">download</span></a> section.
+It also requires a working installation of <a class="reference external" href="http://fieldtrip.fcdonders.nl">FieldTrip</a>.</p>
+<p>Before starting this exercise, please make sure you have read about:</p>
+<ul class="simple">
+<li><a class="reference internal" href="tips.html#matlab-octave-function-handles"><span class="std std-ref">Function handles</span></a></li>
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-measure"><span class="std std-ref">Measure</span></a></li>
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-neighborhood"><span class="std std-ref">Neighborhood</span></a></li>
+</ul>
+<div class="section" id="part-1-meeg-univariate-contrast">
+<h2>Part 1: MEEG univariate contrast<a class="headerlink" href="#part-1-meeg-univariate-contrast" title="Permalink to this headline">¶</a></h2>
+<p>Load the MEEG obj6 data for subject <cite>s00</cite>. Read the README file to understand how the data is represented.
+Use <a class="reference internal" href="matlab/cosmo_meeg_dataset.html#cosmo-meeg-dataset"><span class="std std-ref">cosmo meeg dataset</span></a> to convert the dataset to a CoSMoMVPA dataset structure. How many sensors, time points and trials are in this dataset? Then compute, for each time point and sensor, the difference between face and scene stimuli. Visualize the results in FieldTrip for the magnetometers.</p>
+</div>
+<div class="section" id="part-2-meeg-time-course-searchlight-with-classifier-and-cross-validation">
+<h2>Part 2: MEEG time-course searchlight with classifier and cross-validation<a class="headerlink" href="#part-2-meeg-time-course-searchlight-with-classifier-and-cross-validation" title="Permalink to this headline">¶</a></h2>
+<p>Using the same data as above, define a <cite>time</cite> neighborhood for magnetometer sensors in the posterior part of the brain.
+Then, for each time point, use a classifier with cross-validation discriminating the six categories using data for the selected sensors, and plot a classification accuracy time course.</p>
+</div>
+<div class="section" id="part-3-meeg-time-course-searchlight-with-split-half-correlation-measure">
+<h2>Part 3: MEEG time-course searchlight with split-half correlation measure<a class="headerlink" href="#part-3-meeg-time-course-searchlight-with-split-half-correlation-measure" title="Permalink to this headline">¶</a></h2>
+<p>Using the same data as above, define <cite>chan</cite> (channel) and <cite>time</cite> neighborhoods; then cross these neighborhood for a <em>space-time</em> <cite>chan</cite>-by-<cite>time</cite> neighborhood. Using <a class="reference internal" href="matlab/cosmo_correlation_measure.html#cosmo-correlation-measure"><span class="std std-ref">cosmo correlation measure</span></a>, compute split-half correlation differences for each combination of time points and sensors.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_meeg_timelock_measures_skl.html#run-meeg-timelock-measures-skl"><span class="std std-ref">run meeg timelock measures skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_meeg_timelock_measures.html#run-meeg-timelock-measures"><span class="std std-ref">run meeg timelock measures</span></a> / <a class="reference external" href="_static/publish/run_meeg_timelock_measures.html">Matlab output: run_meeg_timelock_measures</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MEEG Searchlights</a><ul>
+<li><a class="reference internal" href="#part-1-meeg-univariate-contrast">Part 1: MEEG univariate contrast</a></li>
+<li><a class="reference internal" href="#part-2-meeg-time-course-searchlight-with-classifier-and-cross-validation">Part 2: MEEG time-course searchlight with classifier and cross-validation</a></li>
+<li><a class="reference internal" href="#part-3-meeg-time-course-searchlight-with-split-half-correlation-measure">Part 3: MEEG time-course searchlight with split-half correlation measure</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ex_rsa_tutorial.html"
+                        title="previous chapter">Representational similarity analysis</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ex_meeg_time_generalization.html"
+                        title="next chapter">MEEG time generalization</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_meeg_searchlight.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ex_meeg_time_generalization.html" title="MEEG time generalization"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_rsa_tutorial.html" title="Representational similarity analysis"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

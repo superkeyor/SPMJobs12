@@ -1,0 +1,333 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test external surfing &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test find local extrema" href="test_find_local_extrema.html" />
+    <link rel="prev" title="test external neuroelf" href="test_external_neuroelf.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_find_local_extrema.html" title="test find local extrema"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_external_neuroelf.html" title="test external neuroelf"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-external-surfing">
+<span id="id1"></span><h1>test external surfing<a class="headerlink" href="#test-external-surfing" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>test_suite<span class="p">=</span><span class="nf">test_external_surfing</span><span class="p">()</span><span class="w"></span>
+<span class="c">% regression tests for external &quot;surfing&quot; toolbox</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_surfing_subsample_surface</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;surfing&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+
+    <span class="n">vertices</span><span class="p">=[</span><span class="mi">0</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span><span class="mi">2</span> <span class="o">-</span><span class="mi">1</span>  <span class="mi">1</span>  <span class="mi">2</span>  <span class="mi">1</span>  <span class="mi">3</span>  <span class="mi">4</span>  <span class="mi">3</span><span class="p">;</span>
+              <span class="mi">0</span> <span class="o">-</span><span class="mi">2</span>  <span class="mi">0</span>  <span class="mi">2</span>  <span class="mi">2</span>  <span class="mi">0</span> <span class="o">-</span><span class="mi">2</span>  <span class="mi">2</span>  <span class="mi">0</span> <span class="o">-</span><span class="mi">2</span><span class="p">;</span>
+              <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span>  <span class="mi">0</span><span class="p">]</span><span class="o">&#39;</span><span class="p">;</span>
+
+    <span class="n">faces</span><span class="p">=[</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">5</span> <span class="mi">8</span> <span class="mi">6</span>  <span class="mi">6</span><span class="p">;</span>
+           <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">9</span> <span class="mi">9</span> <span class="mi">10</span><span class="p">;</span>
+           <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">7</span> <span class="mi">2</span> <span class="mi">6</span> <span class="mi">6</span> <span class="mi">10</span> <span class="mi">7</span><span class="p">]</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+    <span class="p">[</span><span class="n">v_sub</span><span class="p">,</span><span class="n">f_sub</span><span class="p">]=</span><span class="n">surfing_subsample_surface</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span><span class="n">faces</span><span class="p">,</span><span class="mi">1</span><span class="p">,.</span><span class="mi">2</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">v_sub</span><span class="o">&#39;</span><span class="p">,[</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span><span class="mi">2</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">2</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">3</span>
+                         <span class="o">-</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">2</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">2</span> <span class="mi">2</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">2</span>
+                          <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="p">]);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">f_sub</span><span class="o">&#39;</span><span class="p">,[</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">7</span> <span class="mi">5</span>
+                         <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">7</span> <span class="mi">9</span> <span class="mi">8</span> <span class="mi">8</span>
+                         <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">5</span> <span class="mi">9</span> <span class="p">]);</span>
+
+    <span class="p">[</span><span class="n">v_sub2</span><span class="p">,</span><span class="n">f_sub2</span><span class="p">]=</span><span class="n">surfing_subsample_surface</span><span class="p">(</span><span class="n">v_sub</span><span class="p">,</span><span class="n">f_sub</span><span class="p">,</span><span class="mi">1</span><span class="p">,.</span><span class="mi">2</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">v_sub2</span><span class="o">&#39;</span><span class="p">,[</span> <span class="o">-</span><span class="mi">1</span> <span class="o">-</span><span class="mi">2</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">3</span>
+                          <span class="o">-</span><span class="mi">2</span> <span class="mi">0</span> <span class="mi">2</span> <span class="mi">2</span> <span class="o">-</span><span class="mi">2</span> <span class="mi">2</span> <span class="mi">0</span> <span class="o">-</span><span class="mi">2</span>
+                           <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="p">]);</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">f_sub2</span><span class="o">&#39;</span><span class="p">,[</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">4</span> <span class="mi">6</span> <span class="mi">4</span>
+                          <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="mi">8</span> <span class="mi">7</span> <span class="mi">7</span>
+                          <span class="mi">3</span> <span class="mi">4</span> <span class="mi">5</span> <span class="mi">5</span> <span class="mi">4</span> <span class="mi">8</span> <span class="p">]);</span>
+
+    <span class="p">[</span><span class="n">v_sub2_alt</span><span class="p">,</span><span class="n">f_sub2_alt</span><span class="p">]=</span><span class="n">surfing_subsample_surface</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span><span class="n">faces</span><span class="p">,</span><span class="c">...</span>
+                                                        <span class="mi">2</span><span class="p">,.</span><span class="mi">2</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">v_sub2_alt</span><span class="p">,</span><span class="n">v_sub2</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">f_sub2_alt</span><span class="p">,</span><span class="n">f_sub2</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_surfing_generate_planar_surface</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;surfing&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="s">&#39;surfing_generate_planar_surface&#39;</span><span class="p">))</span>
+        <span class="c">% older versions of surfing</span>
+        <span class="n">cosmo_notify_test_skipped</span><span class="p">([</span><span class="s">&#39;surfing_generate_planar_surface &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;is not available&#39;</span><span class="p">]);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">nx</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+    <span class="n">ny</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+
+    <span class="n">origin</span><span class="p">=</span><span class="nb">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">;</span>
+    <span class="n">x1</span><span class="p">=</span><span class="nb">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">;</span>
+    <span class="n">y1</span><span class="p">=</span><span class="nb">rand</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="mi">10</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="n">f1</span><span class="p">]=</span><span class="n">generate_planar_surface</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">origin</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">v2</span><span class="p">,</span><span class="n">f2</span><span class="p">]=</span><span class="n">surfing_generate_planar_surface</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,</span><span class="n">origin</span><span class="p">,</span><span class="n">x1</span><span class="p">,</span><span class="n">y1</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">);</span>
+
+    <span class="c">% test default options</span>
+    <span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="n">f1</span><span class="p">]=</span><span class="n">generate_planar_surface</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="p">[</span><span class="n">v2</span><span class="p">,</span><span class="n">f2</span><span class="p">]=</span><span class="n">surfing_generate_planar_surface</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">f1</span><span class="p">,</span><span class="n">f2</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_surfing_voxel_selection_dijkstra</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">helper_test_surfing_voxel_selection</span><span class="p">(</span><span class="s">&#39;dijkstra&#39;</span><span class="p">)</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_surfing_voxel_selection_euclidean</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">helper_test_surfing_voxel_selection</span><span class="p">(</span><span class="s">&#39;euclidean&#39;</span><span class="p">)</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">helper_test_surfing_voxel_selection</span><span class="p">(</span>metric<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;surfing&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">warning_state</span><span class="p">=</span><span class="n">warning</span><span class="p">();</span>
+    <span class="n">warning_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+    <span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+
+    <span class="n">nx</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+    <span class="n">ny</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="p">)</span><span class="o">+</span><span class="mi">5</span><span class="p">;</span>
+
+    <span class="c">% surface with some nodes outside the volume</span>
+    <span class="p">[</span><span class="n">v</span><span class="p">,</span><span class="n">f</span><span class="p">]=</span><span class="n">generate_planar_surface</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">,[</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="o">-</span><span class="mi">4</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">]);</span>
+    <span class="n">thickness</span><span class="p">=</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">2</span><span class="o">+</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">pial</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">plus</span><span class="p">,</span><span class="n">v</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="o">-</span><span class="n">thickness</span><span class="p">])</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">white</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">plus</span><span class="p">,</span><span class="n">v</span><span class="p">,[</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">thickness</span><span class="p">])</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;big&#39;</span><span class="p">);</span>
+    <span class="n">ds_xyz</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">voldef</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">;</span>
+    <span class="n">half_vox_size</span><span class="p">=</span><span class="n">voldef</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">thickness_margin</span><span class="p">=</span><span class="n">thickness</span><span class="o">+</span><span class="n">half_vox_size</span><span class="p">;</span>
+
+    <span class="n">radius</span><span class="p">=</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">4</span><span class="o">+</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">args</span><span class="p">={</span><span class="n">pial</span><span class="p">,</span><span class="n">white</span><span class="p">,</span><span class="n">f</span><span class="o">&#39;</span><span class="p">,</span><span class="n">radius</span><span class="p">,</span><span class="n">voldef</span><span class="p">,[],[],</span><span class="n">metric</span><span class="p">,</span><span class="mi">0</span><span class="p">};</span>
+    <span class="n">n2v</span><span class="p">=</span><span class="n">surfing_voxelselection</span><span class="p">(</span><span class="n">args</span><span class="p">{:});</span>
+
+    <span class="k">switch</span> <span class="n">metric</span>
+        <span class="k">case</span> <span class="s">&#39;dijkstra&#39;</span>
+            <span class="n">extra_distance</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s">&#39;euclidean&#39;</span>
+            <span class="n">extra_distance</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal distance &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">metric</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">nv</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">rp</span><span class="p">=</span><span class="n">randperm</span><span class="p">(</span><span class="n">nv</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nv</span><span class="o">/</span><span class="mi">2</span>
+        <span class="n">node_id</span><span class="p">=</span><span class="n">rp</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="n">node_xyz</span><span class="p">=</span><span class="n">v</span><span class="p">(</span><span class="n">node_id</span><span class="p">,:);</span>
+
+        <span class="n">is_inside</span><span class="p">=</span><span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">node_xyz</span><span class="o">&#39;</span><span class="p">),</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">voxel_ids</span><span class="p">=</span><span class="n">n2v</span><span class="p">{</span><span class="n">node_id</span><span class="p">};</span>
+        <span class="n">has_voxels</span><span class="p">=</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">voxel_ids</span><span class="p">);</span>
+
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">is_inside</span><span class="p">,</span><span class="n">has_voxels</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">is_inside</span>
+            <span class="n">voxels_xyz</span><span class="p">=</span><span class="n">ds_xyz</span><span class="p">(:,</span><span class="n">n2v</span><span class="p">{</span><span class="n">node_id</span><span class="p">})</span><span class="o">&#39;</span><span class="p">;</span>
+            <span class="n">voxels_z</span><span class="p">=</span><span class="n">voxels_xyz</span><span class="p">(:,</span><span class="mi">3</span><span class="p">);</span>
+
+            <span class="c">% check z coordinates</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="o">-</span><span class="n">thickness_margin</span> <span class="o">&lt;</span><span class="p">=</span> <span class="n">voxels_z</span> <span class="o">&amp;</span> <span class="c">...</span>
+                        <span class="n">voxels_z</span> <span class="o">&lt;</span><span class="p">=</span> <span class="n">thickness_margin</span><span class="p">))</span>
+
+            <span class="n">distances</span><span class="p">=</span><span class="n">euclidean_distance</span><span class="p">(</span><span class="n">ds_xyz</span><span class="o">&#39;</span><span class="p">,</span><span class="n">node_xyz</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+
+            <span class="n">node_distances</span><span class="p">=</span><span class="n">distances</span><span class="p">(</span><span class="n">n2v</span><span class="p">{</span><span class="n">node_id</span><span class="p">});</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">node_distances</span><span class="o">&lt;</span><span class="p">=</span><span class="n">radius</span><span class="o">+</span><span class="n">thickness_margin</span><span class="p">));</span>
+
+            <span class="c">% check voxels not selected</span>
+            <span class="n">nfeatures</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+            <span class="n">candidates</span><span class="p">=</span><span class="n">true</span><span class="p">(</span><span class="n">nfeatures</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">(</span><span class="mi">1</span><span class="p">,:)</span><span class="o">&lt;</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">v</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)))=</span><span class="n">false</span><span class="p">;</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="o">&lt;</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">v</span><span class="p">(:,</span><span class="mi">2</span><span class="p">)))=</span><span class="n">false</span><span class="p">;</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">(</span><span class="mi">3</span><span class="p">,:)</span><span class="o">&lt;</span><span class="p">=</span><span class="o">-</span><span class="p">(</span><span class="n">thickness</span><span class="o">+</span><span class="n">half_vox_size</span><span class="p">))=</span><span class="n">false</span><span class="p">;</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">(</span><span class="mi">1</span><span class="p">,:)</span><span class="o">&gt;</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">v</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)))=</span><span class="n">false</span><span class="p">;</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">(</span><span class="mi">2</span><span class="p">,:)</span><span class="o">&gt;</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">v</span><span class="p">(:,</span><span class="mi">2</span><span class="p">)))=</span><span class="n">false</span><span class="p">;</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">ds_xyz</span><span class="p">(</span><span class="mi">3</span><span class="p">,:)</span><span class="o">&gt;</span><span class="p">=</span><span class="n">thickness</span><span class="o">+</span><span class="n">half_vox_size</span><span class="p">)=</span><span class="n">false</span><span class="p">;</span>
+            <span class="n">candidates</span><span class="p">(</span><span class="n">n2v</span><span class="p">{</span><span class="n">node_id</span><span class="p">})=</span><span class="n">false</span><span class="p">;</span>
+
+            <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">candidates</span><span class="p">)</span>
+                <span class="n">min_outside</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">distances</span><span class="p">(</span><span class="n">candidates</span><span class="p">));</span>
+                <span class="n">assert</span><span class="p">(</span><span class="n">min_outside</span><span class="o">&gt;</span><span class="n">radius</span><span class="o">-</span><span class="n">half_vox_size</span><span class="p">);</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+        <span class="c">% check individual call for this node id</span>
+        <span class="n">args_single_node</span><span class="p">=</span><span class="n">args</span><span class="p">;</span>
+        <span class="n">args_single_node</span><span class="p">{</span><span class="mi">6</span><span class="p">}=</span><span class="n">node_id</span><span class="p">;</span>
+        <span class="n">n2v_single_node</span><span class="p">=</span><span class="n">surfing_voxelselection</span><span class="p">(</span><span class="n">args_single_node</span><span class="p">{:});</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">n2v_single_node</span><span class="p">,</span><span class="n">n2v</span><span class="p">(</span><span class="n">node_id</span><span class="p">));</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>d<span class="p">=</span><span class="nf">euclidean_distance</span><span class="p">(</span>p,q,dim<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">d</span><span class="p">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span><span class="n">p</span><span class="p">(:,</span><span class="n">dim</span><span class="p">),</span><span class="n">q</span><span class="p">(:,</span><span class="n">dim</span><span class="p">))</span><span class="o">.^</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>[vertices,faces]<span class="p">=</span><span class="nf">generate_planar_surface</span><span class="p">(</span>nx, ny, origin, x1, y1<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">vertices</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nx</span><span class="o">*</span><span class="n">ny</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">faces</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">2</span><span class="o">*</span><span class="p">(</span><span class="n">nx</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ny</span><span class="o">-</span><span class="mi">1</span><span class="p">),</span><span class="mi">3</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nx</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ny</span>
+            <span class="n">vpos</span><span class="p">=(</span><span class="nb">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">ny</span><span class="o">+</span><span class="nb">j</span><span class="p">;</span>
+            <span class="n">vertices</span><span class="p">(</span><span class="n">vpos</span><span class="p">,:)=</span><span class="n">origin</span><span class="o">+</span><span class="p">(</span><span class="nb">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">x1</span><span class="o">+</span><span class="p">(</span><span class="nb">j</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">y1</span><span class="p">;</span>
+            <span class="k">if</span> <span class="nb">i</span><span class="o">&lt;</span><span class="n">nx</span> <span class="o">&amp;&amp;</span> <span class="nb">j</span><span class="o">&lt;</span><span class="n">ny</span>
+                <span class="n">p</span><span class="p">=</span><span class="n">vpos</span><span class="p">;</span>
+                <span class="n">q</span><span class="p">=</span><span class="n">vpos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">r</span><span class="p">=</span><span class="n">vpos</span><span class="o">+</span><span class="n">ny</span><span class="p">;</span>
+                <span class="n">s</span><span class="p">=</span><span class="n">vpos</span><span class="o">+</span><span class="n">ny</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+
+                <span class="n">fpos</span><span class="p">=((</span><span class="nb">i</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="p">(</span><span class="n">ny</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="nb">j</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">faces</span><span class="p">(</span><span class="n">fpos</span><span class="p">,:)=[</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">,</span><span class="n">r</span><span class="p">];</span>
+                <span class="n">faces</span><span class="p">(</span><span class="n">fpos</span><span class="o">+</span><span class="mi">1</span><span class="p">,:)=[</span><span class="n">s</span><span class="p">,</span><span class="n">r</span><span class="p">,</span><span class="n">q</span><span class="p">];</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_external_neuroelf.html"
+                        title="previous chapter">test external neuroelf</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_find_local_extrema.html"
+                        title="next chapter">test find local extrema</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_external_surfing.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_find_local_extrema.html" title="test find local extrema"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_external_neuroelf.html" title="test external neuroelf"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

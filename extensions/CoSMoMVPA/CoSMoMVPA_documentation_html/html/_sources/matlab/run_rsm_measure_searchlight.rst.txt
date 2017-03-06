@@ -1,0 +1,9 @@
+.. _run_rsm_measure_searchlight:
+
+run rsm measure searchlight
+===========================
+
+:run_up:`run_rsm_measure_searchlight`
+
+.. include :: run_rsm_measure_searchlight.txt
+

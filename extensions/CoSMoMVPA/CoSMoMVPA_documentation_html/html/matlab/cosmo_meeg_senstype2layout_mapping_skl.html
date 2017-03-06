@@ -1,0 +1,401 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo meeg senstype2layout mapping skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo meeg senstype collection skl" href="cosmo_meeg_senstype_collection_skl.html" />
+    <link rel="prev" title="cosmo meeg read layout skl" href="cosmo_meeg_read_layout_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_senstype_collection_skl.html" title="cosmo meeg senstype collection skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_read_layout_skl.html" title="cosmo meeg read layout skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-meeg-senstype2layout-mapping-skl">
+<span id="id1"></span><h1>cosmo meeg senstype2layout mapping skl<a class="headerlink" href="#cosmo-meeg-senstype2layout-mapping-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>senstype2layout<span class="p">=</span><span class="nf">cosmo_meeg_senstype2layout_mapping</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% return mapping from MEEG sensor types to sensor layouts</span>
+<span class="c">%</span>
+<span class="c">% senstype2layout=cosmo_meeg_senstype2layout_mapping()</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   senstype2layout       struct where the fieldnames (keys) are senstypes</span>
+<span class="c">%                         (acquisition systems with a possible suffix</span>
+<span class="c">%                         indicating a type of channel)</span>
+<span class="c">%                         If a senstype does not have an associated layout</span>
+<span class="c">%                         then the corresponding value is set to [].</span>
+<span class="c">%                         Otherwise each value has fields:</span>
+<span class="c">%                         .pos     Nx2 x and y coordinates (for N channels)</span>
+<span class="c">%                         .width   Nx1 channel widths</span>
+<span class="c">%                         .height  Nx1 channel heights</span>
+<span class="c">%                         .label   Nx1 cell with channel labels</span>
+<span class="c">%                         .name    string with name of layout</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     senstype2layout=cosmo_meeg_senstype2layout_mapping();</span>
+<span class="c">%     % get layout for neuromag306 MEG planar (gradiometers)</span>
+<span class="c">%     layout=senstype2layout.neuromag306alt_planar;</span>
+<span class="c">%     cosmo_disp(layout.label)</span>
+<span class="c">%     &gt; { &#39;MEG0113&#39;</span>
+<span class="c">%     &gt;   &#39;MEG0112&#39;</span>
+<span class="c">%     &gt;   &#39;MEG0122&#39;</span>
+<span class="c">%     &gt;      :</span>
+<span class="c">%     &gt;   &#39;MEG2643&#39;</span>
+<span class="c">%     &gt;   &#39;COMNT&#39;</span>
+<span class="c">%     &gt;   &#39;SCALE&#39;   }@206x1</span>
+<span class="c">%     cosmo_disp([layout.pos layout.width layout.height])</span>
+<span class="c">%     &gt; [ -0.408     0.253    0.0323    0.0332</span>
+<span class="c">%     &gt;   -0.408     0.284    0.0323    0.0332</span>
+<span class="c">%     &gt;   -0.328     0.285    0.0323    0.0332</span>
+<span class="c">%     &gt;      :         :         :         :</span>
+<span class="c">%     &gt;    0.373    -0.082    0.0323    0.0332</span>
+<span class="c">%     &gt;    -0.45     -0.45    0.0323    0.0332</span>
+<span class="c">%     &gt;     0.45     -0.45    0.0323    0.0332 ]@206x4</span>
+<span class="c">%     layout.name</span>
+<span class="c">%     &gt; neuromag306planar.lay</span>
+<span class="c">%</span>
+<span class="c">%     senstype2layout=cosmo_meeg_senstype2layout_mapping();</span>
+<span class="c">%     % get layout for neuromag306 MEG combined planar</span>
+<span class="c">%     % (combined gradiometers)</span>
+<span class="c">%     layout=senstype2layout.neuromag306alt_planar_combined;</span>
+<span class="c">%     cosmo_disp(layout.label)</span>
+<span class="c">%     &gt; { &#39;MEG0112+0113&#39;</span>
+<span class="c">%     &gt;   &#39;MEG0122+0123&#39;</span>
+<span class="c">%     &gt;   &#39;MEG0132+0133&#39;</span>
+<span class="c">%     &gt;         :</span>
+<span class="c">%     &gt;   &#39;MEG2642+2643&#39;</span>
+<span class="c">%     &gt;   &#39;COMNT&#39;</span>
+<span class="c">%     &gt;   &#39;SCALE&#39;        }@104x1</span>
+<span class="c">%     cosmo_disp([layout.pos layout.width layout.height])</span>
+<span class="c">%     &gt; [ -0.408     0.273    0.0645    0.0712</span>
+<span class="c">%     &gt;   -0.328     0.306    0.0645    0.0712</span>
+<span class="c">%     &gt;   -0.377     0.179    0.0645    0.0712</span>
+<span class="c">%     &gt;      :         :         :         :</span>
+<span class="c">%     &gt;    0.373    -0.104    0.0645    0.0712</span>
+<span class="c">%     &gt;    -0.45     -0.45    0.0645    0.0712</span>
+<span class="c">%     &gt;     0.45     -0.45    0.0645    0.0712 ]@104x4</span>
+<span class="c">%     layout.name</span>
+<span class="c">%     &gt; neuromag306cmb.lay</span>
+<span class="c">%</span>
+<span class="c">%     senstype2layout=cosmo_meeg_senstype2layout_mapping();</span>
+<span class="c">%     % get layout for EEG elec1020</span>
+<span class="c">%     layout=senstype2layout.eeg1020;</span>
+<span class="c">%     cosmo_disp(layout.label)</span>
+<span class="c">%     &gt; { &#39;Fp1&#39;</span>
+<span class="c">%     &gt;   &#39;Fpz&#39;</span>
+<span class="c">%     &gt;   &#39;Fp2&#39;</span>
+<span class="c">%     &gt;     :</span>
+<span class="c">%     &gt;   &#39;O2&#39;</span>
+<span class="c">%     &gt;   &#39;COMNT&#39;</span>
+<span class="c">%     &gt;   &#39;SCALE&#39; }@23x1</span>
+<span class="c">%     cosmo_disp([layout.pos layout.width layout.height])</span>
+<span class="c">%     &gt; [ -0.139     0.428     0.125    0.0938</span>
+<span class="c">%     &gt;        0      0.45     0.125    0.0938</span>
+<span class="c">%     &gt;    0.139     0.428     0.125    0.0938</span>
+<span class="c">%     &gt;      :         :         :         :</span>
+<span class="c">%     &gt;    0.139    -0.428     0.125    0.0938</span>
+<span class="c">%     &gt;    -0.45      0.45     0.125    0.0938</span>
+<span class="c">%     &gt;     0.45      0.45     0.125    0.0938 ]@23x4</span>
+<span class="c">%     layout.name</span>
+<span class="c">%     &gt; EEG1020.lay</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - this function requires FieldTrip, as it uses its collection of</span>
+<span class="c">%     layouts</span>
+<span class="c">%   - the output from this function is similar to FieldTrip&#39;s</span>
+<span class="c">%     ft_prepare_layout, but positions are not scaled as in FieldTrip</span>
+<span class="c">%   - this function caches previously read layouts, for optimization</span>
+<span class="c">%     reasons. run &quot;clear functions&quot; to reset the cache.</span>
+<span class="c">%   - this function uses cosmo_meeg_layout_collection and</span>
+<span class="c">%     cosmo_meeg_senstype_collection to match sensor types with layouts</span>
+<span class="c">%   - this function does not provide layouts for all sensor types; if you</span>
+<span class="c">%     find a layout of interest is missing, please get in touch with the</span>
+<span class="c">%     developers</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_meeg_layout_collection, cosmo_meeg_senstype_collection</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="c">% &#39;secret&#39; options with thresholds to find best matching layout</span>
+    <span class="n">defaults</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">thr_layout</span><span class="p">=.</span><span class="mi">7</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">thr_senstype</span><span class="p">=.</span><span class="mi">8</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="n">senstype2layout</span><span class="p">=</span><span class="n">get_mapping</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>senstype2layout<span class="p">=</span><span class="nf">get_mapping</span><span class="p">(</span>opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function to actually compute the mapping</span>
+    <span class="k">persistent</span> <span class="n">cached_opt</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_senstype2layout</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="n">cached_opt</span><span class="p">)</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">cached_senstype2layout</span><span class="p">)</span>
+        <span class="n">sc</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+        <span class="n">names</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">sc</span><span class="p">);</span>
+        <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">names</span><span class="p">);</span>
+
+        <span class="n">senstype2layout</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+            <span class="n">name</span><span class="p">=</span><span class="n">names</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">lay</span><span class="p">=</span><span class="n">find_layout</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+            <span class="n">senstype2layout</span><span class="p">.(</span><span class="n">name</span><span class="p">)=</span><span class="n">lay</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">cached_opt</span><span class="p">=</span><span class="n">opt</span><span class="p">;</span>
+        <span class="n">cached_senstype2layout</span><span class="p">=</span><span class="n">senstype2layout</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">senstype2layout</span><span class="p">=</span><span class="n">cached_senstype2layout</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>pairs<span class="p">=</span><span class="nf">senstypes_alt_names</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="c">% return pairs of sensor types with and without the &#39;alt&#39; name, e.g.</span>
+    <span class="c">% neuromag306alt_planar and neuromag306_planar</span>
+    <span class="n">sc</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+    <span class="n">names</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">sc</span><span class="p">);</span>
+
+    <span class="n">names_without_alt</span><span class="p">=</span><span class="n">strrep</span><span class="p">(</span><span class="n">names</span><span class="p">,</span><span class="s">&#39;alt&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">msk_with_alt</span><span class="p">=</span><span class="o">~</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">names_without_alt</span><span class="p">);</span>
+    <span class="n">idxs_with_alt</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">msk_with_alt</span><span class="p">);</span>
+    <span class="n">ncandidates</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">idxs_with_alt</span><span class="p">);</span>
+
+    <span class="n">pairs</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">ncandidates</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncandidates</span>
+        <span class="n">idx_with_alt</span><span class="p">=</span><span class="n">idxs_with_alt</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="n">name_without_alt</span><span class="p">=</span><span class="n">names_without_alt</span><span class="p">{</span><span class="n">idx_with_alt</span><span class="p">};</span>
+        <span class="n">idx_all</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">names_without_alt</span><span class="p">,</span><span class="n">name_without_alt</span><span class="p">));</span>
+        <span class="n">idx_without_alt</span><span class="p">=</span><span class="n">setdiff</span><span class="p">(</span><span class="n">idx_all</span><span class="p">,</span><span class="n">idx_with_alt</span><span class="p">);</span>
+        <span class="k">switch</span> <span class="nb">numel</span><span class="p">(</span><span class="n">idx_without_alt</span><span class="p">)</span>
+            <span class="k">case</span> <span class="mi">0</span>
+                <span class="k">continue</span>
+            <span class="k">case</span> <span class="mi">1</span>
+                <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">name_with_alt</span><span class="p">=</span><span class="n">names</span><span class="p">{</span><span class="n">idx_with_alt</span><span class="p">};</span>
+                <span class="n">pairs</span><span class="p">(</span><span class="n">pos</span><span class="p">,:)={</span><span class="n">name_without_alt</span><span class="p">,</span><span class="n">name_with_alt</span><span class="p">};</span>
+            <span class="k">otherwise</span>
+                <span class="n">assert</span><span class="p">(</span><span class="n">false</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">pairs</span><span class="p">=</span><span class="n">pairs</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">pos</span><span class="p">,:);</span>
+
+<span class="k">function</span><span class="w"> </span>alt_name<span class="p">=</span><span class="nf">find_alt_name</span><span class="p">(</span>name<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">alt_name</span><span class="p">=[];</span>
+
+    <span class="n">pairs</span><span class="p">=</span><span class="n">senstypes_alt_names</span><span class="p">();</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span>
+        <span class="n">msk</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">pairs</span><span class="p">(:,</span><span class="n">col</span><span class="p">),</span><span class="n">name</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">msk</span><span class="p">)</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="n">msk</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">alt_name</span><span class="p">=</span><span class="n">pairs</span><span class="p">{</span><span class="n">msk</span><span class="p">,</span><span class="mi">3</span><span class="o">-</span><span class="n">col</span><span class="p">};</span>
+            <span class="k">return</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>lay<span class="p">=</span><span class="nf">find_layout</span><span class="p">(</span>name,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% find layout based on sensname</span>
+    <span class="c">% if no layout is found, lay is returned as []</span>
+    <span class="n">lay</span><span class="p">=</span><span class="n">find_layout_helper</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">lay</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="c">% not found, try to use the alternative name</span>
+    <span class="n">alt_name</span><span class="p">=</span><span class="n">find_alt_name</span><span class="p">(</span><span class="n">name</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">alt_name</span><span class="p">)</span>
+        <span class="n">lay</span><span class="p">=</span><span class="n">find_layout_helper</span><span class="p">(</span><span class="n">alt_name</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>lay<span class="p">=</span><span class="nf">find_layout_helper</span><span class="p">(</span>name,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function: first tries to get the layout directly, if that does</span>
+    <span class="c">% not work, try to infer planar channels from the combined channels</span>
+    <span class="n">sc</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+    <span class="n">label</span><span class="p">=</span><span class="n">sc</span><span class="p">.(</span><span class="n">name</span><span class="p">).</span><span class="n">label</span><span class="p">;</span>
+    <span class="n">lay</span><span class="p">=</span><span class="n">find_layout_from_label</span><span class="p">(</span><span class="n">label</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">lay</span><span class="p">)</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="n">lay</span><span class="p">=</span><span class="n">infer_planar_layout_from_combined</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>planar_lay<span class="p">=</span><span class="nf">infer_planar_layout_from_combined</span><span class="p">(</span>planar_name,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function in case no planar layout is found (e.g. ctf151)</span>
+    <span class="n">planar_lay</span><span class="p">=[];</span>
+
+    <span class="n">combined_name</span><span class="p">=[</span><span class="n">planar_name</span> <span class="s">&#39;_combined&#39;</span><span class="p">];</span>
+
+    <span class="n">sc</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+    <span class="k">if</span> <span class="n">all</span><span class="p">(</span><span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">sc</span><span class="p">,{</span><span class="n">planar_name</span><span class="p">,</span><span class="n">combined_name</span><span class="p">}))</span>
+        <span class="n">planar_label</span><span class="p">=</span><span class="n">sc</span><span class="p">.(</span><span class="n">planar_name</span><span class="p">).</span><span class="n">label</span><span class="p">;</span>
+        <span class="n">combined_label</span><span class="p">=</span><span class="n">sc</span><span class="p">.(</span><span class="n">combined_name</span><span class="p">).</span><span class="n">label</span><span class="p">;</span>
+        <span class="n">combined_lay</span><span class="p">=</span><span class="n">find_layout_from_label</span><span class="p">(</span><span class="n">combined_label</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+        <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">combined_lay</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="c">% get rid of COMNT and SCALE labels</span>
+        <span class="n">keep</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">combined_lay</span><span class="p">.</span><span class="n">label</span><span class="p">,</span><span class="n">combined_label</span><span class="p">);</span>
+        <span class="n">combined_lay</span><span class="p">=</span><span class="n">slice_layout</span><span class="p">(</span><span class="n">combined_lay</span><span class="p">,</span><span class="n">keep</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">combined_lay</span><span class="p">.</span><span class="n">label</span><span class="p">,</span><span class="n">combined_label</span><span class="p">)</span>
+            <span class="k">return</span>
+        <span class="k">end</span>
+
+        <span class="c">% ensure mapping between number of labels</span>
+        <span class="n">nlabels</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">combined_lay</span><span class="p">.</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">combined2planar_idxs</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nlabels</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">),[],</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="n">planar_lay</span><span class="p">=</span><span class="n">slice_layout</span><span class="p">(</span><span class="n">combined_lay</span><span class="p">,</span><span class="n">combined2planar_idxs</span><span class="p">);</span>
+
+        <span class="n">planar_lay</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">planar_label</span><span class="o">&#39;</span><span class="p">,[],</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">planar_lay</span><span class="p">.</span><span class="n">name</span><span class="p">=[];</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>lay<span class="p">=</span><span class="nf">slice_layout</span><span class="p">(</span>lay, to_select<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function to select a subset of channels</span>
+    <span class="n">nrows</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">lay</span><span class="p">.</span><span class="n">pos</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">keys</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">lay</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">value</span><span class="p">=</span><span class="n">lay</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+        <span class="k">if</span> <span class="nb">size</span><span class="p">(</span><span class="n">value</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="n">nrows</span>
+            <span class="n">lay</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">value</span><span class="p">(</span><span class="n">to_select</span><span class="p">,:);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>lay<span class="p">=</span><span class="nf">find_layout_from_label</span><span class="p">(</span>label,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% use labels from the layout to identify it</span>
+    <span class="n">lay_coll</span><span class="p">=</span><span class="n">cosmo_meeg_layout_collection</span><span class="p">();</span>
+    <span class="n">lay_label</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">x</span><span class="p">.</span><span class="n">label</span><span class="p">,</span><span class="n">lay_coll</span><span class="p">,</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">in_lay</span><span class="p">,</span> <span class="n">in_label</span><span class="p">]=</span><span class="n">cosmo_overlap</span><span class="p">(</span><span class="n">lay_label</span><span class="p">,{</span><span class="n">label</span><span class="p">});</span>
+    <span class="p">[</span><span class="n">coverage</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">max</span><span class="p">(</span><span class="n">mean</span><span class="p">([</span><span class="n">in_lay</span><span class="p">,</span> <span class="n">in_label</span><span class="p">],</span><span class="mi">2</span><span class="p">));</span>
+
+    <span class="c">% try to be smart and use decent thresholds</span>
+    <span class="k">if</span> <span class="n">in_lay</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="o">&lt;</span><span class="n">opt</span><span class="p">.</span><span class="n">thr_layout</span> <span class="o">||</span> <span class="n">coverage</span><span class="o">&lt;</span><span class="n">opt</span><span class="p">.</span><span class="n">thr_senstype</span>
+        <span class="n">lay</span><span class="p">=[];</span>
+    <span class="k">else</span>
+        <span class="n">lay</span><span class="p">=</span><span class="n">lay_coll</span><span class="p">{</span><span class="nb">i</span><span class="p">};</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_meeg_read_layout_skl.html"
+                        title="previous chapter">cosmo meeg read layout skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_meeg_senstype_collection_skl.html"
+                        title="next chapter">cosmo meeg senstype collection skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_meeg_senstype2layout_mapping_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_senstype_collection_skl.html" title="cosmo meeg senstype collection skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_read_layout_skl.html" title="cosmo meeg read layout skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

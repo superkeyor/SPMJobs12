@@ -1,0 +1,7 @@
+.. _cosmo_spherical_neighborhood:
+
+cosmo spherical neighborhood
+============================
+
+.. include :: cosmo_spherical_neighborhood.txt
+

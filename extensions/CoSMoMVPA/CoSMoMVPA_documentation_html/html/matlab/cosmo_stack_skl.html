@@ -1,0 +1,516 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo stack skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo stat skl" href="cosmo_stat_skl.html" />
+    <link rel="prev" title="cosmo squareform skl" href="cosmo_squareform_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_stat_skl.html" title="cosmo stat skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_squareform_skl.html" title="cosmo squareform skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-stack-skl">
+<span id="id1"></span><h1>cosmo stack skl<a class="headerlink" href="#cosmo-stack-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>ds_stacked<span class="p">=</span><span class="nf">cosmo_stack</span><span class="p">(</span>ds_cell,varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% stacks multiple datasets to yield a single dataset</span>
+<span class="c">%</span>
+<span class="c">% ds_stacked=cosmo_stack(datasets[,dim,merge])</span>
+<span class="c">%</span>
+<span class="c">% Inputs</span>
+<span class="c">%   datasets     cell with input datasets. Each input dataset must be a</span>
+<span class="c">%                struct and have a field .samples</span>
+<span class="c">%   dim          dimension over which data is stacked. This should be</span>
+<span class="c">%                either 1 (stack .samples and .sa) or 2 (stack features</span>
+<span class="c">%                and .fa).</span>
+<span class="c">%                The default is 1.</span>
+<span class="c">%   merge        Merge strategy for the dimension other than which is</span>
+<span class="c">%                stacked (i.e. .fa if dim==1 and .sa if dim==2), as well as</span>
+<span class="c">%                the dataset attributes (.a). Must be one of:</span>
+<span class="c">%                - &#39;drop&#39;            drop all elements</span>
+<span class="c">%                - &#39;drop_nonunique&#39;  elements differing are dropped</span>
+<span class="c">%                - &#39;unique&#39;          raise an exception if elements differ</span>
+<span class="c">%                - I                 integer; use data from datasets{I}</span>
+<span class="c">%                The default is &#39;unique&#39;</span>
+<span class="c">%   check        Boolean indicating whether to check for the proper size of</span>
+<span class="c">%                the input datasets. The default is true; setting this to</span>
+<span class="c">%                false makes this function run faster but, if the input</span>
+<span class="c">%                dataset do not have proper sizes, will result in less</span>
+<span class="c">%                informative error messages (if any). Use this option only</span>
+<span class="c">%                if you are sure that the inputs have proper dimensions.</span>
+<span class="c">%</span>
+<span class="c">% Ouput:</span>
+<span class="c">%   ds_stacked   Stacked dataset. If dim==1 [or dim==2] and the K-th</span>
+<span class="c">%                dataset has .samples with size M_K x N_K, then it is</span>
+<span class="c">%                required that all N_* [M_*] are the same, and the output</span>
+<span class="c">%                has size sum(M_*) x N_1 [M_1 x sum(N_*)].</span>
+<span class="c">%                It is also required that</span>
+<span class="c">%                all input datasets have the same values across all</span>
+<span class="c">%                the feature [sample] attributes.</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % Build example data for split-half analysis</span>
+<span class="c">%     % Normally, half1 and half2 could be from real brain data</span>
+<span class="c">%     % that is imported using, e.g., cosmo_fmri_dataset</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;nchunks&#39;,2,&#39;ntargets&#39;,3);</span>
+<span class="c">%     half1=cosmo_slice(ds,ds.sa.chunks==1); % .samples is 3x6</span>
+<span class="c">%     half2=cosmo_slice(ds,ds.sa.chunks==2); % .samples is 3x6</span>
+<span class="c">%     %</span>
+<span class="c">%     % join the data in the two halves, over samples.</span>
+<span class="c">%     % stacking makes .samples a (3+3)x6 matrix</span>
+<span class="c">%     merged=cosmo_stack({half1,half2});</span>
+<span class="c">%     cosmo_disp(merged.samples)</span>
+<span class="c">%     &gt; [  2.03    -0.892    -0.826     -1.08       3.4     -1.29</span>
+<span class="c">%     &gt;   0.584      1.84      1.17    -0.848      1.25      2.04</span>
+<span class="c">%     &gt;   -3.68    -0.262     0.321     0.844     -1.37      1.73</span>
+<span class="c">%     &gt;    1.72    0.0975     0.441      1.86     0.479    0.0832</span>
+<span class="c">%     &gt;   -1.05      2.04    -0.209    -0.486    -0.955      2.74</span>
+<span class="c">%     &gt;   -1.33     0.482      2.39     0.502      1.17     -0.48 ]</span>
+<span class="c">%     cosmo_disp(merged.sa)</span>
+<span class="c">%     &gt; .chunks</span>
+<span class="c">%     &gt;   [ 1</span>
+<span class="c">%     &gt;     1</span>
+<span class="c">%     &gt;     1</span>
+<span class="c">%     &gt;     2</span>
+<span class="c">%     &gt;     2</span>
+<span class="c">%     &gt;     2 ]</span>
+<span class="c">%     &gt; .targets</span>
+<span class="c">%     &gt;   [ 1</span>
+<span class="c">%     &gt;     2</span>
+<span class="c">%     &gt;     3</span>
+<span class="c">%     &gt;     1</span>
+<span class="c">%     &gt;     2</span>
+<span class="c">%     &gt;     3 ]</span>
+<span class="c">%     %</span>
+<span class="c">%     % data can also be merged over features, by using dim=2</span>
+<span class="c">%     % here generated data simulates two (tiny) regions of interest</span>
+<span class="c">%     roi1=cosmo_slice(ds,[1 3],2);    % .samples is 6x2</span>
+<span class="c">%     roi2=cosmo_slice(ds,[2 4 5],2);  % .samples is 6x3</span>
+<span class="c">%     % stacking makes .samples a 6x(2+3) matrix</span>
+<span class="c">%     roi_both=cosmo_stack({roi1,roi2},2);</span>
+<span class="c">%     cosmo_disp(roi_both.samples)</span>
+<span class="c">%     &gt; [  2.03    -0.826    -0.892     -1.08       3.4</span>
+<span class="c">%     &gt;   0.584      1.17      1.84    -0.848      1.25</span>
+<span class="c">%     &gt;   -3.68     0.321    -0.262     0.844     -1.37</span>
+<span class="c">%     &gt;    1.72     0.441    0.0975      1.86     0.479</span>
+<span class="c">%     &gt;   -1.05    -0.209      2.04    -0.486    -0.955</span>
+<span class="c">%     &gt;   -1.33      2.39     0.482     0.502      1.17 ]</span>
+<span class="c">%     cosmo_disp(roi_both.fa)</span>
+<span class="c">%     &gt; .i</span>
+<span class="c">%     &gt;   [ 1         3         2         1         2 ]</span>
+<span class="c">%     &gt; .j</span>
+<span class="c">%     &gt;   [ 1         1         1         2         2 ]</span>
+<span class="c">%     &gt; .k</span>
+<span class="c">%     &gt;   [ 1         1         1         1         1 ]</span>
+<span class="c">%     %</span>
+<span class="c">%     % stacking incompatible datasets gives an error</span>
+<span class="c">%     cosmo_stack({roi1,half1})</span>
+<span class="c">%     &gt; error(&#39;value mismatch: .fa.i&#39;)</span>
+<span class="c">%     cosmo_stack({roi1,half1},2)</span>
+<span class="c">%     &gt; error(&#39;value mismatch: .sa.targets&#39;)</span>
+<span class="c">%</span>
+<span class="c">% Note:</span>
+<span class="c">%   - This function is like the inverse of cosmo_split, i.e. if</span>
+<span class="c">%         ds_splits=cosmo_split(ds, split_by, dim),</span>
+<span class="c">%     produces output (i.e., does not throw an error), then using</span>
+<span class="c">%         ds_humpty_dumpty=cosmo_stack(ds_splits,dim)</span>
+<span class="c">%     means that ds and ds_humpty_dumpty contain the same data, except that</span>
+<span class="c">%     the order of the data (in the rows [or columns] of .samples, and</span>
+<span class="c">%     values in .sa [.fa]) may be in different order if dim==1 [dim==2].</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_split</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+
+    <span class="p">[</span><span class="n">dim</span><span class="p">,</span> <span class="n">merge_method</span><span class="p">,</span> <span class="n">check</span><span class="p">]=</span><span class="n">process_parameters</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">,</span> <span class="n">varargin</span><span class="p">{:});</span>
+
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">n</span><span class="o">==</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;empty cell input&#39;</span><span class="p">);</span>
+    <span class="k">elseif</span> <span class="n">n</span><span class="o">==</span><span class="mi">1</span>
+        <span class="n">ds_stacked</span><span class="p">=</span><span class="n">ds_cell</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">sample_values</span><span class="p">=</span><span class="n">get_struct_values</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">,</span> <span class="s">&#39;samples&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">sample_values</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;missing field .samples&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="n">check</span>
+        <span class="n">sample_sizes</span><span class="p">=</span><span class="n">get_dimension_sizes</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">sample_values</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">sample_sizes</span><span class="p">=[];</span>
+    <span class="k">end</span>
+    <span class="n">ds_stacked</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">stack_values</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">sample_values</span><span class="p">,</span> <span class="s">&#39;.samples&#39;</span><span class="p">,</span> <span class="n">check</span><span class="p">);</span>
+
+    <span class="c">% set the field names for the dimension to be stacked, and the other</span>
+    <span class="c">% one</span>
+    <span class="n">attrs_keys</span><span class="p">={</span><span class="s">&#39;sa&#39;</span><span class="p">,</span><span class="s">&#39;fa&#39;</span><span class="p">};</span>
+    <span class="n">stack_key</span><span class="p">=</span><span class="n">attrs_keys</span><span class="p">{</span><span class="n">dim</span><span class="p">};</span>
+
+    <span class="n">to_stack_attr</span><span class="p">=</span><span class="n">get_struct_values</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">,</span> <span class="n">stack_key</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">to_stack_attr</span><span class="p">)</span>
+
+        <span class="n">ds_stacked</span><span class="p">.(</span><span class="n">stack_key</span><span class="p">)=</span><span class="n">stack_structs</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="n">to_stack_attr</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">sample_sizes</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="p">[</span><span class="s">&#39;.&#39;</span> <span class="n">stack_key</span><span class="p">]);</span>
+    <span class="k">end</span>
+
+    <span class="n">other_dim</span><span class="p">=</span><span class="mi">3</span><span class="o">-</span><span class="n">dim</span><span class="p">;</span> <span class="c">% the other dimension</span>
+    <span class="n">merge_key</span><span class="p">=</span><span class="n">attrs_keys</span><span class="p">{</span><span class="n">other_dim</span><span class="p">};</span>
+
+    <span class="n">to_merge_attr</span><span class="p">=</span><span class="n">get_struct_values</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">,</span> <span class="n">merge_key</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">to_merge_attr</span><span class="p">)</span>
+        <span class="n">ds_stacked</span><span class="p">.(</span><span class="n">merge_key</span><span class="p">)=</span><span class="n">merge_structs</span><span class="p">(</span><span class="n">to_merge_attr</span><span class="p">,</span><span class="n">merge_method</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="p">[</span><span class="s">&#39;.&#39;</span> <span class="n">merge_key</span><span class="p">]);</span>
+    <span class="k">end</span>
+
+
+
+    <span class="n">to_merge_a</span><span class="p">=</span><span class="n">get_struct_values</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">,</span> <span class="s">&#39;a&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">to_merge_a</span><span class="p">)</span>
+        <span class="n">ds_stacked</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">merge_structs</span><span class="p">(</span><span class="n">to_merge_a</span><span class="p">,</span><span class="n">merge_method</span><span class="p">,</span><span class="s">&#39;.a&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>[dim, merge, check]<span class="p">=</span><span class="nf">process_parameters</span><span class="p">(</span>ds_cell, varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">narg</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">varargin</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">narg</span><span class="o">&lt;</span><span class="mi">1</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">varargin</span><span class="p">{</span><span class="mi">1</span><span class="p">})</span>
+        <span class="n">dim</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">dim</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="o">||</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span><span class="mi">2</span><span class="p">))</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;second argument must be 1 or 2&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">narg</span><span class="o">&lt;</span><span class="mi">2</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">varargin</span><span class="p">{</span><span class="mi">2</span><span class="p">})</span>
+        <span class="n">merge</span><span class="p">=</span><span class="s">&#39;unique&#39;</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">merge</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">merge</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="o">~</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">merge</span><span class="p">},{</span><span class="s">&#39;drop&#39;</span><span class="p">,</span><span class="s">&#39;drop_nonunique&#39;</span><span class="p">,</span><span class="s">&#39;unique&#39;</span><span class="p">})</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal value for third argument &#39;&#39;merge&#39;&#39;&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">narg</span><span class="o">&lt;</span><span class="mi">3</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">varargin</span><span class="p">)</span>
+        <span class="n">check</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">check</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="mi">3</span><span class="p">};</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="n">islogical</span><span class="p">(</span><span class="n">check</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">isscalar</span><span class="p">(</span><span class="n">check</span><span class="p">))</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;fourth argument &#39;&#39;check&#39;&#39; must be a scalar boolean&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">iscell</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;expected cell input&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>values<span class="p">=</span><span class="nf">get_struct_values</span><span class="p">(</span>struct_cell, key<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">struct_cell</span><span class="p">);</span>
+    <span class="n">values</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">has_values</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">struct_cell</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">has_values</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+            <span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">s</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">has_values</span>
+        <span class="n">values</span><span class="p">=[];</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>keys<span class="p">=</span><span class="nf">get_struct_keys</span><span class="p">(</span>struct_cell<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">struct_cell</span><span class="p">);</span>
+    <span class="n">keys</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">struct_cell</span><span class="p">{</span><span class="n">k</span><span class="p">});</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">merge_structs</span><span class="p">(</span>vs, merge_method, where<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">merge_method</span><span class="p">,</span><span class="s">&#39;drop&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">merge_method</span><span class="p">)</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">merge_method</span><span class="p">)</span> <span class="o">||</span> <span class="n">merge_method</span><span class="o">&lt;</span><span class="mi">1</span> <span class="o">||</span> <span class="c">...</span>
+                <span class="n">merge_method</span><span class="o">&gt;</span><span class="nb">numel</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span> <span class="o">||</span> <span class="nb">round</span><span class="p">(</span><span class="n">merge_method</span><span class="p">)</span><span class="o">~=</span><span class="n">merge_method</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;&#39;&#39;merge&#39;&#39; parameter, when an integer, must be in&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;the range 1:%d&#39;</span><span class="p">],</span><span class="nb">numel</span><span class="p">(</span><span class="n">vs</span><span class="p">));</span>
+        <span class="k">end</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">vs</span><span class="p">{</span><span class="n">merge_method</span><span class="p">};</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="o">~</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">merge_method</span><span class="p">},{</span><span class="s">&#39;drop_nonunique&#39;</span><span class="p">,</span><span class="s">&#39;unique&#39;</span><span class="p">})</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal value for &#39;&#39;merge&#39;&#39; parameter&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+    <span class="n">all_keys_cell</span><span class="p">=</span><span class="n">get_struct_keys</span><span class="p">(</span><span class="n">vs</span><span class="p">);</span>
+
+    <span class="n">keys</span><span class="p">=</span><span class="n">unique</span><span class="p">(</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">all_keys_cell</span><span class="p">{:}));</span>
+    <span class="n">nkeys</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">);</span>
+
+    <span class="n">s</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nkeys</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">values</span><span class="p">=</span><span class="n">get_struct_values</span><span class="p">(</span><span class="n">vs</span><span class="p">,</span> <span class="n">key</span><span class="p">);</span>
+
+        <span class="p">[</span><span class="n">has_unique_elem</span><span class="p">,</span> <span class="n">unique_elem</span><span class="p">]=</span><span class="n">get_single_unique_element</span><span class="p">(</span><span class="n">values</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="n">has_unique_elem</span>
+            <span class="k">switch</span> <span class="n">merge_method</span>
+                <span class="k">case</span> <span class="s">&#39;drop_nonunique&#39;</span>
+                    <span class="c">% do not store values</span>
+                    <span class="k">continue</span><span class="p">;</span>
+
+                <span class="k">case</span> <span class="s">&#39;unique&#39;</span>
+                    <span class="n">error</span><span class="p">(</span><span class="s">&#39;non-unique elements in %s.%s&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="n">where</span><span class="p">,</span> <span class="n">key</span><span class="p">);</span>
+
+                <span class="k">otherwise</span>
+                    <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal value for merge: %s&#39;</span><span class="p">,</span> <span class="n">merge_method</span><span class="p">);</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+        <span class="n">s</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">unique_elem</span><span class="p">;</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>[has_unique_elem, unique_elem]<span class="p">=</span><span class="nf">get_single_unique_element</span><span class="p">(</span>vs<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">vs</span><span class="p">);</span>
+
+    <span class="n">has_elem</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">unique_elem</span><span class="p">=[];</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">v</span><span class="p">=</span><span class="n">vs</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">has_elem</span>
+            <span class="k">if</span> <span class="o">~</span><span class="n">isequaln</span><span class="p">(</span><span class="n">v</span><span class="p">,</span> <span class="n">unique_elem</span><span class="p">)</span>
+                <span class="n">has_unique_elem</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="k">end</span>
+        <span class="k">else</span>
+            <span class="n">has_elem</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+            <span class="n">unique_elem</span><span class="p">=</span><span class="n">v</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">has_unique_elem</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">stack_structs</span><span class="p">(</span>dim, structs, expected_sizes, where<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">check</span><span class="p">=</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">expected_sizes</span><span class="p">);</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">structs</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">structs</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="n">isstruct</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;%d-th input is not a struct&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">keys</span><span class="p">=</span><span class="n">sort</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">s</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="mi">1</span>
+            <span class="n">nkeys</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">);</span>
+
+            <span class="n">stack_args</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">nkeys</span><span class="p">);</span>
+
+            <span class="c">% keep track of the keys in the first input,</span>
+            <span class="c">% and how many values it has along the other dimension</span>
+            <span class="n">first_keys</span><span class="p">=</span><span class="n">keys</span><span class="p">;</span>
+
+        <span class="k">elseif</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">first_keys</span><span class="p">)</span>
+            <span class="n">delta</span><span class="p">=</span><span class="n">setxor</span><span class="p">(</span><span class="n">keys</span><span class="p">,</span> <span class="n">first_keys</span><span class="p">);</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;key mismatch between 1st and %d-th input in %s &#39;</span> <span class="c">...</span>
+                        <span class="s">&#39;for key &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">],</span> <span class="n">k</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">delta</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+        <span class="k">end</span>
+
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nkeys</span>
+            <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+            <span class="n">v</span><span class="p">=</span><span class="n">s</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="n">check</span> <span class="o">&amp;&amp;</span> <span class="nb">size</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">dim</span><span class="p">)</span><span class="o">~=</span><span class="n">expected_sizes</span><span class="p">(</span><span class="n">k</span><span class="p">)</span>
+                <span class="n">error</span><span class="p">([</span><span class="s">&#39;size mismatch in %d-th input: size(%s.%s,%d)=%d&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;, but size(.samples,%d)=%d&#39;</span><span class="p">],</span><span class="c">...</span>
+                            <span class="n">k</span><span class="p">,</span> <span class="n">where</span><span class="p">,</span> <span class="n">key</span><span class="p">,</span> <span class="n">dim</span><span class="p">,</span> <span class="nb">size</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">dim</span><span class="p">),</span> <span class="c">...</span>
+                            <span class="n">dim</span><span class="p">,</span> <span class="n">expected_sizes</span><span class="p">(</span><span class="n">k</span><span class="p">));</span>
+            <span class="k">end</span>
+
+            <span class="n">stack_args</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="nb">j</span><span class="p">}=</span><span class="n">v</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">s</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nkeys</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+        <span class="n">s</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">stack_values</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">stack_args</span><span class="p">(:,</span><span class="nb">j</span><span class="p">),</span> <span class="n">where</span><span class="p">,</span> <span class="n">check</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>sizes<span class="p">=</span><span class="nf">get_dimension_sizes</span><span class="p">(</span>dim, vs<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">vs</span><span class="p">);</span>
+    <span class="n">sizes</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">sizes</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="nb">size</span><span class="p">(</span><span class="n">vs</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="n">dim</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">ensure_same_size_along_dim</span><span class="p">(</span>dim, vs, where<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% throw an error if element sizes along vs is not the same</span>
+
+    <span class="n">sizes</span><span class="p">=</span><span class="n">get_dimension_sizes</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">vs</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span>
+        <span class="n">m</span><span class="p">=</span><span class="n">sizes</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">~=</span><span class="n">sizes</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">m</span><span class="p">)</span>
+            <span class="nb">i</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;size mismatch along dimension %d between 1st &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;and %-dth input for %s&#39;</span><span class="p">],</span> <span class="n">dim</span><span class="p">,</span> <span class="nb">i</span><span class="p">,</span> <span class="n">where</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>c<span class="p">=</span><span class="nf">stack_values</span><span class="p">(</span>dim, vs, where, check<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% stacks the contents of vs along dimension dim, or throw an error</span>
+    <span class="c">% if sizes are not compatible</span>
+    <span class="k">if</span> <span class="n">check</span>
+        <span class="n">other_dim</span><span class="p">=</span><span class="mi">3</span><span class="o">-</span><span class="n">dim</span><span class="p">;</span>
+        <span class="n">ensure_same_size_along_dim</span><span class="p">(</span><span class="n">other_dim</span><span class="p">,</span> <span class="n">vs</span><span class="p">,</span> <span class="n">where</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">c</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="n">dim</span><span class="p">,</span> <span class="n">vs</span><span class="p">{:});</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_squareform_skl.html"
+                        title="previous chapter">cosmo squareform skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_stat_skl.html"
+                        title="next chapter">cosmo stat skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_stack_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_stat_skl.html" title="cosmo stat skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_squareform_skl.html" title="cosmo squareform skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,364 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo check partitions skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo chunkize skl" href="cosmo_chunkize_skl.html" />
+    <link rel="prev" title="cosmo check neighborhood skl" href="cosmo_check_neighborhood_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_chunkize_skl.html" title="cosmo chunkize skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_check_neighborhood_skl.html" title="cosmo check neighborhood skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-check-partitions-skl">
+<span id="id1"></span><h1>cosmo check partitions skl<a class="headerlink" href="#cosmo-check-partitions-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">cosmo_check_partitions</span><span class="p">(</span>partitions, ds, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% check whether partitions are balanced and not double-dippy</span>
+<span class="c">%</span>
+<span class="c">% cosmo_check_partitions(partitions, ds, varargin)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   partitions  struct with partitions, e.g. from</span>
+<span class="c">%               cosmo_{nfold,oddeven,nchoosek}_partitioner</span>
+<span class="c">%   ds          dataset struct with fields .sa.{targets,chunks}</span>
+<span class="c">%   opt         (optional) struct with optional field:</span>
+<span class="c">%     .unbalanced_partitions_ok    if set to true, then unbalanced</span>
+<span class="c">%                                  partitions (with a different number of</span>
+<span class="c">%                                  targets of each class in a chunk) is ok</span>
+<span class="c">% Output:</span>
+<span class="c">%    is_ok      boolean, true if partitions are ok</span>
+<span class="c">%</span>
+<span class="c">% Throws:</span>
+<span class="c">%   - an error if partitions are double dippy or (unless specified in opt)</span>
+<span class="c">%     not balanced</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     ds=struct();</span>
+<span class="c">%     ds.samples=zeros(9,2);</span>
+<span class="c">%     ds.sa.targets=[1 1 2 2 2 3 3 3 3]&#39;;</span>
+<span class="c">%     ds.sa.chunks=[1 2 2 1 1 1 2 2 2]&#39;;</span>
+<span class="c">%     % make unbalanced partitions</span>
+<span class="c">%     partitions=cosmo_nfold_partitioner(ds);</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds);</span>
+<span class="c">%     &gt; error(&#39;Unbalance in partition 1 [...]&#39;)</span>
+<span class="c">%     %</span>
+<span class="c">%     % disable unbalanced check</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds,&#39;unbalanced_partitions_ok&#39;,true)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%     %</span>
+<span class="c">%     % balance partitions and check without unbalanced check</span>
+<span class="c">%     partitions=cosmo_balance_partitions(partitions,ds);</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds,&#39;unbalanced_partitions_ok&#39;,false)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%     %</span>
+<span class="c">%     % make the partitions double dippy</span>
+<span class="c">%     partitions.train_indices{1}=partitions.test_indices{1};</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds,&#39;unbalanced_partitions_ok&#39;,true)</span>
+<span class="c">%     &gt; error(&#39;double dipping in fold 1: chunk 1 is in train and test set&#39;)</span>
+<span class="c">%     %</span>
+<span class="c">%     % make partitions empty</span>
+<span class="c">%     partitions.train_indices{1}=[];</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds);</span>
+<span class="c">%     &gt; error(&#39;partition 1: .train_indices are empty&#39;)</span>
+<span class="c">%     %</span>
+<span class="c">%     % partitions have values outside range</span>
+<span class="c">%     partitions.train_indices{1}=100;</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds);</span>
+<span class="c">%     &gt; error(&#39;partition 1: .train_indices are outside range 1..9&#39;);</span>
+<span class="c">%     %</span>
+<span class="c">%     % use non-integers</span>
+<span class="c">%     partitions.train_indices{1}=1.5;</span>
+<span class="c">%     cosmo_check_partitions(partitions,ds);</span>
+<span class="c">%     &gt; error(&#39;partition 1: .train_indices are not integers&#39;);</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - the reason to require balancing by default is that chance level is</span>
+<span class="c">%     1/nclasses, which is useful for many subsequent analyses.</span>
+<span class="c">%   - if this function raises an exception for partitions, consider running</span>
+<span class="c">%     partitions=cosmo_balance_partitions(partitions,...).</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_balance_partitions, cosmo_nfold_partitioner</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="c">% process input arguments</span>
+    <span class="n">defaults</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">unbalanced_partitions_ok</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+
+    <span class="n">params</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">{:});</span>
+
+    <span class="c">% whether to check for equal number of samples of each class in</span>
+    <span class="c">% each chunks</span>
+    <span class="n">check_balance</span><span class="p">=</span><span class="o">~</span><span class="n">params</span><span class="p">.</span><span class="n">unbalanced_partitions_ok</span><span class="p">;</span>
+
+    <span class="c">% whether to check for the same chunk in train and test set</span>
+    <span class="n">check_double_dipping</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+
+    <span class="c">% check dataset</span>
+    <span class="n">check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="c">% ensure it has targets and chunks</span>
+    <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,{</span><span class="s">&#39;sa.targets&#39;</span><span class="p">,</span><span class="s">&#39;sa.chunks&#39;</span><span class="p">},</span><span class="n">true</span><span class="p">);</span>
+    <span class="n">targets</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">;</span>
+    <span class="n">chunks</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">check_balance</span>
+        <span class="p">[</span><span class="n">classes</span><span class="p">,</span><span class="n">unused</span><span class="p">,</span><span class="n">sample2class</span><span class="p">]=</span><span class="n">unique</span><span class="p">(</span><span class="n">targets</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% must have .train_indices and .test_indices</span>
+    <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">partitions</span><span class="p">,{</span><span class="s">&#39;train_indices&#39;</span><span class="p">,</span><span class="s">&#39;test_indices&#39;</span><span class="p">},</span><span class="n">true</span><span class="p">);</span>
+    <span class="n">train_indices</span><span class="p">=</span><span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">;</span>
+    <span class="n">test_indices</span><span class="p">=</span><span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">iscell</span><span class="p">(</span><span class="n">train_indices</span><span class="p">)</span> <span class="o">||</span> <span class="o">~</span><span class="n">iscell</span><span class="p">(</span><span class="n">test_indices</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;.train_indices and .test_indices must be a cell&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% ensure equal number of partitions for train and test</span>
+    <span class="n">npartitions</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">train_indices</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">npartitions</span><span class="o">~=</span><span class="nb">numel</span><span class="p">(</span><span class="n">test_indices</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Partition count mismatch for train and test: %d ~= %d&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">npartitions</span><span class="p">,</span><span class="nb">numel</span><span class="p">(</span><span class="n">test_indices</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">nsamples</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">targets</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">npartitions</span>
+        <span class="n">train_idxs</span><span class="p">=</span><span class="n">train_indices</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">test_idxs</span><span class="p">=</span><span class="n">test_indices</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="n">check_range</span><span class="p">(</span><span class="n">train_idxs</span><span class="p">,</span><span class="n">nsamples</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="s">&#39;train&#39;</span><span class="p">);</span>
+        <span class="n">check_range</span><span class="p">(</span><span class="n">test_idxs</span><span class="p">,</span><span class="n">nsamples</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="s">&#39;test&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="n">check_balance</span>
+            <span class="c">% counts of number of samples in each each class must be the</span>
+            <span class="c">% same</span>
+            <span class="n">train_classes</span><span class="p">=</span><span class="n">sample2class</span><span class="p">(</span><span class="n">train_idxs</span><span class="p">);</span>
+            <span class="n">h</span><span class="p">=</span><span class="n">histc</span><span class="p">(</span><span class="n">train_classes</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">classes</span><span class="p">));</span>
+
+            <span class="n">h_nonzero_idxs</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">h</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">);</span>
+            <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="mi">1</span>
+                <span class="n">first_h_nonzero_idxs</span><span class="p">=</span><span class="n">h_nonzero_idxs</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">first_h_nonzero_idxs</span><span class="p">,</span><span class="n">h_nonzero_idxs</span><span class="p">);</span>
+                <span class="n">error</span><span class="p">([</span><span class="s">&#39;Different targets used for training &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;in partition %d and %d. This is weird. &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;Consider the following scenarios:\n&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;(1) You made the partitions manually. It is &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;possible that you made a mistake.\n&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;(2) You try to do cross-decoding and &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;partitions were defined using &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;cosmo_nchoosek_partitioner. This usually &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;requires a *re-assignment* of .sa.targets &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;so that the unique targets values are the &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;same for the samples used for training &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;and for testing. Please read the &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;documentation of cosmo_nchoosek_partitioner &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;(especially the examples) carefully and &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;verify that &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;the .sa.targets are (re)assigned properly.\n&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;(3) You used a cosmo_ function to set the &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;partitions, but case 2 does not apply. &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;It may indicate a bug; in that case, &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;please get in touch with the CoSMoMVPA &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;developers&#39;</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="n">h_nonzero</span><span class="p">=</span><span class="n">h</span><span class="p">(</span><span class="n">h_nonzero_idxs</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="o">~</span><span class="n">all</span><span class="p">(</span><span class="n">h_nonzero</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="n">h_nonzero</span><span class="p">)</span>
+                <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">h_nonzero</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">~=</span><span class="n">h_nonzero</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+                <span class="n">pos_first</span><span class="p">=</span><span class="n">h_nonzero_idxs</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+                <span class="n">pos_other</span><span class="p">=</span><span class="n">h_nonzero_idxs</span><span class="p">(</span><span class="n">idx</span><span class="p">);</span>
+
+                <span class="n">error</span><span class="p">([</span><span class="s">&#39;Unbalance in partition %d, &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;classes %d (#=%d) and %d (#=%d). &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;Consider the following scenarios:\n&#39;</span><span class="c">...</span>
+                     <span class="s">&#39;(1) the input is an MEEG dataset, or an fMRI &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;dataset with missing samples (trials) in some &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;of the runs. You probably want to use &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;cosmo_balance_partitions.\n&#39;</span><span class="c">...</span>
+                     <span class="s">&#39;(2) all chunks are unique; this is either a (a) &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;between-participants design and you &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;try to discriminate between participants (e.g. &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;patients versus controls); or this is an MEEG &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;dataset where all samples are assumed to be &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;independent. You probably want to use &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;cosmo_independent_samples_partitioner to define &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;the partitions\n&#39;</span><span class="c">...</span>
+                     <span class="s">&#39;(3) the input is an fMRI dataset using beta &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;estimates or t-statistics estimated using the &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;GLM, with one sample &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;of each condition per run (e.g. nfold partition) &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;or per set of runs (e.g. odd-even partition). &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;Probably a mistake was made setting .sa.chunks &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;or .sa.targets\n&#39;</span><span class="c">...</span>
+                     <span class="s">&#39;(4) you *really* know what you are doing: &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;as a litmus test, you would be comfortable &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;implementing a bootstrapping algorithm to &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;estimate the cdf of your measure of interest &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;under some null hypothesis. You can set &#39;</span><span class="c">...</span>
+                     <span class="s">&#39;unbalanced_partitions_ok to true as an option&#39;</span><span class="p">],</span><span class="c">...</span>
+                      <span class="n">k</span><span class="p">,</span> <span class="n">classes</span><span class="p">(</span><span class="n">pos_first</span><span class="p">),</span> <span class="n">h</span><span class="p">(</span><span class="n">pos_first</span><span class="p">),</span> <span class="c">...</span>
+                      <span class="n">classes</span><span class="p">(</span><span class="n">pos_other</span><span class="p">),</span> <span class="n">h</span><span class="p">(</span><span class="n">pos_other</span><span class="p">));</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">check_double_dipping</span>
+            <span class="c">% no sample allowed to be both in train and test indices</span>
+            <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">chunks</span><span class="p">(</span><span class="n">train_idxs</span><span class="p">),</span><span class="n">chunks</span><span class="p">(</span><span class="n">test_idxs</span><span class="p">)))</span>
+                <span class="n">ctrain</span><span class="p">=</span><span class="n">chunks</span><span class="p">(</span><span class="n">train_idxs</span><span class="p">);</span>
+                <span class="n">m</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ctrain</span><span class="p">,</span><span class="n">chunks</span><span class="p">(</span><span class="n">test_idxs</span><span class="p">));</span>
+                <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+                <span class="n">error</span><span class="p">([</span><span class="s">&#39;double dipping in fold %d: chunk %d is in &#39;</span><span class="c">...</span>
+                       <span class="s">&#39;train and test set&#39;</span><span class="p">],</span><span class="n">k</span><span class="p">,</span><span class="n">ctrain</span><span class="p">(</span><span class="n">idx</span><span class="p">));</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">is_ok</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_range</span><span class="p">(</span>idxs,nsamples,partition,label<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">msg</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span>
+        <span class="n">msg</span><span class="p">=</span><span class="s">&#39;empty&#39;</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">idxs</span><span class="p">,</span><span class="nb">round</span><span class="p">(</span><span class="n">idxs</span><span class="p">))</span>
+        <span class="n">msg</span><span class="p">=</span><span class="s">&#39;not integers&#39;</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="n">min</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">1</span> <span class="o">||</span> <span class="n">max</span><span class="p">(</span><span class="n">idxs</span><span class="p">)</span><span class="o">&gt;</span><span class="n">nsamples</span>
+        <span class="n">msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;outside range 1:%d&#39;</span><span class="p">,</span><span class="n">nsamples</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">msg</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;partition %d: .%s_indices are %s&#39;</span><span class="p">,</span><span class="n">partition</span><span class="p">,</span><span class="n">label</span><span class="p">,</span><span class="n">msg</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_dataset</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">cached_sa</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">isstruct</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">cached_sa</span><span class="p">)</span>
+            <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+            <span class="n">cached_sa</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">;</span>
+        <span class="k">end</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;second input must be a dataset struct with field .sa&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_check_neighborhood_skl.html"
+                        title="previous chapter">cosmo check neighborhood skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_chunkize_skl.html"
+                        title="next chapter">cosmo chunkize skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_check_partitions_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_chunkize_skl.html" title="cosmo chunkize skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_check_neighborhood_skl.html" title="cosmo check neighborhood skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_statcode_skl:
+
+cosmo statcode skl
+==================
+
+.. include :: cosmo_statcode_skl.txt
+

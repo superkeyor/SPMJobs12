@@ -1,0 +1,7 @@
+.. _test_structjoin:
+
+test structjoin
+===============
+
+.. include :: test_structjoin.txt
+

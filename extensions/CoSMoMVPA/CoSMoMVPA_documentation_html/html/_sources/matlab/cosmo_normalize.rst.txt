@@ -1,0 +1,7 @@
+.. _cosmo_normalize:
+
+cosmo normalize
+===============
+
+.. include :: cosmo_normalize.txt
+

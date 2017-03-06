@@ -1,0 +1,266 @@
+.. _`matindex_hdr`:
+
+============================================
+CoSMoMVPA functions - header signature files
+============================================
+
+.. toctree::
+    :maxdepth: 2
+    :hidden:
+
+    matlab/cosmo_wizard_set_config_hdr
+    matlab/cosmo_align_hdr
+    matlab/cosmo_anova_feature_selector_hdr
+    matlab/cosmo_average_samples_hdr
+    matlab/cosmo_balance_partitions_hdr
+    matlab/cosmo_cartprod_hdr
+    matlab/cosmo_check_dataset_hdr
+    matlab/cosmo_check_external_hdr
+    matlab/cosmo_check_neighborhood_hdr
+    matlab/cosmo_check_partitions_hdr
+    matlab/cosmo_chunkize_hdr
+    matlab/cosmo_classify_knn_hdr
+    matlab/cosmo_classify_lda_hdr
+    matlab/cosmo_classify_libsvm_hdr
+    matlab/cosmo_classify_matlabsvm_hdr
+    matlab/cosmo_classify_matlabsvm_2class_hdr
+    matlab/cosmo_classify_meta_feature_selection_hdr
+    matlab/cosmo_classify_naive_bayes_hdr
+    matlab/cosmo_classify_nn_hdr
+    matlab/cosmo_classify_svm_hdr
+    matlab/cosmo_cluster_neighborhood_hdr
+    matlab/cosmo_clusterize_hdr
+    matlab/cosmo_config_hdr
+    matlab/cosmo_confusion_matrix_hdr
+    matlab/cosmo_convert_neighborhood_hdr
+    matlab/cosmo_corr_hdr
+    matlab/cosmo_correlation_measure_hdr
+    matlab/cosmo_cross_neighborhood_hdr
+    matlab/cosmo_crossvalidate_hdr
+    matlab/cosmo_crossvalidation_measure_hdr
+    matlab/cosmo_dataset_slice_fa_hdr
+    matlab/cosmo_dataset_slice_sa_hdr
+    matlab/cosmo_dim_find_hdr
+    matlab/cosmo_dim_generalization_measure_hdr
+    matlab/cosmo_dim_insert_hdr
+    matlab/cosmo_dim_match_hdr
+    matlab/cosmo_dim_prune_hdr
+    matlab/cosmo_dim_remove_hdr
+    matlab/cosmo_dim_rename_hdr
+    matlab/cosmo_dim_slice_hdr
+    matlab/cosmo_dim_transpose_hdr
+    matlab/cosmo_dir_hdr
+    matlab/cosmo_disp_hdr
+    matlab/cosmo_dissimilarity_matrix_measure_hdr
+    matlab/cosmo_distatis_hdr
+    matlab/cosmo_find_local_extrema_hdr
+    matlab/cosmo_flatten_hdr
+    matlab/cosmo_fmri_convert_xform_hdr
+    matlab/cosmo_fmri_dataset_hdr
+    matlab/cosmo_fmri_deoblique_hdr
+    matlab/cosmo_fmri_orientation_hdr
+    matlab/cosmo_fmri_reorient_hdr
+    matlab/cosmo_fx_hdr
+    matlab/cosmo_independent_samples_partitioner_hdr
+    matlab/cosmo_index_unique_hdr
+    matlab/cosmo_interval_neighborhood_hdr
+    matlab/cosmo_isequaln_hdr
+    matlab/cosmo_isfield_hdr
+    matlab/cosmo_make_temp_filename_hdr
+    matlab/cosmo_map2fmri_hdr
+    matlab/cosmo_map2meeg_hdr
+    matlab/cosmo_map2surface_hdr
+    matlab/cosmo_map_pca_hdr
+    matlab/cosmo_mask_dim_intersect_hdr
+    matlab/cosmo_match_hdr
+    matlab/cosmo_measure_clusters_hdr
+    matlab/cosmo_meeg_baseline_correct_hdr
+    matlab/cosmo_meeg_chan_neighborhood_hdr
+    matlab/cosmo_meeg_chan_neighbors_hdr
+    matlab/cosmo_meeg_chantype_hdr
+    matlab/cosmo_meeg_dataset_hdr
+    matlab/cosmo_meeg_find_layout_hdr
+    matlab/cosmo_meeg_layout_collection_hdr
+    matlab/cosmo_meeg_read_layout_hdr
+    matlab/cosmo_meeg_senstype2layout_mapping_hdr
+    matlab/cosmo_meeg_senstype_collection_hdr
+    matlab/cosmo_meta_feature_selection_classifier_hdr
+    matlab/cosmo_montecarlo_cluster_stat_hdr
+    matlab/cosmo_naive_bayes_classifier_searchlight_hdr
+    matlab/cosmo_nchoosek_partitioner_hdr
+    matlab/cosmo_neighborhood_split_hdr
+    matlab/cosmo_nfold_partitioner_hdr
+    matlab/cosmo_normalize_hdr
+    matlab/cosmo_oddeven_partitioner_hdr
+    matlab/cosmo_overlap_hdr
+    matlab/cosmo_parallel_get_nproc_available_hdr
+    matlab/cosmo_parcellfun_hdr
+    matlab/cosmo_pca_hdr
+    matlab/cosmo_pdist_hdr
+    matlab/cosmo_plot_slices_hdr
+    matlab/cosmo_publish_run_scripts_hdr
+    matlab/cosmo_rand_hdr
+    matlab/cosmo_randomize_targets_hdr
+    matlab/cosmo_randperm_hdr
+    matlab/cosmo_remove_useless_data_hdr
+    matlab/cosmo_run_tests_hdr
+    matlab/cosmo_sample_unique_hdr
+    matlab/cosmo_searchlight_hdr
+    matlab/cosmo_set_path_hdr
+    matlab/cosmo_show_progress_hdr
+    matlab/cosmo_slice_hdr
+    matlab/cosmo_sphere_offsets_hdr
+    matlab/cosmo_spherical_neighborhood_hdr
+    matlab/cosmo_split_hdr
+    matlab/cosmo_squareform_hdr
+    matlab/cosmo_stack_hdr
+    matlab/cosmo_stat_hdr
+    matlab/cosmo_statcode_hdr
+    matlab/cosmo_strjoin_hdr
+    matlab/cosmo_strsplit_hdr
+    matlab/cosmo_structjoin_hdr
+    matlab/cosmo_surface_dataset_hdr
+    matlab/cosmo_surficial_neighborhood_hdr
+    matlab/cosmo_synthetic_dataset_hdr
+    matlab/cosmo_tail_hdr
+    matlab/cosmo_target_dsm_corr_measure_hdr
+    matlab/cosmo_type_hdr
+    matlab/cosmo_unflatten_hdr
+    matlab/cosmo_vol_coordinates_hdr
+    matlab/cosmo_vol_grid_convert_hdr
+    matlab/cosmo_warning_hdr
+    matlab/cosmo_winner_indices_hdr
+    matlab/cosmo_wtf_hdr
+    matlab/cosmo_notify_test_skipped_hdr
+    matlab/cosmo_skip_test_if_no_external_hdr
+
+=================================================== =================================================================================================
+--------------------------------------------------- -------------------------------------------------------------------------------------------------
+**All functions**
+--------------------------------------------------- -------------------------------------------------------------------------------------------------
+:ref:`cosmo_align_hdr`                              find permutation so that values in two inputs are matched
+:ref:`cosmo_anova_feature_selector_hdr`             find the features that show the most variance between classes
+:ref:`cosmo_average_samples_hdr`                    average subsets of samples by unique combinations of sample attributes
+:ref:`cosmo_balance_partitions_hdr`                 balances a partition so that each target occurs equally often in each training and test chunk
+:ref:`cosmo_cartprod_hdr`                           returns the cartesian product with all combinations of the input
+:ref:`cosmo_check_dataset_hdr`                      Check consistency of a dataset.
+:ref:`cosmo_check_external_hdr`                     Checks whether a certain external toolbox exists, or list citation info
+:ref:`cosmo_check_neighborhood_hdr`                 check that a neighborhood is kosher
+:ref:`cosmo_check_partitions_hdr`                   check whether partitions are balanced and not double-dippy
+:ref:`cosmo_chunkize_hdr`                           assigns chunks that are as balanced as possible based on targets.
+:ref:`cosmo_classify_knn_hdr`                       k-nearest neighbor classifier
+:ref:`cosmo_classify_lda_hdr`                       linear discriminant analysis classifier - without prior
+:ref:`cosmo_classify_libsvm_hdr`                    libsvm-based SVM classifier
+:ref:`cosmo_classify_matlabsvm_2class_hdr`          svm classifier wrapper (around svmtrain/svmclassify)
+:ref:`cosmo_classify_matlabsvm_hdr`                 SVM multi-classifier using matlab's SVM implementation
+:ref:`cosmo_classify_meta_feature_selection_hdr`    meta classifier that uses feature selection on the training data
+:ref:`cosmo_classify_naive_bayes_hdr`               naive bayes classifier
+:ref:`cosmo_classify_nn_hdr`                        nearest neighbor classifier
+:ref:`cosmo_classify_svm_hdr`                       classifier wrapper that uses either matlab's or libsvm's SVM.
+:ref:`cosmo_cluster_neighborhood_hdr`               define neighborhood suitable for cluster-based analysis
+:ref:`cosmo_clusterize_hdr`                         fast depth-first clustering based on equal values of neighbors
+:ref:`cosmo_config_hdr`                             return a struc with configuration settings, or store such settings
+:ref:`cosmo_confusion_matrix_hdr`                   Returns a confusion matrix
+:ref:`cosmo_convert_neighborhood_hdr`               Converts between cell, matrix and struct representations of neighborhoods
+:ref:`cosmo_corr_hdr`                               Computes correlation - faster than than matlab's "corr" for Pearson.
+:ref:`cosmo_correlation_measure_hdr`                Computes a split-half correlation measure
+:ref:`cosmo_cross_neighborhood_hdr`                 cross neighborhoods along dataset dimensions
+:ref:`cosmo_crossvalidate_hdr`                      performs cross-validation using a classifier
+:ref:`cosmo_crossvalidation_measure_hdr`            performs cross-validation using a classifier
+:ref:`cosmo_dataset_slice_fa_hdr`                   Slice a dataset by features (columns) [deprecated]
+:ref:`cosmo_dataset_slice_sa_hdr`                   Slice a dataset by samples (rows) [deprecated]
+:ref:`cosmo_dim_find_hdr`                           find dimension attribute in dataset
+:ref:`cosmo_dim_generalization_measure_hdr`         measure generalization across pairwise combinations over time (or any other dimension)
+:ref:`cosmo_dim_insert_hdr`                         insert a dataset dimension
+:ref:`cosmo_dim_match_hdr`                          return a mask indicating match of dataset dimensions with values
+:ref:`cosmo_dim_prune_hdr`                          prune dataset dimension values that are not used after slicing
+:ref:`cosmo_dim_remove_hdr`                         remove a dataset dimension
+:ref:`cosmo_dim_rename_hdr`                         rename dimension attribute name
+:ref:`cosmo_dim_slice_hdr`                          slice and prune a dataset with dimension attributes [deprecated]
+:ref:`cosmo_dim_transpose_hdr`                      move a dataset dimension from samples to features or vice versa
+:ref:`cosmo_dir_hdr`                                list files recursively in a directory
+:ref:`cosmo_disp_hdr`                               display the input as a string representation
+:ref:`cosmo_dissimilarity_matrix_measure_hdr`       Compute a dissimilarity matrix measure
+:ref:`cosmo_distatis_hdr`                           apply DISTATIS measure to each feature
+:ref:`cosmo_find_local_extrema_hdr`                 find local extrema in a dataset using a neighborhood
+:ref:`cosmo_flatten_hdr`                            flattens an arbitrary array to a dataset structure
+:ref:`cosmo_fmri_convert_xform_hdr`                 convert xform code between numeric and string in fmri dataset
+:ref:`cosmo_fmri_dataset_hdr`                       load an fmri volumetric dataset
+:ref:`cosmo_fmri_deoblique_hdr`                     de-oblique a dataset
+:ref:`cosmo_fmri_orientation_hdr`                   get orientation of a dataset
+:ref:`cosmo_fmri_reorient_hdr`                      Change the orientation of an fmri dataset
+:ref:`cosmo_fx_hdr`                                 apply a function to unique combinations of .sa or .fa values
+:ref:`cosmo_independent_samples_partitioner_hdr`    Compute partitioning scheme based on dataset with independent samples
+:ref:`cosmo_index_unique_hdr`                       index unique (combinations of) elements
+:ref:`cosmo_interval_neighborhood_hdr`              compute neighborhoods stretching intervals
+:ref:`cosmo_isequaln_hdr`                           compares two input for equality with NaNs considered being equal
+:ref:`cosmo_isfield_hdr`                            checks the presence of (possibly nested) fieldnames in a struct
+:ref:`cosmo_make_temp_filename_hdr`                 give temporary filename that does not exist when this function is called
+:ref:`cosmo_map2fmri_hdr`                           maps a dataset structure to a NIFTI, AFNI, or BV structure or file
+:ref:`cosmo_map2meeg_hdr`                           maps a dataset to a FieldTrip or EEGlab structure or file
+:ref:`cosmo_map2surface_hdr`                        maps a dataset structure to AFNI/SUMA NIML dset or BV SMP file
+:ref:`cosmo_map_pca_hdr`                            normalize dataset either by estimating or applying estimated parameters
+:ref:`cosmo_mask_dim_intersect_hdr`                 find intersection mask across a set of datasets
+:ref:`cosmo_match_hdr`                              returns a mask indicating matching occurences in two arrays or cells relative to the second array
+:ref:`cosmo_measure_clusters_hdr`                   General cluster measure
+:ref:`cosmo_meeg_baseline_correct_hdr`              correct baseline of MEEG dataset
+:ref:`cosmo_meeg_chan_neighborhood_hdr`             determine neighborhood of channels in MEEG dataset
+:ref:`cosmo_meeg_chan_neighbors_hdr`                find neighbors of MEEG channels
+:ref:`cosmo_meeg_chantype_hdr`                      return channel types and optionally a feature mask matching a type
+:ref:`cosmo_meeg_dataset_hdr`                       Returns a dataset structure based on MEEG data
+:ref:`cosmo_meeg_find_layout_hdr`                   finds an MEEG channel layout associated with a dataset
+:ref:`cosmo_meeg_layout_collection_hdr`             return supported MEEG channel layouts
+:ref:`cosmo_meeg_read_layout_hdr`                   Read FieldTrip layout
+:ref:`cosmo_meeg_senstype2layout_mapping_hdr`       return mapping from MEEG sensor types to sensor layouts
+:ref:`cosmo_meeg_senstype_collection_hdr`           return supported MEEG acquisition systems and their channel labels
+:ref:`cosmo_meta_feature_selection_classifier_hdr`  meta classifier that uses feature selection on the training data [deprecated]
+:ref:`cosmo_montecarlo_cluster_stat_hdr`            compute random-effect cluster statistics corrected for multiple comparisons
+:ref:`cosmo_naive_bayes_classifier_searchlight_hdr` Run (fast) Naive Bayes classifier searchlight with crossvalidation
+:ref:`cosmo_nchoosek_partitioner_hdr`               partitions for into nchoosek(n,k) parititions with optional grouping schemas.
+:ref:`cosmo_neighborhood_split_hdr`                 partitions a neighborhood in a cell with (smaller) neigborhoods
+:ref:`cosmo_nfold_partitioner_hdr`                  generates an n-fold partition scheme
+:ref:`cosmo_normalize_hdr`                          normalize dataset either by estimating or applying estimated parameters
+:ref:`cosmo_notify_test_skipped_hdr`                notify that a test in the test suite is skipped
+:ref:`cosmo_oddeven_partitioner_hdr`                generates an odd-even partition scheme
+:ref:`cosmo_overlap_hdr`                            compute overlap between vectors or cellstrings in two cells
+:ref:`cosmo_parallel_get_nproc_available_hdr`       get number of processes available from Matlab parallel processing pool
+:ref:`cosmo_parcellfun_hdr`                         applies a function to elements in a cell in parallel
+:ref:`cosmo_pca_hdr`                                Principal Component Analysis
+:ref:`cosmo_pdist_hdr`                              compute pair-wise distance between samples in a matrix
+:ref:`cosmo_plot_slices_hdr`                        Plots a set of slices from a dataset, nifti image, or 3D data array
+:ref:`cosmo_publish_run_scripts_hdr`                helper function to publish example scripts (for developers)
+:ref:`cosmo_rand_hdr`                               generate uniform pseudo-random numbers, optionally using a seed value
+:ref:`cosmo_randomize_targets_hdr`                  provides randomized target labels
+:ref:`cosmo_randperm_hdr`                           generate random permutation of integers
+:ref:`cosmo_remove_useless_data_hdr`                remove 'useless' (constant and/or non-finite) samples or features
+:ref:`cosmo_run_tests_hdr`                          run unit and documentation tests
+:ref:`cosmo_sample_unique_hdr`                      sample without replacement from subsets of integers in balanced manner
+:ref:`cosmo_searchlight_hdr`                        Generic searchlight function returns a map of results computed at each searchlight location
+:ref:`cosmo_set_path_hdr`                           set the matlab path for CoSMoMVPA
+:ref:`cosmo_show_progress_hdr`                      Shows a progress bar, and time elapsed and expected to complete.
+:ref:`cosmo_skip_test_if_no_external_hdr`           Notify that test in the test suite is skipped if no external is present
+:ref:`cosmo_slice_hdr`                              Slice a dataset by samples (the default) or features
+:ref:`cosmo_sphere_offsets_hdr`                     computes sub index offsets for voxels in a sphere
+:ref:`cosmo_spherical_neighborhood_hdr`             computes neighbors for a spherical searchlight
+:ref:`cosmo_split_hdr`                              splits a dataset by unique values in (a) sample or feature attribute(s).
+:ref:`cosmo_squareform_hdr`                         converts pair-wise distances between matrix and vector form
+:ref:`cosmo_stack_hdr`                              stacks multiple datasets to yield a single dataset
+:ref:`cosmo_stat_hdr`                               compute t-test or F-test (ANOVA) statistic
+:ref:`cosmo_statcode_hdr`                           Convert statcode for different analysis packages
+:ref:`cosmo_strjoin_hdr`                            joins strings using a delimeter string
+:ref:`cosmo_strsplit_hdr`                           splits a string based on another delimeter string
+:ref:`cosmo_structjoin_hdr`                         joins values in structs or key-value pairs
+:ref:`cosmo_surface_dataset_hdr`                    Returns a dataset structure based on surface mesh data
+:ref:`cosmo_surficial_neighborhood_hdr`             neighborhood definition for surface-based searchlight
+:ref:`cosmo_synthetic_dataset_hdr`                  generate synthetic dataset
+:ref:`cosmo_tail_hdr`                               find values in left or right tail of a vector or string
+:ref:`cosmo_target_dsm_corr_measure_hdr`            measure correlation with target dissimilarity matrix
+:ref:`cosmo_type_hdr`                               print or return ASCII contents of a file
+:ref:`cosmo_unflatten_hdr`                          unflattens a dataset from 2 to (1+K) dimensions.
+:ref:`cosmo_vol_coordinates_hdr`                    convert to and from spatial (x,y,z) coordinates
+:ref:`cosmo_vol_grid_convert_hdr`                   convert between volumetric (fmri) and grid-based (meeg source) dataset
+:ref:`cosmo_warning_hdr`                            show a warning message; by default just once for each message
+:ref:`cosmo_winner_indices_hdr`                     Given multiple predictions, get indices that were predicted most often.
+:ref:`cosmo_wizard_set_config_hdr`                  GUI-based 'wizard' to set CoSMoMVPA configuration file
+:ref:`cosmo_wtf_hdr`                                return system, toolbox and externals information
+=================================================== =================================================================================================

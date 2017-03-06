@@ -1,0 +1,7 @@
+.. _run_anatomical_dataset_basics_skl:
+
+run anatomical dataset basics skl
+=================================
+
+.. include :: run_anatomical_dataset_basics_skl.txt
+

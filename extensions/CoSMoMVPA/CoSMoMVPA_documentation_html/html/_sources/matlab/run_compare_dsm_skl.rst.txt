@@ -1,0 +1,7 @@
+.. _run_compare_dsm_skl:
+
+run compare dsm skl
+===================
+
+.. include :: run_compare_dsm_skl.txt
+

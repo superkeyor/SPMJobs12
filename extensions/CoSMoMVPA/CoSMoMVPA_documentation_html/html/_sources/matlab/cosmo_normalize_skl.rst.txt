@@ -1,0 +1,7 @@
+.. _cosmo_normalize_skl:
+
+cosmo normalize skl
+===================
+
+.. include :: cosmo_normalize_skl.txt
+

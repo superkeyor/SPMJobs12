@@ -1,0 +1,445 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo average samples skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo balance partitions skl" href="cosmo_balance_partitions_skl.html" />
+    <link rel="prev" title="cosmo anova feature selector skl" href="cosmo_anova_feature_selector_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_balance_partitions_skl.html" title="cosmo balance partitions skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_anova_feature_selector_skl.html" title="cosmo anova feature selector skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-average-samples-skl">
+<span id="id1"></span><h1>cosmo average samples skl<a class="headerlink" href="#cosmo-average-samples-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span>function ds_avg=cosmo_average_samples(ds, varargin)
+% average subsets of samples by unique combinations of sample attributes
+%
+% ds_avg=cosmo_average_samples(ds, ...)
+%
+% Inputs:
+%   ds              dataset struct with field:
+%     .samples      NS x NF
+%     .sa           with fields .targets and .chunks
+%   &#39;ratio&#39;, ratio  ratio (between 0 and 1) of samples to select for
+%                   each average. Not compatible with &#39;count&#39; (default: 1).
+%   &#39;count&#39;, c      number of samples to select for each average.
+%                   Not compatible with &#39;ratio&#39;.
+%   &#39;resamplings&#39;,s Maximum number of times each sample in ds is used for
+%                   averaging. Not compatible with &#39;repeats&#39; (default: 1)
+%   &#39;repeats&#39;, r    Number of times an average is computed for each unique
+%                   combination of targets and chunks. Not compatible with
+%                   &#39;resamplings&#39;
+%   &#39;seed&#39;, d       Use seed d for pseudo-random sampling (optional); d
+%                   can be any integer between 1 and 2^32-1.
+%                   If this option is omitted, then different calls to this
+%                   function may (usually: will) return different results.
+%   &#39;split_by&#39;,fs   A cell with fieldnames by which the dataset is split
+%                   prior to averaging each bin.
+%                   Default: {&#39;targets&#39;,&#39;chunks&#39;}.
+%
+%
+% Returns
+%   ds_avg          dataset struct with field:
+%      .samples     (&#39;repeats&#39;*unq) x NF, where
+%                   unq is the number of unique combinations of values in
+%                   sample attribute as indicated by &#39;split_by&#39; (by
+%                   default, data is split by &#39;targets&#39; and &#39;chunks&#39;).
+%                   Each sample is an average from samples that share the
+%                   same values for these attributes. The number of times
+%                   each sample is used to compute average values differs
+%                   by one at most.
+%      .sa          Based on averaged samples.
+%      .fa,.a       Same as in ds (if present).
+%
+% Examples:
+%     % generate simple dataset with 3 times (2 targets x 3 chunks)
+%     ds=cosmo_synthetic_dataset(&#39;nreps&#39;,3);
+%     size(ds.samples)
+%     &gt; [ 18 6 ]
+%     cosmo_disp([ds.sa.targets ds.sa.chunks])
+%     &gt; [ 1         1
+%     &gt;   2         1
+%     &gt;   1         2
+%     &gt;   :         :
+%     &gt;   2         2
+%     &gt;   1         3
+%     &gt;   2         3 ]@18x2
+%     % average each unique combination of chunks and targets
+%     ds_avg=cosmo_average_samples(ds);
+%     cosmo_disp([ds_avg.sa.targets ds_avg.sa.chunks]);
+%     &gt; [ 1         1
+%     &gt;   1         2
+%     &gt;   1         3
+%     &gt;   2         1
+%     &gt;   2         2
+%     &gt;   2         3 ]
+%     %
+%     % for each unique target-chunk combination, select 50% of the samples
+%     % randomly and average these; repeat the random selection process 4
+%     % times. Each sample in &#39;ds&#39; is used twice (=.5*4) as an element
+%     % to compute an average. The output has 24 samples
+%     ds_avg2=cosmo_average_samples(ds,&#39;ratio&#39;,.5,&#39;repeats&#39;,4);
+%     cosmo_disp([ds_avg2.sa.targets ds_avg2.sa.chunks],&#39;edgeitems&#39;,5);
+%     &gt; [ 1         1
+%     &gt;   1         1
+%     &gt;   1         1
+%     &gt;   1         1
+%     &gt;   1         2
+%     &gt;   :         :
+%     &gt;   2         2
+%     &gt;   2         3
+%     &gt;   2         3
+%     &gt;   2         3
+%     &gt;   2         3 ]@24x2
+%
+% Notes:
+%  - this function averages feature-wise; the output has the same features
+%    as the input.
+%  - it can be used to average data from trials safely without circular
+%    analysis issues.
+%  - as a result the number of trials in each chunk and target is
+%    identical, so balancing of partitions is not necessary for data from
+%    this function.
+%  - the default behaviour of this function computes a single average for
+%    each unique combination of chunks and targets.
+%  - if the number of samples differs for different combinations of chunks
+%    and targets, then some samples may not be used to compute averages,
+%    as the least number of samples across combinations is used to set
+%  - As illustration, consider a dataset with the following number of
+%    samples for each unique targets and chunks combiniation
+%
+%    .sa.chunks     .sa.targets         number of samples
+%    ----------     -----------         -----------------
+%       1               1                   12
+%       1               2                   16
+%       2               1                   15
+%       2               2                   24
+%
+%    The least number of samples is 12, which determines how many averages
+%    are computed. Different parameters result in a different number of
+%    averages; some examples:
+%
+%       parameters                      number of output samples for each
+%                                       combination of targets and chunks
+%       ----------                      ---------------------------------
+%       &#39;count&#39;, 2                      6 averages from 2 samples [*]
+%       &#39;count&#39;, 3                      4 averages from 3 samples [*]
+%       &#39;ratio&#39;, .25                    4 averages from 3 samples [*]
+%       &#39;ratio&#39;, .5                     2 averages from 6 samples [*]
+%       &#39;ratio&#39;, .5, &#39;repeats&#39;, 3       6 averages from 6 samples
+%       &#39;ratio&#39;, .5, &#39;resamplings&#39;, 3   12 averages from 6 samples
+%
+%    [*]: not all samples in the input are used to compute averages from
+%         the output.
+%
+%    Briefly, &#39;ratio&#39; or &#39;count&#39; determine, together with the least number
+%    of samples, how many samples are averaged for each output sample.
+%    &#39;resamplings&#39; and &#39;repeats&#39; determine how many averages are taken,
+%    based on how many samples are averaged for each output sample.
+% -  To compute averages based on other sample attributes than &#39;targets&#39;
+%    and &#39;chunks&#39;, use the &#39;split_by&#39; option
+%
+% See also: cosmo_balance_partitions
+%
+% #   For CoSMoMVPA&#39;s copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+    % deal with input parameters
+
+    defaults=struct();
+    defaults.seed=[];
+    defaults.split_by={&#39;targets&#39;,&#39;chunks&#39;};
+
+    opt=cosmo_structjoin(defaults, varargin);
+    split_idxs=get_split_indices(ds, opt);
+
+    nsplits=numel(split_idxs);
+    bin_counts=cellfun(@numel,split_idxs);
+
+    [split_sample_ids,nrepeat]=get_split_sample_ids(bin_counts,opt);
+
+    nfeatures=size(ds.samples,2);
+
+    mu=zeros(nrepeat*nsplits,nfeatures);
+    slice_ids=zeros(nrepeat*nsplits,1);
+
+    row=0;
+    for k=1:nsplits
+        split_idx=split_idxs{k};
+        split_ids=split_sample_ids{k};
+
+        for j=1:nrepeat
+            sample_ids=split_idx(split_ids(:,j));
+
+            row=row+1;
+            mu(row,:)=mean(ds.samples(sample_ids,:),1);
+            slice_ids(row)=sample_ids(1);
+        end
+    end
+
+    ds_avg=cosmo_slice(ds,slice_ids,1,false);
+    ds_avg.samples=mu;
+
+
+function split_idxs=get_split_indices(ds, opt)
+    persistent cached_sa;
+    persistent cached_opt;
+    persistent cached_split_idxs;
+
+    if ~(isstruct(ds) &amp;&amp; ...
+            isfield(ds,&#39;samples&#39;) &amp;&amp; ...
+            isfield(ds,&#39;sa&#39;))
+        error([&#39;First argument must be a dataset struct field fields &#39;...
+                    &#39;samples and sa&#39;]);
+    end
+
+    if ~(isequal(cached_opt,opt) &amp;&amp; ...
+                    isequal(cached_sa,ds.sa))
+        split_by=opt.split_by;
+        if ~iscellstr(split_by)
+            error(&#39;&#39;&#39;split_by&#39;&#39;  must be a cell with strings&#39;);
+        end
+
+        n_dim=numel(split_by);
+        if n_dim==0
+            cached_split_idxs={(1:size(ds.samples,1))&#39;};
+        else
+            values=cell(n_dim,1);
+            for k=1:numel(split_by)
+                key=split_by{k};
+                if ~isfield(ds.sa,key)
+                    error(&#39;Missing field &#39;&#39;%s&#39;&#39; in .sa&#39;, key);
+                end
+                values{k}=ds.sa.(key);
+            end
+            cached_split_idxs=cosmo_index_unique(values);
+        end
+
+
+        cached_sa=ds.sa;
+        cached_opt=opt;
+    end
+
+    split_idxs=cached_split_idxs;
+
+
+function [idx, value]=get_mutually_exclusive_param(opt, names, ...
+                                        default_idx, default_value)
+    idx=[];
+    value=[];
+
+    n=numel(names);
+
+    for k=1:n
+        key=names{k};
+        if isfield(opt,key)
+            value=opt.(key);
+            if ~isempty(value)
+                if isempty(idx)
+                    idx=k;
+                else
+                    error([&#39;The options &#39;&#39;%s&#39;&#39; and &#39;&#39;%s&#39;&#39; are mutually &#39;...
+                            &#39;exclusive &#39;], key, names{idx});
+                end
+            end
+        end
+    end
+
+    if isempty(idx)
+        idx=default_idx;
+        value=default_value;
+    end
+
+
+function [nselect,nrepeat]=get_selection_params(bin_counts,opt)
+    [idx,value]=get_mutually_exclusive_param(opt,{&#39;ratio&#39;,&#39;count&#39;},1,1);
+
+    switch idx
+        case 1
+            % ratio
+            nselect=round(value*min(bin_counts));
+        case 2
+            % count
+            nselect=value;
+
+    end
+
+    ensure_in_range(&#39;Number of elements to select&#39;,nselect,...
+                                            1,min(bin_counts));
+
+
+    repeat_labels={&#39;resamplings&#39;,&#39;repeats&#39;};
+    [idx2,value2]=get_mutually_exclusive_param(opt,repeat_labels,1,1);
+    switch idx2
+        case 1
+            nrepeat=floor(value2*min(bin_counts./nselect));
+        case 2
+            nrepeat=value2;
+    end
+
+    ensure_in_range(&#39;Number of repeats&#39;,...
+                            nrepeat,1,Inf);
+
+function ensure_in_range(label, val, min_val, max_val)
+    postfix=[];
+    while true
+        if ~isscalar(val) || ~isnumeric(val)
+            postfix=&#39;must be numeric scalar&#39;;
+            break;
+        end
+
+        if round(val)~=val
+            postfix=&#39;must be an integer&#39;;
+        end
+
+        if val&lt;min_val
+            postfix=sprintf(&#39;cannot be less than %d&#39;, min_val);
+            break;
+        end
+
+        if val&gt;max_val
+            postfix=sprintf(&#39;cannot be greater than %d&#39;, max_val);
+            break;
+        end
+
+        break;
+    end
+
+    if ~isempty(postfix)
+        msg=[label &#39; &#39; postfix];
+        error(msg);
+    end
+
+
+function [sample_ids,nrepeat]=get_split_sample_ids(bin_counts,opt)
+    [nselect,nrepeat]=get_selection_params(bin_counts,opt);
+
+    % number of saples for each unique chunks-targets combination
+    nsplits=numel(bin_counts);
+
+    % allocate space for output
+    sample_ids=cell(nsplits,1);
+
+    % select samples randomly, but in a manner so that each one is used
+    % approximately equally often
+    for k=1:nsplits
+        bin_count=bin_counts(k);
+        sample_ids{k}=cosmo_sample_unique(nselect,bin_count,nrepeat,opt);
+    end
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_anova_feature_selector_skl.html"
+                        title="previous chapter">cosmo anova feature selector skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_balance_partitions_skl.html"
+                        title="next chapter">cosmo balance partitions skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_average_samples_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_balance_partitions_skl.html" title="cosmo balance partitions skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_anova_feature_selector_skl.html" title="cosmo anova feature selector skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

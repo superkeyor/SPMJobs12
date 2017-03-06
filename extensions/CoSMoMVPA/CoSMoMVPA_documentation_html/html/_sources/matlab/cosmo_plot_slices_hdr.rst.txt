@@ -1,0 +1,7 @@
+.. _cosmo_plot_slices_hdr:
+
+cosmo plot slices hdr
+=====================
+
+.. include :: cosmo_plot_slices_hdr.txt
+

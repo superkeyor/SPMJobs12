@@ -1,0 +1,273 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test config &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test confusion matrix" href="test_confusion_matrix.html" />
+    <link rel="prev" title="test clusterize" href="test_clusterize.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_confusion_matrix.html" title="test confusion matrix"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_clusterize.html" title="test clusterize"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-config">
+<span id="id1"></span><h1>test config<a class="headerlink" href="#test-config" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span><span class="p">=</span><span class="n">test_config</span>
+<span class="c">% tests for cosmo_config</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">randstr</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">s</span><span class="p">=</span><span class="n">char</span><span class="p">(</span><span class="nb">ceil</span><span class="p">(</span><span class="nb">rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">20</span><span class="p">)</span><span class="o">*</span><span class="mi">20</span><span class="o">+</span><span class="mi">64</span><span class="p">));</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_config_unable_to_find_file</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">fn</span><span class="p">=</span><span class="n">tempname</span><span class="p">();</span>
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_config</span><span class="p">(</span><span class="n">fn</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_config_unable_to_open_file</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">dirname</span><span class="p">=</span><span class="n">fileparts</span><span class="p">(</span><span class="n">mfilename</span><span class="p">(</span><span class="s">&#39;fullpath&#39;</span><span class="p">));</span>
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_config</span><span class="p">(</span><span class="n">dirname</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_config_reading_empty</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">helper_write_read_config</span><span class="p">(</span><span class="n">false</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_config_reading_with_paths</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">helper_write_read_config</span><span class="p">(</span><span class="n">true</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">helper_generate_config</span><span class="p">(</span>n_keys,include_keys<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">s</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_keys</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">&lt;</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">include_keys</span><span class="p">)</span>
+            <span class="n">key</span><span class="p">=</span><span class="n">include_keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">value</span><span class="p">=</span><span class="n">pwd</span><span class="p">();</span>
+        <span class="k">else</span>
+            <span class="n">key</span><span class="p">=</span><span class="n">randstr</span><span class="p">();</span>
+            <span class="n">value</span><span class="p">=</span><span class="n">randstr</span><span class="p">();</span>
+        <span class="k">end</span>
+        <span class="n">s</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">value</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>tmp_fn<span class="p">=</span><span class="nf">helper_write_config</span><span class="p">(</span>c, suffix<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tmp_fn</span><span class="p">=</span><span class="n">tempname</span><span class="p">();</span>
+    <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">tmp_fn</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">);</span>
+    <span class="n">file_closer</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">));</span>
+
+    <span class="n">key_value_pairs_cell</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">key</span><span class="p">)</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s=%s\n&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">,</span><span class="n">c</span><span class="p">.(</span><span class="n">key</span><span class="p">)),</span><span class="c">...</span>
+                                <span class="n">fieldnames</span><span class="p">(</span><span class="n">c</span><span class="p">),</span><span class="c">...</span>
+                                <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="s">&#39;%s&#39;</span><span class="p">,</span><span class="n">key_value_pairs_cell</span><span class="p">{:});</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="s">&#39;%s&#39;</span><span class="p">,</span><span class="n">suffix</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_error_when_quote_in_paths</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">orig_warning_state</span><span class="p">=</span><span class="n">cosmo_warning</span><span class="p">();</span>
+    <span class="n">warning_state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">cosmo_warning</span><span class="p">(</span><span class="n">orig_warning_state</span><span class="p">));</span>
+    <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">with_path_suffix</span><span class="p">=[</span><span class="n">true</span> <span class="n">false</span><span class="p">]</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">randstr</span><span class="p">();</span>
+        <span class="k">if</span> <span class="n">with_path_suffix</span>
+            <span class="n">key</span><span class="p">=[</span><span class="n">key</span> <span class="s">&#39;_path&#39;</span><span class="p">];</span>
+        <span class="k">end</span>
+
+        <span class="n">around_chars</span><span class="p">={</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="s">&#39;&#39;&#39;&#39;</span><span class="p">,</span><span class="s">&#39;&quot;&#39;</span><span class="p">};</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">around_chars</span><span class="p">)</span>
+            <span class="n">c</span><span class="p">=</span><span class="n">around_chars</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+            <span class="n">value</span><span class="p">=</span><span class="n">randstr</span><span class="p">();</span>
+            <span class="n">config</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+            <span class="n">config</span><span class="p">.(</span><span class="n">key</span><span class="p">)=[</span><span class="n">c</span> <span class="n">value</span> <span class="n">c</span><span class="p">];</span>
+
+            <span class="n">fn</span><span class="p">=</span><span class="n">helper_write_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+            <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete</span><span class="p">(</span><span class="n">fn</span><span class="p">));</span>
+
+            <span class="n">f_handle</span><span class="p">=@()</span><span class="n">cosmo_config</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+            <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">c</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span>
+                <span class="n">assertExceptionThrown</span><span class="p">(</span><span class="n">f_handle</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+            <span class="k">else</span>
+                <span class="n">f_handle</span><span class="p">();</span>
+            <span class="k">end</span>
+
+            <span class="n">clear</span> <span class="n">cleaner</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">helper_write_read_config</span><span class="p">(</span>include_path_settings, config<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">orig_warning_state</span><span class="p">=</span><span class="n">cosmo_warning</span><span class="p">();</span>
+    <span class="n">warning_state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">cosmo_warning</span><span class="p">(</span><span class="n">orig_warning_state</span><span class="p">));</span>
+
+    <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;reset&#39;</span><span class="p">);</span>
+    <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+    <span class="n">n_keys</span><span class="p">=</span><span class="nb">ceil</span><span class="p">(</span><span class="nb">rand</span><span class="p">()</span><span class="o">*</span><span class="mi">5</span><span class="o">+</span><span class="mi">5</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">include_path_settings</span>
+        <span class="n">include_keys</span><span class="p">={</span><span class="s">&#39;tutorial_data_path&#39;</span><span class="p">,</span><span class="s">&#39;output_data_path&#39;</span><span class="p">};</span>
+    <span class="k">else</span>
+        <span class="n">include_keys</span><span class="p">={};</span>
+    <span class="k">end</span>
+
+    <span class="c">% generate and write config</span>
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="p">=</span><span class="mi">2</span>
+        <span class="n">config</span><span class="p">=</span><span class="n">helper_generate_config</span><span class="p">(</span><span class="n">n_keys</span><span class="p">,</span><span class="n">include_keys</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">tmp_fn</span><span class="p">=</span><span class="n">helper_write_config</span><span class="p">(</span><span class="n">config</span><span class="p">,</span> <span class="s">&#39;# this is a comment&#39;</span><span class="p">);</span>
+    <span class="n">file_deleter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete</span><span class="p">(</span><span class="n">tmp_fn</span><span class="p">));</span>
+
+
+    <span class="c">% read configuration</span>
+    <span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="n">read_tmp_fn</span><span class="p">]=</span><span class="n">cosmo_config</span><span class="p">(</span><span class="n">tmp_fn</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">config</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">read_tmp_fn</span><span class="p">,</span><span class="n">tmp_fn</span><span class="p">);</span>
+
+    <span class="n">w</span><span class="p">=</span><span class="n">cosmo_warning</span><span class="p">();</span>
+    <span class="k">if</span> <span class="n">include_path_settings</span>
+        <span class="c">% no warnign shown</span>
+        <span class="n">assert</span><span class="p">(</span><span class="nb">isempty</span><span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">shown_warnings</span><span class="p">));</span>
+    <span class="k">else</span>
+        <span class="c">% warning must have been shown if not include path settings</span>
+        <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">shown_warnings</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">assert</span><span class="p">(</span><span class="n">iscellstr</span><span class="p">(</span><span class="n">w</span><span class="p">.</span><span class="n">shown_warnings</span><span class="p">))</span>
+    <span class="k">end</span>
+
+    <span class="c">% add one key-value pair</span>
+    <span class="n">c2</span><span class="p">=</span><span class="n">c</span><span class="p">;</span>
+    <span class="n">key</span><span class="p">=</span><span class="n">randstr</span><span class="p">();</span>
+    <span class="n">c2</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">randstr</span><span class="p">();</span>
+
+    <span class="c">% write and read new configuration</span>
+    <span class="n">cosmo_config</span><span class="p">(</span><span class="n">tmp_fn</span><span class="p">,</span><span class="n">c2</span><span class="p">);</span>
+    <span class="n">c3</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">(</span><span class="n">tmp_fn</span><span class="p">);</span>
+
+    <span class="c">% should be different with missing key-value pair</span>
+    <span class="n">assert</span><span class="p">(</span><span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">c3</span><span class="p">));</span>
+
+    <span class="c">% should be the same</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">c2</span><span class="p">,</span><span class="n">c3</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_clusterize.html"
+                        title="previous chapter">test clusterize</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_confusion_matrix.html"
+                        title="next chapter">test confusion matrix</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_config.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_confusion_matrix.html" title="test confusion matrix"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_clusterize.html" title="test clusterize"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

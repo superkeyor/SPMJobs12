@@ -1,0 +1,789 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test fmri io &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test fmri orientation" href="test_fmri_orientation.html" />
+    <link rel="prev" title="test fmri deoblique" href="test_fmri_deoblique.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_fmri_orientation.html" title="test fmri orientation"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_fmri_deoblique.html" title="test fmri deoblique"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-fmri-io">
+<span id="id1"></span><h1>test fmri io<a class="headerlink" href="#test-fmri-io" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span><span class="p">=</span><span class="n">test_fmri_io</span>
+<span class="c">% tests for fmri input/output</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_nii_gz</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">usejava</span><span class="p">(</span><span class="s">&#39;jvm&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">)</span>
+        <span class="n">cosmo_notify_test_skipped</span><span class="p">(</span><span class="s">&#39;java VM not available for .nii.gz&#39;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.nii.gz&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_nii</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.nii&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_hdr</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.hdr&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_img</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.img&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_afni_orig_head</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;afni&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;+orig.HEAD&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_afni_tlrc_brik</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;afni&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;+tlrc.BRIK&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_bv_vmp</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;neuroelf&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.vmp&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_bv_vmr</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;neuroelf&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.vmr&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_bv_msk</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;neuroelf&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.msk&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_mat</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">save_and_load_dataset_with_extension</span><span class="p">(</span><span class="s">&#39;.mat&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_mat_struct</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;fmri&#39;</span><span class="p">);</span>
+
+    <span class="n">fn</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;fn1&#39;</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">);</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete_files</span><span class="p">({</span><span class="n">fn</span><span class="p">}));</span>
+
+    <span class="c">% save as struct</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;-struct&#39;</span><span class="p">,</span><span class="s">&#39;ds&#39;</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">);</span>
+
+    <span class="c">% save as variable</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;ds&#39;</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">);</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_bv_vmp_oblique</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;neuroelf&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;normal&#39;</span><span class="p">,</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% make dataset oblique (manually)</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)=.</span><span class="mi">8</span><span class="o">*</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)=.</span><span class="mi">6</span><span class="o">*</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                        <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="n">ds_deob</span><span class="p">=</span><span class="n">cosmo_fmri_deoblique</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">bv_vmp</span><span class="p">=</span><span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">bv_vmp</span><span class="p">.</span><span class="n">ClearObject</span><span class="p">());</span>
+
+    <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">bv_vmp</span><span class="p">);</span>
+    <span class="n">ds3</span><span class="p">=</span><span class="n">cosmo_fmri_reorient</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="n">cosmo_fmri_orientation</span><span class="p">(</span><span class="n">ds_deob</span><span class="p">));</span>
+
+    <span class="c">% require that rotation matrix is ok</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds3</span><span class="p">,</span><span class="n">ds_deob</span><span class="p">,</span><span class="s">&#39;.vmr&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_bv_vmp_noniso</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;neuroelf&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;normal&#39;</span><span class="p">,</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% make dataset oblique (manually)</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">)=</span><span class="mi">3</span><span class="p">;</span>
+
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                        <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;bv_force_fit&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="n">bv_vmp</span><span class="p">=</span><span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-bv_vmp&#39;</span><span class="p">,</span><span class="s">&#39;bv_force_fit&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">bv_vmp</span><span class="p">.</span><span class="n">ClearObject</span><span class="p">());</span>
+
+    <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">bv_vmp</span><span class="p">);</span>
+    <span class="n">ds3</span><span class="p">=</span><span class="n">cosmo_fmri_reorient</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="n">cosmo_fmri_orientation</span><span class="p">(</span><span class="n">ds</span><span class="p">));</span>
+
+    <span class="n">vox_size</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">);</span>
+    <span class="n">resolution</span><span class="p">=</span><span class="n">prod</span><span class="p">(</span><span class="n">vox_size</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">))</span><span class="o">.^</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">3</span><span class="p">);</span>
+
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">ds3</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">),</span><span class="c">...</span>
+                                            <span class="nb">eye</span><span class="p">(</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="n">resolution</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=</span><span class="n">ds3</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">;</span>
+
+    <span class="c">% require that rotation matrix is ok</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds3</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;.vmr&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_map2fmri_illegal_name</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                        <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-nii-nii&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-illegalformat&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;fn.illegal_extension&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_force_fit</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="mi">1</span><span class="o">+</span><span class="nb">rand</span><span class="p">();</span>
+
+    <span class="n">assertFalse</span><span class="p">(</span><span class="n">has_isotropic_voxels</span><span class="p">(</span><span class="n">ds</span><span class="p">));</span>
+
+    <span class="c">% just converting to nifti and back does not make the voxels isotropic</span>
+    <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-nii&#39;</span><span class="p">));</span>
+    <span class="n">assertFalse</span><span class="p">(</span><span class="n">has_isotropic_voxels</span><span class="p">(</span><span class="n">ds2</span><span class="p">));</span>
+
+    <span class="c">% forcefit makes the voxels isotropic</span>
+    <span class="n">ds3</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-nii&#39;</span><span class="p">,</span><span class="s">&#39;bv_force_fit&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">));</span>
+    <span class="n">assertTrue</span><span class="p">(</span><span class="n">has_isotropic_voxels</span><span class="p">(</span><span class="n">ds3</span><span class="p">));</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">has_isotropic_voxels</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function</span>
+    <span class="n">m</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">;</span>
+    <span class="n">sz</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">m</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">.^</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="nb">eps</span><span class="p">=</span><span class="mf">1e-4</span><span class="p">;</span>
+    <span class="n">tf</span><span class="p">=</span><span class="n">all</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="n">sz</span><span class="p">)</span><span class="o">&lt;</span><span class="nb">eps</span><span class="p">);</span>
+
+
+<span class="k">function</span> <span class="nf">test_map2fmri_afni_nonisotropic</span>
+    <span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;afni&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="c">% fine because voxels are not oblique</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-afni&#39;</span><span class="p">);</span>
+
+    <span class="c">% make oblique</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">2</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                        <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-afni&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-afni&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="c">% should be fine with de-obliqued</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-afni&#39;</span><span class="p">,</span><span class="s">&#39;deoblique&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">save_and_load_dataset_with_extension</span><span class="p">(</span>ext, multi_volume<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span>
+        <span class="n">multi_volume</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">x_base</span><span class="p">=</span><span class="n">get_base_dataset</span><span class="p">();</span>
+    <span class="k">if</span> <span class="n">multi_volume</span>
+        <span class="n">y</span><span class="p">=</span><span class="n">save_and_load</span><span class="p">(</span><span class="n">x_base</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+        <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">x_base</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+
+        <span class="n">volumes</span><span class="p">=[</span><span class="mi">4</span> <span class="mi">2</span><span class="p">];</span>
+    <span class="k">else</span>
+        <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">save_and_load</span><span class="p">(</span><span class="n">x_base</span><span class="p">,</span><span class="n">ext</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+        <span class="n">volumes</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">x_sel</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">x_base</span><span class="p">,</span><span class="n">volumes</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">multi_volume</span>
+        <span class="n">x</span><span class="p">=</span><span class="n">x_base</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">x</span><span class="p">=</span><span class="n">x_sel</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">y_sel</span><span class="p">=</span><span class="n">save_and_load</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="s">&#39;volumes&#39;</span><span class="p">,</span><span class="n">volumes</span><span class="p">);</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">x_sel</span><span class="p">,</span><span class="n">y_sel</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">ext_supports_block_loading</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+        <span class="n">helper_test_save_and_load_in_blocks</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">ext_supports_block_loading</span><span class="p">(</span>ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ext_with_block_loading</span><span class="p">={</span><span class="s">&#39;+orig.HEAD&#39;</span><span class="p">,</span><span class="s">&#39;+orig.BRIK&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;+tlrc.HEAD&#39;</span><span class="p">,</span><span class="s">&#39;+tlrc.BRIK&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;.nii&#39;</span><span class="p">};</span>
+    <span class="n">tf</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">ext</span><span class="p">},</span><span class="n">ext_with_block_loading</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">helper_test_save_and_load_in_blocks</span><span class="p">(</span>x,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">msk_ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">msk_ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">x</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="o">&gt;</span><span class="mi">3</span> <span class="o">&amp;</span> <span class="n">x</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">j</span><span class="o">&lt;</span><span class="mi">5</span><span class="p">;</span>
+
+    <span class="n">ds_once</span><span class="p">=</span><span class="n">save_and_load</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">msk_ds</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">nsamples</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds_once</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+    <span class="n">block_sizes</span><span class="p">=[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="o">*</span><span class="n">nfeatures</span><span class="p">,(</span><span class="n">nsamples</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">nfeatures</span><span class="p">,</span><span class="n">Inf</span><span class="p">];</span>
+    <span class="k">for</span> <span class="n">block_size</span><span class="p">=</span><span class="n">block_sizes</span>
+        <span class="n">ds_blocked</span><span class="p">=</span><span class="n">save_and_load</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">msk_ds</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="s">&#39;block_size&#39;</span><span class="p">,</span><span class="n">block_size</span><span class="p">);</span>
+        <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds_once</span><span class="p">,</span><span class="n">ds_blocked</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_exceptions</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                            <span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="n">fn</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;test&#39;</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">);</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete_files</span><span class="p">({</span><span class="n">fn</span><span class="p">}));</span>
+
+    <span class="n">x</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+
+    <span class="n">x</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">y</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+
+    <span class="c">% incomplete AFNI struct</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">DATASET_DIMENSIONS</span><span class="p">=[];</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">DATASET_RANK</span><span class="p">=[];</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+
+    <span class="c">% illegal .mat file</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;x&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+
+    <span class="c">% wrong dimension size</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">nii</span><span class="p">=</span><span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-nii&#39;</span><span class="p">);</span>
+    <span class="n">nii</span><span class="p">.</span><span class="n">img</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">nii</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">test_fmri_io_mask</span>
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                    <span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">m</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">fn</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;fn1&#39;</span><span class="p">,</span><span class="s">&#39;.nii&#39;</span><span class="p">);</span>
+    <span class="n">fn2</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;fn2&#39;</span><span class="p">,</span><span class="s">&#39;.nii&#39;</span><span class="p">);</span>
+
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete_files</span><span class="p">({</span><span class="n">fn</span><span class="p">,</span><span class="n">fn2</span><span class="p">}));</span>
+
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">fn</span><span class="p">);</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;.nii&#39;</span><span class="p">)</span>
+
+    <span class="n">m_rsa</span><span class="p">=</span><span class="n">cosmo_fmri_reorient</span><span class="p">(</span><span class="n">m</span><span class="p">,</span><span class="s">&#39;RSA&#39;</span><span class="p">);</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">m_rsa</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;.nii&#39;</span><span class="p">)</span>
+
+    <span class="n">m_bad_fa</span><span class="p">=</span><span class="n">m</span><span class="p">;</span>
+    <span class="n">m_bad_fa</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}=[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span><span class="p">];</span>
+    <span class="n">m_bad_fa</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">dim</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="mi">4</span><span class="p">;</span>
+    <span class="n">m_bad_fa</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="p">=</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">m_bad_fa</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+
+    <span class="n">m_bad_mat</span><span class="p">=</span><span class="n">m</span><span class="p">;</span>
+    <span class="n">m_bad_mat</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="mi">3</span><span class="p">;</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">m_bad_mat</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+
+    <span class="n">m_bad_2samples</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">({</span><span class="n">m</span><span class="p">,</span><span class="n">m</span><span class="p">});</span>
+    <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">m_bad_2samples</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">fn2</span><span class="p">);</span>
+
+    <span class="c">% disable automask warning</span>
+    <span class="n">warning_state</span><span class="p">=</span><span class="n">cosmo_warning</span><span class="p">();</span>
+    <span class="n">state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">cosmo_warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+    <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">)=</span><span class="mi">0</span><span class="p">;</span>
+
+    <span class="n">res</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">res</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="n">msk</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="n">msk</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">logical</span><span class="p">([</span><span class="mi">0</span> <span class="mi">1</span> <span class="mi">1</span> <span class="mi">0</span> <span class="mi">1</span> <span class="mi">0</span><span class="p">]);</span>
+    <span class="n">msk</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">msk</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">msk</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">msk</span><span class="p">);</span>
+    <span class="n">ds_expected</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">msk</span><span class="p">,</span><span class="n">msk</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds_expected</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_fmri_io_spm</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">directories</span><span class="p">={</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">cosmo_make_temp_filename</span><span class="p">()};</span>
+    <span class="n">cellfun</span><span class="p">(@</span><span class="n">helper_test_fmri_io_spm_in_directory</span><span class="p">,</span><span class="n">directories</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">helper_test_fmri_io_spm_in_directory</span><span class="p">(</span>directory<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">register_or_delete_all_files</span><span class="p">());</span>
+    <span class="p">[</span><span class="n">spm_fn</span><span class="p">,</span><span class="n">SPM</span><span class="p">]=</span><span class="n">write_spm_dot_mat</span><span class="p">(</span><span class="n">directory</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds_spm</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">spm_fn</span><span class="p">);</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">,</span><span class="n">ds_spm</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds_spm</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">beta_index</span><span class="p">,(</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">)</span><span class="o">&#39;</span><span class="p">)</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds_spm</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">,{</span><span class="s">&#39;sample_1&#39;</span><span class="p">;</span><span class="s">&#39;sample_2&#39;</span><span class="p">});</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">ds_spm</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="s">&#39;relative&#39;</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">);</span>
+
+    <span class="n">msk_ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">msk_ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">msk_ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="o">~=</span><span class="mi">3</span><span class="p">;</span>
+    <span class="n">block_sizes</span><span class="p">=[</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">13</span><span class="p">,</span><span class="n">Inf</span><span class="p">];</span>
+
+    <span class="n">ds_spm_msk</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">spm_fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">msk_ds</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds_spm_msk</span><span class="p">,</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds_spm</span><span class="p">,</span><span class="n">msk_ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+
+    <span class="k">for</span> <span class="n">block_size</span><span class="p">=</span><span class="n">block_sizes</span>
+        <span class="n">ds_spm_msk_blocked</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">spm_fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">msk_ds</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="s">&#39;block_size&#39;</span><span class="p">,</span><span class="n">block_size</span><span class="p">);</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds_spm_msk_blocked</span><span class="p">,</span><span class="n">ds_spm_msk</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+    <span class="n">input_keys</span><span class="p">={</span><span class="s">&#39;beta&#39;</span><span class="p">,</span><span class="s">&#39;con&#39;</span><span class="p">,</span><span class="s">&#39;spm&#39;</span><span class="p">};</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">0</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">input_keys</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="mi">0</span>
+            <span class="n">postfix</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+            <span class="n">offset</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">key</span><span class="p">=</span><span class="n">input_keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">postfix</span><span class="p">=[</span><span class="s">&#39;:&#39;</span> <span class="n">key</span><span class="p">];</span>
+            <span class="n">offset</span><span class="p">=</span><span class="n">k</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">spm_fn_key</span><span class="p">=[</span><span class="n">spm_fn</span> <span class="n">postfix</span><span class="p">];</span>
+        <span class="n">ds_spm</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">spm_fn_key</span><span class="p">);</span>
+        <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="o">+</span><span class="n">offset</span><span class="p">,</span><span class="n">ds_spm</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;relative&#39;</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">);</span>
+
+        <span class="n">is_beta</span><span class="p">=</span><span class="n">k</span><span class="o">&lt;</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">if</span> <span class="n">is_beta</span> <span class="o">&amp;&amp;</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+            <span class="n">ds_spm2</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">SPM</span><span class="p">);</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">ds_spm2</span><span class="p">,</span> <span class="n">ds_spm</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>[spm_fn,SPM]<span class="p">=</span><span class="nf">write_spm_dot_mat</span><span class="p">(</span>directory<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">register_or_delete_all_files</span><span class="p">();</span>
+    <span class="n">prefix_with_directory</span><span class="p">=@(</span><span class="n">fn</span><span class="p">)</span><span class="n">fullfile</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span><span class="n">fn</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="n">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">input_types</span><span class="p">.</span><span class="nb">beta</span><span class="p">.</span><span class="n">vols</span><span class="p">=</span><span class="s">&#39;Vbeta&#39;</span><span class="p">;</span>
+    <span class="n">input_types</span><span class="p">.</span><span class="n">con</span><span class="p">.</span><span class="n">vols</span><span class="p">=</span><span class="s">&#39;Vcon&#39;</span><span class="p">;</span>
+    <span class="n">input_types</span><span class="p">.</span><span class="n">spmT</span><span class="p">.</span><span class="n">vols</span><span class="p">=</span><span class="s">&#39;Vspm&#39;</span><span class="p">;</span>
+
+
+    <span class="n">input_keys</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">input_types</span><span class="p">);</span>
+
+    <span class="n">SPM</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">SPM</span><span class="p">.</span><span class="n">SPMid</span><span class="p">=[];</span>
+    <span class="n">xCon_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nsamples</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">input_keys</span><span class="p">);</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">input_keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">is_beta</span><span class="p">=</span><span class="n">strcmp</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="s">&#39;beta&#39;</span><span class="p">);</span>
+
+        <span class="n">values</span><span class="p">=</span><span class="n">input_types</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+        <span class="n">vol_label</span><span class="p">=</span><span class="n">values</span><span class="p">.</span><span class="n">vols</span><span class="p">;</span>
+
+        <span class="n">samples_offset</span><span class="p">=</span><span class="n">k</span><span class="p">;</span>
+
+        <span class="n">vol_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nsamples</span><span class="p">);</span>
+        <span class="n">sample_labels</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nsamples</span><span class="p">);</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+            <span class="n">tmp_fns</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;XX&#39;</span><span class="p">,{</span><span class="s">&#39;.hdr&#39;</span><span class="p">,</span><span class="s">&#39;.img&#39;</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">});</span>
+            <span class="n">tmp_hdr_fn</span><span class="p">=</span><span class="n">tmp_fns</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+
+            <span class="n">tmp_pth_fns</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(</span><span class="n">prefix_with_directory</span><span class="p">,</span><span class="n">tmp_fns</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+            <span class="n">tmp_hdr_pth_fn</span><span class="p">=</span><span class="n">tmp_pth_fns</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+            <span class="n">tmp_img_pth_fn</span><span class="p">=</span><span class="n">tmp_pth_fns</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+            <span class="n">tmp_mat_pth_fn</span><span class="p">=</span><span class="n">tmp_pth_fns</span><span class="p">{</span><span class="mi">3</span><span class="p">};</span>
+
+            <span class="n">vol</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">;</span>
+            <span class="n">vol</span><span class="p">.</span><span class="n">fname</span><span class="p">=</span><span class="n">tmp_hdr_fn</span><span class="p">;</span>
+            <span class="n">vol_cell</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="n">vol</span><span class="p">;</span>
+
+            <span class="n">ds_sample</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="nb">j</span><span class="p">);</span>
+            <span class="n">ds_sample</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">ds_sample</span><span class="p">.</span><span class="n">samples</span><span class="o">+</span><span class="n">samples_offset</span><span class="p">;</span>
+            <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds_sample</span><span class="p">,</span><span class="n">tmp_hdr_pth_fn</span><span class="p">);</span>
+            <span class="n">sample_labels</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;sample_%d&#39;</span><span class="p">,</span><span class="nb">j</span><span class="p">);</span>
+
+            <span class="n">register_or_delete_all_files</span><span class="p">(</span><span class="n">tmp_hdr_pth_fn</span><span class="p">);</span>
+            <span class="n">register_or_delete_all_files</span><span class="p">(</span><span class="n">tmp_img_pth_fn</span><span class="p">);</span>
+            <span class="n">register_or_delete_all_files</span><span class="p">(</span><span class="n">tmp_mat_pth_fn</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="o">~</span><span class="n">is_beta</span>
+                <span class="n">xcon</span><span class="p">=</span><span class="n">xCon_cell</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+                <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">xcon</span><span class="p">)</span>
+                    <span class="n">xcon</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+                    <span class="n">xcon</span><span class="p">.</span><span class="n">name</span><span class="p">=</span><span class="n">sample_labels</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+                <span class="k">end</span>
+                <span class="n">xcon</span><span class="p">.(</span><span class="n">vol_label</span><span class="p">)=</span><span class="n">vol</span><span class="p">;</span>
+                <span class="n">xCon_cell</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="n">xcon</span><span class="p">;</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+
+
+        <span class="n">vol_info</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">2</span><span class="p">,</span><span class="n">vol_cell</span><span class="p">{:});</span>
+        <span class="k">if</span> <span class="n">is_beta</span>
+            <span class="n">SPM</span><span class="p">.(</span><span class="n">vol_label</span><span class="p">)=</span><span class="n">vol_info</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">is_beta</span>
+            <span class="n">SPM</span><span class="p">.</span><span class="n">xX</span><span class="p">.</span><span class="n">X</span><span class="p">=[];</span>
+            <span class="n">SPM</span><span class="p">.</span><span class="n">Sess</span><span class="p">.</span><span class="n">Fc</span><span class="p">.</span><span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">;</span>
+            <span class="n">SPM</span><span class="p">.</span><span class="n">Sess</span><span class="p">.</span><span class="n">col</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span><span class="p">;</span>
+            <span class="n">SPM</span><span class="p">.</span><span class="n">xX</span><span class="p">.</span><span class="n">name</span><span class="p">=</span><span class="n">sample_labels</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">SPM</span><span class="p">.</span><span class="n">xCon</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">xCon_cell</span><span class="p">{:});</span>
+
+    <span class="n">spm_fn</span><span class="p">=</span><span class="n">prefix_with_directory</span><span class="p">(</span><span class="s">&#39;_tmp_SPM.mat&#39;</span><span class="p">);</span>
+    <span class="n">register_or_delete_all_files</span><span class="p">(</span><span class="n">spm_fn</span><span class="p">);</span>
+    <span class="n">save</span><span class="p">(</span><span class="n">spm_fn</span><span class="p">,</span><span class="s">&#39;SPM&#39;</span><span class="p">);</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">register_or_delete_all_files</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">files_to_delete</span><span class="p">;</span>
+
+    <span class="n">has_files_to_delete</span><span class="p">=</span><span class="n">iscell</span><span class="p">(</span><span class="n">files_to_delete</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">==</span><span class="mi">0</span>
+        <span class="k">if</span> <span class="n">has_files_to_delete</span>
+            <span class="n">delete_files</span><span class="p">(</span><span class="n">files_to_delete</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="n">files_to_delete</span><span class="p">=[];</span>
+    <span class="k">else</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">has_files_to_delete</span>
+            <span class="n">files_to_delete</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="n">files_to_delete</span><span class="p">{</span><span class="k">end</span><span class="o">+</span><span class="mi">1</span><span class="p">}=</span><span class="n">fn</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_dataset_equal</span><span class="p">(</span>x,y,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">funcs</span><span class="p">={@</span><span class="n">assert_samples_equal</span><span class="p">,</span> <span class="p">@</span><span class="n">assert_a_equal</span><span class="p">,</span> <span class="c">...</span>
+                    <span class="p">@</span><span class="n">assert_fa_equal</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">@</span><span class="n">assert_sa_equal</span><span class="p">};</span>
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">funcs</span><span class="p">)</span>
+        <span class="n">func</span><span class="p">=</span><span class="n">funcs</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+        <span class="n">func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_samples_equal</span><span class="p">(</span>x,y,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">xs</span><span class="p">=</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">;</span>
+    <span class="n">ys</span><span class="p">=</span><span class="n">y</span><span class="p">.</span><span class="n">samples</span><span class="p">;</span>
+    <span class="k">switch</span> <span class="n">ext</span>
+        <span class="k">case</span> <span class="s">&#39;.msk&#39;</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">cosmo_corr</span><span class="p">(</span><span class="n">xs</span><span class="o">&#39;</span><span class="p">,</span><span class="n">ys</span><span class="o">&#39;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">.</span><span class="mi">999</span><span class="p">);</span>
+        <span class="k">case</span> <span class="s">&#39;.vmr&#39;</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">cosmo_corr</span><span class="p">(</span><span class="n">xs</span><span class="o">&#39;</span><span class="p">,</span><span class="n">ys</span><span class="o">&#39;</span><span class="p">)</span><span class="o">&gt;</span><span class="p">.</span><span class="mi">999</span><span class="p">);</span>
+        <span class="k">otherwise</span>
+            <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">xs</span><span class="p">,</span><span class="n">ys</span><span class="p">,</span><span class="s">&#39;relative&#39;</span><span class="p">,</span><span class="mf">1e-5</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_a_equal</span><span class="p">(</span>xd,yd,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">x</span><span class="p">=</span><span class="n">xd</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+    <span class="n">y</span><span class="p">=</span><span class="n">yd</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">vol</span><span class="p">=</span><span class="n">rmfield_if_present</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">vol</span><span class="p">,</span><span class="s">&#39;xform&#39;</span><span class="p">);</span>
+    <span class="n">y</span><span class="p">.</span><span class="n">vol</span><span class="p">=</span><span class="n">rmfield_if_present</span><span class="p">(</span><span class="n">y</span><span class="p">.</span><span class="n">vol</span><span class="p">,</span><span class="s">&#39;xform&#39;</span><span class="p">);</span>
+
+    <span class="k">switch</span> <span class="n">ext</span>
+        <span class="k">case</span> <span class="s">&#39;.vmr&#39;</span>
+            <span class="c">% does not store the offset, so do not check it</span>
+            <span class="n">x</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=</span><span class="n">x</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+            <span class="n">y</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=</span><span class="n">y</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+        <span class="k">otherwise</span>
+            <span class="c">% keep as is</span>
+    <span class="k">end</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_fa_equal</span><span class="p">(</span>x,y,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">fa</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_sa_equal</span><span class="p">(</span>x,y,ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ignore_sa_exts</span><span class="p">={</span><span class="s">&#39;.nii&#39;</span><span class="p">,</span><span class="s">&#39;.nii.gz&#39;</span><span class="p">,</span><span class="s">&#39;.hdr&#39;</span><span class="p">,</span><span class="s">&#39;.img&#39;</span><span class="p">,</span><span class="s">&#39;.vmr&#39;</span><span class="p">,</span><span class="s">&#39;.msk&#39;</span><span class="p">};</span>
+    <span class="k">if</span> <span class="n">cosmo_match</span><span class="p">({</span><span class="n">ext</span><span class="p">},</span><span class="n">ignore_sa_exts</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">sa</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">rmfield_if_present</span><span class="p">(</span>s, f<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="n">f</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>x<span class="p">=</span><span class="nf">get_base_dataset</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">x</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;big&#39;</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">cosmo_fmri_reorient</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="s">&#39;ASR&#39;</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">);</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">sa</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="s">&#39;labels1&#39;</span><span class="p">;</span><span class="s">&#39;labels2&#39;</span><span class="p">;</span><span class="s">&#39;labels3&#39;</span><span class="p">;</span><span class="s">&#39;labels4&#39;</span><span class="p">};</span>
+    <span class="n">x</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">={</span><span class="s">&#39;Beta(17,2)&#39;</span><span class="p">;</span><span class="s">&#39;&#39;</span><span class="p">;</span><span class="s">&#39;Zscore()&#39;</span><span class="p">;</span><span class="s">&#39;Ftest(2,3)&#39;</span><span class="p">};</span>
+
+<span class="k">function</span><span class="w"> </span>ds_again<span class="p">=</span><span class="nf">save_and_load</span><span class="p">(</span>ds,ext,varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">directories</span><span class="p">={</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="n">cosmo_make_temp_filename</span><span class="p">()};</span>
+
+    <span class="n">ds_again_cell</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">directory</span><span class="p">)</span><span class="n">save_and_load_in_directory</span><span class="p">(</span><span class="c">...</span>
+                                <span class="n">directory</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">ext</span><span class="p">,</span><span class="n">varargin</span><span class="p">),</span><span class="n">directories</span><span class="p">,</span><span class="c">...</span>
+                         <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">ds_again</span><span class="p">=</span><span class="n">ds_again_cell</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+
+    <span class="c">% all datasets must give the same dataset</span>
+    <span class="n">assertTrue</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">ds</span><span class="p">)</span><span class="nb">isequal</span><span class="p">(</span><span class="n">ds_again</span><span class="p">,</span><span class="n">ds</span><span class="p">),</span><span class="c">...</span>
+                            <span class="n">ds_again_cell</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">))))</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>ds_again<span class="p">=</span><span class="nf">save_and_load_in_directory</span><span class="p">(</span>directory,ds,ext,varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">sib_exts</span><span class="p">=</span><span class="n">get_sibling_exts</span><span class="p">(</span><span class="n">ext</span><span class="p">);</span>
+    <span class="n">all_exts</span><span class="p">=[{</span><span class="n">ext</span><span class="p">}</span> <span class="n">sib_exts</span><span class="p">];</span>
+
+    <span class="n">temp_fns</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;&#39;</span> <span class="p">,</span><span class="n">all_exts</span><span class="p">);</span>
+
+    <span class="n">temp_pth_fns</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">fn</span><span class="p">)</span><span class="n">fullfile</span><span class="p">(</span><span class="n">directory</span><span class="p">,</span><span class="n">fn</span><span class="p">),</span><span class="n">temp_fns</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">directory</span><span class="p">)</span>
+        <span class="n">mkdir</span><span class="p">(</span><span class="n">directory</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">main_temp_pth_fn</span><span class="p">=</span><span class="n">temp_pth_fns</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete_files</span><span class="p">(</span><span class="n">temp_pth_fns</span><span class="p">));</span>
+
+    <span class="k">switch</span> <span class="n">ext</span>
+        <span class="k">case</span> <span class="s">&#39;.mat&#39;</span>
+            <span class="n">save</span><span class="p">(</span><span class="n">main_temp_pth_fn</span><span class="p">,</span><span class="s">&#39;ds&#39;</span><span class="p">);</span>
+        <span class="k">otherwise</span>
+            <span class="c">% disable automask warning</span>
+            <span class="n">warning_state</span><span class="p">=</span><span class="n">cosmo_warning</span><span class="p">();</span>
+            <span class="n">state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">cosmo_warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+            <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+            <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">main_temp_pth_fn</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">ds_again</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">main_temp_pth_fn</span><span class="p">,</span><span class="n">varargin</span><span class="p">{:});</span>
+
+<span class="k">function</span><span class="w"> </span>sib_exts<span class="p">=</span><span class="nf">get_sibling_exts</span><span class="p">(</span>ext<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">sib_exts</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">switch</span> <span class="n">ext</span>
+        <span class="k">case</span> <span class="s">&#39;.img&#39;</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;.hdr&#39;</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;.hdr&#39;</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;.img&#39;</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;+orig.HEAD&#39;</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;+orig.BRIK&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;+orig.BRIK&#39;</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;+orig.HEAD&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;+tlrc.HEAD&#39;</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;+tlrc.BRIK&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;+tlrc.BRIK&#39;</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;+tlrc.HEAD&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="s">&#39;.vmp&#39;</span>
+            <span class="c">% recent Neuroelf (&gt;=v1.1) seems to save run time variables</span>
+            <span class="c">% in an .rtv file</span>
+            <span class="n">sib_exts</span><span class="p">={</span><span class="s">&#39;.rtv&#39;</span><span class="p">};</span>
+        <span class="k">case</span> <span class="p">{</span><span class="s">&#39;.msk&#39;</span><span class="p">,</span><span class="s">&#39;.mat&#39;</span><span class="p">,</span><span class="s">&#39;.vmr&#39;</span><span class="p">,</span><span class="s">&#39;.nii&#39;</span><span class="p">,</span><span class="s">&#39;.nii.gz&#39;</span><span class="p">};</span>
+            <span class="c">% do nothing</span>
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;unsupported extension &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span><span class="n">ext</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">delete_files</span><span class="p">(</span>fns<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% delete files. If they are all in the same directory and the</span>
+    <span class="c">% directory is not empty, then the directory is removed as well</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">fns</span><span class="p">)</span>
+        <span class="n">fn</span><span class="p">=</span><span class="n">fns</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">exist</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;file&#39;</span><span class="p">)</span>
+            <span class="n">delete</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">pth</span><span class="p">=</span><span class="n">fileparts</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="mi">1</span>
+            <span class="n">first_pth</span><span class="p">=</span><span class="n">pth</span><span class="p">;</span>
+        <span class="k">elseif</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">pth</span><span class="p">,</span><span class="n">first_pth</span><span class="p">)</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;paths differ: %s ~= %s&#39;</span><span class="p">,</span> <span class="n">first_pth</span><span class="p">,</span> <span class="n">pth</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">pth</span><span class="p">)</span>
+        <span class="n">rmdir</span><span class="p">(</span><span class="n">pth</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_fmri_deoblique.html"
+                        title="previous chapter">test fmri deoblique</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_fmri_orientation.html"
+                        title="next chapter">test fmri orientation</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_fmri_io.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_fmri_orientation.html" title="test fmri orientation"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_fmri_deoblique.html" title="test fmri deoblique"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

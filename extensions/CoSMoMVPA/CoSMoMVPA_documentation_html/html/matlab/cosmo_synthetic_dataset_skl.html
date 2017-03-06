@@ -1,0 +1,795 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo synthetic dataset skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo tail skl" href="cosmo_tail_skl.html" />
+    <link rel="prev" title="cosmo surficial neighborhood skl" href="cosmo_surficial_neighborhood_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_tail_skl.html" title="cosmo tail skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_surficial_neighborhood_skl.html" title="cosmo surficial neighborhood skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-synthetic-dataset-skl">
+<span id="id1"></span><h1>cosmo synthetic dataset skl<a class="headerlink" href="#cosmo-synthetic-dataset-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>ds<span class="p">=</span><span class="nf">cosmo_synthetic_dataset</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% generate synthetic dataset</span>
+<span class="c">%</span>
+<span class="c">% ds=cosmo_synthetic_dataset(varargin)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   &#39;size&#39;, s               determines the number of features. One of</span>
+<span class="c">%                           &#39;tiny&#39;, &#39;small&#39;, &#39;normal&#39;, &#39;big&#39;, or &#39;huge&#39;</span>
+<span class="c">%   &#39;type&#39;, t               type of dataset. One of &#39;fmri&#39;, &#39;meeg&#39;,</span>
+<span class="c">%                           &#39;timelock&#39;, &#39;timefreq&#39;, &#39;surface&#39;, or &#39;source&#39;.</span>
+ <span class="c">%                          &#39;meeg&#39; is equivalent to &#39;timelock&#39;</span>
+<span class="c">%   &#39;sens&#39;, c               for meeg datasets (&#39;time{lock}, &#39;meeg&#39;), this</span>
+<span class="c">%                           sets which sensor type is used. Supported are</span>
+<span class="c">%                           - neuromag306{all,planar,combined,mag}</span>
+<span class="c">%                           - ctf151</span>
+<span class="c">%                           - 4d{1,2}48[planar]</span>
+<span class="c">%                           - yokogawa{64,160}[planar]</span>
+<span class="c">%                           - eeg10{05,10,20}</span>
+<span class="c">%   &#39;data_field&#39;, f         If the type t is &#39;source&#39;, this can be &#39;pow&#39; or</span>
+<span class="c">%                           &#39;mom&#39;.</span>
+<span class="c">%   &#39;sigma&#39;, sigma          parameter to influence class distance. The</span>
+<span class="c">%                           larger this value, the more discrimable the</span>
+<span class="c">%                           classes are.</span>
+<span class="c">%</span>
+<span class="c">%   &#39;ntargets&#39;, nt          number of unique targets (default: 2)</span>
+<span class="c">%   &#39;nchunks&#39;, nc           number of unique chunks (default: 3)</span>
+<span class="c">%</span>
+<span class="c">%   &#39;nmodalities&#39;, nm       number of unique modalities (default: [])</span>
+<span class="c">%   &#39;nsubjects&#39;, ns         number of unique subjects (default: [])</span>
+<span class="c">%   &#39;nreps&#39;, nr             number of sample repeats (default: [])</span>
+<span class="c">%   &#39;seed&#39;, seed            seed value for pseudo-random number generator</span>
+<span class="c">%                           (default: 1). Different seed values give</span>
+<span class="c">%                           different random numbers.</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%    ds                     dataset struct according to parameters.</span>
+<span class="c">%                           The output has (nt*nc*nm*ns*nr) samples, and</span>
+<span class="c">%                           the number of features is determined by s.</span>
+<span class="c">%                           If any of the nt, nc, nm, ns, nr values are not</span>
+<span class="c">%                           empty, there is a corresponding sample</span>
+<span class="c">%                           attribute.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%    ds=cosmo_synthetic_dataset();</span>
+<span class="c">%    cosmo_disp(ds);</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [   2.03    -0.892    -0.826      1.16      1.16     -1.29</span>
+<span class="c">%     &gt;      0.584      1.84      1.17    -0.848      3.49    -0.199</span>
+<span class="c">%     &gt;      -1.44    -0.262     -1.92      3.09     -1.37      1.73</span>
+<span class="c">%     &gt;     -0.518      2.34     0.441      1.86     0.479    0.0832</span>
+<span class="c">%     &gt;       1.19    -0.204    -0.209      1.76    -0.955     0.501</span>
+<span class="c">%     &gt;      -1.33      2.72     0.148     0.502      3.41     -0.48 ]</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     &gt;   .j</span>
+<span class="c">%     &gt;     [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt;   .k</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .fdim</span>
+<span class="c">%     &gt;     .labels</span>
+<span class="c">%     &gt;       { &#39;i&#39;  &#39;j&#39;  &#39;k&#39; }</span>
+<span class="c">%     &gt;     .values</span>
+<span class="c">%     &gt;       { [ 1         2         3 ]  [ 1         2 ]  [ 1 ] }</span>
+<span class="c">%     &gt;   .vol</span>
+<span class="c">%     &gt;     .mat</span>
+<span class="c">%     &gt;       [ 2         0         0        -3</span>
+<span class="c">%     &gt;         0         2         0        -3</span>
+<span class="c">%     &gt;         0         0         2        -3</span>
+<span class="c">%     &gt;         0         0         0         1 ]</span>
+<span class="c">%     &gt;     .dim</span>
+<span class="c">%     &gt;       [ 3         2         1 ]</span>
+<span class="c">%     &gt;     .xform</span>
+<span class="c">%     &gt;       &#39;scanner_anat&#39;</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .targets</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2 ]</span>
+<span class="c">%     &gt;   .chunks</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       3</span>
+<span class="c">%     &gt;       3 ]</span>
+<span class="c">%</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;sigma&#39;,5,...</span>
+<span class="c">%                                &#39;nchunks&#39;,5,&#39;ntargets&#39;,4,...</span>
+<span class="c">%                                &#39;nsubjects&#39;,10);</span>
+<span class="c">%     cosmo_disp(ds)</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [   3.53      1.65      1.74     0.453      1.22      3.28</span>
+<span class="c">%     &gt;      0.584      3.88     0.856     0.841    -0.899      1.23</span>
+<span class="c">%     &gt;      -3.68      1.38      1.89      -1.4     0.216      0.68</span>
+<span class="c">%     &gt;        :         :         :        :          :         :</span>
+<span class="c">%     &gt;     -0.725      4.41    -0.313     0.111     0.437     -1.03</span>
+<span class="c">%     &gt;      0.297    0.0279       1.8   -0.0303    -0.451     0.346</span>
+<span class="c">%     &gt;       1.64     0.103     -1.22       4.8     0.754      1.03 ]@200x6</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     &gt;   .j</span>
+<span class="c">%     &gt;     [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt;   .k</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .fdim</span>
+<span class="c">%     &gt;     .labels</span>
+<span class="c">%     &gt;       { &#39;i&#39;  &#39;j&#39;  &#39;k&#39; }</span>
+<span class="c">%     &gt;     .values</span>
+<span class="c">%     &gt;       { [ 1         2         3 ]  [ 1         2 ]  [ 1 ] }</span>
+<span class="c">%     &gt;   .vol</span>
+<span class="c">%     &gt;     .mat</span>
+<span class="c">%     &gt;       [ 2         0         0        -3</span>
+<span class="c">%     &gt;         0         2         0        -3</span>
+<span class="c">%     &gt;         0         0         2        -3</span>
+<span class="c">%     &gt;         0         0         0         1 ]</span>
+<span class="c">%     &gt;     .dim</span>
+<span class="c">%     &gt;       [ 3         2         1 ]</span>
+<span class="c">%     &gt;     .xform</span>
+<span class="c">%     &gt;       &#39;scanner_anat&#39;</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .targets</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       3</span>
+<span class="c">%     &gt;       :</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       3</span>
+<span class="c">%     &gt;       4 ]@200x1</span>
+<span class="c">%     &gt;   .chunks</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       :</span>
+<span class="c">%     &gt;       5</span>
+<span class="c">%     &gt;       5</span>
+<span class="c">%     &gt;       5 ]@200x1</span>
+<span class="c">%     &gt;   .subject</span>
+<span class="c">%     &gt;     [  1</span>
+<span class="c">%     &gt;        1</span>
+<span class="c">%     &gt;        1</span>
+<span class="c">%     &gt;        :</span>
+<span class="c">%     &gt;       10</span>
+<span class="c">%     &gt;       10</span>
+<span class="c">%     &gt;       10 ]@200x1</span>
+<span class="c">%</span>
+<span class="c">%     % example of MEEG dataset with ctf151 layout</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,...</span>
+<span class="c">%                                   &#39;sens&#39;,&#39;ctf151&#39;,&#39;size&#39;,&#39;huge&#39;);</span>
+<span class="c">%     % show labels and values for feature dimensions</span>
+<span class="c">%     cosmo_disp(ds.a.fdim,&#39;edgeitems&#39;,2)</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;chan&#39;</span>
+<span class="c">%     &gt;     &#39;time&#39; }</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { { &#39;MLC11&#39;  &#39;MLC12&#39; ... &#39;MZP01&#39;  &#39;MZP02&#39;   }@1x151</span>
+<span class="c">%     &gt;     [ -0.2     -0.15  ...  0.55       0.6 ]@1x17      }</span>
+<span class="c">%</span>
+<span class="c">%     % example of MEEG dataset with 4d148 layout (3 channels only)</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;,&#39;sens&#39;,&#39;4d148_planar&#39;);</span>
+<span class="c">%     cosmo_disp(ds.a.fdim)</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;chan&#39;</span>
+<span class="c">%     &gt;     &#39;time&#39; }</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { { &#39;A148_dH&#39;  &#39;A147_dH&#39;  &#39;A146_dH&#39; }</span>
+<span class="c">%     &gt;     [ -0.2     -0.15 ]                  }</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">default</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">ntargets</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">nchunks</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span>
+
+    <span class="n">default</span><span class="p">.</span><span class="n">sigma</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span>
+    <span class="n">default</span><span class="p">.</span><span class="nb">size</span><span class="p">=</span><span class="s">&#39;small&#39;</span><span class="p">;</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">type</span><span class="p">=</span><span class="s">&#39;fmri&#39;</span><span class="p">;</span>
+
+    <span class="n">default</span><span class="p">.</span><span class="n">nreps</span><span class="p">=[];</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">nmodalities</span><span class="p">=[];</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">nsubjects</span><span class="p">=[];</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">chunks</span><span class="p">=[];</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">targets</span><span class="p">=[];</span>
+
+    <span class="n">default</span><span class="p">.</span><span class="n">target1</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c">% for PRNG</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">seed</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c">% for MEEG</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">sens</span><span class="p">=</span><span class="s">&#39;neuromag306_all&#39;</span><span class="p">;</span>
+
+    <span class="c">% for MEEG source</span>
+    <span class="n">default</span><span class="p">.</span><span class="n">data_field</span><span class="p">=</span><span class="s">&#39;pow&#39;</span><span class="p">;</span> <span class="c">% &#39;pow&#39; or &#39;mom&#39;</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">default</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="p">[</span><span class="n">ds</span><span class="p">,</span> <span class="n">nfeatures</span><span class="p">]=</span><span class="n">get_fdim_fa</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">sa_labels_pl</span><span class="p">={</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="s">&#39;nmodalities&#39;</span><span class="p">,</span><span class="s">&#39;nsubjects&#39;</span><span class="p">,</span><span class="s">&#39;nreps&#39;</span><span class="p">};</span>
+    <span class="n">cp</span><span class="p">=</span><span class="n">cosmo_cartprod</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="mi">1</span><span class="p">:</span><span class="n">max</span><span class="p">([</span><span class="n">opt</span><span class="p">.(</span><span class="n">x</span><span class="p">)</span> <span class="mi">1</span><span class="p">]),</span><span class="n">sa_labels_pl</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">));</span>
+    <span class="n">sa_labels_si</span><span class="p">={</span><span class="s">&#39;targets&#39;</span><span class="p">,</span><span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="s">&#39;modality&#39;</span><span class="p">,</span><span class="s">&#39;subject&#39;</span><span class="p">,</span><span class="s">&#39;rep&#39;</span><span class="p">};</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">sa_labels_si</span><span class="p">)</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">opt</span><span class="p">.(</span><span class="n">sa_labels_pl</span><span class="p">{</span><span class="n">k</span><span class="p">}))</span>
+            <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">sa_labels_si</span><span class="p">{</span><span class="n">k</span><span class="p">})=</span><span class="n">cp</span><span class="p">(:,</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+    <span class="n">nelem</span><span class="p">=</span><span class="nb">log</span><span class="p">(</span><span class="n">nfeatures</span><span class="o">*</span><span class="n">max</span><span class="p">([</span><span class="n">opt</span><span class="p">.</span><span class="n">nreps</span> <span class="mi">1</span><span class="p">]));</span>
+    <span class="n">class_distance</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">sigma</span><span class="o">/</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">nelem</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">generate_samples</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">class_distance</span><span class="p">,</span> <span class="n">opt</span><span class="p">.</span><span class="n">seed</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">assign_sa</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">opt</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="s">&#39;targets&#39;</span><span class="p">});</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="o">+</span><span class="n">opt</span><span class="p">.</span><span class="n">target1</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>ds<span class="p">=</span><span class="nf">assign_sa</span><span class="p">(</span>ds, opt, names<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+        <span class="n">name</span><span class="p">=</span><span class="n">names</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">v</span><span class="p">=</span><span class="n">opt</span><span class="p">.(</span><span class="n">name</span><span class="p">);</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">v</span><span class="p">)</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;Value for &#39;&#39;%s&#39;&#39; must be a scalar&#39;</span><span class="p">,</span> <span class="n">name</span><span class="p">);</span>
+            <span class="k">end</span>
+            <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">name</span><span class="p">)=</span><span class="nb">ones</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">v</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>samples<span class="p">=</span><span class="nf">generate_samples</span><span class="p">(</span>ds, class_distance, seed<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">targets</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">;</span>
+    <span class="n">nsamples</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">targets</span><span class="p">);</span>
+    <span class="n">nclasses</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">targets</span><span class="p">));</span>
+
+    <span class="n">fa_names</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">);</span>
+    <span class="n">nfeatures</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.(</span><span class="n">fa_names</span><span class="p">{</span><span class="mi">1</span><span class="p">}),</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="n">r</span><span class="p">=</span><span class="n">cosmo_rand</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="n">seed</span><span class="p">);</span>
+    <span class="n">samples</span><span class="p">=</span><span class="n">norminv</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
+
+    <span class="n">add_msk</span><span class="p">=</span><span class="nb">mod</span><span class="p">(</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">targets</span><span class="p">),</span><span class="n">nclasses</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">add_msk_full</span><span class="p">=</span><span class="nb">repmat</span><span class="p">(</span><span class="n">add_msk</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="nb">ceil</span><span class="p">(</span><span class="n">nfeatures</span><span class="o">/</span><span class="p">(</span><span class="n">nclasses</span><span class="o">+</span><span class="mi">1</span><span class="p">)));</span>
+    <span class="n">add_msk_full</span><span class="p">=</span><span class="n">add_msk_full</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">nfeatures</span><span class="p">);</span>
+    <span class="n">samples</span><span class="p">(</span><span class="n">add_msk_full</span><span class="p">)=</span><span class="n">samples</span><span class="p">(</span><span class="n">add_msk_full</span><span class="p">)</span><span class="o">+</span><span class="n">class_distance</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>a<span class="p">=</span><span class="nf">dim_labels_values</span><span class="p">(</span>opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">data_type</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">type</span><span class="p">;</span>
+    <span class="n">sens_type</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">sens</span><span class="p">;</span>
+
+    <span class="n">a</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+    <span class="k">switch</span> <span class="n">data_type</span>
+        <span class="k">case</span> <span class="s">&#39;fmri&#39;</span>
+            <span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=</span><span class="nb">eye</span><span class="p">(</span><span class="mi">4</span><span class="p">);</span>
+            <span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)=</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">)</span><span class="o">*</span><span class="mi">2</span><span class="p">;</span>
+
+            <span class="c">% ensure negative origin, so that MRIcron displays</span>
+            <span class="c">% the matrix correctly</span>
+            <span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">)=</span><span class="o">-</span><span class="mi">3</span><span class="p">;</span>
+
+            <span class="n">labels</span><span class="p">={</span><span class="s">&#39;i&#39;</span><span class="p">;</span><span class="s">&#39;j&#39;</span><span class="p">;</span><span class="s">&#39;k&#39;</span><span class="p">};</span>
+            <span class="n">values</span><span class="p">={</span><span class="mi">1</span><span class="p">:</span><span class="mi">20</span><span class="p">;</span><span class="mi">1</span><span class="p">:</span><span class="mi">20</span><span class="p">;</span><span class="mi">1</span><span class="p">:</span><span class="mi">20</span><span class="p">};</span>
+
+        <span class="k">case</span> <span class="p">{</span><span class="s">&#39;meeg&#39;</span><span class="p">,</span><span class="s">&#39;timelock&#39;</span><span class="p">,</span><span class="s">&#39;timefreq&#39;</span><span class="p">}</span>
+            <span class="c">% simulate full neuromag 306 system</span>
+            <span class="n">chan</span><span class="p">=</span><span class="n">get_meeg_channels</span><span class="p">(</span><span class="n">sens_type</span><span class="p">);</span>
+
+            <span class="n">time</span><span class="p">=(</span><span class="o">-</span><span class="p">.</span><span class="mi">2</span><span class="p">:.</span><span class="mi">05</span><span class="p">:</span><span class="mf">1.3</span><span class="p">);</span>
+
+            <span class="k">switch</span> <span class="n">data_type</span>
+                <span class="k">case</span> <span class="s">&#39;timefreq&#39;</span>
+                    <span class="n">freq</span><span class="p">=(</span><span class="mi">2</span><span class="p">:</span><span class="mi">2</span><span class="p">:</span><span class="mi">40</span><span class="p">);</span>
+                    <span class="n">values</span><span class="p">={</span><span class="n">chan</span><span class="p">;</span><span class="n">freq</span><span class="p">;</span><span class="n">time</span><span class="p">};</span>
+                    <span class="n">labels</span><span class="p">={</span><span class="s">&#39;chan&#39;</span><span class="p">;</span><span class="s">&#39;freq&#39;</span><span class="p">;</span><span class="s">&#39;time&#39;</span><span class="p">};</span>
+                    <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_type</span><span class="p">=</span><span class="s">&#39;freq&#39;</span><span class="p">;</span>
+                    <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;powspctrm&#39;</span><span class="p">;</span>
+
+                <span class="k">otherwise</span> <span class="c">% meeg and timelock</span>
+                    <span class="n">values</span><span class="p">={</span><span class="n">chan</span><span class="p">;</span><span class="n">time</span><span class="p">};</span>
+                    <span class="n">labels</span><span class="p">={</span><span class="s">&#39;chan&#39;</span><span class="p">;</span><span class="s">&#39;time&#39;</span><span class="p">};</span>
+                    <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_type</span><span class="p">=</span><span class="s">&#39;timelock&#39;</span><span class="p">;</span>
+                    <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;trial&#39;</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_label</span><span class="p">=</span><span class="s">&#39;rpt&#39;</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="s">&#39;surface&#39;</span>
+            <span class="n">labels</span><span class="p">={</span><span class="s">&#39;node_indices&#39;</span><span class="p">};</span>
+            <span class="n">values</span><span class="p">={</span><span class="mi">1</span><span class="p">:</span><span class="mi">4000</span><span class="p">};</span>
+
+        <span class="k">case</span> <span class="s">&#39;source&#39;</span>
+            <span class="n">xyz</span><span class="p">=</span><span class="n">cosmo_cartprod</span><span class="p">({</span><span class="o">-</span><span class="mi">70</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">70</span><span class="p">,</span><span class="o">-</span><span class="mi">60</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">60</span><span class="p">,</span><span class="o">-</span><span class="mi">110</span><span class="p">:</span><span class="mi">10</span><span class="p">:</span><span class="mi">110</span><span class="p">})</span><span class="o">&#39;</span><span class="p">;</span>
+            <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">sum</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">xyz</span><span class="p">),</span><span class="mi">1</span><span class="p">));</span>
+            <span class="k">switch</span> <span class="n">opt</span><span class="p">.</span><span class="n">data_field</span>
+                <span class="k">case</span> <span class="s">&#39;pow&#39;</span>
+                    <span class="n">labels</span><span class="p">={</span><span class="s">&#39;pos&#39;</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">};</span>
+                    <span class="n">values</span><span class="p">={</span><span class="n">xyz</span><span class="p">(:,</span><span class="nb">i</span><span class="p">),</span><span class="o">-</span><span class="mi">1</span><span class="p">:.</span><span class="mi">5</span><span class="p">:</span><span class="mi">14</span><span class="p">};</span>
+                    <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;trial.pow&#39;</span><span class="p">;</span>
+
+                <span class="k">case</span> <span class="s">&#39;mom&#39;</span>
+                    <span class="n">labels</span><span class="p">={</span><span class="s">&#39;pos&#39;</span><span class="p">,</span><span class="s">&#39;mom&#39;</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">};</span>
+                    <span class="n">values</span><span class="p">={</span><span class="n">xyz</span><span class="p">(:,</span><span class="nb">i</span><span class="p">),{</span><span class="s">&#39;x&#39;</span><span class="p">,</span><span class="s">&#39;y&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="o">-</span><span class="mi">1</span><span class="p">:.</span><span class="mi">5</span><span class="p">:</span><span class="mi">14</span><span class="p">};</span>
+                    <span class="n">a</span><span class="p">.</span><span class="n">meeg</span><span class="p">.</span><span class="n">samples_field</span><span class="p">=</span><span class="s">&#39;trial.mom&#39;</span><span class="p">;</span>
+                <span class="k">otherwise</span>
+                    <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal data_field &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">opt</span><span class="p">.</span><span class="n">data_field</span><span class="p">);</span>
+            <span class="k">end</span>
+
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported type &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">data_type</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">=</span><span class="n">values</span><span class="p">;</span>
+    <span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">labels</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_meeg_channels</span><span class="p">(</span>sens_type<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="c">% mapping from name to helper function</span>
+    <span class="c">% each name is prefixed with &#39;T&#39; to allow names that start with a digit</span>
+    <span class="n">sens2func</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Tneuromag306</span><span class="p">=@</span><span class="n">get_neuromag_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Tctf151</span><span class="p">=@</span><span class="n">get_CTF151_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">T4d148</span><span class="p">=@</span><span class="n">get_4d148_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">T4d248</span><span class="p">=@</span><span class="n">get_4d248_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Teeg1020</span><span class="p">=@</span><span class="n">get_eeg1020_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Teeg1010</span><span class="p">=@</span><span class="n">get_eeg1010_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Teeg1005</span><span class="p">=@</span><span class="n">get_eeg1005_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Tyokogawa64</span><span class="p">=@</span><span class="n">get_yokogawa64_chan</span><span class="p">;</span>
+    <span class="n">sens2func</span><span class="p">.</span><span class="n">Tyokogawa160</span><span class="p">=@</span><span class="n">get_yokogawa160_chan</span><span class="p">;</span>
+
+    <span class="n">sp</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">([</span><span class="s">&#39;T&#39;</span> <span class="n">sens_type</span><span class="p">],</span><span class="s">&#39;_&#39;</span><span class="p">);</span>
+    <span class="n">key</span><span class="p">=</span><span class="n">sp</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">sens2func</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+        <span class="n">supported_sens</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">sens2func</span><span class="p">);</span>
+        <span class="n">supported_labels</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)[</span><span class="n">x</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span> <span class="s">&#39;*&#39;</span><span class="p">],</span><span class="n">supported_sens</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported sens_type %s, supported are: %s &#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">key</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">),</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">supported_labels</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">func</span><span class="p">=</span><span class="n">sens2func</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+    <span class="n">chan_type</span><span class="p">=[</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">sp</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">),</span><span class="s">&#39;_&#39;</span><span class="p">)</span> <span class="s">&#39;&#39;</span><span class="p">];</span> <span class="c">% ensure string</span>
+    <span class="n">labels</span><span class="p">=</span><span class="n">func</span><span class="p">(</span><span class="n">chan_type</span><span class="p">);</span>
+    <span class="n">labels</span><span class="p">=</span><span class="n">labels</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_eeg1020_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_eeg10XX_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="s">&#39;1020&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_eeg1010_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_eeg10XX_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="s">&#39;1010&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_eeg1005_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_eeg10XX_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="s">&#39;1005&#39;</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_eeg10XX_chan_helper</span><span class="p">(</span>chan_type,sens_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assert</span><span class="p">(</span><span class="nb">isempty</span><span class="p">(</span><span class="n">chan_type</span><span class="p">));</span>
+
+    <span class="c">% build mapping from prefix to postfixes</span>
+    <span class="n">ch</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="k">switch</span> <span class="n">sens_type</span>
+        <span class="k">case</span> <span class="s">&#39;1020&#39;</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">Fp</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">F</span><span class="p">={</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">T</span><span class="p">={</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">C</span><span class="p">={</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">P</span><span class="p">={</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">O</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">A</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">M</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="p">};</span>
+
+        <span class="k">case</span> <span class="s">&#39;1010&#39;</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">TP</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">CP</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">Fp</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">AF</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">F</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FT</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FC</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">T</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">C</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">P</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">PO</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">O</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">I</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">A</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">M</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="p">};</span>
+
+        <span class="k">case</span> <span class="s">&#39;1005&#39;</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FCC</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">F</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="c">...</span>
+                    <span class="s">&#39;p1&#39;</span> <span class="s">&#39;p1h&#39;</span> <span class="s">&#39;p2&#39;</span> <span class="s">&#39;p2h&#39;</span> <span class="s">&#39;pz&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">AF</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="c">...</span>
+                    <span class="s">&#39;p1&#39;</span> <span class="s">&#39;p10&#39;</span> <span class="s">&#39;p10h&#39;</span> <span class="s">&#39;p1h&#39;</span> <span class="s">&#39;p2&#39;</span> <span class="s">&#39;p2h&#39;</span> <span class="s">&#39;p3&#39;</span> <span class="s">&#39;p3h&#39;</span> <span class="c">...</span>
+                    <span class="s">&#39;p4&#39;</span> <span class="s">&#39;p4h&#39;</span> <span class="s">&#39;p5&#39;</span> <span class="s">&#39;p5h&#39;</span> <span class="s">&#39;p6&#39;</span> <span class="s">&#39;p6h&#39;</span> <span class="s">&#39;p7&#39;</span> <span class="s">&#39;p7h&#39;</span> <span class="c">...</span>
+                    <span class="s">&#39;p8&#39;</span> <span class="s">&#39;p8h&#39;</span> <span class="s">&#39;p9&#39;</span> <span class="s">&#39;p9h&#39;</span> <span class="s">&#39;pz&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FT</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FC</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">T</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">C</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">TP</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">CP</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">P</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">PO</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">O</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">I</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">AFF</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FFT</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FFC</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">FTT</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">TTP</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">CCP</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">TPP</span><span class="p">={</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">CPP</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span> <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;6h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">PPO</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">POO</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;10&#39;</span> <span class="s">&#39;10h&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;3&#39;</span> <span class="s">&#39;3h&#39;</span> <span class="s">&#39;4&#39;</span> <span class="s">&#39;4h&#39;</span> <span class="s">&#39;5&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;5h&#39;</span> <span class="s">&#39;6&#39;</span> <span class="s">&#39;6h&#39;</span> <span class="s">&#39;7&#39;</span> <span class="s">&#39;7h&#39;</span> <span class="s">&#39;8&#39;</span> <span class="s">&#39;8h&#39;</span> <span class="s">&#39;9&#39;</span> <span class="s">&#39;9h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">OI</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;1h&#39;</span> <span class="s">&#39;2&#39;</span> <span class="s">&#39;2h&#39;</span> <span class="s">&#39;z&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">A</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="p">};</span>
+            <span class="n">ch</span><span class="p">.</span><span class="n">M</span><span class="p">={</span> <span class="s">&#39;1&#39;</span> <span class="s">&#39;2&#39;</span> <span class="p">};</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal senstype %s&#39;</span><span class="p">,</span><span class="n">sens_type</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">prefixes</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">ch</span><span class="p">);</span>
+    <span class="n">nprefix</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">prefixes</span><span class="p">);</span>
+    <span class="n">label_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nprefix</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nprefix</span>
+        <span class="n">prefix</span><span class="p">=</span><span class="n">prefixes</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">postfixes</span><span class="p">=</span><span class="n">ch</span><span class="p">.(</span><span class="n">prefix</span><span class="p">);</span>
+        <span class="n">npostfix</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">postfixes</span><span class="p">);</span>
+        <span class="n">prefix_labels</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">npostfix</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">npostfix</span>
+            <span class="n">postfix</span><span class="p">=</span><span class="n">postfixes</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+            <span class="n">prefix_labels</span><span class="p">{</span><span class="nb">j</span><span class="p">}=[</span><span class="n">prefix</span> <span class="n">postfix</span><span class="p">];</span>
+        <span class="k">end</span>
+        <span class="n">label_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">prefix_labels</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">labels</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">label_cell</span><span class="p">{:});</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_4d248_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_4dX48_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="mi">248</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_4d148_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_4dX48_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="mi">148</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_yokogawa64_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_yokogawaX_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="mi">64</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_yokogawa160_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_yokogawaX_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="mi">160</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_yokogawaX_chan_helper</span><span class="p">(</span>chan_type,nchan<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_general_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="n">nchan</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;AG%03d&#39;</span><span class="p">,</span><span class="s">&#39;AG%03d_dH&#39;</span><span class="p">,</span><span class="s">&#39;AG%03d_dV&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_4dX48_chan_helper</span><span class="p">(</span>chan_type,nchan<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">labels</span><span class="p">=</span><span class="n">get_general_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="n">nchan</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A%d&#39;</span><span class="p">,</span><span class="s">&#39;A%d_dH&#39;</span><span class="p">,</span><span class="s">&#39;A%d_dV&#39;</span><span class="p">);</span>
+
+<span class="k">function</span> <span class="nf">labels</span><span class="p">=</span><span class="n">get_general_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="n">chan_vals</span><span class="p">,</span><span class="c">...</span>
+                        <span class="n">pat_combined</span><span class="p">,</span> <span class="n">pat_planar1</span><span class="p">,</span> <span class="n">pat_planar2</span><span class="p">)</span>
+
+    <span class="c">% if chan_vals is a scalar, it indicates the number of channels</span>
+    <span class="k">if</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">chan_vals</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">numel</span><span class="p">(</span><span class="n">chan_vals</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
+        <span class="c">% take the last channels</span>
+        <span class="n">chan_vals</span><span class="p">=</span><span class="n">num2cell</span><span class="p">(</span><span class="n">chan_vals</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">generate</span><span class="p">=@(</span><span class="n">pat</span><span class="p">)</span> <span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">sprintf</span><span class="p">(</span><span class="n">pat</span><span class="p">,</span><span class="n">x</span><span class="p">),</span><span class="n">chan_vals</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="k">switch</span> <span class="n">chan_type</span>
+        <span class="k">case</span> <span class="p">{</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="s">&#39;planar_combined&#39;</span><span class="p">}</span>
+            <span class="n">labels</span><span class="p">=</span><span class="n">generate</span><span class="p">(</span><span class="n">pat_combined</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s">&#39;planar&#39;</span>
+            <span class="n">labels</span><span class="p">=[</span><span class="n">generate</span><span class="p">(</span><span class="n">pat_planar1</span><span class="p">)</span> <span class="n">generate</span><span class="p">(</span><span class="n">pat_planar2</span><span class="p">)]</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal chan type %s&#39;</span><span class="p">,</span> <span class="n">chan_type</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_CTF151_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">chan_vals</span><span class="p">=</span><span class="n">get_CTF151_chan_prefixes</span><span class="p">();</span>
+    <span class="n">labels</span><span class="p">=</span><span class="n">get_general_chan_helper</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="n">chan_vals</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;%s&#39;</span><span class="p">,</span><span class="s">&#39;%s_dH&#39;</span><span class="p">,</span><span class="s">&#39;%s_dV&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_CTF151_chan_prefixes</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="c">% get channels for CTF151</span>
+    <span class="n">lats</span><span class="p">=</span><span class="s">&#39;LRZ&#39;</span><span class="p">;</span>   <span class="c">% lateralities</span>
+    <span class="n">locs</span><span class="p">=</span><span class="s">&#39;CFOPT&#39;</span><span class="p">;</span> <span class="c">% brain part</span>
+    <span class="n">counts</span><span class="p">=[</span><span class="nb">repmat</span><span class="p">({{[</span><span class="mi">0</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">2</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">],</span><span class="c">...</span>
+                            <span class="p">[</span><span class="mi">0</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">4</span><span class="p">],[</span><span class="mi">0</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="mi">4</span><span class="p">]}},</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span><span class="c">...</span>
+                    <span class="p">{{</span><span class="mi">2</span><span class="p">,</span><span class="mi">3</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">2</span><span class="p">}}];</span>
+
+    <span class="n">labels</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">151</span><span class="p">);</span>
+    <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">lats</span><span class="p">)</span>
+        <span class="n">lat</span><span class="p">=</span><span class="n">lats</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+        <span class="n">count</span><span class="p">=</span><span class="n">counts</span><span class="p">{</span><span class="nb">i</span><span class="p">};</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+            <span class="n">loc</span><span class="p">=</span><span class="n">locs</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+            <span class="n">cs</span><span class="p">=</span><span class="n">count</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">cs</span><span class="p">)</span>
+                <span class="k">for</span> <span class="n">m</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">cs</span><span class="p">(</span><span class="nb">j</span><span class="p">)</span>
+                    <span class="n">label</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;M%s%s%d%d&#39;</span><span class="p">,</span><span class="n">lat</span><span class="p">,</span><span class="n">loc</span><span class="p">,</span><span class="nb">j</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="n">m</span><span class="p">);</span>
+                    <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+                    <span class="n">labels</span><span class="p">{</span><span class="n">pos</span><span class="p">}=</span><span class="n">label</span><span class="p">;</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>labels<span class="p">=</span><span class="nf">get_neuromag_chan</span><span class="p">(</span>chan_type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% get channels for neuromag system</span>
+    <span class="n">all_chan_idxs</span><span class="p">=[</span><span class="nb">repmat</span><span class="p">((</span><span class="mi">1</span><span class="p">:</span><span class="mi">26</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span> <span class="n">kron</span><span class="p">((</span><span class="mi">1</span><span class="p">:</span><span class="mi">4</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="nb">ones</span><span class="p">(</span><span class="mi">26</span><span class="p">,</span><span class="mi">1</span><span class="p">))];</span>
+    <span class="n">remove_msk</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">all_chan_idxs</span><span class="p">(:,</span><span class="mi">1</span><span class="p">),</span> <span class="mi">8</span><span class="p">)</span> <span class="o">&amp;</span> <span class="c">...</span>
+                        <span class="n">cosmo_match</span><span class="p">(</span><span class="n">all_chan_idxs</span><span class="p">(:,</span><span class="mi">2</span><span class="p">),[</span><span class="mi">3</span> <span class="mi">4</span><span class="p">]);</span>
+    <span class="n">chan_idxs</span><span class="p">=</span><span class="n">all_chan_idxs</span><span class="p">(</span><span class="o">~</span><span class="n">remove_msk</span><span class="p">,:);</span>
+    <span class="n">nloc</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">chan_idxs</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">nloc</span><span class="o">==</span><span class="mi">102</span><span class="p">);</span>
+
+    <span class="n">infix</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%02d%d&#39;</span><span class="p">,</span><span class="n">chan_idxs</span><span class="o">&#39;</span><span class="p">),</span><span class="mi">3</span><span class="p">,[])</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">as_column</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span> <span class="nb">repmat</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">nloc</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">meg</span><span class="p">=</span><span class="n">as_column</span><span class="p">(</span><span class="s">&#39;MEG&#39;</span><span class="p">);</span>
+    <span class="n">one</span><span class="p">=</span><span class="n">as_column</span><span class="p">(</span><span class="s">&#39;1&#39;</span><span class="p">);</span>
+    <span class="n">two</span><span class="p">=</span><span class="n">as_column</span><span class="p">(</span><span class="s">&#39;2&#39;</span><span class="p">);</span>
+    <span class="n">three</span><span class="p">=</span><span class="n">as_column</span><span class="p">(</span><span class="s">&#39;3&#39;</span><span class="p">);</span>
+    <span class="n">plus_</span><span class="p">=</span><span class="n">as_column</span><span class="p">(</span><span class="s">&#39;+&#39;</span><span class="p">);</span>
+
+    <span class="n">labels</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nloc</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+    <span class="n">labels</span><span class="p">(:,</span><span class="mi">1</span><span class="p">)=</span><span class="n">cellstr</span><span class="p">([</span><span class="n">meg</span> <span class="n">infix</span> <span class="n">one</span><span class="p">]);</span>
+    <span class="n">labels</span><span class="p">(:,</span><span class="mi">2</span><span class="p">)=</span><span class="n">cellstr</span><span class="p">([</span><span class="n">meg</span> <span class="n">infix</span> <span class="n">two</span><span class="p">]);</span>
+    <span class="n">labels</span><span class="p">(:,</span><span class="mi">3</span><span class="p">)=</span><span class="n">cellstr</span><span class="p">([</span><span class="n">meg</span> <span class="n">infix</span> <span class="n">three</span><span class="p">]);</span>
+    <span class="n">labels</span><span class="p">(:,</span><span class="mi">4</span><span class="p">)=</span><span class="n">cellstr</span><span class="p">([</span><span class="n">meg</span> <span class="n">infix</span> <span class="n">two</span> <span class="n">plus_</span> <span class="n">infix</span> <span class="n">three</span><span class="p">]);</span>
+
+    <span class="n">keep_col</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">4</span><span class="p">);</span>
+    <span class="n">types</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">chan_type</span><span class="p">,</span><span class="s">&#39;+&#39;</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">types</span><span class="p">)</span>
+        <span class="n">tp</span><span class="p">=</span><span class="n">types</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">switch</span> <span class="n">tp</span>
+            <span class="k">case</span> <span class="p">{</span><span class="s">&#39;all&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">}</span>
+                <span class="n">keep_col</span><span class="p">([</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span><span class="p">])=</span><span class="n">true</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&#39;planar_combined&#39;</span>
+                <span class="n">keep_col</span><span class="p">(</span><span class="mi">4</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&#39;planar&#39;</span>
+                <span class="n">keep_col</span><span class="p">([</span><span class="mi">2</span> <span class="mi">3</span><span class="p">])=</span><span class="n">true</span><span class="p">;</span>
+            <span class="k">case</span> <span class="s">&#39;axial&#39;</span>
+                <span class="n">keep_col</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+            <span class="k">otherwise</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported channel type %s&#39;</span><span class="p">,</span> <span class="n">tp</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">keep_col</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="n">keep_col</span><span class="p">(</span><span class="mi">4</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;planar and cmb/combined are mutually exclusive&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">labels</span><span class="p">=</span><span class="n">labels</span><span class="p">(:,</span><span class="n">keep_col</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">labels</span><span class="p">=</span><span class="n">labels</span><span class="p">(:);</span>
+
+
+<span class="k">function</span><span class="w"> </span>dim_size<span class="p">=</span><span class="nf">get_dim_size</span><span class="p">(</span>size_label,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% get dimension size. NaN means use input size</span>
+    <span class="n">size2dim</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">size2dim</span><span class="p">.</span><span class="n">tiny</span><span class="p">=[</span><span class="mi">2</span> <span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">size2dim</span><span class="p">.</span><span class="n">small</span><span class="p">=[</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">size2dim</span><span class="p">.</span><span class="n">normal</span><span class="p">=[</span><span class="mi">3</span> <span class="mi">2</span> <span class="mi">5</span><span class="p">];</span>
+    <span class="n">size2dim</span><span class="p">.</span><span class="n">big</span><span class="p">=[</span><span class="n">NaN</span> <span class="mi">7</span> <span class="mi">5</span><span class="p">];</span>
+    <span class="n">size2dim</span><span class="p">.</span><span class="n">huge</span><span class="p">=[</span><span class="n">NaN</span> <span class="mi">17</span> <span class="mi">19</span><span class="p">];</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">size2dim</span><span class="p">,</span> <span class="n">size_label</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported size %s. Supported are: %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">size_label</span><span class="p">,</span> <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">size2dim</span><span class="p">),</span><span class="s">&#39;, &#39;</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">dim_size</span><span class="p">=</span><span class="n">size2dim</span><span class="p">.(</span><span class="n">size_label</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">type</span><span class="p">,</span><span class="s">&#39;source&#39;</span><span class="p">)</span>
+        <span class="n">dim_size</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="mi">4</span><span class="p">;</span>
+        <span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">data_field</span><span class="p">,</span><span class="s">&#39;mom&#39;</span><span class="p">)</span>
+            <span class="n">dim_size</span><span class="p">(</span><span class="mi">2</span><span class="p">)=</span><span class="mi">3</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>[ds, nfeatures]<span class="p">=</span><span class="nf">get_fdim_fa</span><span class="p">(</span>opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">data_type</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">type</span><span class="p">;</span>
+    <span class="n">size_label</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="nb">size</span><span class="p">;</span>
+
+    <span class="c">% get dimension labels</span>
+    <span class="n">a</span><span class="p">=</span><span class="n">dim_labels_values</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">labels</span><span class="p">=</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">;</span>
+    <span class="n">values</span><span class="p">=</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">;</span>
+    <span class="n">a</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">a</span><span class="p">,</span><span class="s">&#39;fdim&#39;</span><span class="p">);</span>
+
+    <span class="c">% get dimension values</span>
+    <span class="n">dim_sizes</span><span class="p">=</span><span class="n">get_dim_size</span><span class="p">(</span><span class="n">size_label</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">nlabel</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">labels</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">nlabel</span><span class="o">==</span><span class="mi">1</span>
+        <span class="c">% surface case</span>
+        <span class="n">dim_sizes</span><span class="p">=</span><span class="n">prod</span><span class="p">(</span><span class="n">dim_sizes</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="c">% everything else</span>
+        <span class="n">dim_sizes</span><span class="p">=</span><span class="n">dim_sizes</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nlabel</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">dim_sizes</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">isnan</span><span class="p">(</span><span class="n">dim_sizes</span><span class="p">(</span><span class="n">k</span><span class="p">))</span>
+            <span class="n">dim_sizes</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="nb">size</span><span class="p">(</span><span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="mi">2</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="nb">isvector</span><span class="p">(</span><span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">})</span>
+            <span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">}(</span><span class="mi">1</span><span class="p">:</span><span class="n">dim_sizes</span><span class="p">(</span><span class="n">k</span><span class="p">));</span>
+        <span class="k">else</span>
+            <span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">}(:,</span><span class="mi">1</span><span class="p">:</span><span class="n">dim_sizes</span><span class="p">(</span><span class="n">k</span><span class="p">));</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c">% get ds with proper size</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_flatten</span><span class="p">(</span><span class="nb">zeros</span><span class="p">([</span><span class="mi">1</span> <span class="n">dim_sizes</span><span class="p">]),</span><span class="n">labels</span><span class="p">,</span><span class="n">values</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;matrix_labels&#39;</span><span class="p">,{</span><span class="s">&#39;pos&#39;</span><span class="p">});</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="n">a</span><span class="p">);</span>
+    <span class="k">switch</span> <span class="n">data_type</span>
+        <span class="k">case</span> <span class="s">&#39;fmri&#39;</span>
+            <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">dim</span><span class="p">=</span><span class="n">dim_sizes</span><span class="p">;</span>
+            <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">xform</span><span class="p">=</span><span class="s">&#39;scanner_anat&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">nfeatures</span><span class="p">=</span><span class="n">prod</span><span class="p">(</span><span class="n">dim_sizes</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_surficial_neighborhood_skl.html"
+                        title="previous chapter">cosmo surficial neighborhood skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_tail_skl.html"
+                        title="next chapter">cosmo tail skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_synthetic_dataset_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_tail_skl.html" title="cosmo tail skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_surficial_neighborhood_skl.html" title="cosmo surficial neighborhood skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

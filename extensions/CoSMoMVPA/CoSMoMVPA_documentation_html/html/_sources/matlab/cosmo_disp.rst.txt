@@ -1,0 +1,7 @@
+.. _cosmo_disp:
+
+cosmo disp
+==========
+
+.. include :: cosmo_disp.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_classify_lda_hdr:
+
+cosmo classify lda hdr
+======================
+
+.. include :: cosmo_classify_lda_hdr.txt
+

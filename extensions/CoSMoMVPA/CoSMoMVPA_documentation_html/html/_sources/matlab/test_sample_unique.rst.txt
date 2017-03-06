@@ -1,0 +1,7 @@
+.. _test_sample_unique:
+
+test sample unique
+==================
+
+.. include :: test_sample_unique.txt
+

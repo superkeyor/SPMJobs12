@@ -1,0 +1,7 @@
+.. _cosmo_dim_prune_skl:
+
+cosmo dim prune skl
+===================
+
+.. include :: cosmo_dim_prune_skl.txt
+

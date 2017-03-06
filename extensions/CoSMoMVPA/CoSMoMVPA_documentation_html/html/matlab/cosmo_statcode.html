@@ -1,0 +1,528 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo statcode &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo strjoin" href="cosmo_strjoin.html" />
+    <link rel="prev" title="cosmo stat" href="cosmo_stat.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_strjoin.html" title="cosmo strjoin"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_stat.html" title="cosmo stat"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-statcode">
+<span id="id1"></span><h1>cosmo statcode<a class="headerlink" href="#cosmo-statcode" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>stat_repr<span class="p">=</span><span class="nf">cosmo_statcode</span><span class="p">(</span>ds, output_format<span class="p">)</span><span class="w"></span>
+<span class="c">% Convert statcode for different analysis packages</span>
+<span class="c">%</span>
+<span class="c">% stat_repr=cosmo_statcode(ds[, output_format])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds             dataset struct with N samples, or Nx1 cell with strings</span>
+<span class="c">%                  with statistic labels, or AFNI, BV or NIFTI header</span>
+<span class="c">%                  struct for N samples.</span>
+<span class="c">%   output_format  Optional; one of &#39;afni&#39;, &#39;bv&#39;, or &#39;nifti&#39;; or empty.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   stat_repr      - If output_format is empty or omitted: an Nx1 cell</span>
+<span class="c">%                    with a string representation of the statistic in each</span>
+<span class="c">%                    sample, e.g. &#39;Ftest(123,2)&#39; or &#39;Zscore()&#39; or empty.</span>
+<span class="c">%                  - If output_format==&#39;afni&#39;: struct with field</span>
+<span class="c">%                    .BRICK_STATAUX.</span>
+<span class="c">%                  - If output_format==&#39;bv&#39;: Nx1 cell with structs, each</span>
+<span class="c">%                    with fieldnames .name, .DF1 and .DF2.</span>
+<span class="c">%                  - If output_format==&#39;nifti&#39;: struct with fieldnames</span>
+<span class="c">%                    .intent_code and .intent_p{1,2,3} if all stat codes</span>
+<span class="c">%                    are the same; empty otherwise (NIFTI does not support</span>
+<span class="c">%                    different stat codes for different samples).</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - this function is intended for fmri datasets</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">,</span> <span class="n">output_format</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span> <span class="k">end</span>
+
+    <span class="c">% see what kind of input we got</span>
+    <span class="k">if</span> <span class="n">iscellstr</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="c">% string representation of stats</span>
+        <span class="n">stat_repr</span><span class="p">=</span><span class="n">ds</span><span class="p">(:);</span>
+    <span class="k">elseif</span> <span class="n">isstruct</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;samples&#39;</span><span class="p">)</span>
+        <span class="c">% dataset struct</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="s">&#39;stats&#39;</span><span class="p">)</span>
+            <span class="c">% get stat information</span>
+            <span class="n">stat_repr</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="c">% no stat information; return empty output</span>
+            <span class="n">stat_repr</span><span class="p">=[];</span>
+        <span class="k">end</span>
+    <span class="k">else</span>
+        <span class="c">% assume header from AFNI, BV or NIFTI; try to convert it to string</span>
+        <span class="c">% representation, or fail in hdr2strs if that&#39;s not the case</span>
+        <span class="n">stat_repr</span><span class="p">=</span><span class="n">hdr2strs</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% convert to (name, df) pairs</span>
+    <span class="n">name_df</span><span class="p">=</span><span class="n">stat_strs2name_df</span><span class="p">(</span><span class="n">stat_repr</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">output_format</span><span class="p">)</span>
+        <span class="c">% we&#39;re done</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="c">% convert to package-specific header</span>
+    <span class="n">stat_repr</span><span class="p">=</span><span class="n">name_df2hdr</span><span class="p">(</span><span class="n">name_df</span><span class="p">,</span> <span class="n">output_format</span><span class="p">);</span>
+
+
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="c">% helper functions</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+<span class="k">function</span><span class="w"> </span>name_df<span class="p">=</span><span class="nf">stat_strs2name_df</span><span class="p">(</span>stat_strs<span class="p">)</span><span class="w"></span>
+<span class="c">% converts string representations to name and degrees of freedom</span>
+    <span class="n">match_regexp_failed</span><span class="p">=@(</span><span class="n">res</span><span class="p">)</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">res</span><span class="p">)</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">stat_strs</span><span class="p">);</span>
+
+    <span class="n">name_df</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">stat_str</span><span class="p">=</span><span class="n">stat_strs</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">stat_str</span><span class="p">)</span>
+            <span class="n">name_df</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">}=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="c">% try with parentheses: &#39;stat_name(df1,df2,df3)&#39;</span>
+            <span class="n">names</span><span class="p">=</span><span class="n">regexp</span><span class="p">(</span><span class="n">stat_str</span><span class="p">,</span><span class="s">&#39;^(?&lt;name&gt;\w+)\((?&lt;df&gt;[,\d]*)\)$&#39;</span><span class="p">,</span><span class="c">...</span>
+                                                        <span class="s">&#39;names&#39;</span><span class="p">);</span>
+            <span class="k">if</span> <span class="n">match_regexp_failed</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+                <span class="c">% try without parentheses: &#39;stat_name&#39;</span>
+                <span class="n">names</span><span class="p">=</span><span class="n">regexp</span><span class="p">(</span><span class="n">stat_str</span><span class="p">,</span><span class="s">&#39;^(?&lt;name&gt;\w+)$&#39;</span><span class="p">,</span><span class="s">&#39;names&#39;</span><span class="p">);</span>
+                <span class="n">df</span><span class="p">=[];</span>
+            <span class="k">else</span>
+                <span class="n">df_split</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">names</span><span class="p">.</span><span class="n">df</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">);</span>
+                <span class="k">if</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">df_split</span><span class="p">,{</span><span class="s">&#39;&#39;</span><span class="p">})</span>
+                    <span class="n">df</span><span class="p">=[];</span>
+                <span class="k">else</span>
+                    <span class="n">df</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="n">str2num</span><span class="p">,</span><span class="n">df_split</span><span class="p">);</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+
+            <span class="k">if</span> <span class="n">match_regexp_failed</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unable to parse stat string %s&#39;</span><span class="p">,</span> <span class="n">stat_str</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="n">name_df</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">}=</span><span class="n">names</span><span class="p">.</span><span class="n">name</span><span class="p">;</span>
+            <span class="n">name_df</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">}=</span><span class="n">df</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>hdr<span class="p">=</span><span class="nf">name_df2hdr</span><span class="p">(</span>name_df, output_format<span class="p">)</span><span class="w"></span>
+<span class="c">% converts statistic name and df to package-specific header</span>
+<span class="c">%</span>
+<span class="c">% hdr=name_df2hdr(name_df, output_format)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   name_df:        Kx2 cell with name and degrees of freedom, for K</span>
+<span class="c">%                   samples</span>
+<span class="c">%   output_format   &#39;afni&#39;, &#39;bv&#39;, or &#39;nifti&#39;</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   hdr             Part of the package-specific header containing the</span>
+<span class="c">%                   statistical information</span>
+    <span class="n">codes</span><span class="p">=</span><span class="n">get_codes</span><span class="p">(</span><span class="n">output_format</span><span class="p">);</span>
+    <span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">name_df</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">stat_idxs</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">names</span><span class="p">=</span><span class="n">codes</span><span class="p">(:,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+        <span class="n">name</span><span class="p">=</span><span class="n">name_df</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">};</span>
+        <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="k">end</span>
+        <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">names</span><span class="p">,</span> <span class="n">name</span><span class="p">));</span>
+        <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
+            <span class="c">% ignore if not found or multiple matches</span>
+            <span class="n">stat_idxs</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">idx</span><span class="p">;</span>
+        <span class="k">elseif</span> <span class="o">~</span><span class="n">strcmp</span><span class="p">(</span><span class="n">name</span><span class="p">,</span><span class="s">&#39;none&#39;</span><span class="p">)</span>
+            <span class="n">cosmo_warning</span><span class="p">(</span><span class="s">&#39;Unrecognized stat name %s at sample %d&#39;</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">switch</span> <span class="n">output_format</span>
+        <span class="k">case</span> <span class="s">&#39;afni&#39;</span>
+            <span class="n">hdr</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+            <span class="c">% space for each sample</span>
+            <span class="n">auxs</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nsamples</span><span class="p">);</span>
+
+            <span class="c">% build BRICK_STATAUX struct</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+                <span class="n">stat_idx</span><span class="p">=</span><span class="n">stat_idxs</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+                <span class="k">if</span> <span class="n">stat_idx</span><span class="o">==</span><span class="mi">0</span>
+                    <span class="k">continue</span><span class="p">;</span>
+                <span class="k">end</span>
+                <span class="n">df</span><span class="p">=</span><span class="n">name_df</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">};</span>
+                <span class="n">auxs</span><span class="p">{</span><span class="n">k</span><span class="p">}=[(</span><span class="n">k</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span> <span class="n">stat_idx</span> <span class="nb">numel</span><span class="p">(</span><span class="n">df</span><span class="p">)</span> <span class="n">df</span><span class="p">];</span>
+            <span class="k">end</span>
+
+            <span class="c">% concatenate information for all samples</span>
+            <span class="n">hdr</span><span class="p">.</span><span class="n">BRICK_STATAUX</span><span class="p">=[</span><span class="n">auxs</span><span class="p">{:}];</span>
+
+        <span class="k">case</span> <span class="s">&#39;bv&#39;</span>
+            <span class="n">maps</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+                <span class="n">map</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+                <span class="n">stat_idx</span><span class="p">=</span><span class="n">stat_idxs</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+                <span class="n">map</span><span class="p">.</span><span class="n">Type</span><span class="p">=</span><span class="n">stat_idx</span><span class="p">;</span>
+
+                <span class="k">if</span> <span class="n">stat_idx</span><span class="o">~=</span><span class="mi">0</span>
+                    <span class="n">df</span><span class="p">=</span><span class="n">name_df</span><span class="p">{</span><span class="n">k</span><span class="p">,</span><span class="mi">2</span><span class="p">};</span>
+
+                    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">map</span><span class="p">.</span><span class="n">DF1</span><span class="p">=</span><span class="n">df</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span> <span class="k">end</span>
+                    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">df</span><span class="p">)</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">map</span><span class="p">.</span><span class="n">DF2</span><span class="p">=</span><span class="n">df</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span> <span class="k">end</span>
+                <span class="k">end</span>
+
+                <span class="n">maps</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">map</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="n">hdr</span><span class="p">=</span><span class="n">maps</span><span class="p">;</span> <span class="c">% return a cell with maps</span>
+
+        <span class="k">case</span> <span class="s">&#39;nifti&#39;</span>
+            <span class="n">hdr</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+            <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">stat_idxs</span><span class="p">)</span>
+                <span class="k">return</span>
+            <span class="k">end</span>
+
+            <span class="n">unq_stat_idx</span><span class="p">=</span><span class="n">unique</span><span class="p">(</span><span class="n">stat_idxs</span><span class="p">);</span>
+            <span class="n">df</span><span class="p">=</span><span class="n">name_df</span><span class="p">(:,</span><span class="mi">2</span><span class="p">);</span>
+            <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">df</span><span class="p">);</span>
+            <span class="n">ndf</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">df</span><span class="p">);</span>
+            <span class="n">max_ndf</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">ndf</span><span class="p">);</span>
+            <span class="n">df_matrix</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">max_ndf</span><span class="p">);</span>
+
+
+            <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+                <span class="n">dfk</span><span class="p">=</span><span class="n">df</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+                <span class="n">n_dfk</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">dfk</span><span class="p">);</span>
+                <span class="k">if</span> <span class="n">n_dfk</span><span class="o">&gt;</span><span class="mi">0</span>
+                    <span class="n">df_matrix</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">n_dfk</span><span class="p">)=</span><span class="n">dfk</span><span class="p">;</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+
+            <span class="n">unq_df</span><span class="p">=</span><span class="n">unique</span><span class="p">(</span><span class="n">df_matrix</span><span class="p">,</span><span class="s">&#39;rows&#39;</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">unq_stat_idx</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span> <span class="o">||</span> <span class="nb">numel</span><span class="p">(</span><span class="n">unique</span><span class="p">(</span><span class="n">ndf</span><span class="p">))</span><span class="o">&gt;</span><span class="mi">1</span> <span class="o">||</span> <span class="c">...</span>
+                            <span class="nb">size</span><span class="p">(</span><span class="n">unq_df</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span>
+                <span class="n">cosmo_warning</span><span class="p">([</span><span class="s">&#39;Multiple stat codes found, unsupported &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;by nifti&#39;</span><span class="p">]);</span>
+                <span class="k">return</span>
+            <span class="k">end</span>
+
+            <span class="n">hdr</span><span class="p">.</span><span class="n">intent_code</span><span class="p">=</span><span class="n">unq_stat_idx</span><span class="p">;</span>
+
+            <span class="n">df</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">unq_df</span><span class="p">)</span>
+                <span class="n">df</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">unq_df</span><span class="p">))=</span><span class="n">unq_df</span><span class="p">;</span>
+            <span class="k">end</span>
+            <span class="n">hdr</span><span class="p">.</span><span class="n">intent_p1</span><span class="p">=</span><span class="n">df</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">hdr</span><span class="p">.</span><span class="n">intent_p2</span><span class="p">=</span><span class="n">df</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+            <span class="n">hdr</span><span class="p">.</span><span class="n">intent_p3</span><span class="p">=</span><span class="n">df</span><span class="p">(</span><span class="mi">3</span><span class="p">);</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">false</span><span class="p">,</span><span class="s">&#39;should never come here&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>stat_strs<span class="p">=</span><span class="nf">hdr2strs</span><span class="p">(</span>hdr<span class="p">)</span><span class="w"></span>
+<span class="c">% Converts package-specific header to stat string representation</span>
+<span class="c">%</span>
+<span class="c">% stat_strs=hdr2strs(hdr)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   hdr         AFNI, BV vmp, or NIFTI header</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   stat_strs   Kx1</span>
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span> <span class="s">&#39;Map&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span><span class="s">&#39;VMRDimX&#39;</span><span class="p">)</span> <span class="o">||</span><span class="c">...</span>
+                                <span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span><span class="s">&#39;NrOfVertices&#39;</span><span class="p">))</span>
+        <span class="c">% bv vmp or smp</span>
+        <span class="n">codes</span><span class="p">=</span><span class="n">get_codes</span><span class="p">(</span><span class="s">&#39;bv&#39;</span><span class="p">);</span>
+        <span class="n">nsamples</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">hdr</span><span class="p">.</span><span class="n">Map</span><span class="p">);</span>
+        <span class="n">stat_strs</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+            <span class="n">map</span><span class="p">=</span><span class="n">hdr</span><span class="p">.</span><span class="n">Map</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+            <span class="n">tp</span><span class="p">=</span><span class="n">map</span><span class="p">.</span><span class="n">Type</span><span class="p">;</span>
+            <span class="n">df</span><span class="p">=[</span><span class="n">map</span><span class="p">.</span><span class="n">DF1</span> <span class="n">map</span><span class="p">.</span><span class="n">DF2</span><span class="p">];</span>
+            <span class="n">stat_strs</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">stat_code2str</span><span class="p">(</span><span class="n">codes</span><span class="p">,</span> <span class="n">tp</span><span class="p">,</span> <span class="n">df</span><span class="p">);</span>
+        <span class="k">end</span>
+
+    <span class="k">elseif</span> <span class="n">isstruct</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span><span class="s">&#39;DATASET_RANK&#39;</span><span class="p">)</span>
+        <span class="c">% afni</span>
+        <span class="n">nsamples</span><span class="p">=</span><span class="n">hdr</span><span class="p">.</span><span class="n">DATASET_RANK</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="n">stat_strs</span><span class="p">=</span><span class="nb">repmat</span><span class="p">({</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span><span class="s">&#39;BRICK_STATAUX&#39;</span><span class="p">)</span>
+            <span class="n">codes</span><span class="p">=</span><span class="n">get_codes</span><span class="p">(</span><span class="s">&#39;afni&#39;</span><span class="p">);</span>
+            <span class="n">aux</span><span class="p">=</span><span class="n">hdr</span><span class="p">.</span><span class="n">BRICK_STATAUX</span><span class="p">;</span>
+            <span class="n">naux</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">aux</span><span class="p">);</span>
+            <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+            <span class="k">while</span> <span class="p">(</span><span class="n">pos</span><span class="o">+</span><span class="mi">2</span><span class="p">)</span><span class="o">&lt;</span><span class="n">naux</span>
+                <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+                <span class="n">brik_idx</span><span class="p">=</span><span class="n">aux</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="c">% base0 =&gt; base1</span>
+                <span class="n">stat_code</span><span class="p">=</span><span class="n">aux</span><span class="p">(</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">);</span> <span class="c">% stat code</span>
+                <span class="n">n_df</span><span class="p">=</span><span class="n">aux</span><span class="p">(</span><span class="n">pos</span><span class="o">+</span><span class="mi">2</span><span class="p">);</span> <span class="c">% # of df</span>
+                <span class="k">if</span> <span class="n">naux</span><span class="o">&lt;</span><span class="n">pos</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">n_df</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">end</span>
+                <span class="n">df</span><span class="p">=</span><span class="n">aux</span><span class="p">(</span><span class="n">pos</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_df</span><span class="p">));</span> <span class="c">% get dfs</span>
+                <span class="n">stat_strs</span><span class="p">{</span><span class="n">brik_idx</span><span class="p">}=</span><span class="n">stat_code2str</span><span class="p">(</span><span class="n">codes</span><span class="p">,</span> <span class="n">stat_code</span><span class="p">,</span> <span class="n">df</span><span class="p">);</span>
+                <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">2</span><span class="o">+</span><span class="n">n_df</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="c">% sanity check</span>
+            <span class="k">if</span> <span class="n">pos</span><span class="o">~=</span><span class="n">naux</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;Not all elements were processed in STATAUX %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%d &#39;</span><span class="p">,</span> <span class="n">aux</span><span class="p">));</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+    <span class="k">elseif</span> <span class="n">isstruct</span><span class="p">(</span><span class="n">hdr</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">,</span><span class="s">&#39;dime&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">hdr</span><span class="p">.</span><span class="n">dime</span><span class="p">,</span><span class="s">&#39;dim&#39;</span><span class="p">)</span>
+        <span class="c">% nifti</span>
+        <span class="n">codes</span><span class="p">=</span><span class="n">get_codes</span><span class="p">(</span><span class="s">&#39;nifti&#39;</span><span class="p">);</span>
+
+        <span class="n">dime</span><span class="p">=</span><span class="n">hdr</span><span class="p">.</span><span class="n">dime</span><span class="p">;</span>
+        <span class="c">% deal with potential data in &gt;4th dimension</span>
+        <span class="c">% (AFNI-NIFTI conversion syndrome)</span>
+        <span class="n">nsamples</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">prod</span><span class="p">(</span><span class="n">dime</span><span class="p">.</span><span class="n">dim</span><span class="p">(</span><span class="mi">5</span><span class="p">:</span><span class="k">end</span><span class="p">)),</span><span class="n">dime</span><span class="p">.</span><span class="n">dim</span><span class="p">(</span><span class="mi">5</span><span class="p">));</span>
+
+        <span class="c">% get stat codes</span>
+        <span class="n">stat_code</span><span class="p">=</span><span class="n">dime</span><span class="p">.</span><span class="n">intent_code</span><span class="p">;</span>
+        <span class="n">stat_df</span><span class="p">=[</span><span class="n">dime</span><span class="p">.</span><span class="n">intent_p1</span> <span class="n">dime</span><span class="p">.</span><span class="n">intent_p2</span> <span class="n">dime</span><span class="p">.</span><span class="n">intent_p3</span><span class="p">];</span>
+        <span class="n">stat_str</span><span class="p">=</span><span class="n">stat_code2str</span><span class="p">(</span><span class="n">codes</span><span class="p">,</span><span class="n">stat_code</span><span class="p">,</span><span class="n">stat_df</span><span class="p">);</span>
+
+        <span class="c">% repeat for as many samples as there are in the dataset</span>
+        <span class="n">stat_strs</span><span class="p">=</span><span class="nb">repmat</span><span class="p">({</span><span class="n">stat_str</span><span class="p">},</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported input&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>str<span class="p">=</span><span class="nf">stat_code2str</span><span class="p">(</span>codes, stat_code, df<span class="p">)</span><span class="w"></span>
+<span class="c">% give string representation of stat code with degrees of freedom</span>
+
+<span class="c">% (df can have more elements than required; superfluous ones are ignored.)</span>
+    <span class="k">if</span> <span class="n">stat_code</span><span class="o">==</span><span class="mi">0</span>
+        <span class="n">str</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="n">name</span><span class="p">=</span><span class="n">codes</span><span class="p">{</span><span class="n">stat_code</span><span class="p">,</span><span class="mi">1</span><span class="p">};</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">name</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Illegal stat_code: %d&#39;</span><span class="p">,</span> <span class="n">stat_code</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% build string representation of df</span>
+    <span class="n">df_count</span><span class="p">=</span><span class="n">codes</span><span class="p">{</span><span class="n">stat_code</span><span class="p">,</span><span class="mi">2</span><span class="p">};</span>
+    <span class="n">df_str</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span> <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%d&#39;</span><span class="p">,</span><span class="n">x</span><span class="p">),</span><span class="n">num2cell</span><span class="p">(</span><span class="n">df</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">df_count</span><span class="p">)),</span><span class="c">...</span>
+                        <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="c">% join with stat name</span>
+    <span class="n">str</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s(%s)&#39;</span><span class="p">,</span><span class="n">name</span><span class="p">,</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">df_str</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">));</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>codes<span class="p">=</span><span class="nf">get_codes</span><span class="p">(</span>package<span class="p">)</span><span class="w"></span>
+<span class="c">% get names and number of degrees of freedom for an analysis package</span>
+<span class="c">%</span>
+<span class="c">% codes=get_codes(package)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   package      &#39;nifti&#39;, &#39;afni&#39; or &#39;bv&#39;.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   codes        Px2 cell, with codes{k,1} the name of the k-th stat</span>
+<span class="c">%                and codes{k,2} the number of degrees of freedom</span>
+
+
+    <span class="k">switch</span> <span class="n">package</span>
+        <span class="k">case</span> <span class="s">&#39;nifti&#39;</span>
+            <span class="c">% http://nifti.nimh.nih.gov/nifti-1/documentation/...</span>
+            <span class="c">%                 nifti_stats.pdf</span>
+            <span class="n">codes</span><span class="p">={</span><span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">... % not defined</span>
+                    <span class="s">&#39;Correl&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">... % first one starts at 2</span>
+                    <span class="s">&#39;Ttest&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Ftest&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Zscore&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Chisq&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Beta&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Binom&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Gamma&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Poisson&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Normal&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,;</span><span class="c">...</span>
+                    <span class="s">&#39;Ftest_Nonc&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Chisq_Nonc&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Logistic&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Laplace&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Uniform&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Ttest_Nonc&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Weibull&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Chi&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Invgauss&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Extval&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Pval&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Logpval&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...</span>
+                    <span class="s">&#39;Log10pval&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">};</span>
+
+
+        <span class="k">case</span> <span class="s">&#39;afni&#39;</span>
+            <span class="c">% http://afni.nimh.nih.gov/pub/dist/doc/program_help/...</span>
+            <span class="c">%                README.attributes.html</span>
+            <span class="c">% AFNI uses a subset of NIFTI.</span>
+            <span class="n">nifti_codes</span><span class="p">=</span><span class="n">get_codes</span><span class="p">(</span><span class="s">&#39;nifti&#39;</span><span class="p">);</span> <span class="c">% recursive call</span>
+            <span class="n">codes</span><span class="p">=</span><span class="n">nifti_codes</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">10</span><span class="p">,:);</span>
+
+
+        <span class="k">case</span> <span class="s">&#39;bv&#39;</span>
+            <span class="c">% http://support.brainvoyager.com/documents/Available_Tools/...</span>
+            <span class="c">%              Available_Plugins/niftiplugin_manual_v12.pdf</span>
+            <span class="c">% why follow a standard (like NIFTI) if one can</span>
+            <span class="c">% come up with something incompatible too?</span>
+            <span class="n">codes</span><span class="p">={</span><span class="s">&#39;Ttest&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...      % 1</span>
+                      <span class="s">&#39;Correl&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...  % 2  correlation</span>
+                      <span class="s">&#39;Correl&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...  % 3 &quot;cross-correlation&quot;</span>
+                      <span class="s">&#39;Ftest&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...   % 4</span>
+                      <span class="s">&#39;Zscore&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...  % 5</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 6 [lots of undefined codes here]</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 7</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 8</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 9</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 10</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 11 &quot;percent signal change&quot; ignored</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 12 &quot;ICA&quot; ignored</span>
+                      <span class="s">&#39;&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">;</span><span class="c">...        % 13</span>
+                      <span class="s">&#39;Chisq&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">;</span><span class="c">...   % 14</span>
+                      <span class="s">&#39;Beta&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">;</span><span class="c">...    % 15</span>
+                      <span class="s">&#39;Pval&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">};</span>      <span class="c">% 16</span>
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported analysis package %s&#39;</span><span class="p">,</span> <span class="n">package</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_stat.html"
+                        title="previous chapter">cosmo stat</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_strjoin.html"
+                        title="next chapter">cosmo strjoin</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_statcode.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_strjoin.html" title="cosmo strjoin"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_stat.html" title="cosmo stat"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

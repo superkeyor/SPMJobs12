@@ -1,0 +1,7 @@
+.. _test_cluster_neighborhood:
+
+test cluster neighborhood
+=========================
+
+.. include :: test_cluster_neighborhood.txt
+

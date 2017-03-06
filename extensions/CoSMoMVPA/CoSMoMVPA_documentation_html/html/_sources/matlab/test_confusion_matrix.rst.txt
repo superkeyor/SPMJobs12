@@ -1,0 +1,7 @@
+.. _test_confusion_matrix:
+
+test confusion matrix
+=====================
+
+.. include :: test_confusion_matrix.txt
+

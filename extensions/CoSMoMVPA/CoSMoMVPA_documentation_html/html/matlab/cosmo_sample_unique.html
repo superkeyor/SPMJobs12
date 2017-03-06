@@ -1,0 +1,239 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo sample unique &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo searchlight" href="cosmo_searchlight.html" />
+    <link rel="prev" title="cosmo run tests" href="cosmo_run_tests.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_searchlight.html" title="cosmo searchlight"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_run_tests.html" title="cosmo run tests"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-sample-unique">
+<span id="id1"></span><h1>cosmo sample unique<a class="headerlink" href="#cosmo-sample-unique" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>samples<span class="p">=</span><span class="nf">cosmo_sample_unique</span><span class="p">(</span>k,n,count,varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% sample without replacement from subsets of integers in balanced manner</span>
+<span class="c">%</span>
+<span class="c">% function samples=cosmo_sample_unique(k,n[,count,varargin])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   k           number of elements to return in each subset</span>
+<span class="c">%   n           size of integer range from which to sample</span>
+<span class="c">%   count       number of subsets to select (default: 1)</span>
+<span class="c">%   &#39;seed&#39;, s   Use seed s for pseudo-random sampling (optional). If this</span>
+<span class="c">%               option is omitted, then different calls to this function</span>
+<span class="c">%               may (usually: will) return different results</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   samples     k x count indices, all in the range 1:n, with the following</span>
+<span class="c">%               properties:</span>
+<span class="c">%               - each value is randomly sampled from the range 1:n</span>
+<span class="c">%               - each column forms a subset of 1:n (without repeats)</span>
+<span class="c">%               - across the entire matrix, each value in the range 1:n</span>
+<span class="c">%                 occurs approximately equally often</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % get 4 random subsets of 3 elements in range 1:7</span>
+<span class="c">%     % (in this example a seed is used to get the same result upon every</span>
+<span class="c">%     % function call)</span>
+<span class="c">%     cosmo_sample_unique(3,6,4,&#39;seed&#39;,3)</span>
+<span class="c">%     &gt;      1     2     1     2</span>
+<span class="c">%     &gt;      3     5     3     4</span>
+<span class="c">%     &gt;      4     6     5     6</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - this is a utility function; it does not work on dataset structures.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">3</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">count</span><span class="p">)</span>
+        <span class="n">count</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ensure_scalar_nat</span><span class="p">({</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">count</span><span class="p">});</span>
+    <span class="k">if</span> <span class="n">k</span><span class="o">&gt;</span><span class="n">n</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;First argument (%d) cannot be greater than &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;second argument (%d)&#39;</span><span class="p">],</span><span class="n">k</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:});</span>
+
+    <span class="c">% random elements, each column is a permutation of 1:count</span>
+    <span class="n">rs_mat</span><span class="p">=</span><span class="n">random_permutations</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">count</span><span class="o">+</span><span class="mi">1</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% vectorize</span>
+    <span class="n">rs</span><span class="p">=</span><span class="n">rs_mat</span><span class="p">(:);</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">samples</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">count</span><span class="p">);</span>
+
+    <span class="c">% keep track of which elements in rs were visited</span>
+    <span class="n">visited</span><span class="p">=</span><span class="n">false</span><span class="p">((</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">count</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">first_non_visited_pos</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">in_bin</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">);</span> <span class="c">% re-use this for each column</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">count</span>
+        <span class="c">% no elements added so far</span>
+        <span class="n">in_bin</span><span class="p">(:)=</span><span class="n">false</span><span class="p">;</span>
+
+        <span class="n">pos</span><span class="p">=</span><span class="n">first_non_visited_pos</span><span class="p">;</span>
+        <span class="k">for</span> <span class="n">row</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">k</span>
+            <span class="c">% avoid duplicates in in_bin</span>
+            <span class="k">while</span> <span class="n">visited</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span> <span class="o">||</span> <span class="n">in_bin</span><span class="p">(</span><span class="n">rs</span><span class="p">(</span><span class="n">pos</span><span class="p">))</span>
+                <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="n">r</span><span class="p">=</span><span class="n">rs</span><span class="p">(</span><span class="n">pos</span><span class="p">);</span>
+            <span class="n">in_bin</span><span class="p">(</span><span class="n">r</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+            <span class="n">samples</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">)=</span><span class="n">r</span><span class="p">;</span>
+            <span class="n">visited</span><span class="p">(</span><span class="n">pos</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="c">% update first_non_visited pos</span>
+        <span class="k">while</span> <span class="n">visited</span><span class="p">(</span><span class="n">first_non_visited_pos</span><span class="p">)</span>
+            <span class="n">first_non_visited_pos</span><span class="p">=</span><span class="n">first_non_visited_pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">samples</span><span class="p">=</span><span class="n">sort</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>r<span class="p">=</span><span class="nf">random_permutations</span><span class="p">(</span>n,count,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% output r has in each column the values 1:count in randomly permuted</span>
+    <span class="c">% order</span>
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">args</span><span class="p">={</span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">seed</span><span class="p">};</span>
+    <span class="k">else</span>
+        <span class="n">args</span><span class="p">={};</span>
+    <span class="k">end</span>
+
+    <span class="n">v</span><span class="p">=</span><span class="n">cosmo_rand</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">count</span><span class="p">,</span><span class="n">args</span><span class="p">{:});</span>
+    <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="n">r</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">ensure_scalar_nat</span><span class="p">(</span>vs<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">vs</span><span class="p">)</span>
+        <span class="n">v</span><span class="p">=</span><span class="n">vs</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="nb">isscalar</span><span class="p">(</span><span class="n">v</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">v</span><span class="o">&gt;</span><span class="mi">0</span> <span class="o">&amp;&amp;</span> <span class="nb">round</span><span class="p">(</span><span class="n">v</span><span class="p">)</span><span class="o">==</span><span class="n">v</span><span class="p">)</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Argument %d must be positive scalar integer&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_run_tests.html"
+                        title="previous chapter">cosmo run tests</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_searchlight.html"
+                        title="next chapter">cosmo searchlight</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_sample_unique.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_searchlight.html" title="cosmo searchlight"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_run_tests.html" title="cosmo run tests"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

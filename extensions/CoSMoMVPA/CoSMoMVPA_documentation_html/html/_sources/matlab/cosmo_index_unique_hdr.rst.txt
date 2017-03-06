@@ -1,0 +1,7 @@
+.. _cosmo_index_unique_hdr:
+
+cosmo index unique hdr
+======================
+
+.. include :: cosmo_index_unique_hdr.txt
+

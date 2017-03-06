@@ -1,0 +1,7 @@
+.. _cosmo_make_temp_filename_hdr:
+
+cosmo make temp filename hdr
+============================
+
+.. include :: cosmo_make_temp_filename_hdr.txt
+

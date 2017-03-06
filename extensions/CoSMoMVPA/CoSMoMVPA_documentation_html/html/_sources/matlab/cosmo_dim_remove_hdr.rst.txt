@@ -1,0 +1,7 @@
+.. _cosmo_dim_remove_hdr:
+
+cosmo dim remove hdr
+====================
+
+.. include :: cosmo_dim_remove_hdr.txt
+

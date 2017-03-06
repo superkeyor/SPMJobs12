@@ -1,0 +1,7 @@
+.. _cosmo_naive_bayes_classifier_searchlight_hdr:
+
+cosmo naive bayes classifier searchlight hdr
+============================================
+
+.. include :: cosmo_naive_bayes_classifier_searchlight_hdr.txt
+

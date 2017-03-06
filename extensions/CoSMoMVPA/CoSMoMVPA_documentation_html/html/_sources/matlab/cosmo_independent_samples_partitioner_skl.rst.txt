@@ -1,0 +1,7 @@
+.. _cosmo_independent_samples_partitioner_skl:
+
+cosmo independent samples partitioner skl
+=========================================
+
+.. include :: cosmo_independent_samples_partitioner_skl.txt
+

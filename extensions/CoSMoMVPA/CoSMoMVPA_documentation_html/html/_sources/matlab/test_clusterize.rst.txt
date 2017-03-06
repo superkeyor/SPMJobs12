@@ -1,0 +1,7 @@
+.. _test_clusterize:
+
+test clusterize
+===============
+
+.. include :: test_clusterize.txt
+

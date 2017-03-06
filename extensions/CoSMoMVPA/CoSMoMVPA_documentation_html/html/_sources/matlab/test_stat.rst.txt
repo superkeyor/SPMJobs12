@@ -1,0 +1,7 @@
+.. _test_stat:
+
+test stat
+=========
+
+.. include :: test_stat.txt
+

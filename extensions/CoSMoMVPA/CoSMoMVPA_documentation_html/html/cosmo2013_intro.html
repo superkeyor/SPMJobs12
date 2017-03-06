@@ -1,0 +1,274 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Exercises" href="cosmo2013_ex_toc.html" />
+    <link rel="prev" title="CoSMo 2013 Multivariate Pattern Analysis Workshop" href="cosmo2013.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo2013_ex_toc.html" title="Exercises"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo2013.html" title="CoSMo 2013 Multivariate Pattern Analysis Workshop"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cosmo2013.html" accesskey="U">CoSMo 2013 Multivariate Pattern Analysis Workshop</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="goals-of-the-workshop">
+<h2>Goals of the workshop<a class="headerlink" href="#goals-of-the-workshop" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Learn the basics of Multivariate Pattern Analysis</li>
+<li>Get your hands dirty with data manipulation and algorithm implementation</li>
+<li>Build a your own data analysis toolkit</li>
+</ul>
+</div></blockquote>
+<p><strong>Why study brain imaging?</strong></p>
+<p>Organization of Human Brain Mapping (OHBM) throws great parties.</p>
+<div class="figure" id="id2">
+<img alt="_images/hbm.jpg" src="_images/hbm.jpg" />
+<p class="caption"><span class="caption-text">OHBM 2013 in Seattle rented the Rock and Roll Museum for their &#8220;club night&#8221; party.</span></p>
+</div>
+<p><strong>What is MVPA?</strong></p>
+<p>When applied to <strong>fMRI</strong> data it is multi-<em>voxel</em> pattern analysis.</p>
+<p>But multi-<em>variate</em> analysis is general, and widely used set of techniques. Variables or <em>features</em> can be from all sorts of neuroscience data:</p>
+<blockquote>
+<div><ul class="simple">
+<li>EEG</li>
+<li>MEG</li>
+<li>Multi-unit recording</li>
+<li>Electrocorticography (ECoG)</li>
+</ul>
+</div></blockquote>
+<p>... or almost anything else you can think of:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Geological data</li>
+<li><em>BIG</em> data culled from internet users</li>
+<li>etc.</li>
+</ul>
+</div></blockquote>
+<ul class="simple">
+<li>What is a <em>pattern</em>?<ul>
+<li><strong>fMRI</strong>: Pattern is a vector of voxels (time points, averages of conditions,  stats, etc.)</li>
+<li>In <strong>general</strong>: It is a vector of <em>features</em> or <em>variables</em></li>
+<li>In <strong>practice</strong>, i.e., in <strong>MATLAB</strong>: A pattern is a row vector.</li>
+</ul>
+</li>
+</ul>
+<p>A dataset is a set of patterns over the same features that are vertically
+stacked on one another into a 2-D N x M matrix with N patterns and M features.
+Patterns are sometimes called &#8220;observations&#8221; or &#8220;samples&#8221;.  In this tutorial we
+will call them samples.</p>
+<p>In a simplistic and generic sense, MVPA includes any analysis where the outcome
+is dependent on the variablility of measurements across a a samples by features
+matrix.</p>
+<p><strong>MATLAB</strong> is an ideal environment for dealing with this sort of data with
+hundreds of function for do MVPA analysis on rectangular matrices, some of which
+you may be familiar with:</p>
+<blockquote>
+<div><ul class="simple">
+<li><strong>corrcoef</strong>: compute the pair-wise correlations for a set of column vectors</li>
+<li><strong>cmdscale</strong>: classic multidimensional scaling</li>
+<li><strong>svmclassify / svmtrain</strong>: support vector machine</li>
+<li><strong>procrustes</strong>: Procrustes transformation (used in <a class="reference external" href="http://haxbylab.dartmouth.edu/ppl/swaroop.html">hyper-alignment</a>, )</li>
+<li>and many many others ...</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="mvpa-dataset">
+<h2>MVPA Dataset<a class="headerlink" href="#mvpa-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Given this general formulation, our workshop will aim to build a foundation and
+a working MATLAB toolbox for MVP analysis around the <strong>dataset</strong> as a common
+starting point. For this we have adopted the terminology and many of the
+semantics of the <a class="reference external" href="http://www.pymvpa.org/">PyMVPA</a> Python library which you are
+encouraged to learn more about especially if you interesting in learning to
+program in <a class="reference external" href="http://www.python.org/">Python</a>.</p>
+<p>Other useful resources:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://neuro.debian.net">NeuroDebian</a> : One stop shopping for all Neuroscience related computing needs</li>
+<li><a class="reference external" href="http://mathesaurus.sourceforge.net/matlab-numpy.html">Numpy for MATLAB users</a></li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="code-for-the-workshop">
+<h2>Code for the workshop<a class="headerlink" href="#code-for-the-workshop" title="Permalink to this headline">¶</a></h2>
+<p><a class="reference external" href="http://discovery.dartmouth.edu/~aconnoll/cosmo_mvpa/_static/cosmo_mvpa_scripts.zip">Get the code for the workshop here.</a></p>
+</div>
+<div class="section" id="sample-dataset">
+<h2>Sample Dataset<a class="headerlink" href="#sample-dataset" title="Permalink to this headline">¶</a></h2>
+<p>We have preprocessed data for 8 subjects from <a class="reference internal" href="references.html#cgg-12" id="id1">[CGG+12]</a>.
+A slow event-related design with six different types of animals.</p>
+<a class="reference internal image-reference" href="_images/fmri_design.png"><img alt="_images/fmri_design.png" src="_images/fmri_design.png" style="width: 400px;" /></a>
+<p>The six categories included 2 primates: monkeys and lemurs; 2 birds: mallard ducks and yellow-throated warblers; and 2 bugs: ladybugs and luna moths.</p>
+<p>We also have model similarity structures, which you can see here:</p>
+<a class="reference internal image-reference" href="_images/sim_sl.png"><img alt="_images/sim_sl.png" src="_images/sim_sl.png" style="width: 600px;" /></a>
+</div>
+<div class="section" id="plan-for-the-day">
+<h2>Plan for the day<a class="headerlink" href="#plan-for-the-day" title="Permalink to this headline">¶</a></h2>
+<ol class="arabic">
+<li><p class="first">Learn how to manipulate data as a &#8220;<strong>cosmo_fmri_dataset</strong>&#8220;</p>
+</li>
+<li><dl class="first docutils">
+<dt>Do several exercises with pattern classification</dt>
+<dd><ul class="first last simple">
+<li>Split-half correlations</li>
+<li>Write your own Nearest-neighbor classifier</li>
+<li>Write a wrapper for MATLAB&#8217;s support vector machine functions to work with
+dataset</li>
+<li>Implement a N-Fold data partitioner for cross-validation</li>
+<li>Write an abstraction of cross-validation as a &#8220;dataset measure&#8221;</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Representational Similarity Analysis</dt>
+<dd><ul class="first last simple">
+<li>Viewing dissimilarity matrices</li>
+<li>Comparign dissimilarity matrices</li>
+<li>Write an abstraction &#8220;RSA dataset measure&#8221;</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><dl class="first docutils">
+<dt>Searchlight analysis</dt>
+<dd><ul class="first last simple">
+<li>Implement a function to calculate sphere offsets for searchlight</li>
+<li>Implement searchlight with cross-validation</li>
+<li>Implement RSA searchlight</li>
+<li>View searchlight results</li>
+</ul>
+</dd>
+</dl>
+</li>
+</ol>
+<p>In the end we will keep the cosmo_mvpa toolbox in a public repository on
+git-hub.  Here: <a class="reference external" href="https://github.com/andycon/cosmo_mvpa">https://github.com/andycon/cosmo_mvpa</a> You (or any one else) may
+&#8220;clone&#8221; the repository using <a class="reference external" href="http://git-scm.com/">git</a> and contribute your
+own code to the project.</p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#goals-of-the-workshop">Goals of the workshop</a></li>
+<li><a class="reference internal" href="#mvpa-dataset">MVPA Dataset</a></li>
+<li><a class="reference internal" href="#code-for-the-workshop">Code for the workshop</a></li>
+<li><a class="reference internal" href="#sample-dataset">Sample Dataset</a></li>
+<li><a class="reference internal" href="#plan-for-the-day">Plan for the day</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo2013.html"
+                        title="previous chapter">CoSMo 2013 Multivariate Pattern Analysis Workshop</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo2013_ex_toc.html"
+                        title="next chapter">Exercises</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cosmo2013_intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo2013_ex_toc.html" title="Exercises"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo2013.html" title="CoSMo 2013 Multivariate Pattern Analysis Workshop"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cosmo2013.html" >CoSMo 2013 Multivariate Pattern Analysis Workshop</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

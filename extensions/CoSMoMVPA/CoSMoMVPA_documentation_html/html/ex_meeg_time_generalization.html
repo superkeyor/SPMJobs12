@@ -1,0 +1,156 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>MEEG time generalization &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Using CoSMoMVPA multiple-comparison correction" href="ex_multiple_comparisons.html" />
+    <link rel="prev" title="MEEG Searchlights" href="ex_meeg_searchlight.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ex_multiple_comparisons.html" title="Using CoSMoMVPA multiple-comparison correction"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_meeg_searchlight.html" title="MEEG Searchlights"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="meeg-time-generalization">
+<span id="ex-meeg-time-generalization"></span><h1>MEEG time generalization<a class="headerlink" href="#meeg-time-generalization" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="requirements">
+<h2>Requirements<a class="headerlink" href="#requirements" title="Permalink to this headline">¶</a></h2>
+<p>This exercise requires a separate dataset named <cite>meg-obj6</cite>; see <a class="reference internal" href="download.html#download"><span class="std std-ref">download</span></a> section.
+It also requires a working installation of <a class="reference external" href="http://fieldtrip.fcdonders.nl">FieldTrip</a>.</p>
+</div>
+<div class="section" id="reading-material">
+<h2>Reading material<a class="headerlink" href="#reading-material" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="references.html#kid14" id="id1">[KD14]</a>: Description of the time generalization method.</li>
+</ul>
+</div>
+<div class="section" id="the-time-generalization-method">
+<h2>The time generalization method<a class="headerlink" href="#the-time-generalization-method" title="Permalink to this headline">¶</a></h2>
+<p>Load the <cite>meg-obj6</cite> data. Assign targets and chunks, then select only posterior gradiometer sensors in the time interval between 0 and 300 ms relative to stimulus onset. Then reduce the number of chunks to two (using <a class="reference internal" href="matlab/cosmo_chunkize.html#cosmo-chunkize"><span class="std std-ref">cosmo chunkize</span></a>) to get a train and test set.
+Use <a class="reference internal" href="matlab/cosmo_dim_generalization_measure.html#cosmo-dim-generalization-measure"><span class="std std-ref">cosmo dim generalization measure</span></a> for the <code class="docutils literal"><span class="pre">time</span></code> dimension, together with <a class="reference internal" href="matlab/cosmo_classify_lda.html#cosmo-classify-lda"><span class="std std-ref">cosmo classify lda</span></a> and <a class="reference internal" href="matlab/cosmo_crossvalidation_measure.html#cosmo-crossvalidation-measure"><span class="std std-ref">cosmo crossvalidation measure</span></a> to train for all time points in the 0-300 ms interval, and for each time point, test the classifier for each time point in the same interval. Display the resulting time-by-time classification accuracy matrix using <code class="docutils literal"><span class="pre">imagesc</span></code></p>
+<p>Template: <a class="reference internal" href="matlab/run_meeg_time_generalization_skl.html#run-meeg-time-generalization-skl"><span class="std std-ref">run meeg time generalization skl</span></a></p>
+<p>Check your answers here: <a class="reference internal" href="matlab/run_meeg_time_generalization.html#run-meeg-time-generalization"><span class="std std-ref">run meeg time generalization</span></a> / <a class="reference external" href="_static/publish/run_meeg_time_generalization.html">Matlab output: run_meeg_time_generalization</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">MEEG time generalization</a><ul>
+<li><a class="reference internal" href="#requirements">Requirements</a></li>
+<li><a class="reference internal" href="#reading-material">Reading material</a></li>
+<li><a class="reference internal" href="#the-time-generalization-method">The time generalization method</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ex_meeg_searchlight.html"
+                        title="previous chapter">MEEG Searchlights</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ex_multiple_comparisons.html"
+                        title="next chapter">Using CoSMoMVPA multiple-comparison correction</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_meeg_time_generalization.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ex_multiple_comparisons.html" title="Using CoSMoMVPA multiple-comparison correction"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_meeg_searchlight.html" title="MEEG Searchlights"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

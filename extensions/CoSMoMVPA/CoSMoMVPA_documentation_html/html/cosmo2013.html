@@ -1,0 +1,203 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>CoSMo 2013 Multivariate Pattern Analysis Workshop &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Introduction" href="cosmo2013_intro.html" />
+    <link rel="prev" title="References" href="references.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo2013_intro.html" title="Introduction"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="references.html" title="References"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" accesskey="U">Documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-2013-multivariate-pattern-analysis-workshop">
+<h1>CoSMo 2013 Multivariate Pattern Analysis Workshop<a class="headerlink" href="#cosmo-2013-multivariate-pattern-analysis-workshop" title="Permalink to this headline">¶</a></h1>
+<p>These exercises were presented at the <a class="reference external" href="http://www.compneurosci.com/CoSMo2013/">CoSMo 2013 workshop</a> in Kingston, Ontario, Canada.</p>
+<p>History of exercises:</p>
+<ul class="simple">
+<li>2016  <a class="reference internal" href="prni2016.html#prni2016"><span class="std std-ref">PRNI 2016, the 6th International Workshop on Pattern Recognition in Neuroimaging workshop</span></a>.</li>
+<li>2016  <a class="reference internal" href="cimec2016.html#cimec2016"><span class="std std-ref">CIMeC 2016 Hands-on Methods</span></a>.</li>
+<li>2016  <a class="reference internal" href="rhul2016.html#rhul2016"><span class="std std-ref">Royal Holloway University of London CoSMoMVPA workshop</span></a>.</li>
+<li>2014  <a class="reference internal" href="cimec2014.html#cimec2014"><span class="std std-ref">CIMeC 2014 Advanced Neural Decoding</span></a>.</li>
+<li>2013  <a class="reference internal" href="#cosmo2013"><span class="std std-ref">2013 Summer School in Computational Sensory-Motor Neuroscience</span></a>.</li>
+</ul>
+<div class="section" id="contents">
+<span id="cosmo2013"></span><h2>Contents<a class="headerlink" href="#contents" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="cosmo2013_intro.html">Introduction</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013_intro.html#goals-of-the-workshop">Goals of the workshop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013_intro.html#mvpa-dataset">MVPA Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013_intro.html#code-for-the-workshop">Code for the workshop</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013_intro.html#sample-dataset">Sample Dataset</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013_intro.html#plan-for-the-day">Plan for the day</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cosmo2013_ex_toc.html">Exercises</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="ex_dataset_basics.html">Dataset basics</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_splithalf_correlations.html">Split-half correlation-based MVPA with group analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_classify_naive_bayes.html">Classification with Naive Bayes classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_write_classify_nn.html">Write your own Nearest-neighbor classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_classify_svm.html">Build wrapper for Matlab&#8217;s SVM classifier</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_nfold_partitioner.html">Cross-validation part 1: N-Fold Partitioner</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_crossvalidate.html">Cross-validation part 2: using multiple classifiers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_crossvalidation_measure.html">Cross-validation part 3: using a dataset measure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_rsa_visualization.html">Visualization of DSMs</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_rsa_tutorial.html">Representational similarity analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_sphere_offsets.html">Define voxel selection for a searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_searchlight.html">Write a searchlight function that computes a generic dataset measure</a></li>
+<li class="toctree-l2"><a class="reference internal" href="ex_searchlight_measure.html">Use the searchlight with a neighborhood and a measure</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matindex.html">CoSMoMVPA functions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matindex_hdr.html">CoSMoMVPA functions - header signature files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matindex_skl.html">CoSMoMVPA functions - skeleton files</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matindex_run.html">Runnable examples</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matindex_skl_run.html">Runnable examples - skeleton files</a></li>
+</ul>
+</div>
+<p>Matlab outputs: <a class="reference external" href="_static/publish/index.html">matlab_pb_toc</a></p>
+</div>
+<div class="section" id="miscellaneous">
+<h2>Miscellaneous<a class="headerlink" href="#miscellaneous" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="matindex_test.html">CoSMoMVPA unit tests</a></li>
+<li class="toctree-l1"><a class="reference internal" href="matindex_demo.html">Demonstrations</a></li>
+</ul>
+</div>
+</div>
+</div>
+<div class="section" id="indices-and-tables">
+<h1>Indices and tables<a class="headerlink" href="#indices-and-tables" title="Permalink to this headline">¶</a></h1>
+<ul class="simple">
+<li><a class="reference internal" href="genindex.html"><span class="std std-ref">Index</span></a></li>
+<li><a class="reference internal" href="matindex.html#matindex"><span class="std std-ref">CoSMoMVPA functions</span></a></li>
+<li><a class="reference internal" href="search.html"><span class="std std-ref">Search Page</span></a></li>
+</ul>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">CoSMo 2013 Multivariate Pattern Analysis Workshop</a><ul>
+<li><a class="reference internal" href="#contents">Contents</a><ul>
+</ul>
+</li>
+<li><a class="reference internal" href="#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#indices-and-tables">Indices and tables</a></li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="references.html"
+                        title="previous chapter">References</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo2013_intro.html"
+                        title="next chapter">Introduction</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cosmo2013.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo2013_intro.html" title="Introduction"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="references.html" title="References"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

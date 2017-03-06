@@ -1,0 +1,7 @@
+.. _cosmo_nfold_partitioner:
+
+cosmo nfold partitioner
+=======================
+
+.. include :: cosmo_nfold_partitioner.txt
+

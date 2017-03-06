@@ -1,0 +1,7 @@
+.. _cosmo_index_unique_skl:
+
+cosmo index unique skl
+======================
+
+.. include :: cosmo_index_unique_skl.txt
+

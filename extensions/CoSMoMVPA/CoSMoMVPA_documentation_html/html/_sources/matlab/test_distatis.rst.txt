@@ -1,0 +1,7 @@
+.. _test_distatis:
+
+test distatis
+=============
+
+.. include :: test_distatis.txt
+

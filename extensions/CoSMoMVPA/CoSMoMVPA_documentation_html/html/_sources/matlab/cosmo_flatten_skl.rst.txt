@@ -1,0 +1,7 @@
+.. _cosmo_flatten_skl:
+
+cosmo flatten skl
+=================
+
+.. include :: cosmo_flatten_skl.txt
+

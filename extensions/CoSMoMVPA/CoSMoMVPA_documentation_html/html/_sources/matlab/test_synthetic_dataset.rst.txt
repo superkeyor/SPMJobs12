@@ -1,0 +1,7 @@
+.. _test_synthetic_dataset:
+
+test synthetic dataset
+======================
+
+.. include :: test_synthetic_dataset.txt
+

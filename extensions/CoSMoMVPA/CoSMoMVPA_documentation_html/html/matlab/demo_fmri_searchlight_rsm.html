@@ -1,0 +1,372 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>demo fmri searchlight rsm &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="demo meeg dataset operations" href="demo_meeg_dataset_operations.html" />
+    <link rel="prev" title="demo fmri searchlight naive bayes" href="demo_fmri_searchlight_naive_bayes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="demo_meeg_dataset_operations.html" title="demo meeg dataset operations"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="demo_fmri_searchlight_naive_bayes.html" title="demo fmri searchlight naive bayes"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" accesskey="U">Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="demo-fmri-searchlight-rsm">
+<span id="id1"></span><h1>demo fmri searchlight rsm<a class="headerlink" href="#demo-fmri-searchlight-rsm" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="../_static/publish/demo_fmri_searchlight_rsm.html">Matlab output: demo_fmri_searchlight_rsm</a></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% Demo: fMRI searchlights with representational similarity analysis</span>
+<span class="c">%</span>
+<span class="c">% The data used here is available from http://cosmomvpa.org/datadb.zip</span>
+<span class="c">%</span>
+<span class="c">% This example uses the following dataset:</span>
+<span class="c">% - &#39;ak6&#39; is based on the following work (please cite if you use it):</span>
+<span class="c">%    Connolly et al (2012), Representation of biological classes in the</span>
+<span class="c">%    human brain. Journal of Neuroscience,</span>
+<span class="c">%    doi 10.1523/JNEUROSCI.5547-11.2012</span>
+<span class="c">%</span>
+<span class="c">%    Six categories (monkey, lemur, mallard, warbler, ladybug, lunamoth)</span>
+<span class="c">%    during ten runs in an fMRI study. Using the General Linear Model</span>
+<span class="c">%    response were estimated for each category in each run, resulting</span>
+<span class="c">%    in 6*10=60 t-values.</span>
+<span class="c">%</span>
+<span class="c">% The example shows a searchlight analysis matching local neural similarity</span>
+<span class="c">% patterns to three different target similarity matrices</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+
+<span class="c">%% Set data paths</span>
+<span class="c">% The function cosmo_config() returns a struct containing paths to tutorial</span>
+<span class="c">% data. (Alternatively the paths can be set manually without using</span>
+<span class="c">% cosmo_config.)</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+
+<span class="n">ak6_study_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;ak6&#39;</span><span class="p">);</span>
+
+<span class="c">% show readme information</span>
+<span class="n">readme_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">ak6_study_path</span><span class="p">,</span><span class="s">&#39;README&#39;</span><span class="p">);</span>
+<span class="n">cosmo_type</span><span class="p">(</span><span class="n">readme_fn</span><span class="p">);</span>
+
+<span class="n">output_path</span><span class="p">=</span><span class="n">config</span><span class="p">.</span><span class="n">output_data_path</span><span class="p">;</span>
+
+<span class="c">% reset citation list</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-tic&#39;</span><span class="p">);</span>
+
+
+<span class="c">%% Load data</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="c">% This example uses the &#39;ak6&#39; dataset</span>
+<span class="c">% In this example only one sample (response estimate) per condition (class)</span>
+<span class="c">% per feature (voxel) is used. Here this is done using t-stats from odd</span>
+<span class="c">% runs. One could also use output from a GLM based on an entire</span>
+<span class="c">% scanning session experiment.</span>
+<span class="c">%</span>
+
+<span class="c">% define data filenames &amp; load data from even and odd runs</span>
+
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">ak6_study_path</span><span class="p">,</span><span class="s">&#39;s01&#39;</span><span class="p">);</span> <span class="c">% data from subject s01</span>
+<span class="n">mask_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span> <span class="s">&#39;brain_mask.nii&#39;</span><span class="p">);</span> <span class="c">% whole brain mask</span>
+
+<span class="n">data_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;glm_T_stats_odd.nii&#39;</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_fmri_dataset</span><span class="p">(</span><span class="n">data_fn</span><span class="p">,</span><span class="s">&#39;mask&#39;</span><span class="p">,</span><span class="n">mask_fn</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;targets&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">,</span><span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c">%% Set animal species &amp; class</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="s">&#39;monkey&#39;</span><span class="p">,</span><span class="s">&#39;lemur&#39;</span><span class="p">,</span><span class="s">&#39;mallard&#39;</span><span class="p">,</span><span class="s">&#39;warbler&#39;</span><span class="p">,</span><span class="s">&#39;ladybug&#39;</span><span class="p">,</span><span class="s">&#39;lunamoth&#39;</span><span class="p">}</span><span class="s">&#39;;</span>
+<span class="s">ds.sa.animal_class=[1 1 2 2 3 3]&#39;</span><span class="p">;</span>
+
+<span class="c">% simple sanity check to ensure all attributes are set properly</span>
+<span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="c">% print dataset</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Dataset input:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="c">%% Define feature neighorhoods</span>
+<span class="c">%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%</span>
+
+<span class="c">% For the searchlight, define neighborhood for each feature (voxel).</span>
+<span class="n">nvoxels_per_searchlight</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span>
+
+<span class="c">% The neighborhood defined here is used three times (one for each target</span>
+<span class="c">% similarity matrix), so it is not recomputed for every searchlight call.</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Defining neighborhood for each feature\n&#39;</span><span class="p">);</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="n">nvoxels_per_searchlight</span><span class="p">);</span>
+
+<span class="c">% print neighborhood</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Searchlight neighborhood definition:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">);</span>
+
+
+<span class="c">%% Simple RSM searchlight</span>
+<span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">target_dsm</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nsamples</span><span class="p">);</span>
+
+<span class="c">% define &#39;simple&#39; target structure where primates (monkey, lemur),</span>
+<span class="c">% birds (mallard, warbler) and insects (ladybug, lunamoth) are the same</span>
+<span class="c">% (distance=0), all other pairs are equally dissimilar (distance=1).</span>
+<span class="c">% Given the ds.sa.targets assignment, pairs (1,2), (3,4) and (5,6) have</span>
+<span class="c">% distance 0, all others distance 1.</span>
+<span class="n">animal_class</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">animal_class</span><span class="p">;</span>
+<span class="k">for</span> <span class="n">row</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+    <span class="k">for</span> <span class="n">col</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span>
+        <span class="n">same_animal_class</span><span class="p">=</span><span class="n">animal_class</span><span class="p">(</span><span class="n">row</span><span class="p">)</span><span class="o">==</span><span class="n">animal_class</span><span class="p">(</span><span class="n">col</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="n">same_animal_class</span>
+            <span class="n">target_dsm</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">)=</span><span class="mi">0</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">target_dsm</span><span class="p">(</span><span class="n">row</span><span class="p">,</span><span class="n">col</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Using the following target dsm\n&#39;</span><span class="p">);</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">target_dsm</span><span class="p">);</span>
+<span class="n">imagesc</span><span class="p">(</span><span class="n">target_dsm</span><span class="p">)</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;XTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">,</span><span class="c">...</span>
+        <span class="s">&#39;YTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">)</span>
+
+<span class="c">% set measure</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_target_dsm_corr_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">target_dsm</span><span class="p">=</span><span class="n">target_dsm</span><span class="p">;</span>
+
+<span class="c">% print measure and arguments</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Searchlight measure:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">measure</span><span class="p">);</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Searchlight measure arguments:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="c">% run searchlight</span>
+<span class="n">ds_rsm_binary</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="c">% Note: when these results are used for group analysis across multiple</span>
+<span class="c">% participants, it may be good to Fisher-transform the correlation values,</span>
+<span class="c">% so that they are more normally distributed. This can be done by:</span>
+<span class="c">%</span>
+<span class="c">% ds_rsm_binary.samples=atanh(ds_rsm_binary.samples);</span>
+
+
+<span class="c">% show results</span>
+<span class="n">cosmo_plot_slices</span><span class="p">(</span><span class="n">ds_rsm_binary</span><span class="p">);</span>
+
+<span class="c">% store results</span>
+<span class="n">output_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="s">&#39;rsm_binary.nii&#39;</span><span class="p">);</span>
+<span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds_rsm_binary</span><span class="p">,</span><span class="n">output_fn</span><span class="p">);</span>
+
+
+<span class="c">%% Using another RSM</span>
+
+<span class="c">% This example is very similar to the previous example.</span>
+<span class="c">% - This example uses a different target representational similarity</span>
+<span class="c">%   matrix. The code below allows for identifying regions that show a</span>
+<span class="c">%   linear dissimilarity across animal class, with primates of distance 1</span>
+<span class="c">%   from birdsand distance 2 from insects, and insects distance 1 from</span>
+<span class="c">%   birds. Graphically:</span>
+<span class="c">%</span>
+<span class="c">%            +------------------+------------------+</span>
+<span class="c">%        primates             birds             insects</span>
+<span class="c">%     {monkey,lemur}     {mallard,warbler}   {ladybug,lunamoth}</span>
+<span class="c">%</span>
+<span class="c">% - It uses a Spearman rather than Pearson correlation measure to match</span>
+<span class="c">%   the neural similarity to the target similarity measure</span>
+
+<span class="n">animal_class</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">animal_class</span><span class="p">;</span>
+
+<span class="c">% compute absolute difference between each pair of samples</span>
+<span class="n">target_dsm</span><span class="p">=</span><span class="nb">abs</span><span class="p">(</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">minus</span><span class="p">,</span><span class="n">animal_class</span><span class="p">,</span><span class="n">animal_class</span><span class="o">&#39;</span><span class="p">));</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Using the following target dsm\n&#39;</span><span class="p">);</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">target_dsm</span><span class="p">);</span>
+<span class="n">imagesc</span><span class="p">(</span><span class="n">target_dsm</span><span class="p">)</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;XTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">,</span><span class="c">...</span>
+        <span class="s">&#39;YTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">)</span>
+
+<span class="c">% set measure</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_target_dsm_corr_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">target_dsm</span><span class="p">=</span><span class="n">target_dsm</span><span class="p">;</span>
+
+<span class="c">% &#39;Spearman&#39; requires  matlab with stats toolbox; if not present use</span>
+<span class="c">% &#39;Pearson&#39;</span>
+<span class="k">if</span> <span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;@stats&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">)</span>
+    <span class="n">measure_args</span><span class="p">.</span><span class="n">type</span><span class="p">=</span><span class="s">&#39;Spearman&#39;</span><span class="p">;</span>
+<span class="k">else</span>
+    <span class="n">measure_args</span><span class="p">.</span><span class="n">type</span><span class="p">=</span><span class="s">&#39;Pearson&#39;</span><span class="p">;</span>
+    <span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Matlab stats toolbox not present, using %s correlation\n&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="n">measure_args</span><span class="p">.</span><span class="n">type</span><span class="p">)</span>
+<span class="k">end</span>
+
+<span class="c">% run searchlight</span>
+<span class="n">ds_rsm_linear</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="c">% Note: when these results are used for group analysis across multiple</span>
+<span class="c">% participants, it may be good to Fisher-transform the correlation values,</span>
+<span class="c">% so that they are more normally distributed. This can be done by:</span>
+<span class="c">%</span>
+<span class="c">% ds_rsm_linear.samples=atanh(ds_rsm_linear.samples);</span>
+
+<span class="c">% show results</span>
+<span class="n">cosmo_plot_slices</span><span class="p">(</span><span class="n">ds_rsm_linear</span><span class="p">);</span>
+
+<span class="c">% store results</span>
+<span class="n">output_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="s">&#39;rsm_linear.nii&#39;</span><span class="p">);</span>
+<span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds_rsm_linear</span><span class="p">,</span><span class="n">output_fn</span><span class="p">);</span>
+
+
+<span class="c">%% Using a behavioural RSM</span>
+<span class="c">% This example is very similar to the one above, but now the target</span>
+<span class="c">% similarity structure is based on behavioural similarity ratings</span>
+
+<span class="c">% load behavioural similarity matrix from disc</span>
+<span class="n">behav_model_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">ak6_study_path</span><span class="p">,</span><span class="s">&#39;models&#39;</span><span class="p">,</span><span class="s">&#39;behav_sim.mat&#39;</span><span class="p">);</span>
+<span class="n">behav_model</span><span class="p">=</span><span class="n">importdata</span><span class="p">(</span><span class="n">behav_model_fn</span><span class="p">);</span>
+
+<span class="n">target_dsm</span><span class="p">=</span><span class="n">behav_model</span><span class="p">;</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Using the following target dsm\n&#39;</span><span class="p">);</span>
+<span class="nb">disp</span><span class="p">(</span><span class="n">target_dsm</span><span class="p">);</span>
+<span class="n">imagesc</span><span class="p">(</span><span class="n">target_dsm</span><span class="p">)</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;XTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">,</span><span class="c">...</span>
+        <span class="s">&#39;YTick&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">)</span>
+
+<span class="c">% set measure</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_target_dsm_corr_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">target_dsm</span><span class="p">=</span><span class="n">target_dsm</span><span class="p">;</span>
+
+<span class="c">% run searchlight</span>
+<span class="n">ds_rsm_behav</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="c">% Note: when these results are used for group analysis across multiple</span>
+<span class="c">% participants, it may be good to Fisher-transform the correlation values,</span>
+<span class="c">% so that they are more normally distributed. This can be done by:</span>
+<span class="c">%</span>
+<span class="c">% ds_rsm_behav.samples=atanh(ds_rsm_behav.samples);</span>
+
+<span class="c">% show results</span>
+<span class="n">cosmo_plot_slices</span><span class="p">(</span><span class="n">ds_rsm_behav</span><span class="p">);</span>
+
+<span class="c">% store results</span>
+<span class="n">output_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">output_path</span><span class="p">,</span><span class="s">&#39;rsm_behav.nii&#39;</span><span class="p">);</span>
+<span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds_rsm_behav</span><span class="p">,</span><span class="n">output_fn</span><span class="p">);</span>
+
+<span class="c">% Show citation information</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-cite&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="demo_fmri_searchlight_naive_bayes.html"
+                        title="previous chapter">demo fmri searchlight naive bayes</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="demo_meeg_dataset_operations.html"
+                        title="next chapter">demo meeg dataset operations</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/demo_fmri_searchlight_rsm.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="demo_meeg_dataset_operations.html" title="demo meeg dataset operations"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="demo_fmri_searchlight_naive_bayes.html" title="demo fmri searchlight naive bayes"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" >Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

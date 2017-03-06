@@ -1,0 +1,7 @@
+.. _cosmo_parallel_get_nproc_available_hdr:
+
+cosmo parallel get nproc available hdr
+======================================
+
+.. include :: cosmo_parallel_get_nproc_available_hdr.txt
+

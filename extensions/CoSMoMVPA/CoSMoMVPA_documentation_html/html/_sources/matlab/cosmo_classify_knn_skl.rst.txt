@@ -1,0 +1,7 @@
+.. _cosmo_classify_knn_skl:
+
+cosmo classify knn skl
+======================
+
+.. include :: cosmo_classify_knn_skl.txt
+

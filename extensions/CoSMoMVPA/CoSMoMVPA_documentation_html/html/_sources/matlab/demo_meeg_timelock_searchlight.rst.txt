@@ -1,0 +1,9 @@
+.. _demo_meeg_timelock_searchlight:
+
+demo meeg timelock searchlight
+==============================
+
+:demo_up:`demo_meeg_timelock_searchlight`
+
+.. include :: demo_meeg_timelock_searchlight.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_classify_matlabsvm:
+
+cosmo classify matlabsvm
+========================
+
+.. include :: cosmo_classify_matlabsvm.txt
+

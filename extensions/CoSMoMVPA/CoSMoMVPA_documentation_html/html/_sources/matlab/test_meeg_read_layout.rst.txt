@@ -1,0 +1,7 @@
+.. _test_meeg_read_layout:
+
+test meeg read layout
+=====================
+
+.. include :: test_meeg_read_layout.txt
+

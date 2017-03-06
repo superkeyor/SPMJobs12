@@ -1,0 +1,9 @@
+.. _run_compare_dsm:
+
+run compare dsm
+===============
+
+:run_up:`run_compare_dsm`
+
+.. include :: run_compare_dsm.txt
+

@@ -1,0 +1,277 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Write a searchlight function that computes a generic dataset measure &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="CIMeC 2014 Advanced Neural Decoding" href="cimec2014.html" />
+    <link rel="prev" title="Define voxel selection for a searchlight" href="ex_sphere_offsets.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cimec2014.html" title="CIMeC 2014 Advanced Neural Decoding"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_sphere_offsets.html" title="Define voxel selection for a searchlight"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cosmo2013.html" >CoSMo 2013 Multivariate Pattern Analysis Workshop</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cosmo2013_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="write-a-searchlight-function-that-computes-a-generic-dataset-measure">
+<h1>Write a searchlight function that computes a generic dataset measure<a class="headerlink" href="#write-a-searchlight-function-that-computes-a-generic-dataset-measure" title="Permalink to this headline">¶</a></h1>
+<p>Volume based searchlight analysis proceeds by defining a local neighborhood of
+voxels around each voxel in the brain volume. This subset of voxels can be
+thought of as a mini dataset, where the mask that defines the voxels included in
+the dataset is the searchlight sphere. Because we can treat each searchlight as
+a dataset, we can build a searchlight function that will compute any <strong>dataset
+measure</strong> that we specify. This allows us to reuse code, and run searchlights
+for different purposes.</p>
+<p>We have provided a couple of helper functions that do some of the heavy lifting
+involved defining the sets of <em>neighborhood voxels</em>. For this, use
+<a class="reference internal" href="matlab/cosmo_spherical_neighborhood.html#cosmo-spherical-neighborhood"><span class="std std-ref">cosmo spherical neighborhood</span></a> that was presented in the previous exercise.</p>
+<p>With the help of these functions, write a generic searchlight function that
+satisfies the following definition:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>results_map <span class="p">=</span><span class="w"> </span><span class="nf">cosmo_searchlight</span><span class="p">(</span>ds, nbrhood, measure, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">%  Generic searchlight function returns a map of results computed at each</span>
+<span class="c">%  searchlight location</span>
+<span class="c">%</span>
+<span class="c">%   results_map=cosmo_searchlight(dataset, nbrhood, measure, ...)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                   dataset struct with field .samples (NSxNF)</span>
+<span class="c">%   nbrhood              Neighborhood structure with fields:</span>
+<span class="c">%         .a               struct with dataset attributes</span>
+<span class="c">%         .fa              struct with feature attributes. Each field</span>
+<span class="c">%                            should have NF values in the second dimension</span>
+<span class="c">%         .neighbors       cell with NF mappings from center_ids in output</span>
+<span class="c">%                        dataset to feature ids in input dataset.</span>
+<span class="c">%                        Suitable neighborhood structs can be generated</span>
+<span class="c">%                        using:</span>
+<span class="c">%                        - cosmo_spherical_neighborhood (fmri volume)</span>
+<span class="c">%                        - cosmo_surficial_neighborhood (fmri surface)</span>
+<span class="c">%                        - cosmo_meeg_chan_neigborhood (MEEG channels)</span>
+<span class="c">%                        - cosmo_interval_neighborhood (MEEG time, freq)</span>
+<span class="c">%                        - cosmo_cross_neighborhood (to cross neighborhoods</span>
+<span class="c">%                                                    from the neighborhood</span>
+<span class="c">%                                                    functions above)</span>
+<span class="c">%   measure              function handle to a dataset measure. A dataset</span>
+<span class="c">%                        measure has the function signature:</span>
+<span class="c">%                          output = measure(dataset, args)</span>
+<span class="c">%                        where output must be a struct with fields .samples</span>
+<span class="c">%                        (as a column vector) and optionally a field .sa</span>
+<span class="c">%                        with sample attributes.</span>
+<span class="c">%                        Typical measures are:</span>
+<span class="c">%                        - cosmo_correlation_measure</span>
+<span class="c">%                        - cosmo_crossvalidation_measure</span>
+<span class="c">%                        - cosmo_target_dsm_corr_measure</span>
+<span class="c">%   &#39;center_ids&#39;, ids    vector indicating center ids to be used as a</span>
+<span class="c">%                        searchlight center. By default all feature ids are</span>
+<span class="c">%                        used (i.e. ids=1:numel(nbrhood.neighbors). The</span>
+<span class="c">%                        output results_map.samples has size N in the 2nd</span>
+<span class="c">%                        dimension.</span>
+<span class="c">%   &#39;progress&#39;, p        Show progress every p steps</span>
+<span class="c">%   &#39;nproc&#39;, np          If the Matlab parallel processing toolbox, or the</span>
+<span class="c">%                        GNU Octave parallel package is available, use</span>
+<span class="c">%                        np parallel threads. (Multiple threads may speed</span>
+<span class="c">%                        up searchlight computations).</span>
+<span class="c">%                        If parallel processing is not available, or if</span>
+<span class="c">%                        this option is not provided, then a single thread</span>
+<span class="c">%                        is used.</span>
+<span class="c">%   K, V                 any key-value pair (K,V) with arguments for the</span>
+<span class="c">%                        measure function handle. Alternatively a struct</span>
+<span class="c">%                        can be used</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   results_map          a dataset struct where the samples</span>
+<span class="c">%                        contain the results of the searchlight analysis.</span>
+<span class="c">%                        If measure returns datasets all of size Nx1 and</span>
+<span class="c">%                        there are M center_ids</span>
+<span class="c">%                        (M=numel(nbrhood.neighbors) if center_ids is not</span>
+<span class="c">%                        provided), then results_map.samples has size MxN.</span>
+<span class="c">%                        If nbrhood has fields .a and .fa, these are part</span>
+<span class="c">%                        of the output (with .fa sliced according to</span>
+<span class="c">%                        center_ids)</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % use a minimal dataset with 6 voxels</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;nchunks&#39;,5);</span>
+<span class="c">%     %</span>
+<span class="c">%     % define neighborhood (progress is set to false to suppress output)</span>
+<span class="c">%     radius=1; % radius=3 is typical for fMRI datasets</span>
+<span class="c">%     nbrhood=cosmo_spherical_neighborhood(ds,&#39;radius&#39;,radius,...</span>
+<span class="c">%                                               &#39;progress&#39;,false);</span>
+<span class="c">%     %</span>
+<span class="c">%     % define measure and its arguments; here crossvalidation with LDA</span>
+<span class="c">%     % classifier to compute classification accuracies</span>
+<span class="c">%     args=struct();</span>
+<span class="c">%     args.classifier = @cosmo_classify_lda;</span>
+<span class="c">%     args.partitions = cosmo_nfold_partitioner(ds);</span>
+<span class="c">%     measure=@cosmo_crossvalidation_measure;</span>
+<span class="c">%     %</span>
+<span class="c">%     % run searchlight (without showing progress bar)</span>
+<span class="c">%     result=cosmo_searchlight(ds,nbrhood,measure,&#39;progress&#39;,0,args);</span>
+<span class="c">%     %</span>
+<span class="c">%     % show results:</span>
+<span class="c">%     % - .samples contains classification accuracy</span>
+<span class="c">%     % - .fa.nvoxels is the number of voxels in each searchlight</span>
+<span class="c">%     % - .fa.radius is the radius of each searchlight</span>
+<span class="c">%     cosmo_disp(result)</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .fdim</span>
+<span class="c">%     &gt;     .labels</span>
+<span class="c">%     &gt;       { &#39;i&#39;  &#39;j&#39;  &#39;k&#39; }</span>
+<span class="c">%     &gt;     .values</span>
+<span class="c">%     &gt;       { [ 1         2         3 ]  [ 1         2 ]  [ 1 ] }</span>
+<span class="c">%     &gt;   .vol</span>
+<span class="c">%     &gt;     .mat</span>
+<span class="c">%     &gt;       [ 2         0         0        -3</span>
+<span class="c">%     &gt;         0         2         0        -3</span>
+<span class="c">%     &gt;         0         0         2        -3</span>
+<span class="c">%     &gt;         0         0         0         1 ]</span>
+<span class="c">%     &gt;     .dim</span>
+<span class="c">%     &gt;       [ 3         2         1 ]</span>
+<span class="c">%     &gt;     .xform</span>
+<span class="c">%     &gt;       &#39;scanner_anat&#39;</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .nvoxels</span>
+<span class="c">%     &gt;     [ 3         4         3         3         4         3 ]</span>
+<span class="c">%     &gt;   .radius</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt;   .center_ids</span>
+<span class="c">%     &gt;     [ 1         2         3         4         5         6 ]</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     &gt;   .j</span>
+<span class="c">%     &gt;     [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt;   .k</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [ 1         1         1       0.9         1       0.7 ]</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .labels</span>
+<span class="c">%     &gt;     { &#39;accuracy&#39; }</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - neighborhoods can be defined using one or more of the</span>
+<span class="c">%     cosmo_*_neighborhood functions</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_correlation_measure,</span>
+<span class="c">%           cosmo_crossvalidation_measure,</span>
+<span class="c">%           cosmo_dissimilarity_matrix_measure,</span>
+<span class="c">%           cosmo_spherical_neighborhood,cosmo_surficial_neighborhood,</span>
+<span class="c">%           cosmo_meeg_chan_neigborhood, cosmo_interval_neighborhood</span>
+<span class="c">%           cosmo_cross_neighborhood</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+<p>Hint: <a class="reference internal" href="matlab/cosmo_searchlight_skl.html#cosmo-searchlight-skl"><span class="std std-ref">cosmo searchlight skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/cosmo_searchlight.html#cosmo-searchlight"><span class="std std-ref">cosmo searchlight</span></a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ex_sphere_offsets.html"
+                        title="previous chapter">Define voxel selection for a searchlight</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cimec2014.html"
+                        title="next chapter">CIMeC 2014 Advanced Neural Decoding</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_searchlight.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cimec2014.html" title="CIMeC 2014 Advanced Neural Decoding"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_sphere_offsets.html" title="Define voxel selection for a searchlight"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cosmo2013.html" >CoSMo 2013 Multivariate Pattern Analysis Workshop</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cosmo2013_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

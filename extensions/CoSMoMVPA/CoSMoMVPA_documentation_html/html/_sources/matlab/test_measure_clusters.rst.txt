@@ -1,0 +1,7 @@
+.. _test_measure_clusters:
+
+test measure clusters
+=====================
+
+.. include :: test_measure_clusters.txt
+

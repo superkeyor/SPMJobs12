@@ -1,0 +1,341 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test surficial io niml dset &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test surficial neighborhood" href="test_surficial_neighborhood.html" />
+    <link rel="prev" title="test surficial io gifti" href="test_surficial_io_gifti.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_surficial_neighborhood.html" title="test surficial neighborhood"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_surficial_io_gifti.html" title="test surficial io gifti"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-surficial-io-niml-dset">
+<span id="id1"></span><h1>test surficial io niml dset<a class="headerlink" href="#test-surficial-io-niml-dset" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_surficial_io_niml_dset</span>
+<span class="c">% tests for AFNI NIML input/output</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_niml_dset_dataset_io</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;afni&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">get_niml_dataset</span><span class="p">();</span>
+    <span class="n">fn</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">(</span><span class="s">&#39;_tmp&#39;</span><span class="p">,</span><span class="s">&#39;.niml.dset&#39;</span><span class="p">);</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">delete</span><span class="p">(</span><span class="n">fn</span><span class="p">));</span>
+
+    <span class="n">formats</span><span class="p">={</span><span class="s">&#39;ascii&#39;</span><span class="p">,</span><span class="s">&#39;binary&#39;</span><span class="p">,</span><span class="s">&#39;binary.lsbfirst&#39;</span><span class="p">,</span><span class="s">&#39;binary.msbfirst&#39;</span><span class="p">};</span>
+
+    <span class="n">n_formats</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">formats</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_formats</span>
+        <span class="n">format</span><span class="p">=</span><span class="n">formats</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">niml_str</span><span class="p">=</span><span class="n">get_niml_dset_string</span><span class="p">(</span><span class="n">format</span><span class="p">);</span>
+
+        <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;w&#39;</span><span class="p">);</span>
+        <span class="n">fwrite</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="n">niml_str</span><span class="p">);</span>
+        <span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">);</span>
+        <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_surface_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+        <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds2</span><span class="p">);</span>
+
+        <span class="n">cosmo_map2surface</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;encoding&#39;</span><span class="p">,</span><span class="n">format</span><span class="p">);</span>
+        <span class="n">ds3</span><span class="p">=</span><span class="n">cosmo_surface_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+        <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds3</span><span class="p">);</span>
+
+        <span class="c">% try mapping using functionality in AFNI Matlab library</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">data</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">node_indices</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">stats</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">;</span>
+        <span class="n">s</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">;</span>
+
+        <span class="n">afni_niml_writesimple</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">format</span><span class="p">);</span>
+        <span class="n">ds4</span><span class="p">=</span><span class="n">cosmo_surface_dataset</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+        <span class="n">assert_dataset_equal</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds4</span><span class="p">);</span>
+
+        <span class="c">% ensure that mapping to struct works</span>
+        <span class="n">s2</span><span class="p">=</span><span class="n">cosmo_map2surface</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;-niml_dset&#39;</span><span class="p">,</span><span class="s">&#39;encoding&#39;</span><span class="p">,</span><span class="n">format</span><span class="p">);</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">s2</span><span class="p">,</span><span class="n">s</span><span class="p">);</span>
+
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_dataset_equal</span><span class="p">(</span>x,y<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="s">&#39;absolute&#39;</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span><span class="n">sort</span><span class="p">(</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">y</span><span class="p">)));</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">fa</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">sa</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="n">y</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>ds<span class="p">=</span><span class="nf">get_niml_dataset</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;surface&#39;</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}=</span><span class="mi">1</span><span class="o">+</span><span class="p">[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">5</span> <span class="mi">3</span><span class="p">];</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">={</span><span class="s">&#39;Ftest(3,4)&#39;</span><span class="p">;</span><span class="s">&#39;Zscore()&#39;</span><span class="p">};</span>
+    <span class="c">% TODO: use these complicated labels</span>
+    <span class="c">% ds.sa.labels={&#39;label1&lt;&gt;&quot;&amp;&#39;&#39;&#39;;&#39;label2&#39;};</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="s">&#39;label1&#39;</span><span class="p">;</span><span class="s">&#39;label2&#39;</span><span class="p">};</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_niml_dset_string</span><span class="p">(</span>format<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">string</span><span class="p">=[</span><span class="c">...</span>
+            <span class="n">get_niml_dset_header</span><span class="p">()</span> <span class="c">...</span>
+            <span class="n">get_niml_dset_data</span><span class="p">(</span><span class="n">format</span><span class="p">)</span> <span class="c">...</span>
+            <span class="n">get_niml_dset_footer</span><span class="p">()</span>
+            <span class="p">];</span>
+
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_niml_dset_header</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">string</span><span class="p">=</span><span class="n">bytes_printf</span><span class="p">([</span><span class="c">...</span>
+            <span class="s">&#39;&lt;AFNI_dataset\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  dset_type=&quot;Node_Bucket&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  self_idcode=&quot;XYZ_QJCWHYMMSUIUXCMBUZJASSJT&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  filename=&quot;data.niml.dset&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  label=&quot;data.niml.dset&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_form=&quot;ni_group&quot; &gt;\n&#39;</span> <span class="c">...</span>
+            <span class="p">]);</span>
+
+<span class="k">function</span><span class="w"> </span>string<span class="p">=</span><span class="nf">get_niml_dset_footer</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">string</span><span class="p">=</span><span class="n">bytes_printf</span><span class="p">([</span><span class="c">...</span>
+            <span class="s">&#39;&lt;AFNI_atr\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  atr_name=&quot;COLMS_RANGE&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_type=&quot;String&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_dimen=&quot;1&quot; &gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&quot;-3.6849477 2.0316862 1 0;-1.3264908 2.3386572 2 4&quot;&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;&lt;/AFNI_atr&gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&lt;AFNI_atr\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  atr_name=&quot;COLMS_LABS&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_type=&quot;String&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_dimen=&quot;1&quot; &gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&quot;label1;label2&quot;&lt;/AFNI_atr&gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&lt;AFNI_atr\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  atr_name=&quot;COLMS_TYPE&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_type=&quot;String&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_dimen=&quot;1&quot; &gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&quot;Generic_Float;Generic_Float&quot;&lt;/AFNI_atr&gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&lt;AFNI_atr\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  atr_name=&quot;COLMS_STATSYM&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_type=&quot;String&quot;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;  ni_dimen=&quot;1&quot; &gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&quot;Ftest(3,4);Zscore()&quot;&lt;/AFNI_atr&gt;\n&#39;</span> <span class="c">...</span>
+            <span class="s">&#39;&lt;/AFNI_dataset&gt;\n&#39;</span> <span class="c">...</span>
+            <span class="p">]);</span>
+    <span class="c">% TODO: use these complicated labels:</span>
+    <span class="c">% &#39;&quot;label1&amp;lt;&amp;gt;&amp;quot;&amp;amp;&amp;apos;;label2&quot;&lt;/AFNI_atr&gt;\n&#39; ...</span>
+
+
+<span class="k">function</span><span class="w"> </span>bytes<span class="p">=</span><span class="nf">get_niml_dset_data</span><span class="p">(</span>format<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">get_niml_dataset</span><span class="p">();</span>
+    <span class="n">data</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">;</span>
+    <span class="n">nodes_base0</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="n">nrows</span><span class="p">,</span><span class="n">ncols</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+
+    <span class="n">row_sep</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;\n&#39;</span><span class="p">);</span>
+    <span class="n">col_sep</span><span class="p">=</span><span class="s">&#39; &#39;</span><span class="p">;</span>
+
+
+    <span class="k">switch</span> <span class="n">lower</span><span class="p">(</span><span class="n">format</span><span class="p">)</span>
+        <span class="k">case</span> <span class="s">&#39;ascii&#39;</span>
+            <span class="n">data_pat</span><span class="p">=[</span><span class="nb">repmat</span><span class="p">([</span><span class="s">&#39;%.6f&#39;</span> <span class="n">col_sep</span><span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="n">nrows</span><span class="p">)</span> <span class="n">row_sep</span><span class="p">];</span>
+            <span class="n">bucket_data</span><span class="p">=</span><span class="n">uint8</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="n">data_pat</span><span class="p">,</span><span class="n">data</span><span class="p">));</span>
+
+            <span class="n">node_pat</span><span class="p">=[</span><span class="s">&#39;%d&#39;</span> <span class="n">row_sep</span><span class="p">];</span>
+            <span class="n">node_data</span><span class="p">=</span><span class="n">uint8</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="n">node_pat</span><span class="p">,</span><span class="n">nodes_base0</span><span class="p">));</span>
+            <span class="n">ni_form</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+
+        <span class="k">case</span> <span class="p">{</span><span class="s">&#39;binary&#39;</span><span class="p">,</span><span class="s">&#39;binary.lsbfirst&#39;</span><span class="p">,</span><span class="s">&#39;binary.msbfirst&#39;</span><span class="p">};</span>
+            <span class="n">data_single</span><span class="p">=</span><span class="n">single</span><span class="p">(</span><span class="n">data</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">);</span>
+            <span class="n">node_int</span><span class="p">=</span><span class="n">int32</span><span class="p">(</span><span class="n">nodes_base0</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">);</span>
+
+            <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="n">unused</span><span class="p">,</span><span class="n">endian</span><span class="p">]=</span><span class="n">computer</span><span class="p">();</span>
+            <span class="n">computer_format</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;binary.%ssbfirst&#39;</span><span class="p">,</span><span class="n">lower</span><span class="p">(</span><span class="n">endian</span><span class="p">));</span>
+
+            <span class="n">do_swap</span><span class="p">=</span><span class="o">~</span><span class="n">strcmp</span><span class="p">(</span><span class="n">format</span><span class="p">,</span><span class="s">&#39;binary&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                            <span class="o">~</span><span class="n">strcmp</span><span class="p">(</span><span class="n">format</span><span class="p">,</span> <span class="n">computer_format</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="n">do_swap</span>
+                <span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">)</span>
+                    <span class="c">% Octave 3.8 does not support byteswap for single</span>
+                    <span class="n">data_single_int</span><span class="p">=</span><span class="n">typecast</span><span class="p">(</span><span class="n">data_single</span><span class="p">,</span><span class="s">&#39;int32&#39;</span><span class="p">);</span>
+                    <span class="n">data_single_int_swap</span><span class="p">=</span><span class="n">swapbytes</span><span class="p">(</span><span class="n">data_single_int</span><span class="p">);</span>
+                    <span class="n">data_single</span><span class="p">=</span><span class="n">typecast</span><span class="p">(</span><span class="n">data_single_int_swap</span><span class="p">,</span><span class="s">&#39;single&#39;</span><span class="p">);</span>
+                <span class="k">else</span>
+                    <span class="n">data_single</span><span class="p">=</span><span class="n">swapbytes</span><span class="p">(</span><span class="n">data_single</span><span class="p">);</span>
+                <span class="k">end</span>
+                <span class="n">node_int</span><span class="p">=</span><span class="n">swapbytes</span><span class="p">(</span><span class="n">node_int</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">format</span><span class="p">,</span><span class="s">&#39;binary&#39;</span><span class="p">)</span>
+                <span class="n">ni_form_format</span><span class="p">=</span><span class="n">computer_format</span><span class="p">;</span>
+            <span class="k">else</span>
+                <span class="n">ni_form_format</span><span class="p">=</span><span class="n">format</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="n">bucket_data</span><span class="p">=</span><span class="n">typecast</span><span class="p">(</span><span class="n">data_single</span><span class="p">,</span><span class="s">&#39;uint8&#39;</span><span class="p">);</span>
+            <span class="n">node_data</span><span class="p">=</span><span class="n">typecast</span><span class="p">(</span><span class="n">node_int</span><span class="p">,</span><span class="s">&#39;uint8&#39;</span><span class="p">);</span>
+
+            <span class="n">ni_form</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;  ni_form=&quot;%s&quot;\n&#39;</span><span class="p">,</span><span class="n">ni_form_format</span><span class="p">);</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;unsupported format %s&#39;</span><span class="p">,</span> <span class="n">format</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">bytes</span><span class="p">=[</span><span class="c">...</span>
+            <span class="n">bytes_printf</span><span class="p">([</span><span class="c">...</span>
+                <span class="s">&#39;&lt;SPARSE_DATA\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  data_type=&quot;Node_Bucket_data&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  ni_type=&quot;2*float&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="n">ni_form</span> <span class="c">...</span>
+                <span class="s">&#39;  ni_dimen=&quot;6&quot; &gt;&#39;</span> <span class="p">])</span><span class="c">...</span>
+            <span class="n">bucket_data</span> <span class="c">...</span>
+            <span class="n">bytes_printf</span><span class="p">([</span><span class="c">...</span>
+                <span class="s">&#39;&lt;/SPARSE_DATA&gt;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;&lt;INDEX_LIST\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  data_type=&quot;Node_Bucket_node_indices&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  sorted_node_def=&quot;No&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  COLMS_RANGE=&quot;1 8 0 3&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  COLMS_LABS=&quot;Node Indices&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  COLMS_TYPE=&quot;Node_Index&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="s">&#39;  ni_type=&quot;int&quot;\n&#39;</span> <span class="c">...</span>
+                <span class="n">ni_form</span> <span class="c">...</span>
+                <span class="s">&#39;  ni_dimen=&quot;6&quot; &gt;&#39;</span><span class="p">])</span> <span class="c">...</span>
+            <span class="n">node_data</span> <span class="c">...</span>
+            <span class="n">bytes_printf</span><span class="p">([</span><span class="c">...</span>
+                <span class="s">&#39;&lt;/INDEX_LIST&gt;\n&#39;</span> <span class="p">])</span><span class="c">...</span>
+            <span class="p">];</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>b<span class="p">=</span><span class="nf">bytes_printf</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">b</span><span class="p">=</span><span class="n">uint8</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}));</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_surficial_io_gifti.html"
+                        title="previous chapter">test surficial io gifti</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_surficial_neighborhood.html"
+                        title="next chapter">test surficial neighborhood</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_surficial_io_niml_dset.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_surficial_neighborhood.html" title="test surficial neighborhood"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_surficial_io_gifti.html" title="test surficial io gifti"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

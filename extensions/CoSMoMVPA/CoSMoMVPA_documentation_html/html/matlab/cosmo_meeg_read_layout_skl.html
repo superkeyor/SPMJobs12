@@ -1,0 +1,238 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo meeg read layout skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo meeg senstype2layout mapping skl" href="cosmo_meeg_senstype2layout_mapping_skl.html" />
+    <link rel="prev" title="cosmo meeg layout collection skl" href="cosmo_meeg_layout_collection_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_senstype2layout_mapping_skl.html" title="cosmo meeg senstype2layout mapping skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_layout_collection_skl.html" title="cosmo meeg layout collection skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-meeg-read-layout-skl">
+<span id="id1"></span><h1>cosmo meeg read layout skl<a class="headerlink" href="#cosmo-meeg-read-layout-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>layout<span class="p">=</span><span class="nf">cosmo_meeg_read_layout</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="c">% Read FieldTrip layout</span>
+<span class="c">%</span>
+<span class="c">% layout=cosmo_meeg_read_layout(fn)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   fn                  Filename of layout file, or a string containing the</span>
+<span class="c">%                       layout. In the latter case fn must contain at least</span>
+<span class="c">%                       one newline (&#39;\n&#39;) character.</span>
+<span class="c">%                       A layout file is a text file with one line per</span>
+<span class="c">%                       sensor, with each line containing the following</span>
+<span class="c">%                       data separated by white-space:</span>
+<span class="c">%                       1) sensor number (integer)</span>
+<span class="c">%                       2) horizontal position (float)</span>
+<span class="c">%                       3) vertical position (float)</span>
+<span class="c">%                       4) width (float)</span>
+<span class="c">%                       5) height (float)</span>
+<span class="c">%                       6) label (string)</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   layout              struct with fields containing data for N sensors:</span>
+<span class="c">%     .pos              Nx2 matrix with x and y position</span>
+<span class="c">%     .width            Nx1 vector</span>
+<span class="c">%     .height           Nx1 vector</span>
+<span class="c">%     .label            Nx1 cell string with channel labels</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - whitespace is trimmed from the labels</span>
+<span class="c">%   - the sensor number is not used; the order of the sensors in layout is</span>
+<span class="c">%     the same as in the layout file</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">check_layout_input</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+
+    <span class="k">if</span> <span class="n">string_contains_newline</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="n">lay_string</span><span class="p">=</span><span class="n">fn</span><span class="p">;</span>
+        <span class="n">fn_descr</span><span class="p">=@()</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;input:\n&#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span><span class="n">lay_string</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">lay_string</span><span class="p">=</span><span class="n">read_lay_string_from_file</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+        <span class="n">fn_descr</span><span class="p">=@()</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;file %s&#39;</span><span class="p">,</span><span class="n">fn</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">layout</span><span class="p">=</span><span class="n">parse_layout</span><span class="p">(</span><span class="n">lay_string</span><span class="p">,</span> <span class="n">fn_descr</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>lay_string<span class="p">=</span><span class="nf">read_lay_string_from_file</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">exist</span><span class="p">(</span><span class="n">fn</span><span class="p">,</span><span class="s">&#39;file&#39;</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;layout file %s does ont exist&#39;</span><span class="p">,</span> <span class="n">fn</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% read FT layout (.lay) file</span>
+    <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">fn</span><span class="p">);</span>
+    <span class="n">file_closer</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">));</span>
+    <span class="n">lay_string</span><span class="p">=</span><span class="n">fread</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="nb">inf</span><span class="p">,</span><span class="s">&#39;char=&gt;char&#39;</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_layout_input</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">ischar</span><span class="p">(</span><span class="n">fn</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;first argument must be string, found %s&#39;</span><span class="p">,</span> <span class="n">class</span><span class="p">(</span><span class="n">fn</span><span class="p">));</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">string_contains_newline</span><span class="p">(</span>fn<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tf</span><span class="p">=</span><span class="n">any</span><span class="p">(</span><span class="n">fn</span><span class="o">==</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;\n&#39;</span><span class="p">));</span>
+
+
+<span class="k">function</span><span class="w"> </span>layout<span class="p">=</span><span class="nf">parse_layout</span><span class="p">(</span>lay_string, fn_descr<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% pattern to match is integer, then 4 numeric values followed by a</span>
+    <span class="c">% string that can contain whitespaces and plus characters, followed by</span>
+    <span class="c">% newline</span>
+    <span class="n">integer</span><span class="p">=</span><span class="s">&#39;(\d+)&#39;</span><span class="p">;</span>
+    <span class="n">float</span><span class="p">=</span><span class="s">&#39;([\d\.-]+)&#39;</span><span class="p">;</span>
+    <span class="n">space</span><span class="p">=</span><span class="s">&#39;\s+&#39;</span><span class="p">;</span>
+    <span class="n">channel_label</span><span class="p">=</span><span class="s">&#39;([\w \t\r\f\v\+\-]+)&#39;</span><span class="p">;</span>
+    <span class="n">single_newline</span><span class="p">=</span><span class="s">&#39;\n&#39;</span><span class="p">;</span>
+
+    <span class="n">pat</span><span class="p">=[</span><span class="n">integer</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="c">...</span>
+         <span class="n">float</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="c">...</span>
+         <span class="n">float</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="c">...</span>
+         <span class="n">float</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="c">...</span>
+         <span class="n">float</span><span class="p">,</span> <span class="n">space</span><span class="p">,</span> <span class="c">...</span>
+         <span class="n">channel_label</span><span class="p">,</span> <span class="n">single_newline</span><span class="p">];</span>
+
+    <span class="n">matches</span><span class="p">=</span><span class="n">regexp</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s\n&#39;</span><span class="p">,</span><span class="n">lay_string</span><span class="p">),</span><span class="n">pat</span><span class="p">,</span><span class="s">&#39;tokens&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">matches</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;No valid layout definition found in %s&#39;</span><span class="p">,</span> <span class="n">fn_descr</span><span class="p">());</span>
+    <span class="k">end</span>
+
+    <span class="c">% convert to (nchannel x 6) matrix</span>
+    <span class="n">layout_matrix</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">matches</span><span class="p">{:});</span>
+
+    <span class="c">% convert values in first five columns to numeric</span>
+    <span class="n">num_values_cell</span><span class="p">=</span><span class="n">layout_matrix</span><span class="p">(:,</span><span class="mi">1</span><span class="p">:</span><span class="mi">5</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+    <span class="n">str_values</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s %s %s %s %s; &#39;</span><span class="p">,</span> <span class="n">num_values_cell</span><span class="p">{:});</span>
+    <span class="n">num_values</span><span class="p">=</span><span class="n">str2num</span><span class="p">(</span><span class="n">str_values</span><span class="p">);</span>
+
+    <span class="c">% store layout information (omit channel number in first column)</span>
+    <span class="n">layout</span><span class="p">.</span><span class="n">pos</span>    <span class="p">=</span> <span class="n">num_values</span><span class="p">(:,</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">layout</span><span class="p">.</span><span class="n">width</span>  <span class="p">=</span> <span class="n">num_values</span><span class="p">(:,</span><span class="mi">4</span><span class="p">);</span>
+    <span class="n">layout</span><span class="p">.</span><span class="n">height</span> <span class="p">=</span> <span class="n">num_values</span><span class="p">(:,</span><span class="mi">5</span><span class="p">);</span>
+
+    <span class="c">% trim whitespace around channel names</span>
+    <span class="n">label</span><span class="p">=</span><span class="n">layout_matrix</span><span class="p">(:,</span><span class="mi">6</span><span class="p">);</span>
+    <span class="n">label</span><span class="p">=</span><span class="n">regexprep</span><span class="p">(</span><span class="n">label</span><span class="p">,</span><span class="s">&#39;^\s*&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">label</span><span class="p">=</span><span class="n">regexprep</span><span class="p">(</span><span class="n">label</span><span class="p">,</span><span class="s">&#39;\s*$&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">layout</span><span class="p">.</span><span class="n">label</span>  <span class="p">=</span> <span class="n">label</span><span class="p">;</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_meeg_layout_collection_skl.html"
+                        title="previous chapter">cosmo meeg layout collection skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_meeg_senstype2layout_mapping_skl.html"
+                        title="next chapter">cosmo meeg senstype2layout mapping skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_meeg_read_layout_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_senstype2layout_mapping_skl.html" title="cosmo meeg senstype2layout mapping skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_layout_collection_skl.html" title="cosmo meeg layout collection skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

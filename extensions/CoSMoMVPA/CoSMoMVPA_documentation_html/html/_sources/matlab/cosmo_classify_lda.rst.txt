@@ -1,0 +1,7 @@
+.. _cosmo_classify_lda:
+
+cosmo classify lda
+==================
+
+.. include :: cosmo_classify_lda.txt
+

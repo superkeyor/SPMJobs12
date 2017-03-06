@@ -1,0 +1,312 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test vol coordinates &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test vol grid convert" href="test_vol_grid_convert.html" />
+    <link rel="prev" title="test type" href="test_type.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_vol_grid_convert.html" title="test vol grid convert"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_type.html" title="test type"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-vol-coordinates">
+<span id="id1"></span><h1>test vol coordinates<a class="headerlink" href="#test-vol-coordinates" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_vol_coordinates</span>
+<span class="c">% tests for cosmo_vol_coordinates</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_vol_coordinates_</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+
+    <span class="p">[</span><span class="n">ns</span><span class="p">,</span><span class="n">nf</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+
+    <span class="c">% sample some features</span>
+    <span class="n">rp</span><span class="p">=</span><span class="n">randperm</span><span class="p">(</span><span class="n">nf</span><span class="p">);</span>
+    <span class="n">nsel</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="n">nf</span><span class="o">/</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">rp</span><span class="p">=</span><span class="n">rp</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nsel</span><span class="p">);</span>
+    <span class="n">ds_sel</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">rp</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="c">% voxel to world space</span>
+    <span class="n">xyz</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">.</span><span class="n">samples</span><span class="p">),[</span><span class="n">ns</span> <span class="n">nsel</span><span class="p">]);</span>
+
+    <span class="n">xyz_</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">nsel</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span> <span class="n">xyz_</span><span class="p">);</span>
+
+    <span class="n">selsel</span><span class="p">=</span><span class="n">randperm</span><span class="p">(</span><span class="n">nsel</span><span class="p">);</span>
+    <span class="n">xyz__</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">selsel</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">xyz</span><span class="p">(:,</span><span class="n">selsel</span><span class="p">),</span> <span class="n">xyz__</span><span class="p">);</span>
+
+    <span class="c">% check coordinate transform</span>
+    <span class="n">ijk1</span><span class="p">=[</span><span class="n">ds_sel</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="p">;</span> <span class="n">ds_sel</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">j</span><span class="p">;</span> <span class="n">ds_sel</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">k</span><span class="p">;</span> <span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nsel</span><span class="p">)];</span>
+    <span class="n">xyz1</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="o">*</span><span class="n">ijk1</span><span class="p">;</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">xyz1</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">3</span><span class="p">,:),</span><span class="n">xyz_</span><span class="p">);</span>
+
+    <span class="c">% double the dataset</span>
+    <span class="n">ds_sel2</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">({</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">ds_sel</span><span class="p">},</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">xyz2</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds_sel2</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">xyz2</span><span class="p">,</span> <span class="p">[</span><span class="n">xyz</span> <span class="n">xyz</span><span class="p">]);</span>
+
+    <span class="c">% world to voxel space</span>
+    <span class="n">fa_indices</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">xyz</span><span class="p">(:,</span><span class="n">selsel</span><span class="p">));</span>
+    <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">fa_indices</span><span class="p">,</span><span class="n">selsel</span><span class="p">);</span>
+
+    <span class="c">% duplicate features cannot be matched back</span>
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds_sel2</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="n">xyz</span><span class="p">(:,</span><span class="n">selsel</span><span class="p">)),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_vol_coordinates_afni</span><span class="p">()</span><span class="w"></span>
+<span class="c">% test coordinates using AFNI&#39;s 3dmerge</span>
+    <span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;afni_bin&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="c">% make an fMRI dataset</span>
+    <span class="n">dim_sizes</span><span class="p">=[</span><span class="mi">60</span> <span class="mi">50</span> <span class="mi">30</span><span class="p">];</span>
+    <span class="n">dim_values</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span> <span class="mi">1</span><span class="p">:</span><span class="n">x</span><span class="p">,</span><span class="n">num2cell</span><span class="p">(</span><span class="n">dim_sizes</span><span class="p">),</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">dim_labels</span><span class="p">={</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="s">&#39;j&#39;</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">};</span>
+    <span class="n">vox_sizes</span><span class="p">=[</span><span class="mi">3</span> <span class="mi">3</span> <span class="mi">3</span><span class="p">];</span>
+    <span class="n">origin</span><span class="p">=</span><span class="o">-</span><span class="n">dim_sizes</span><span class="o">.*</span><span class="n">vox_sizes</span><span class="o">*</span><span class="p">.</span><span class="mi">4</span><span class="p">;</span> <span class="c">% slightly off-center</span>
+    <span class="n">nsamples</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="n">data4d</span><span class="p">=</span><span class="nb">zeros</span><span class="p">([</span><span class="n">nsamples</span><span class="p">,</span><span class="n">dim_sizes</span><span class="p">]);</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_flatten</span><span class="p">(</span><span class="n">data4d</span><span class="p">,</span><span class="n">dim_labels</span><span class="p">,</span><span class="n">dim_values</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span> <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;sample%d&#39;</span><span class="p">,</span><span class="n">x</span><span class="p">),</span><span class="c">...</span>
+                                    <span class="n">num2cell</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nsamples</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">=</span><span class="nb">repmat</span><span class="p">({</span><span class="s">&#39;Ftest(10,1)&#39;</span><span class="p">},</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=[</span><span class="nb">diag</span><span class="p">(</span><span class="n">vox_sizes</span><span class="p">),</span><span class="n">origin</span><span class="o">&#39;</span><span class="p">;[</span><span class="mi">0</span> <span class="mi">0</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">]];</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">dim</span><span class="p">=</span><span class="n">dim_sizes</span><span class="p">;</span>
+
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">(:,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">center_distance</span><span class="p">=</span><span class="mi">20</span><span class="p">;</span>
+    <span class="n">offsets</span><span class="p">=[</span><span class="mi">3</span> <span class="mi">7</span> <span class="mi">11</span><span class="p">];</span> <span class="c">% some offsets in x, y, z directions</span>
+    <span class="n">xyz</span><span class="p">=</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">plus</span><span class="p">,</span> <span class="n">cosmo_cartprod</span><span class="p">(</span><span class="nb">repmat</span><span class="p">({[</span><span class="o">-</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">]</span><span class="o">*</span><span class="n">center_distance</span><span class="p">},</span><span class="mi">1</span><span class="p">,</span><span class="mi">3</span><span class="p">)),</span><span class="c">...</span>
+                        <span class="n">offsets</span><span class="p">);</span>
+    <span class="n">ncoord</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">xyz</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">fa_indices</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">xyz</span><span class="o">&#39;</span><span class="p">);</span>
+    <span class="n">xyz</span><span class="p">=</span><span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">fa_indices</span><span class="p">);</span> <span class="c">% recompute</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(:,</span><span class="n">fa_indices</span><span class="p">)=</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ncoord</span><span class="p">,</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="c">% 1 to 8</span>
+
+    <span class="c">% make temporary directory</span>
+    <span class="n">tmp_dir</span><span class="p">=</span><span class="n">cosmo_make_temp_filename</span><span class="p">();</span>
+    <span class="n">tmp_dir_cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">remove_dir_helper</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">));</span>
+
+    <span class="n">mkdir</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">);</span>
+
+    <span class="c">% generate AFNI files</span>
+    <span class="n">ext_postfix</span><span class="p">={</span><span class="s">&#39;.nii&#39;</span><span class="p">,{</span><span class="s">&#39;&#39;</span><span class="p">};</span>
+                 <span class="s">&#39;+orig&#39;</span><span class="p">,{</span><span class="s">&#39;.BRIK&#39;</span><span class="p">,</span><span class="s">&#39;.BRIK.gz&#39;</span><span class="p">,</span><span class="s">&#39;.HEAD&#39;</span><span class="p">}};</span>
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">ext_postfix</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span>
+        <span class="n">ext</span><span class="p">=</span><span class="n">ext_postfix</span><span class="p">{</span><span class="nb">j</span><span class="p">,</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">postfixes</span><span class="p">=</span><span class="n">ext_postfix</span><span class="p">{</span><span class="nb">j</span><span class="p">,</span><span class="mi">2</span><span class="p">};</span>
+
+        <span class="n">get_fn</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span> <span class="n">fullfile</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,[</span><span class="n">x</span> <span class="n">ext</span><span class="p">]);</span>
+        <span class="n">get_to_delete</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">exts</span><span class="p">)</span> <span class="n">cellfun</span><span class="p">(@(</span><span class="n">y</span><span class="p">)</span> <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s%s&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="n">get_fn</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">y</span><span class="p">),</span><span class="n">postfixes</span><span class="p">,</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+        <span class="n">base_fn</span><span class="p">=</span><span class="n">get_fn</span><span class="p">(</span><span class="s">&#39;base&#39;</span><span class="p">);</span>
+        <span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">base_fn</span><span class="p">);</span>
+
+        <span class="n">orients</span><span class="p">={</span><span class="s">&#39;lpi&#39;</span><span class="p">,</span><span class="s">&#39;rai&#39;</span><span class="p">,</span><span class="s">&#39;asr&#39;</span><span class="p">};</span>
+
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">orients</span><span class="p">)</span>
+            <span class="n">orient</span><span class="p">=</span><span class="n">orients</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+            <span class="n">fn</span><span class="p">=</span><span class="n">get_fn</span><span class="p">(</span><span class="n">orient</span><span class="p">);</span>
+            <span class="n">cmd</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;3dresample -overwrite -orient %s -prefix %s -input %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="n">orient</span><span class="p">,</span> <span class="n">fn</span><span class="p">,</span> <span class="n">base_fn</span><span class="p">);</span>
+            <span class="n">r</span><span class="p">=</span><span class="n">unix</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">r</span><span class="o">==</span><span class="mi">0</span><span class="p">);</span>
+            <span class="n">cmd</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;3dclust -orient LPI -1clip .5 0 0 %s&#39;&#39;[0]&#39;&#39; &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;2&gt;/dev/null | grep --invert-match &#39;&#39;#&#39;&#39;&#39;</span><span class="p">],</span> <span class="n">fn</span><span class="p">);</span>
+            <span class="p">[</span><span class="n">r</span><span class="p">,</span><span class="n">v</span><span class="p">]=</span><span class="n">unix</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">r</span><span class="o">==</span><span class="mi">0</span><span class="p">);</span>
+
+            <span class="n">to_delete</span><span class="p">=</span><span class="n">get_to_delete</span><span class="p">(</span><span class="n">orient</span><span class="p">,</span><span class="n">postfixes</span><span class="p">);</span>
+            <span class="n">cmd</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;rm -f %s&#39;</span><span class="p">,</span> <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">to_delete</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">));</span>
+            <span class="n">unused</span><span class="p">=</span><span class="n">unix</span><span class="p">(</span><span class="n">cmd</span><span class="p">);</span>
+
+            <span class="n">s</span><span class="p">=</span><span class="n">sscanf</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="s">&#39;%f&#39;</span><span class="p">);</span>
+            <span class="n">table</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">s</span><span class="p">,</span><span class="mi">16</span><span class="p">,[]);</span>
+
+            <span class="c">% sort by voxel value</span>
+            <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">table</span><span class="p">(</span><span class="mi">11</span><span class="p">,:));</span>
+            <span class="n">table</span><span class="p">=</span><span class="n">table</span><span class="p">(:,</span><span class="nb">i</span><span class="p">);</span>
+
+            <span class="n">line1</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ncoord</span><span class="p">);</span>
+            <span class="n">line0</span><span class="p">=</span><span class="mi">0</span><span class="o">*</span><span class="n">line1</span><span class="p">;</span>
+            <span class="n">line_inc</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncoord</span><span class="p">;</span>
+            <span class="n">expected_table</span><span class="p">=[</span><span class="n">line1</span><span class="p">;</span> <span class="n">xyz</span><span class="p">;</span> <span class="n">kron</span><span class="p">(</span><span class="n">xyz</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]</span><span class="o">&#39;</span><span class="p">);</span> <span class="c">...</span>
+                                <span class="n">line_inc</span><span class="p">;</span> <span class="n">line0</span><span class="p">;</span> <span class="n">line_inc</span><span class="p">;</span> <span class="n">xyz</span><span class="p">];</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">table</span><span class="p">,</span> <span class="n">expected_table</span><span class="p">)</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_test_vol_coordinates_exceptions</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                    <span class="n">cosmo_vol_coordinates</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+
+    <span class="c">% not 1xP or 3xP</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="nb">ones</span><span class="p">(</span><span class="mi">2</span><span class="p">));</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="p">[</span><span class="mi">1</span><span class="p">;</span><span class="mi">2</span><span class="p">]);</span>
+
+    <span class="c">% not in fdim</span>
+    <span class="n">ds_bad</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="n">ds_bad</span><span class="p">=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">ds_bad</span><span class="p">,</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds_bad</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% size mismatch</span>
+    <span class="n">ds_bad</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="n">ds_bad</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">dim</span><span class="p">=</span><span class="n">ds_bad</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">dim</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds_bad</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% no matrix</span>
+    <span class="n">ds_bad</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="n">ds_bad</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">ds_bad</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">,</span><span class="s">&#39;mat&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds_bad</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% not 4x4 matrix</span>
+    <span class="n">ds_bad</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="n">ds_bad</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">.</span><span class="n">mat</span><span class="p">=</span><span class="nb">eye</span><span class="p">(</span><span class="mi">5</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds_bad</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">remove_dir_helper</span><span class="p">(</span>tmp_dir<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">)</span>
+        <span class="n">rmdir_state</span><span class="p">=</span><span class="n">confirm_recursive_rmdir</span><span class="p">();</span>
+        <span class="n">state_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">confirm_recursive_rmdir</span><span class="p">(</span><span class="n">rmdir_state</span><span class="p">));</span>
+        <span class="n">confirm_recursive_rmdir</span><span class="p">(</span><span class="n">false</span><span class="p">,</span><span class="s">&#39;local&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+    <span class="n">rmdir</span><span class="p">(</span><span class="n">tmp_dir</span><span class="p">,</span><span class="s">&#39;s&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_type.html"
+                        title="previous chapter">test type</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_vol_grid_convert.html"
+                        title="next chapter">test vol grid convert</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_vol_coordinates.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_vol_grid_convert.html" title="test vol grid convert"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_type.html" title="test type"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

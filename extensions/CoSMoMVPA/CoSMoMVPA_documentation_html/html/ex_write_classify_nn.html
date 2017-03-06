@@ -1,0 +1,173 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Write your own Nearest-neighbor classifier &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Build wrapper for Matlab’s SVM classifier" href="ex_classify_svm.html" />
+    <link rel="prev" title="Classification with Naive Bayes classifier" href="ex_classify_naive_bayes.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ex_classify_svm.html" title="Build wrapper for Matlab’s SVM classifier"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_classify_naive_bayes.html" title="Classification with Naive Bayes classifier"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cosmo2013.html" >CoSMo 2013 Multivariate Pattern Analysis Workshop</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cosmo2013_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="write-your-own-nearest-neighbor-classifier">
+<h1>Write your own Nearest-neighbor classifier<a class="headerlink" href="#write-your-own-nearest-neighbor-classifier" title="Permalink to this headline">¶</a></h1>
+<p>We have begun to write a nearest neighbor classifier, but we have left out the
+best part. Write the for loop that iterates over every sample in the testing
+data and assigns a single label from the training targets to each of the test
+samples based on which is nearest (where &#8216;nearest&#8217;, for now, is defined based on Euclidian distance). Test your classifers on pairwise or multi-class datasets.</p>
+<p>Your function should have the following signature:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>predicted<span class="p">=</span><span class="nf">cosmo_classify_nn</span><span class="p">(</span>samples_train, targets_train, samples_test, unused<span class="p">)</span><span class="w"></span>
+<span class="c">% nearest neighbor classifier</span>
+<span class="c">%</span>
+<span class="c">% predicted=cosmo_classify_nn(samples_train, targets_train, samples_test[, opt])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   samples_train      PxR training data for P samples and R features</span>
+<span class="c">%   targets_train      Px1 training data classes</span>
+<span class="c">%   samples_test       QxR test data</span>
+<span class="c">%   opt                (currently ignored)</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   predicted          Qx1 predicted data classes for samples_test</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;ntargets&#39;,5,&#39;nchunks&#39;,15);</span>
+<span class="c">%     test_chunk=1;</span>
+<span class="c">%     te=cosmo_slice(ds,ds.sa.chunks==test_chunk);</span>
+<span class="c">%     tr=cosmo_slice(ds,ds.sa.chunks~=test_chunk);</span>
+<span class="c">%     pred=cosmo_classify_nn(tr.samples,tr.sa.targets,te.samples,struct);</span>
+<span class="c">%     % show targets and predicted labels (100% accuracy)</span>
+<span class="c">%     disp([te.sa.targets pred])</span>
+<span class="c">%     &gt;      1     1</span>
+<span class="c">%     &gt;      2     2</span>
+<span class="c">%     &gt;      3     3</span>
+<span class="c">%     &gt;      4     4</span>
+<span class="c">%     &gt;      5     5</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_crossvalidate, cosmo_crossvalidation_measure</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+<p>Hint: <a class="reference internal" href="matlab/cosmo_classify_nn_skl.html#cosmo-classify-nn-skl"><span class="std std-ref">cosmo classify nn skl</span></a></p>
+<p>Full solution: <a class="reference internal" href="matlab/cosmo_classify_nn.html#cosmo-classify-nn"><span class="std std-ref">cosmo classify nn</span></a></p>
+<p>Extra exercise: write a nearest-mean classifier.</p>
+<p>Extra exercise: Try correlation instead of Euclidian distance.</p>
+<p>Advanced exercise: write a k-nearest neighbor classifier that considers the nearest k neighbors for each test sample. Bonus points if this classifier uses <a class="reference internal" href="matlab/cosmo_winner_indices.html#cosmo-winner-indices"><span class="std std-ref">cosmo winner indices</span></a> in case of a tie. (solution: <a class="reference internal" href="matlab/cosmo_classify_knn.html#cosmo-classify-knn"><span class="std std-ref">cosmo classify knn</span></a>).</p>
+<p><a class="reference external" href="_static/publish/run_classify_naive_bayes.html">Matlab output: run_classify_naive_bayes</a></p>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ex_classify_naive_bayes.html"
+                        title="previous chapter">Classification with Naive Bayes classifier</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ex_classify_svm.html"
+                        title="next chapter">Build wrapper for Matlab&#8217;s SVM classifier</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_write_classify_nn.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ex_classify_svm.html" title="Build wrapper for Matlab’s SVM classifier"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_classify_naive_bayes.html" title="Classification with Naive Bayes classifier"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cosmo2013.html" >CoSMo 2013 Multivariate Pattern Analysis Workshop</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cosmo2013_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

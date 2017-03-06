@@ -1,0 +1,7 @@
+.. _test_naive_bayes_classifier_searchlight:
+
+test naive bayes classifier searchlight
+=======================================
+
+.. include :: test_naive_bayes_classifier_searchlight.txt
+

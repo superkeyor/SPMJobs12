@@ -1,0 +1,177 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo parallel get nproc available hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo parcellfun hdr" href="cosmo_parcellfun_hdr.html" />
+    <link rel="prev" title="cosmo overlap hdr" href="cosmo_overlap_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_parcellfun_hdr.html" title="cosmo parcellfun hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_overlap_hdr.html" title="cosmo overlap hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-parallel-get-nproc-available-hdr">
+<span id="id1"></span><h1>cosmo parallel get nproc available hdr<a class="headerlink" href="#cosmo-parallel-get-nproc-available-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>nproc_available<span class="p">=</span><span class="nf">cosmo_parallel_get_nproc_available</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% get number of processes available from Matlab parallel processing pool</span>
+<span class="c">%</span>
+<span class="c">% nproc=cosmo_parallel_get_nproc_available()</span>
+<span class="c">%</span>
+<span class="c">% Input:</span>
+<span class="c">%   &#39;nproc&#39;,nproc_wanted            Number of desired processes (optional)</span>
+<span class="c">%                                   If not provided, then the number of</span>
+<span class="c">%                                   available cores is returned.</span>
+<span class="c">%                                   Use &#39;nproc&#39;,inf to get as many</span>
+<span class="c">%                                   cores as there available.</span>
+<span class="c">%   &#39;nproc_available_query_func&#39;,f  Function handle to determine how many</span>
+<span class="c">%                                   processes are available. This function</span>
+<span class="c">%                                   is intended for use by developers only;</span>
+<span class="c">%                                   by default it selects the appropriate</span>
+<span class="c">%                                   function based on the platform (Octave,</span>
+<span class="c">%                                   Matlab &lt;= 2013b, or Matlab &gt; 2013b)</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   nproc_available                 Number of available parallel processes.</span>
+<span class="c">%                                   - On Matlab: this requires the parallel</span>
+<span class="c">%                                     computing toolbox</span>
+<span class="c">%                                   - On Octave: this requires the parallel</span>
+<span class="c">%                                     toolbox</span>
+<span class="c">%                                   If the required toolbox is not</span>
+<span class="c">%                                   available, then nproc_available=1.</span>
+<span class="c">%                                   If there are nproc_available</span>
+<span class="c">%                                   processes available and</span>
+<span class="c">%                                       nproc_available&lt;nproc_wanted</span>
+<span class="c">%                                   then nproc=nproc_available is returned.</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - If no parallel processing pool has been started, then this function</span>
+<span class="c">%     will try to start one (with as many parallel processes as possible)</span>
+<span class="c">%     before counting the number of processes available.</span>
+<span class="c">%   - If a parallel processing pool has already been started, then this</span>
+<span class="c">%     function returns the number of processes available it that pool. This</span>
+<span class="c">%     function *does not* close an existing pool and open a new one. This</span>
+<span class="c">%     means that if a user has started a pool with M processes on a machine</span>
+<span class="c">%     with N processes available (i.e. a pool has started with fewer</span>
+<span class="c">%     processes than available), then this function will return M (and not</span>
+<span class="c">%     N if M&lt;N). If you need a fresh pool with</span>
+<span class="c">%</span>
+<span class="c">% See also: parcellfun, matlabpool</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_overlap_hdr.html"
+                        title="previous chapter">cosmo overlap hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_parcellfun_hdr.html"
+                        title="next chapter">cosmo parcellfun hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_parallel_get_nproc_available_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_parcellfun_hdr.html" title="cosmo parcellfun hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_overlap_hdr.html" title="cosmo overlap hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

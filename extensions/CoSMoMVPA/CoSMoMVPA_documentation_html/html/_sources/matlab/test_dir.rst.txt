@@ -1,0 +1,7 @@
+.. _test_dir:
+
+test dir
+========
+
+.. include :: test_dir.txt
+

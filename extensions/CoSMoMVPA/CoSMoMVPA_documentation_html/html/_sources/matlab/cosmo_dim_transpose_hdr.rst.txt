@@ -1,0 +1,7 @@
+.. _cosmo_dim_transpose_hdr:
+
+cosmo dim transpose hdr
+=======================
+
+.. include :: cosmo_dim_transpose_hdr.txt
+

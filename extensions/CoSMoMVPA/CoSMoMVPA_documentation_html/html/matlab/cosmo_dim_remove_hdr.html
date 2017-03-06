@@ -1,0 +1,186 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo dim remove hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo dim rename hdr" href="cosmo_dim_rename_hdr.html" />
+    <link rel="prev" title="cosmo dim prune hdr" href="cosmo_dim_prune_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_rename_hdr.html" title="cosmo dim rename hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dim_prune_hdr.html" title="cosmo dim prune hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-dim-remove-hdr">
+<span id="id1"></span><h1>cosmo dim remove hdr<a class="headerlink" href="#cosmo-dim-remove-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[ds,attr,values]<span class="p">=</span><span class="nf">cosmo_dim_remove</span><span class="p">(</span>ds,dim_labels<span class="p">)</span><span class="w"></span>
+<span class="c">% remove a dataset dimension</span>
+<span class="c">%</span>
+<span class="c">% [ds_result,attr,values]=cosmo_dim_remove(ds,dim_labels)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                  dataset struct</span>
+<span class="c">%   dim_labels          cellstring with label(s) to remove. A single</span>
+<span class="c">%                       string s is interpreted as s{1}</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   ds_result           dataset struct with dim_labels removed from</span>
+<span class="c">%                       .a.{fdim,sdim} and .{fa,sa}.</span>
+<span class="c">%   attr                struct based on .{fa,sa} but only with the fields in</span>
+<span class="c">%                       dim_labels</span>
+<span class="c">%   values              Nx1 cell based on .a.{fdim,sdim}.values, but only</span>
+<span class="c">%                       with the fields in dim_labels. If dim_labels is a</span>
+<span class="c">%                       string, then the output is values{1}.</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % generate tiny fmri dataset</span>
+<span class="c">%     ds=cosmo_synthetic_dataset();</span>
+<span class="c">%     cosmo_disp(ds.a.fdim);</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;i&#39;  &#39;j&#39;  &#39;k&#39; }</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { [ 1         2         3 ]  [ 1         2 ]  [ 1 ] }</span>
+<span class="c">%     cosmo_disp(ds.fa);</span>
+<span class="c">%     &gt; .i</span>
+<span class="c">%     &gt;   [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     &gt; .j</span>
+<span class="c">%     &gt;   [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt; .k</span>
+<span class="c">%     &gt;   [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     % remove &#39;j&#39; and &#39;k&#39; dimension label; only &#39;i&#39; is left</span>
+<span class="c">%     [ds_without_jk,attr,values]=cosmo_dim_remove(ds,{&#39;j&#39;,&#39;k&#39;});</span>
+<span class="c">%     cosmo_disp(ds_without_jk.a.fdim);</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;i&#39; }</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { [ 1         2         3 ] }</span>
+<span class="c">%     cosmo_disp(ds_without_jk.fa);</span>
+<span class="c">%     &gt; .i</span>
+<span class="c">%     &gt;   [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     cosmo_disp(attr)</span>
+<span class="c">%     &gt; .j</span>
+<span class="c">%     &gt;   [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt; .k</span>
+<span class="c">%     &gt;   [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     cosmo_disp(values)</span>
+<span class="c">%     &gt; { [ 1         2 ]  [ 1 ] }</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_dim_transpose</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_dim_prune_hdr.html"
+                        title="previous chapter">cosmo dim prune hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_dim_rename_hdr.html"
+                        title="next chapter">cosmo dim rename hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_dim_remove_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_rename_hdr.html" title="cosmo dim rename hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dim_prune_hdr.html" title="cosmo dim prune hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

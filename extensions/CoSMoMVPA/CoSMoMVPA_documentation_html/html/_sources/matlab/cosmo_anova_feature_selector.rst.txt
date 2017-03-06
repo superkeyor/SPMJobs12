@@ -1,0 +1,7 @@
+.. _cosmo_anova_feature_selector:
+
+cosmo anova feature selector
+============================
+
+.. include :: cosmo_anova_feature_selector.txt
+

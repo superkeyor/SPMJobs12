@@ -1,0 +1,295 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>demo meeg timefreq searchlight &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="demo meeg timelock searchlight" href="demo_meeg_timelock_searchlight.html" />
+    <link rel="prev" title="demo meeg dataset operations" href="demo_meeg_dataset_operations.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="demo_meeg_timelock_searchlight.html" title="demo meeg timelock searchlight"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="demo_meeg_dataset_operations.html" title="demo meeg dataset operations"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" accesskey="U">Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="demo-meeg-timefreq-searchlight">
+<span id="id1"></span><h1>demo meeg timefreq searchlight<a class="headerlink" href="#demo-meeg-timefreq-searchlight" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="../_static/publish/demo_meeg_timefreq_searchlight.html">Matlab output: demo_meeg_timefreq_searchlight</a></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% MEEG time-frequency searchlight</span>
+<span class="c">%</span>
+<span class="c">% This example shows MVPA analyses performed on MEEG data, using a</span>
+<span class="c">% searchlight across the time, frequency and channel dimensions</span>
+<span class="c">%</span>
+<span class="c">% The input dataset involved a paradigm with electrical median nerve</span>
+<span class="c">% stimulation for durations of 2s at 20Hz.</span>
+<span class="c">%</span>
+<span class="c">% The code presented here can be adapted for other MEEG analyses, but</span>
+<span class="c">% there are a few potential caveats:</span>
+<span class="c">% * assignment of targets (labels of conditions) is based here on</span>
+<span class="c">%   stimulation periods versus pre-stimulation periods. In typical</span>
+<span class="c">%   analyses the targets should be based on different trial conditions, for</span>
+<span class="c">%   example as set a FieldTrip .trialinfo field.</span>
+<span class="c">% * assignment of chunks (parts of the data that are assumed to be</span>
+<span class="c">%   independent) is based on a trial-by-trial basis. For cross-validation,</span>
+<span class="c">%   the number of chunks is reduced to two to speed up the analysis.</span>
+<span class="c">% * the time window used for analyses is rather small. This means that in</span>
+<span class="c">%   particular for time-freq analysis a lot of data is missing, especially</span>
+<span class="c">%   for early and late timepoints in the lower frequency bands. For typical</span>
+<span class="c">%   analyses it may be preferred to use a wider time window.</span>
+<span class="c">% * the current examples do not perform baseline corrections or signal</span>
+<span class="c">%   normalizations, which may reduce discriminatory power.</span>
+<span class="c">%</span>
+<span class="c">% Note: running this code requires FieldTrip.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+
+<span class="c">%% get timelock data in CoSMoMVPA format</span>
+
+<span class="c">% set configuration</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;meg_20hz&#39;</span><span class="p">);</span>
+
+<span class="c">% show dataset information</span>
+<span class="n">readme_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;README&#39;</span><span class="p">);</span>
+<span class="n">cosmo_type</span><span class="p">(</span><span class="n">readme_fn</span><span class="p">);</span>
+
+<span class="c">% reset citation list</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-tic&#39;</span><span class="p">);</span>
+
+<span class="c">% load data</span>
+<span class="n">data_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;subj102_B01_20Hz_timefreq.mat&#39;</span><span class="p">);</span>
+<span class="n">data_tf</span><span class="p">=</span><span class="n">load</span><span class="p">(</span><span class="n">data_fn</span><span class="p">);</span>
+
+<span class="c">% convert to cosmomvpa struct</span>
+<span class="n">ds_tf</span><span class="p">=</span><span class="n">cosmo_meeg_dataset</span><span class="p">(</span><span class="n">data_tf</span><span class="p">);</span>
+
+<span class="c">% set the target (trial condition)</span>
+<span class="n">ds_tf</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="n">ds_tf</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">trialinfo</span><span class="p">(:,</span><span class="mi">1</span><span class="p">);</span> <span class="c">% 1=pre, 2=post</span>
+
+<span class="c">% set the chunks (independent measurements)</span>
+<span class="c">% in this dataset, the first half of the samples (in order)</span>
+<span class="c">% are the post-trials;</span>
+<span class="c">% the second half the pre-trials</span>
+<span class="n">ds_tf</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=[(</span><span class="mi">1</span><span class="p">:</span><span class="mi">145</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">145</span><span class="p">)]</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+<span class="c">% in addition give a label to each trial</span>
+<span class="n">index2label</span><span class="p">={</span><span class="s">&#39;pre&#39;</span><span class="p">,</span><span class="s">&#39;post&#39;</span><span class="p">};</span> <span class="c">% 1=pre, 2=peri/post</span>
+<span class="n">ds_tf</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">index2label</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">num2cell</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">));</span>
+
+<span class="c">% just to check everything is ok</span>
+<span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">);</span>
+
+<span class="c">% get rid of features with at least one NaN value across samples</span>
+<span class="n">fa_nan_mask</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="nb">isnan</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">.</span><span class="n">samples</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;%d / %d features have NaN\n&#39;</span><span class="p">,</span> <span class="c">...</span>
+            <span class="n">sum</span><span class="p">(</span><span class="n">fa_nan_mask</span><span class="p">),</span> <span class="nb">numel</span><span class="p">(</span><span class="n">fa_nan_mask</span><span class="p">));</span>
+<span class="n">ds_tf</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span> <span class="o">~</span><span class="n">fa_nan_mask</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+
+<span class="c">%% set MVPA parameters</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The input has feature dimensions %s\n&#39;</span><span class="p">,</span> <span class="c">...</span>
+                <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">,</span><span class="s">&#39;, &#39;</span><span class="p">));</span>
+
+
+<span class="c">% set chunks</span>
+<span class="c">% again for speed just two chunks</span>
+<span class="c">% (targets were already set above)</span>
+<span class="n">nchunks</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+<span class="n">ds_tf</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="n">cosmo_chunkize</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span> <span class="n">nchunks</span><span class="p">);</span>
+
+<span class="c">% define neighborhood parameters for each dimension</span>
+
+<span class="c">% channel neighborhood uses meg_combined_from_planar, which means that the</span>
+<span class="c">% input are planar channels but the output has combined-planar channels.</span>
+<span class="c">% to use the magnetometers, use &#39;meg_axial&#39;</span>
+<span class="n">chan_type</span><span class="p">=</span><span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">;</span>
+<span class="n">chan_count</span><span class="p">=</span><span class="mi">10</span><span class="p">;</span>        <span class="c">% use 10 channel locations (relative to the combined</span>
+                      <span class="c">% planar channels)</span>
+                      <span class="c">% as we use meg_combined_from_planar there are</span>
+                      <span class="c">% 20 channels in each searchlight because</span>
+                      <span class="c">% gradiometers are paired</span>
+<span class="n">time_radius</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span> <span class="c">% 2*2+1=5 time bines</span>
+<span class="n">freq_radius</span><span class="p">=</span><span class="mi">4</span><span class="p">;</span> <span class="c">% 4*2+1=9 freq bins</span>
+
+
+<span class="c">% define the neighborhood for each dimensions</span>
+<span class="n">chan_nbrhood</span><span class="p">=</span><span class="n">cosmo_meeg_chan_neighborhood</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span> <span class="s">&#39;count&#39;</span><span class="p">,</span> <span class="n">chan_count</span><span class="p">,</span> <span class="c">...</span>
+                                                <span class="s">&#39;chantype&#39;</span><span class="p">,</span> <span class="n">chan_type</span><span class="p">);</span>
+<span class="n">freq_nbrhood</span><span class="p">=</span><span class="n">cosmo_interval_neighborhood</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span><span class="s">&#39;freq&#39;</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="n">freq_radius</span><span class="p">);</span>
+<span class="n">time_nbrhood</span><span class="p">=</span><span class="n">cosmo_interval_neighborhood</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="n">time_radius</span><span class="p">);</span>
+
+<span class="c">% cross neighborhoods for chan-time-freq searchlight</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">cosmo_cross_neighborhood</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,{</span><span class="n">chan_nbrhood</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="n">freq_nbrhood</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="n">time_nbrhood</span><span class="p">});</span>
+
+<span class="c">% print some info</span>
+<span class="n">nbrhood_nfeatures</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">);</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Features have on average %.1f +/- %.1f neighbors\n&#39;</span><span class="p">,</span> <span class="c">...</span>
+            <span class="n">mean</span><span class="p">(</span><span class="n">nbrhood_nfeatures</span><span class="p">),</span> <span class="n">std</span><span class="p">(</span><span class="n">nbrhood_nfeatures</span><span class="p">));</span>
+
+<span class="c">% only keep features with at least 10 neighbors</span>
+<span class="c">% (some have zero neighbors - in particular, those with low frequencies</span>
+<span class="c">% early or late in time)</span>
+<span class="n">center_ids</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">nbrhood_nfeatures</span><span class="o">&gt;</span><span class="mi">10</span><span class="p">);</span>
+
+<span class="c">% for illustration purposes use the split-half measure because it is</span>
+<span class="c">% relatively fast - but clasifiers can also be used</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_correlation_measure</span><span class="p">;</span>
+
+<span class="c">% split-half, as there are just two chunks</span>
+<span class="c">% (when using a classifier, do not use &#39;half&#39; but the number of chunks to</span>
+<span class="c">% leave out for testing, e.g. 1).</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_nchoosek_partitioner</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span><span class="s">&#39;half&#39;</span><span class="p">);</span>
+
+
+<span class="c">%% run searchlight</span>
+<span class="n">sl_tf_ds</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds_tf</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">measure_args</span><span class="p">,</span><span class="c">...</span>
+                                      <span class="s">&#39;center_ids&#39;</span><span class="p">,</span><span class="n">center_ids</span><span class="p">);</span>
+<span class="c">%% visualize results</span>
+
+<span class="c">% deduce layout from output</span>
+<span class="n">layout</span><span class="p">=</span><span class="n">cosmo_meeg_find_layout</span><span class="p">(</span><span class="n">sl_tf_ds</span><span class="p">);</span>
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The output uses layout %s\n&#39;</span><span class="p">,</span> <span class="n">layout</span><span class="p">.</span><span class="n">name</span><span class="p">);</span>
+
+<span class="c">% map to FT struct for visualization</span>
+<span class="n">sl_tf_ft</span><span class="p">=</span><span class="n">cosmo_map2meeg</span><span class="p">(</span><span class="n">sl_tf_ds</span><span class="p">);</span>
+
+<span class="c">% show figure</span>
+<span class="n">figure</span><span class="p">()</span>
+<span class="n">cfg</span> <span class="p">=</span> <span class="p">[];</span>
+<span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">)</span>
+    <span class="c">% GNU Octave does not show data when labels are shown</span>
+    <span class="n">cfg</span><span class="p">.</span><span class="n">interactive</span><span class="p">=</span><span class="s">&#39;no&#39;</span><span class="p">;</span>
+    <span class="n">cfg</span><span class="p">.</span><span class="n">showlabels</span><span class="p">=</span><span class="s">&#39;no&#39;</span><span class="p">;</span>
+<span class="k">else</span>
+    <span class="c">% Matlab supports interactive viewing and labels</span>
+    <span class="n">cfg</span><span class="p">.</span><span class="n">interactive</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+    <span class="n">cfg</span><span class="p">.</span><span class="n">showlabels</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+<span class="k">end</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">zlim</span><span class="p">=</span><span class="s">&#39;maxabs&#39;</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">layout</span>       <span class="p">=</span> <span class="n">layout</span><span class="p">;</span>
+<span class="n">ft_multiplotTFR</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">sl_tf_ft</span><span class="p">);</span>
+
+<span class="c">% Show citation information</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-cite&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="demo_meeg_dataset_operations.html"
+                        title="previous chapter">demo meeg dataset operations</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="demo_meeg_timelock_searchlight.html"
+                        title="next chapter">demo meeg timelock searchlight</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/demo_meeg_timefreq_searchlight.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="demo_meeg_timelock_searchlight.html" title="demo meeg timelock searchlight"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="demo_meeg_dataset_operations.html" title="demo meeg dataset operations"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" >Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

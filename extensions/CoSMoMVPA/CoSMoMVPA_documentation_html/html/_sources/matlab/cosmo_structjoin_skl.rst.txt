@@ -1,0 +1,7 @@
+.. _cosmo_structjoin_skl:
+
+cosmo structjoin skl
+====================
+
+.. include :: cosmo_structjoin_skl.txt
+

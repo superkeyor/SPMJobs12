@@ -1,0 +1,292 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test searchlight &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test show progress" href="test_show_progress.html" />
+    <link rel="prev" title="test sample unique" href="test_sample_unique.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_show_progress.html" title="test show progress"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_sample_unique.html" title="test sample unique"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-searchlight">
+<span id="id1"></span><h1>test searchlight<a class="headerlink" href="#test-searchlight" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_searchlight</span>
+<span class="c">% tests for cosmo_searchlight</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_searchlight_singlethread</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">helper_test_searchlight</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_searchlight_matlab_multithread</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">has_function</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">has_parallel_toolbox</span><span class="p">=</span><span class="n">all</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(</span><span class="n">has_function</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;gcp&#39;</span><span class="p">,</span><span class="s">&#39;parpool&#39;</span><span class="p">}));</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">has_parallel_toolbox</span>
+        <span class="n">cosmo_notify_test_skipped</span><span class="p">(</span><span class="s">&#39;Matlab parallel toolbox not available&#39;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">warning_state</span><span class="p">=</span><span class="n">warning</span><span class="p">();</span>
+    <span class="n">warning_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+    <span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">nproc</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">helper_test_searchlight</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_searchlight_octave_multithread</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">has_function</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">has_parallel_toolbox</span><span class="p">=</span><span class="n">all</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(</span><span class="n">has_function</span><span class="p">,</span> <span class="p">{</span><span class="s">&#39;parcellfun&#39;</span><span class="p">,</span><span class="c">...</span>
+                                                    <span class="s">&#39;pararrayfun&#39;</span><span class="p">}));</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">has_parallel_toolbox</span>
+        <span class="n">cosmo_notify_test_skipped</span><span class="p">(</span><span class="s">&#39;Octave parallel toolbox not available&#39;</span><span class="p">);</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">warning_state</span><span class="p">=</span><span class="n">warning</span><span class="p">();</span>
+    <span class="n">warning_resetter</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+    <span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">);</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">nproc</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span>
+    <span class="n">helper_test_searchlight</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">helper_test_searchlight</span><span class="p">(</span>opt<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;normal&#39;</span><span class="p">);</span>
+    <span class="n">m</span><span class="p">=</span><span class="n">any</span><span class="p">(</span><span class="nb">abs</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">3</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="o">~</span><span class="n">m</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="n">measure</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">a</span><span class="p">)</span> <span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+    <span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="n">m</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">samples</span><span class="p">,[</span><span class="mi">8</span> <span class="mi">12</span> <span class="mi">10</span> <span class="mi">9</span> <span class="mi">12</span> <span class="mi">10</span> <span class="mi">16</span> <span class="mi">13</span> <span class="mi">12</span> <span class="mi">17</span> <span class="mi">14</span> <span class="mi">15</span> <span class="c">...</span>
+                            <span class="mi">13</span> <span class="mi">11</span> <span class="mi">15</span> <span class="mi">14</span> <span class="mi">10</span> <span class="mi">9</span> <span class="mi">14</span> <span class="mi">11</span> <span class="mi">5</span> <span class="mi">7</span> <span class="mi">6</span> <span class="mi">7</span><span class="p">]);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">j</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">j</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">k</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">k</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">);</span>
+
+    <span class="n">nh2</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">17</span><span class="p">,</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">m</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh2</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">samples</span><span class="p">,[</span><span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">18</span> <span class="mi">16</span> <span class="c">...</span>
+                                <span class="mi">17</span> <span class="mi">17</span> <span class="mi">16</span> <span class="mi">15</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span> <span class="mi">17</span><span class="p">]);</span>
+
+
+    <span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_correlation_measure</span><span class="p">;</span>
+
+    <span class="n">nh3</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="c">...</span>
+                                <span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">m</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">nh3</span><span class="p">,</span> <span class="n">measure</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;center_ids&#39;</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">21</span><span class="p">],</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span> <span class="p">[</span><span class="mf">0.9742</span><span class="p">,</span><span class="o">-</span><span class="p">.</span><span class="mi">0273</span><span class="p">]</span><span class="c">...</span>
+                                        <span class="p">,</span><span class="s">&#39;relative&#39;</span><span class="p">,.</span><span class="mi">001</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">i</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="nb">j</span><span class="p">,[</span><span class="mi">2</span> <span class="mi">1</span><span class="p">]);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">k</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">5</span><span class="p">]);</span>
+
+    <span class="n">sa</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">sa</span><span class="p">.</span><span class="n">time</span><span class="p">=(</span><span class="mi">1</span><span class="p">:</span><span class="mi">6</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">sdim</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">sdim</span><span class="p">.</span><span class="n">values</span><span class="p">={</span><span class="mi">10</span><span class="p">:</span><span class="mi">15</span><span class="p">};</span>
+    <span class="n">sdim</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="s">&#39;time&#39;</span><span class="p">};</span>
+
+    <span class="n">nh4</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">measure2</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">opt</span><span class="p">)</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="c">...</span>
+                                       <span class="s">&#39;sa&#39;</span><span class="p">,</span><span class="n">sa</span><span class="p">,</span><span class="c">...</span>
+                                       <span class="s">&#39;a&#39;</span><span class="p">,</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;sdim&#39;</span><span class="p">,</span><span class="n">sdim</span><span class="p">));</span>
+    <span class="n">m2</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh4</span><span class="p">,</span><span class="n">measure2</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m2</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">sa</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">m2</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">,</span><span class="n">sdim</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">m2</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+
+
+<span class="k">function</span> <span class="nf">test_searchlight_partial_classification</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">6</span><span class="p">);</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">train_msk</span><span class="p">=</span><span class="nb">mod</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">={</span><span class="nb">find</span><span class="p">(</span><span class="n">train_msk</span><span class="p">)};</span>
+    <span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">={</span><span class="nb">find</span><span class="p">(</span><span class="o">~</span><span class="n">train_msk</span><span class="p">)};</span>
+
+    <span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">partitions</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">output</span><span class="p">=</span><span class="s">&#39;winner_predictions&#39;</span><span class="p">;</span>
+
+
+    <span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">res</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">samples</span><span class="p">([</span><span class="mi">3</span> <span class="mi">4</span> <span class="mi">7</span> <span class="mi">8</span> <span class="mi">11</span> <span class="mi">12</span><span class="p">],:),</span><span class="n">NaN</span><span class="p">(</span><span class="mi">6</span><span class="p">,</span><span class="mi">6</span><span class="p">))</span>
+    <span class="n">s</span><span class="p">=</span><span class="n">res</span><span class="p">.</span><span class="n">samples</span><span class="p">([</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">5</span> <span class="mi">6</span> <span class="mi">9</span> <span class="mi">10</span><span class="p">],:);</span>
+    <span class="n">assertTrue</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">s</span><span class="p">(:)</span><span class="o">==</span><span class="mi">1</span> <span class="o">|</span> <span class="n">s</span><span class="p">(:)</span><span class="o">==</span><span class="mi">2</span><span class="p">));</span>
+
+
+
+<span class="k">function</span> <span class="nf">test_searchlight_exceptions</span>
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                            <span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:},</span><span class="c">...</span>
+                            <span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">measure</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">opt</span><span class="p">)</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+
+    <span class="n">aet</span><span class="p">(</span><span class="n">struct</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds</span><span class="p">,</span><span class="n">measure</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">nh</span><span class="p">);</span>
+
+    <span class="n">measure_bad</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">opt</span><span class="p">)</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure_bad</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_searchlight_progress</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;!evalc&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+    <span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;progress&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">measure</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">opt</span><span class="p">)</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+    <span class="n">f</span><span class="p">=@()</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure</span><span class="p">);</span>
+    <span class="n">res</span><span class="p">=</span><span class="n">evalc</span><span class="p">(</span><span class="s">&#39;f();&#39;</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">strfind</span><span class="p">(</span><span class="n">res</span><span class="p">,</span><span class="s">&#39;[####################]&#39;</span><span class="p">)));</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_sample_unique.html"
+                        title="previous chapter">test sample unique</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_show_progress.html"
+                        title="next chapter">test show progress</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_searchlight.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_show_progress.html" title="test show progress"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_sample_unique.html" title="test sample unique"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

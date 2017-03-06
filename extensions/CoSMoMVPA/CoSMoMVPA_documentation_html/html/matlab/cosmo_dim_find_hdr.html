@@ -1,0 +1,180 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo dim find hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo dim generalization measure hdr" href="cosmo_dim_generalization_measure_hdr.html" />
+    <link rel="prev" title="cosmo dataset slice sa hdr" href="cosmo_dataset_slice_sa_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_generalization_measure_hdr.html" title="cosmo dim generalization measure hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dataset_slice_sa_hdr.html" title="cosmo dataset slice sa hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-dim-find-hdr">
+<span id="id1"></span><h1>cosmo dim find hdr<a class="headerlink" href="#cosmo-dim-find-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[dim, index, attr_name, dim_name, values]<span class="p">=</span><span class="nf">cosmo_dim_find</span><span class="p">(</span>ds, dim_label, raise<span class="p">)</span><span class="w"></span>
+<span class="c">% find dimension attribute in dataset</span>
+<span class="c">%</span>
+<span class="c">% [dim, index, attr_name, dim_name]=cosmo_dim_find(ds, dim_label[, raise])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds              dataset struct</span>
+<span class="c">%   dim_label       dimension label</span>
+<span class="c">%   raise           if true, raise an error if the dimension is not found.</span>
+<span class="c">%                   Default: false</span>
+<span class="c">%</span>
+<span class="c">% Outputs:</span>
+<span class="c">%   dim             dimension where dim_label was found, 1=sample</span>
+<span class="c">%                   dimension, 2=feature dimension</span>
+<span class="c">%   index           position where dim_label was found, so that:</span>
+<span class="c">%                     ds.a.(dim_name).values{index}==dim_label</span>
+<span class="c">%   attr_name       &#39;sa&#39; if dim==1, &#39;fa&#39; if dim==2</span>
+<span class="c">%   dim_name        &#39;sdim&#39; if dim==1, &#39;fdim&#39; if dim==2</span>
+<span class="c">%   values          the values associated with the dimension</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % fMRI dataset, find first voxel dimension</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;fmri&#39;);</span>
+<span class="c">%     [dim, index, attr_name, dim_name, values]=cosmo_dim_find(ds,&#39;i&#39;)</span>
+<span class="c">%     &gt; dim = 2</span>
+<span class="c">%     &gt; index = 1</span>
+<span class="c">%     &gt; attr_name = fa</span>
+<span class="c">%     &gt; dim_name = fdim</span>
+<span class="c">%     &gt; values = 1 2 3</span>
+<span class="c">%</span>
+<span class="c">%     % MEEG time-frequency dataset, find &#39;time&#39; dimension</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timefreq&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     [dim, index, attr_name, dim_name, values]=cosmo_dim_find(ds,&#39;time&#39;)</span>
+<span class="c">%     &gt; dim = 2</span>
+<span class="c">%     &gt; index = 3</span>
+<span class="c">%     &gt; attr_name = fa</span>
+<span class="c">%     &gt; dim_name = fdim</span>
+<span class="c">%     &gt; values = -0.2000 -0.1500 -0.1000 -0.0500 0</span>
+<span class="c">%     %</span>
+<span class="c">%     % move &#39;time&#39; from feature to sample dimension</span>
+<span class="c">%     dst=cosmo_dim_transpose(ds,&#39;time&#39;,1);</span>
+<span class="c">%     [dim, index, attr_name, dim_name, values]=cosmo_dim_find(dst,&#39;time&#39;)</span>
+<span class="c">%     &gt; dim = 1</span>
+<span class="c">%     &gt; index = 1</span>
+<span class="c">%     &gt; attr_name = sa</span>
+<span class="c">%     &gt; dim_name = sdim</span>
+<span class="c">%     &gt; values = -0.2000 -0.1500 -0.1000 -0.0500 0</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_dataset_slice_sa_hdr.html"
+                        title="previous chapter">cosmo dataset slice sa hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_dim_generalization_measure_hdr.html"
+                        title="next chapter">cosmo dim generalization measure hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_dim_find_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_generalization_measure_hdr.html" title="cosmo dim generalization measure hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dataset_slice_sa_hdr.html" title="cosmo dataset slice sa hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

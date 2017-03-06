@@ -1,0 +1,7 @@
+.. _cosmo_flatten_hdr:
+
+cosmo flatten hdr
+=================
+
+.. include :: cosmo_flatten_hdr.txt
+

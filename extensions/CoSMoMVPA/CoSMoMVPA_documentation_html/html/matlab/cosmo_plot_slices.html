@@ -1,0 +1,273 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo plot slices &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo publish run scripts" href="cosmo_publish_run_scripts.html" />
+    <link rel="prev" title="cosmo pdist" href="cosmo_pdist.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_publish_run_scripts.html" title="cosmo publish run scripts"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_pdist.html" title="cosmo pdist"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-plot-slices">
+<span id="id1"></span><h1>cosmo plot slices<a class="headerlink" href="#cosmo-plot-slices" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span><span class="nf">cosmo_plot_slices</span><span class="p">(</span>data, dim, slice_step, slice_start, slice_stop<span class="p">)</span><span class="w"></span>
+<span class="c">% Plots a set of slices from a dataset, nifti image, or 3D data array</span>
+<span class="c">%</span>
+<span class="c">% cosmo_plot_slices(data[, dim][, slice_step][, slice_start][, slice_stop])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%  data         an fmri dataset (e.g., from cosmo_fmri_dataset), or a 3D</span>
+<span class="c">%               array with data. data should contain samples from a single</span>
+<span class="c">%               volume (sample) only.</span>
+<span class="c">%  dim          dimension according to which slices are plotted</span>
+<span class="c">%               (default: 3). Values between 1 and 3 allows using a</span>
+<span class="c">%               saggital, axial or coronal view; but the mapping between</span>
+<span class="c">%               the 3 numbers and 3 views depends on the particular</span>
+<span class="c">%               orientation of the data.</span>
+<span class="c">%  slice_step   step between slices (default: 1). If negative then</span>
+<span class="c">%               -slice_step indicates the number of slices</span>
+<span class="c">%  slice_start  the index of the first slice to plot (default: 1).</span>
+<span class="c">%  slice_stop   the index of the last slice to plot (default: the number of</span>
+<span class="c">%               slices in the dim-th dimension).</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%    % plot an fMRI dataset struct with default options</span>
+<span class="c">%    cosmo_plot_slices(ds)</span>
+<span class="c">%</span>
+<span class="c">%    % plot an fMRI dataset struct along the second spatial dimension</span>
+<span class="c">%    cosmo_plot_slices(ds, 2)</span>
+<span class="c">%</span>
+<span class="c">%    % plot a random gaussian 3D array along the first dimension</span>
+<span class="c">%    cosmo_plot_slices(randn([40,50,20]),1)</span>
+<span class="c">%</span>
+<span class="c">%    % plot an fMRI dataset struct along the default spatial dimension</span>
+<span class="c">%    % every 5-th slice</span>
+<span class="c">%    cosmo_plot_slices(ds, [], 5)</span>
+<span class="c">%</span>
+<span class="c">%    % plot an fMRI dataset struct along the third spatial dimension</span>
+<span class="c">%    % with about 12 slices</span>
+<span class="c">%    cosmo_plot_slices(ds, 3, -12)</span>
+<span class="c">%</span>
+<span class="c">%    % plot an fMRI dataset struct along the third spatial dimension</span>
+<span class="c">%    % with about 12 slices, starting at slice 10 and stopping at slice 25</span>
+<span class="c">%    cosmo_plot_slices(ds, 3, -12, 10, 25)</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%  - Using this function only really makes sense for fMRI-like data.</span>
+<span class="c">%  - This function does not provide a consistent orientation for slices,</span>
+<span class="c">%    as this depends on the voxel-to-world transformation matrix, which is</span>
+<span class="c">%    completely ignored in this function. Thus left-right and top-down</span>
+<span class="c">%    swaps can occur. Different datasets may provide different views, for</span>
+<span class="c">%    example dim=1 may give a saggital view if the dataset comes from one</span>
+<span class="c">%    program and an axial view if it comes from another program.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">dim</span><span class="p">),</span> <span class="n">dim</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span> <span class="k">end</span>
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">3</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">slice_step</span><span class="p">),</span> <span class="n">slice_step</span><span class="p">=</span><span class="o">-</span><span class="mi">20</span><span class="p">;</span> <span class="k">end</span>
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">4</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">slice_start</span><span class="p">),</span> <span class="n">slice_start</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span> <span class="k">end</span>
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">5</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">slice_stop</span><span class="p">),</span> <span class="n">slice_stop</span><span class="p">=[];</span> <span class="k">end</span> <span class="c">% set later</span>
+
+    <span class="n">data3D</span><span class="p">=</span><span class="n">get_data3D</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+
+    <span class="c">% get min and max values across the entire volume</span>
+    <span class="n">data_lin</span><span class="p">=</span><span class="n">data3D</span><span class="p">(:);</span>
+    <span class="n">mn</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">data_lin</span><span class="p">);</span>
+    <span class="n">mx</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">data_lin</span><span class="p">);</span>
+
+    <span class="c">% shift it so that we can walk over the first dimension</span>
+    <span class="n">data_sh</span><span class="p">=</span><span class="nb">shiftdim</span><span class="p">(</span><span class="n">data3D</span><span class="p">,</span> <span class="n">dim</span><span class="o">-</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">slice_stop</span><span class="p">)</span>
+        <span class="n">slice_stop</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">data_sh</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">slice_step</span><span class="o">&lt;</span><span class="mi">0</span>
+        <span class="n">nslices</span><span class="p">=</span><span class="o">-</span><span class="n">slice_step</span><span class="p">;</span>
+        <span class="n">slice_step</span><span class="p">=</span><span class="nb">ceil</span><span class="p">((</span><span class="n">slice_stop</span><span class="o">-</span><span class="n">slice_start</span><span class="o">+</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">nslices</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% determine which slices to show</span>
+    <span class="n">slice_idxs</span><span class="p">=</span><span class="n">slice_start</span><span class="p">:</span><span class="n">slice_step</span><span class="p">:</span><span class="n">slice_stop</span><span class="p">;</span>
+    <span class="n">nslices</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">slice_idxs</span><span class="p">);</span>
+
+    <span class="n">plot_ratio</span><span class="p">=.</span><span class="mi">8</span><span class="p">;</span> <span class="c">% ratio between number of rows and colums</span>
+    <span class="n">nrows</span><span class="p">=</span><span class="nb">ceil</span><span class="p">(</span><span class="nb">sqrt</span><span class="p">(</span><span class="n">nslices</span><span class="p">)</span><span class="o">*</span><span class="n">plot_ratio</span><span class="p">);</span>
+    <span class="n">ncols</span><span class="p">=</span><span class="nb">ceil</span><span class="p">(</span><span class="n">nslices</span><span class="o">/</span><span class="n">nrows</span><span class="p">);</span>
+
+    <span class="c">% use header depending on dim</span>
+    <span class="n">header_labels</span><span class="p">={</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="s">&#39;j&#39;</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">};</span>
+
+    <span class="c">% order of slices and whether the slice should be transposed</span>
+    <span class="n">xorder</span><span class="p">=[</span><span class="o">-</span><span class="mi">1</span> <span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="n">yorder</span><span class="p">=[</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span> <span class="o">-</span><span class="mi">1</span><span class="p">];</span>
+    <span class="n">do_transpose</span><span class="p">=[</span><span class="n">true</span> <span class="n">false</span> <span class="n">true</span><span class="p">];</span>
+
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nslices</span>
+        <span class="n">slice_idx</span><span class="p">=</span><span class="n">slice_idxs</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="n">slice</span><span class="p">=</span><span class="nb">squeeze</span><span class="p">(</span><span class="n">data_sh</span><span class="p">(</span><span class="n">slice_idx</span><span class="p">,:,:));</span>
+
+        <span class="k">if</span> <span class="n">xorder</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span>
+            <span class="n">slice</span><span class="p">=</span><span class="n">slice</span><span class="p">(</span><span class="k">end</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">,:);</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">yorder</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span>
+            <span class="n">slice</span><span class="p">=</span><span class="n">slice</span><span class="p">(:,</span><span class="k">end</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">do_transpose</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+            <span class="n">slice</span><span class="p">=</span><span class="n">slice</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">subplot</span><span class="p">(</span><span class="n">nrows</span><span class="p">,</span> <span class="n">ncols</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+        <span class="n">imagesc</span><span class="p">(</span><span class="n">slice</span><span class="p">,</span> <span class="p">[</span><span class="n">mn</span><span class="p">,</span> <span class="n">mx</span><span class="p">]);</span>
+        <span class="n">title</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s = %d&#39;</span><span class="p">,</span> <span class="n">header_labels</span><span class="p">{</span><span class="n">dim</span><span class="p">},</span> <span class="n">slice_idx</span><span class="p">));</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>data3D<span class="p">=</span><span class="nf">get_data3D</span><span class="p">(</span>data<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">isstruct</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="s">&#39;fmri&#39;</span><span class="p">);</span>
+        <span class="n">data4D</span><span class="p">=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+        <span class="n">sz</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">data4D</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;expected single volume data, but found %d &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;volumes. To select a single volume, use &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;cosmo_slice. For example, to show the %d-th &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;volume from a dataset struct ds, use:\n\n   &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;cosmo_plot_slices(cosmo_slice(ds,%d))\n&#39;</span><span class="p">],</span><span class="c">...</span>
+                    <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">4</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;data must be 4D&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">data3D</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">data4D</span><span class="p">,</span> <span class="n">sz</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">));</span>
+    <span class="k">elseif</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">data</span><span class="p">)</span> <span class="o">||</span> <span class="n">islogical</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">ndim</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">data</span><span class="p">));</span>
+        <span class="k">if</span> <span class="n">ndim</span><span class="o">&gt;</span><span class="mi">3</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;expected 3D image - did you select a single volume?&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="n">data3D</span><span class="p">=</span><span class="n">data</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal input: expected dataset or 3D array&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_pdist.html"
+                        title="previous chapter">cosmo pdist</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_publish_run_scripts.html"
+                        title="next chapter">cosmo publish run scripts</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_plot_slices.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_publish_run_scripts.html" title="cosmo publish run scripts"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_pdist.html" title="cosmo pdist"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

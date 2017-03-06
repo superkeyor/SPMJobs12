@@ -1,0 +1,7 @@
+.. _cosmo_surficial_neighborhood:
+
+cosmo surficial neighborhood
+============================
+
+.. include :: cosmo_surficial_neighborhood.txt
+

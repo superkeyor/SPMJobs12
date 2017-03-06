@@ -1,0 +1,7 @@
+.. _cosmo_correlation_measure_skl:
+
+cosmo correlation measure skl
+=============================
+
+.. include :: cosmo_correlation_measure_skl.txt
+

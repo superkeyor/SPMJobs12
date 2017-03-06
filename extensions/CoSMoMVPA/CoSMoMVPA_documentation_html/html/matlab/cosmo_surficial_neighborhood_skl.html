@@ -1,0 +1,749 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo surficial neighborhood skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo synthetic dataset skl" href="cosmo_synthetic_dataset_skl.html" />
+    <link rel="prev" title="cosmo surface dataset skl" href="cosmo_surface_dataset_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_synthetic_dataset_skl.html" title="cosmo synthetic dataset skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_surface_dataset_skl.html" title="cosmo surface dataset skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-surficial-neighborhood-skl">
+<span id="id1"></span><h1>cosmo surficial neighborhood skl<a class="headerlink" href="#cosmo-surficial-neighborhood-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[nbrhood,vo,fo,out2in]<span class="p">=</span><span class="nf">cosmo_surficial_neighborhood</span><span class="p">(</span>ds, surfs, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% neighborhood definition for surface-based searchlight</span>
+<span class="c">%</span>
+<span class="c">% [nbrhood,vo,fo,out2in]=cosmo_surficial_neighborhood(ds, surfs, ...)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%    ds            fMRI-like volumetric or surface-based dataset</span>
+<span class="c">%    surfs         cell with specification of surfaces. The following</span>
+<span class="c">%                  formats are valid options:</span>
+<span class="c">%                  # Volumetric datasets:</span>
+<span class="c">%                    * Single surface (Caret, BrainVoyager)</span>
+<span class="c">%                      - {fn, [start,stop]}</span>
+<span class="c">%                      - {fn, [start,stop], niter}</span>
+<span class="c">%                      - {v,f,[start,stop], niter}</span>
+<span class="c">%                      where</span>
+<span class="c">%                         + fn is the filename of a single surface</span>
+<span class="c">%                         + start and stop are distances towards and away</span>
+<span class="c">%                           from the center of a hemisphere. For example,</span>
+<span class="c">%                           if surface coordinates are in mm (which is</span>
+<span class="c">%                           typical), start=-3 and stop=2 means selecting</span>
+<span class="c">%                           voxels that are 3 mm or closer to the surface</span>
+<span class="c">%                           on the white-matter side, up to voxels that are</span>
+<span class="c">%                           2 mm from the surface on the pial matter side</span>
+<span class="c">%                         + niter is the number of subsampling (mesh</span>
+<span class="c">%                           decimation) iterations to use for the output</span>
+<span class="c">%                           surface.</span>
+<span class="c">%                         + v are Px3 coordinates for P nodes</span>
+<span class="c">%                         + f are Qx3 node indices for Q faces</span>
+<span class="c">%                    * Twin surface (FreeSurfer)</span>
+<span class="c">%                      - {fn1, fn2}</span>
+<span class="c">%                      - {fn1, fn2,         fn_o}</span>
+<span class="c">%                      - {fn1, fn2,         niter}</span>
+<span class="c">%                      - {v1,v2,f}</span>
+<span class="c">%                      - {v1,v2,f,v_o,f_o}</span>
+<span class="c">%                      - {v1,v2,f,niter}</span>
+<span class="c">%                      where</span>
+<span class="c">%                         + fn{1,2} are filenames for pial and white</span>
+<span class="c">%                           surfaces</span>
+<span class="c">%                         + fn_o is the filename of an intermediate</span>
+<span class="c">%                           (node-wise average of a pial and white</span>
+<span class="c">%                           surface) output surface, and can be of a lower</span>
+<span class="c">%                           resolution than the pial and white surfaces.</span>
+<span class="c">%                           This  can be achieved by using MapIcosahedron</span>
+<span class="c">%                           to generate meshes of different densities, e.g.</span>
+<span class="c">%                           ld=64 for the pial and white surface and ld=16</span>
+<span class="c">%                           for the intermediate surface. It is required</span>
+<span class="c">%                           that for every node in the intermediate surface</span>
+<span class="c">%                           there is a corresponding node (at the same</span>
+<span class="c">%                           spatial location) on the node-wise average of</span>
+<span class="c">%                           the pial and white surface.</span>
+<span class="c">%                         + v{1,2} are Px3 coordinates for P nodes of the</span>
+<span class="c">%                           pial and white surfaces</span>
+<span class="c">%                         + f are Qx3 node indices for Q faces on the pial</span>
+<span class="c">%                           and white surfaces</span>
+<span class="c">%                         + v_o and f_o are the nodes and vertices of an</span>
+<span class="c">%                           intermediate output surface. It is required</span>
+<span class="c">%                           that the vertices in v_o are a subset of the</span>
+<span class="c">%                           pair-wise averages of vertices in v1 and v2. A</span>
+<span class="c">%                           typical use case is using standard topologies</span>
+<span class="c">%                           from AFNI&#39;s MapIcosahedron, where the v1 and v2</span>
+<span class="c">%                           are high-res with X linear divisions, v_o is</span>
+<span class="c">%                           low-res with Y linear divisions, and Y&lt;X and X</span>
+<span class="c">%                           is an integer multiple of Y.</span>
+<span class="c">%                         + niter is the number of subsampling (mesh</span>
+<span class="c">%                           decimation) iterations to use for the output</span>
+<span class="c">%                           surface.</span>
+<span class="c">%                  # Surface-based datasets:</span>
+<span class="c">%                    - {fn}</span>
+<span class="c">%                    - {fn, niter}</span>
+<span class="c">%                    - {v, f, niter}</span>
+<span class="c">%    &#39;radius&#39;, r         } select neighbors either within radius r, grow</span>
+<span class="c">%    &#39;count&#39;, c          } the radius to get neighbors are c locations,</span>
+<span class="c">%    &#39;direct&#39;, true      } or get direct neighbors only (nodes who share an</span>
+<span class="c">%                        } edge)</span>
+<span class="c">%                        } These three options are mutually exclusive</span>
+<span class="c">%    &#39;metric&#39;,metric     distance metric along cortical surface. One of</span>
+<span class="c">%                        &#39;geodesic&#39; (default), &#39;dijkstra&#39; or &#39;euclidean&#39;.</span>
+<span class="c">%    &#39;line_def&#39;,line_def definition of lines from inner to outer surface</span>
+<span class="c">%                        See surfing_nodeidxs2coords</span>
+<span class="c">%    &#39;progress&#39;, p       Show progress every p centers (default: 100)</span>
+<span class="c">%    &#39;vol_def&#39;, v        Volume definition with fields .mat (4x4 affine</span>
+<span class="c">%                        voxel-to-world matrix) and .dim (1x3 number of</span>
+<span class="c">%                        voxels in each dimension). If omittied, voldef is</span>
+<span class="c">%                        based on ds</span>
+<span class="c">%    &#39;subsample_min_ratio&#39;, r   When niter is provided and positive, it</span>
+<span class="c">%                               defines the minimum ratio between surfaces</span>
+<span class="c">%                               of old and new faces. This should help in</span>
+<span class="c">%                               preventing the generation of triangles with</span>
+<span class="c">%                               angles close to 180 degrees (default: 0.2).</span>
+<span class="c">%    &#39;center_ids&#39;, c     Center ids in output surface of the nodes for</span>
+<span class="c">%                        which the neighborhood should be computed. Empty</span>
+<span class="c">%                        means all nodes are used (default: [])</span>
+<span class="c">%</span>
+<span class="c">% Outputs:</span>
+<span class="c">%     nbrhood       neighborhood struct with fields</span>
+<span class="c">%                   .neighbors       Mx1 cell with .neighbors{k} the</span>
+<span class="c">%                                    indices of features (relative to ds)</span>
+<span class="c">%                                    in the neighborhood of node k</span>
+<span class="c">%                   .a.fdim.labels   set to {&#39;node_indices&#39;}</span>
+<span class="c">%                   .a.fdim.values   set to {center_ids} with center_ids</span>
+<span class="c">%                                    Mx1 ids of each neighborhood</span>
+<span class="c">%                   .fa.node_indices identical to center_ids</span>
+<span class="c">%     v_o           NVx3 coordinates for N nodes of the output surface</span>
+<span class="c">%     f_o           NFx3 node indices for Q faces of the output surface</span>
+<span class="c">%     out2in        Node mapping from output to input surface.</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % this example uses BrainVoyager Surfaces</span>
+<span class="c">%     anat_fn=&#39;SUB02_MPRAGE_ISO_IIHC_TAL.vmr&#39;;</span>
+<span class="c">%     surf_fn=&#39;SUB02_MPRAGE_ISO_IIHC_TAL_LH_RECOSM.srf&#39;;</span>
+<span class="c">%</span>
+<span class="c">%     % read dataset and surface</span>
+<span class="c">%     ds=cosmo_fmri_dataset(anat_fn,&#39;mask&#39;,anat_fn);</span>
+<span class="c">%     fprintf(&#39;Dataset has %d samples and %d features\n&#39;,size(ds.samples));</span>
+<span class="c">%</span>
+<span class="c">%     [v,f]=surfing_read(surf_fn);</span>
+<span class="c">%     fprintf(&#39;Input surface has %d nodes and %d faces\n&#39;,size(v,1),size(f,1))</span>
+<span class="c">%</span>
+<span class="c">%     % define neighborhood parameters</span>
+<span class="c">%     count=100; % 100 voxels per searchlight</span>
+<span class="c">%     niter=10;    % 10 mesh decimation algorithms</span>
+<span class="c">%</span>
+<span class="c">%     % surface definition; voxels are selected that are 3 mm or closer to the</span>
+<span class="c">%     % surface on the white-matter side, up to voxels that are 1 mm from the</span>
+<span class="c">%     % surface on the pial matter side.</span>
+<span class="c">%</span>
+<span class="c">%     % Note: for FreeSurfer surfaces one could use</span>
+<span class="c">%     %       {surf_white_fn, surf_pial_fn [,niter]}</span>
+<span class="c">%     surfs={surf_fn,[-3 1],niter};</span>
+<span class="c">%     [nbrhood,vo,fo]=cosmo_surficial_neighborhood(ds,surfs,&#39;radius&#39;,radius);</span>
+<span class="c">%     fprintf(&#39;Neighborhood has %d elements\n&#39;, numel(nbrhood.neighbors))</span>
+<span class="c">%     fprintf(&#39;Output surface has %d nodes and %d faces\n&#39;,size(vo,1),size(fo,1))</span>
+<span class="c">%</span>
+<span class="c">%     % write decimated (smaller) output surface in ASCII format</span>
+<span class="c">%     surfing_write([&#39;small_surf.asc&#39;],vo,fo);</span>
+<span class="c">%</span>
+<span class="c">%     % define a measure that counts the number of features in each searchlight</span>
+<span class="c">%     % (in more practical applications the measure could be, for example,</span>
+<span class="c">%     %  cosmo_correlation_measure or cosmo_crossvalidation_measure)</span>
+<span class="c">%     voxel_counter=@(x,opt) cosmo_structjoin(&#39;samples&#39;,size(x.samples,2));</span>
+<span class="c">%</span>
+<span class="c">%     % run a searchlight</span>
+<span class="c">%     res=cosmo_searchlight(ds,voxel_counter,&#39;nbrhood&#39;,nbrhood);</span>
+<span class="c">%     fprintf(&#39;Searchlights have mean %.3f +/- %.3f features\n&#39;,...</span>
+<span class="c">%                     mean(res.samples), std(res.samples));</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">%     % store surface dataset (in AFNI/SUMA NIML format) with the number of</span>
+<span class="c">%     % features (voxels) for each center node of the output surface</span>
+<span class="c">%     s=struct();</span>
+<span class="c">%     s.node_indices=res.a.fdim.values{1}(res.fa.node_indices);</span>
+<span class="c">%     s.data=res.samples&#39;;</span>
+<span class="c">%     surfing_write(&#39;voxcount.niml.dset&#39;,s);</span>
+<span class="c">%</span>
+<span class="c">%     % store volume dataset (in NIFTI format) with the number of times each</span>
+<span class="c">%     % voxel was selected by a searchlight</span>
+<span class="c">%     vol=ds;</span>
+<span class="c">%     vol.samples(:)=0;</span>
+<span class="c">%     for k=1:numel(nbrhood.neighbors);</span>
+<span class="c">%         nbrs=nbrhood.neighbors{k};</span>
+<span class="c">%         vol.samples(nbrs)=vol.samples(nbrs)+1;</span>
+<span class="c">%     end</span>
+<span class="c">%     cosmo_map2fmri(vol,&#39;voxcount.nii&#39;);</span>
+<span class="c">%     cosmo_map2fmri(ds,&#39;anat.nii&#39;);</span>
+<span class="c">%</span>
+<span class="c">% Notes</span>
+<span class="c">%  - Higher values of niter, or using a less dense mesh for fn_o or</span>
+<span class="c">%    (v_o, f_o) means that the output surface has fewer nodes, which will</span>
+<span class="c">%    decrease execution time for searchlights.</span>
+<span class="c">%  - This function requires the surfing toolbox, surfing.sourceforge.net or</span>
+<span class="c">%    github.com/nno/surfing</span>
+<span class="c">%</span>
+<span class="c">% See also: surfing, surfing_nodeidxs2coords, cosmo_searchlight</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;surfing&#39;</span><span class="p">);</span>
+
+<span class="n">check_input</span><span class="p">(</span><span class="n">surfs</span><span class="p">,</span> <span class="n">varargin</span><span class="p">{:});</span>
+
+<span class="n">defaults</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">defaults</span><span class="p">.</span><span class="n">metric</span><span class="p">=</span><span class="s">&#39;geodesic&#39;</span><span class="p">;</span>
+<span class="n">defaults</span><span class="p">.</span><span class="n">line_def</span><span class="p">=[</span><span class="mi">10</span> <span class="mi">0</span> <span class="mi">1</span><span class="p">];</span>
+<span class="n">defaults</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span>
+<span class="n">defaults</span><span class="p">.</span><span class="n">vol_def</span><span class="p">=[];</span>
+<span class="n">defaults</span><span class="p">.</span><span class="n">subsample_min_ratio</span><span class="p">=.</span><span class="mi">2</span><span class="p">;</span>
+<span class="n">defaults</span><span class="p">.</span><span class="n">center_ids</span><span class="p">=[];</span>
+<span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">{:});</span>
+
+<span class="n">ds_type</span><span class="p">=</span><span class="n">get_ds_type</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">metric</span><span class="p">,</span><span class="s">&#39;geodesic&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;direct&#39;</span><span class="p">)</span>
+    <span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;fast_marching&#39;</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c">% get surfaces</span>
+<span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">vo</span><span class="p">,</span><span class="n">fo</span><span class="p">]=</span><span class="n">parse_surfs</span><span class="p">(</span><span class="n">surfs</span><span class="p">,</span> <span class="n">ds_type</span><span class="p">);</span>
+<span class="n">ds_is_surface</span><span class="p">=</span><span class="n">strcmp</span><span class="p">(</span><span class="n">ds_type</span><span class="p">,</span> <span class="s">&#39;surface&#39;</span><span class="p">);</span>
+
+<span class="n">one_surface</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span> <span class="o">||</span> <span class="p">(</span><span class="n">ds_is_surface</span> <span class="o">&amp;&amp;</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v2</span><span class="p">));</span>
+
+<span class="c">% define intermediate high-res surface</span>
+<span class="k">if</span> <span class="n">one_surface</span>
+    <span class="n">vi</span><span class="p">=</span><span class="n">v1</span><span class="p">;</span>
+<span class="k">else</span>
+    <span class="n">vi</span><span class="p">=(</span><span class="n">v1</span><span class="o">+</span><span class="n">v2</span><span class="p">)</span><span class="o">*</span><span class="p">.</span><span class="mi">5</span><span class="p">;</span>
+<span class="k">end</span>
+
+<span class="k">switch</span> <span class="nb">numel</span><span class="p">(</span><span class="n">vo</span><span class="p">)</span>
+    <span class="k">case</span> <span class="mi">0</span>
+        <span class="c">% no low-res surface, so use intermediate surface as source</span>
+        <span class="n">vo</span><span class="p">=</span><span class="n">vi</span><span class="p">;</span>
+        <span class="n">fo</span><span class="p">=</span><span class="n">f</span><span class="p">;</span>
+    <span class="k">case</span> <span class="mi">1</span>
+        <span class="c">% subsample the surface</span>
+        <span class="p">[</span><span class="n">vo</span><span class="p">,</span><span class="n">fo</span><span class="p">]=</span><span class="n">surfing_subsample_surface</span><span class="p">(</span><span class="n">vi</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">vo</span><span class="p">,</span><span class="c">...</span>
+                                <span class="n">opt</span><span class="p">.</span><span class="n">subsample_min_ratio</span><span class="p">,</span> <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c">% find mapping from low to high res surface</span>
+<span class="c">% if they are identical then low2high is the identity</span>
+<span class="n">out2in</span><span class="p">=</span><span class="n">surfing_maplow2hires</span><span class="p">(</span><span class="n">vo</span><span class="o">&#39;</span><span class="p">,</span> <span class="n">vi</span><span class="o">&#39;</span><span class="p">);</span>
+
+
+
+<span class="c">% set center ids</span>
+<span class="n">center_ids</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">center_ids</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span> <span class="c">% ensure row vector</span>
+<span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">center_ids</span><span class="p">)</span>
+    <span class="n">center_ids</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">vo</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">else</span>
+    <span class="n">out2in</span><span class="p">=</span><span class="n">out2in</span><span class="p">(</span><span class="n">center_ids</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c">% either surface or volumetric input dataset</span>
+<span class="n">ds_is_surface</span><span class="p">=</span><span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;surface&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+<span class="n">ds_is_volume</span><span class="p">=</span><span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;fmri&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+<span class="k">if</span> <span class="n">sum</span><span class="p">([</span><span class="n">ds_is_surface</span><span class="p">,</span> <span class="n">ds_is_volume</span><span class="p">])</span><span class="o">~=</span><span class="mi">1</span>
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported dataset: expected surface or fmri dataset&#39;</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="k">if</span> <span class="n">ds_is_surface</span>
+    <span class="c">% todo: use out2in to allow for subset of node indices as center</span>
+    <span class="c">%       (the current implementation computes neighborhoods for all</span>
+    <span class="c">%       nodes)</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">center_ids</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">vo</span><span class="p">,</span><span class="mi">1</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unsupported center_ids option&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">out2in</span><span class="o">&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">out2in</span><span class="p">))</span>
+        <span class="c">%error(&#39;Unsupported other output surface than input surface&#39;);</span>
+    <span class="k">end</span>
+
+    <span class="n">nbrhood</span><span class="p">=</span><span class="n">surface_to_surface_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">vi</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+
+<span class="k">elseif</span> <span class="n">ds_is_volume</span>
+    <span class="c">% get circle definition</span>
+    <span class="n">circle_def</span><span class="p">=</span><span class="n">get_circle_def</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% set volume definition</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">vol_def</span><span class="p">)</span>
+        <span class="n">vol_def</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">vol</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">vol_def</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">vol_def</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+
+    <span class="c">% define voxel mask based on features in dataset</span>
+    <span class="n">ds_one</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>          <span class="c">% arbitrary sample</span>
+    <span class="n">ds_one</span><span class="p">.</span><span class="n">samples</span><span class="p">(:)=</span><span class="mi">1</span><span class="p">;</span>               <span class="c">% all set to one</span>
+    <span class="n">ds_unflat</span><span class="p">=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">ds_one</span><span class="p">);</span> <span class="c">% missing features have value of zero</span>
+    <span class="n">vol_def</span><span class="p">.</span><span class="n">mask</span><span class="p">=</span><span class="n">ds_unflat</span><span class="o">~=</span><span class="mi">0</span><span class="p">;</span>          <span class="c">% define mask</span>
+
+
+    <span class="n">n2v</span><span class="p">=</span><span class="n">surfing_voxelselection</span><span class="p">(</span><span class="n">v1</span><span class="o">&#39;</span><span class="p">,</span><span class="n">v2</span><span class="o">&#39;</span><span class="p">,</span><span class="n">f</span><span class="o">&#39;</span><span class="p">,</span><span class="n">circle_def</span><span class="p">,</span><span class="n">vol_def</span><span class="p">,</span><span class="c">...</span>
+                                             <span class="n">out2in</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">line_def</span><span class="p">,</span><span class="c">...</span>
+                                             <span class="n">opt</span><span class="p">.</span><span class="n">metric</span><span class="p">,</span><span class="mi">0</span><span class="o">+</span><span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">);</span>
+
+    <span class="n">ncenters</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">center_ids</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">ncenters</span><span class="o">==</span><span class="nb">numel</span><span class="p">(</span><span class="n">n2v</span><span class="p">));</span>
+    <span class="c">% determine unique center ids used</span>
+    <span class="p">[</span><span class="n">unq_center_ids</span><span class="p">,</span><span class="n">unused</span><span class="p">,</span><span class="n">center_ids_mapping</span><span class="p">]=</span><span class="n">unique</span><span class="p">(</span><span class="n">center_ids</span><span class="p">);</span>
+
+    <span class="c">% find mapping from features</span>
+    <span class="n">nf_full</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">vol_def</span><span class="p">.</span><span class="n">mask</span><span class="p">);</span>
+    <span class="n">nf_mask</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">vol_def</span><span class="p">.</span><span class="n">mask</span><span class="p">(:));</span>
+    <span class="n">all2msk_indices</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nf_full</span><span class="p">);</span>
+    <span class="n">all2msk_indices</span><span class="p">(</span><span class="n">vol_def</span><span class="p">.</span><span class="n">mask</span><span class="p">)=</span><span class="mi">1</span><span class="p">:</span><span class="n">nf_mask</span><span class="p">;</span>
+
+    <span class="c">% store neighborhood information</span>
+    <span class="n">nbrhood</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="s">&#39;node_indices&#39;</span><span class="p">};</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">={</span><span class="n">unq_center_ids</span><span class="p">};</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">=</span><span class="n">center_ids_mapping</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span>
+
+    <span class="c">% set neighbors while considering the masked nature of the input dataset</span>
+    <span class="n">neighbors</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">ncenters</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncenters</span>
+        <span class="n">msk_indices</span><span class="p">=</span><span class="n">all2msk_indices</span><span class="p">(</span><span class="n">double</span><span class="p">(</span><span class="n">n2v</span><span class="p">{</span><span class="n">k</span><span class="p">}));</span>
+        <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">msk_indices</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">));</span>
+        <span class="n">neighbors</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">msk_indices</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">neighbors</span><span class="p">;</span>
+
+<span class="k">else</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">false</span><span class="p">,</span><span class="s">&#39;this should never happen&#39;</span><span class="p">);</span>
+<span class="k">end</span>
+
+<span class="c">% compatibility wrapper for the surfing toolbox</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">ensure_neighbors_row_vectors</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">);</span>
+
+<span class="n">origin</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+<span class="n">origin</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">;</span>
+<span class="n">nbrhood</span><span class="p">.</span><span class="n">origin</span><span class="p">=</span><span class="n">origin</span><span class="p">;</span>
+
+
+<span class="n">cosmo_check_neighborhood</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>nbrhood<span class="p">=</span><span class="nf">surface_to_surface_neighborhood</span><span class="p">(</span>ds,vertices,faces,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">circle_def</span><span class="p">=</span><span class="n">get_circle_def</span><span class="p">(</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">dim_label</span><span class="p">=</span><span class="s">&#39;node_indices&#39;</span><span class="p">;</span>
+
+    <span class="p">[</span><span class="n">two</span><span class="p">,</span><span class="n">fdim_index</span><span class="p">,</span><span class="n">attr_name</span><span class="p">,</span><span class="n">dim_name</span><span class="p">]=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="n">dim_label</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+
+    <span class="n">fdim_nodes</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.(</span><span class="n">dim_name</span><span class="p">).</span><span class="n">values</span><span class="p">{</span><span class="n">fdim_index</span><span class="p">};</span>
+    <span class="n">fa_indices</span><span class="p">=</span><span class="n">ds</span><span class="p">.(</span><span class="n">attr_name</span><span class="p">).(</span><span class="n">dim_label</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">fdim_nodes</span><span class="p">),</span> <span class="n">unique</span><span class="p">(</span><span class="n">fdim_nodes</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;values in .a.%s.values{%d} are not all unique&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">dim_name</span><span class="p">,</span> <span class="n">fdim_index</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+    <span class="c">% - unq_nodes contains the node index associated with each unique</span>
+    <span class="c">%   node_indices feature in the dataset</span>
+    <span class="p">[</span><span class="n">fa_idxs</span><span class="p">,</span><span class="n">unq_fa_indices</span><span class="p">]=</span><span class="n">cosmo_index_unique</span><span class="p">(</span><span class="n">fa_indices</span><span class="o">&#39;</span><span class="p">);</span>
+    <span class="n">unq_nodes</span><span class="p">=</span><span class="n">fdim_nodes</span><span class="p">(</span><span class="n">unq_fa_indices</span><span class="p">);</span>
+
+    <span class="n">nvertices</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">vertices</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">too_large_index</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">unq_nodes</span><span class="o">&gt;</span><span class="n">nvertices</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">too_large_index</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;surface has %d vertices, but maximum .fa.%s &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;is %d&#39;</span><span class="p">],</span><span class="c">...</span>
+                    <span class="n">nvertices</span><span class="p">,</span><span class="n">dim_label</span><span class="p">,</span><span class="n">fa_node_ids</span><span class="p">(</span><span class="n">too_large_index</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">ignore_vertices_msk</span><span class="p">=</span><span class="n">true</span><span class="p">(</span><span class="n">nvertices</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ignore_vertices_msk</span><span class="p">(</span><span class="n">unq_nodes</span><span class="p">)=</span><span class="n">false</span><span class="p">;</span>
+
+    <span class="n">vertices</span><span class="p">(</span><span class="n">ignore_vertices_msk</span><span class="p">,:)=</span><span class="n">NaN</span><span class="p">;</span>
+
+    <span class="c">% set mapping from nodes to feature ids</span>
+    <span class="n">ncenters</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">unq_fa_indices</span><span class="p">);</span>
+    <span class="n">node2feature_ids</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nvertices</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncenters</span>
+        <span class="n">node</span><span class="p">=</span><span class="n">unq_nodes</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">ignore_vertices_msk</span><span class="p">(</span><span class="n">node</span><span class="p">)</span>
+            <span class="n">feature_ids</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">feature_ids</span><span class="p">=</span><span class="n">fa_idxs</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">end</span>
+        <span class="n">node2feature_ids</span><span class="p">{</span><span class="n">node</span><span class="p">}=</span><span class="n">feature_ids</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+    <span class="c">% run node selection</span>
+    <span class="p">[</span><span class="n">n2ns</span><span class="p">,</span><span class="n">radii</span><span class="p">]=</span><span class="n">surfing_nodeselection</span><span class="p">(</span><span class="n">vertices</span><span class="o">&#39;</span><span class="p">,</span><span class="n">faces</span><span class="o">&#39;</span><span class="p">,</span><span class="n">circle_def</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="n">opt</span><span class="p">.</span><span class="n">metric</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">);</span>
+
+    <span class="c">% set output</span>
+    <span class="n">nbrhood</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">={</span><span class="s">&#39;node_indices&#39;</span><span class="p">};</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">={</span><span class="n">fdim_nodes</span><span class="p">};</span>
+
+
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">ncenters</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">radius</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ncenters</span><span class="p">);</span>
+    <span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ncenters</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ncenters</span>
+        <span class="n">center_node</span><span class="p">=</span><span class="n">unq_nodes</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">unq_fa_indices</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">radius</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">radii</span><span class="p">(</span><span class="n">center_node</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="n">ignore_vertices_msk</span><span class="p">(</span><span class="n">center_node</span><span class="p">)</span>
+            <span class="n">around_feature_ids</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">around_nodes</span><span class="p">=</span><span class="n">n2ns</span><span class="p">{</span><span class="n">center_node</span><span class="p">};</span>
+            <span class="n">around_feature_ids</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">node2feature_ids</span><span class="p">{</span><span class="n">around_nodes</span><span class="p">});</span>
+        <span class="k">end</span>
+
+        <span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">around_feature_ids</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>nbrhood<span class="p">=</span><span class="nf">ensure_neighbors_row_vectors</span><span class="p">(</span>nbrhood<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% compatibility wrapper for the surfing toolbox</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">size</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="mi">1</span><span class="p">)</span><span class="o">~=</span><span class="mi">1</span>
+            <span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">k</span><span class="p">}</span><span class="s">&#39;;</span>
+<span class="s">        end</span>
+<span class="s">    end</span>
+
+<span class="s">function [v1,v2,f,vo,fo]=parse_surfs(surfs, ds_type)</span>
+<span class="s">    % helper function to get surfaces</span>
+
+<span class="s">    ds_is_surface=strcmp(ds_type,&#39;</span><span class="n">surface</span><span class="o">&#39;</span><span class="p">);</span>
+
+    <span class="p">[</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">vo</span><span class="p">,</span><span class="n">fo</span><span class="p">]=</span><span class="n">parse_surfs_arguments</span><span class="p">(</span><span class="n">ds_is_surface</span><span class="p">,</span> <span class="n">surfs</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">~=</span><span class="mi">2</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">f</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">f</span><span class="p">))</span>
+        <span class="c">% swap position</span>
+        <span class="n">temp</span><span class="p">=</span><span class="n">f</span><span class="p">;</span>
+        <span class="n">f</span><span class="p">=</span><span class="n">v2</span><span class="p">;</span>
+        <span class="n">v2</span><span class="p">=</span><span class="n">temp</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">check_surf_arguments</span><span class="p">(</span><span class="n">ds_is_surface</span><span class="p">,</span><span class="n">v1</span><span class="p">,</span><span class="n">v2</span><span class="p">,</span><span class="n">f</span><span class="p">,</span><span class="n">vo</span><span class="p">,</span><span class="n">fo</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_surf_arguments</span><span class="p">(</span>ds_is_surface,v1,v2,f,vo,fo<span class="p">)</span><span class="w"></span>
+
+
+<span class="w">    </span><span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span> <span class="o">||</span> <span class="p">(</span><span class="nb">isempty</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">~</span><span class="n">ds_is_surface</span><span class="p">)</span> <span class="o">||</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Not enough arguments for surfaces and topology&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% c2 can be vector with two elements indicating the size of the curved</span>
+    <span class="c">% cylinder with a circle as basis; if not, it should be a surface with</span>
+    <span class="c">% the same size as c1</span>
+    <span class="n">one_surface</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span><span class="o">==</span><span class="mi">2</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="n">one_surface</span> <span class="o">||</span> <span class="n">ds_is_surface</span> <span class="o">||</span> <span class="nb">isequal</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">v1</span><span class="p">),</span><span class="nb">size</span><span class="p">(</span><span class="n">v2</span><span class="p">)))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Size mismatch between surfaces: %dx%d != %dx%d&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="nb">size</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="c">...</span>
+                    <span class="nb">size</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span> <span class="nb">size</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span><span class="mi">2</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">surfing_check_surface</span><span class="p">(</span><span class="n">v1</span><span class="p">,</span><span class="n">f</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="n">one_surface</span> <span class="o">||</span> <span class="n">ds_is_surface</span><span class="p">)</span>
+        <span class="n">surfing_check_surface</span><span class="p">(</span><span class="n">v2</span><span class="p">,</span><span class="n">f</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">fo</span><span class="p">)</span>
+        <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">vo</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span>
+            <span class="c">% if not a scaler (niter) then throw an error</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Topology missing for output surface&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">else</span>
+        <span class="n">surfing_check_surface</span><span class="p">(</span><span class="n">vo</span><span class="p">,</span><span class="n">fo</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>[v1,v2,f,vo,fo]<span class="p">=</span><span class="nf">parse_surfs_arguments</span><span class="p">(</span>ds_is_surface,surfs<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">iscell</span><span class="p">(</span><span class="n">surfs</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;surfs argument must be a cell&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">surfs</span><span class="p">);</span>
+
+    <span class="c">% space for output</span>
+    <span class="n">v1</span><span class="p">=[];</span>
+    <span class="n">v2</span><span class="p">=[];</span>
+    <span class="n">f</span><span class="p">=[];</span>
+    <span class="n">vo</span><span class="p">=[];</span>
+    <span class="n">fo</span><span class="p">=[];</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">surfs</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">ischar</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="c">% filename; read the surface</span>
+            <span class="p">[</span><span class="n">c</span><span class="p">,</span><span class="n">f_</span><span class="p">]=</span><span class="n">surfing_read</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+            <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+                <span class="n">v1</span><span class="p">=</span><span class="n">c</span><span class="p">;</span>
+                <span class="n">f</span><span class="p">=</span><span class="n">f_</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="o">~</span><span class="n">ds_is_surface</span>
+                <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">f_</span><span class="p">,</span><span class="n">f</span><span class="p">)</span>
+                    <span class="n">error</span><span class="p">(</span><span class="s">&#39;Topology mismatch between the two surfaces&#39;</span><span class="p">);</span>
+                <span class="k">end</span>
+                <span class="n">v2</span><span class="p">=</span><span class="n">c</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">vo</span><span class="p">)</span>
+                <span class="n">vo</span><span class="p">=</span><span class="n">c</span><span class="p">;</span>
+                <span class="n">fo</span><span class="p">=</span><span class="n">f_</span><span class="p">;</span>
+            <span class="k">else</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;Superfluous argument at position %d&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+            <span class="k">end</span>
+        <span class="k">elseif</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">s</span><span class="p">)</span>
+            <span class="c">% numeric array; coordinates or faces</span>
+            <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v1</span><span class="p">)</span>
+                <span class="n">v1</span><span class="p">=</span><span class="n">s</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">v2</span><span class="p">)</span>
+                <span class="n">v2</span><span class="p">=</span><span class="n">s</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+                <span class="n">f</span><span class="p">=</span><span class="n">s</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">vo</span><span class="p">)</span>
+                <span class="n">vo</span><span class="p">=</span><span class="n">s</span><span class="p">;</span>
+            <span class="k">elseif</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">fo</span><span class="p">)</span>
+                <span class="n">fo</span><span class="p">=</span><span class="n">s</span><span class="p">;</span>
+            <span class="k">else</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;Superfluous argument at position %d&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+            <span class="k">end</span>
+        <span class="k">else</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Expected surface filename or array at position %d&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>ds_type<span class="p">=</span><span class="nf">get_ds_type</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">supported_ds_types</span><span class="p">={</span><span class="s">&#39;surface&#39;</span><span class="p">,</span><span class="s">&#39;fmri&#39;</span><span class="p">};</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">supported_ds_types</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">supported_ds_type</span><span class="p">=</span><span class="n">supported_ds_types</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">supported_ds_type</span><span class="p">,</span><span class="n">false</span><span class="p">)</span>
+            <span class="n">ds_type</span><span class="p">=</span><span class="n">supported_ds_type</span><span class="p">;</span>
+            <span class="k">return</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c">% maybe it is not a dataset at all, check this possibility</span>
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="c">% it is a valid dataset but not fmri or surface;</span>
+    <span class="c">% try to give an appropriate error message</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">supported_ds_type</span><span class="p">=</span><span class="n">supported_ds_types</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">is_ds_type_like</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">supported_ds_type</span><span class="p">)</span>
+            <span class="c">% let it throw an error</span>
+            <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">supported_ds_type</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unknown dataset type, supported are: %s.&#39;</span><span class="p">,</span> <span class="c">...</span>
+                    <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">supported_ds_types</span><span class="p">,</span><span class="s">&#39;, &#39;</span><span class="p">));</span>
+
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">is_ds_type_like</span><span class="p">(</span>ds, type<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function that uses heuristics to find type of dataset</span>
+    <span class="n">tf</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+
+    <span class="k">switch</span> <span class="n">type</span>
+        <span class="k">case</span> <span class="s">&#39;surface&#39;</span>
+            <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;fa.node_indices&#39;</span><span class="p">)</span>
+                <span class="n">tf</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.fdim.values&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                        <span class="nb">isequal</span><span class="p">({</span><span class="s">&#39;node_indices&#39;</span><span class="p">},</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">)</span>
+                <span class="n">tf</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="k">end</span>
+
+        <span class="k">case</span> <span class="s">&#39;fmri&#39;</span>
+            <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,{</span><span class="s">&#39;fa.i&#39;</span><span class="p">,</span><span class="s">&#39;fa.j&#39;</span><span class="p">,</span><span class="s">&#39;fa.k&#39;</span><span class="p">}))</span>
+                <span class="n">tf</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+                <span class="k">return</span><span class="p">;</span>
+            <span class="k">end</span>
+
+            <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.fdim.values&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                        <span class="n">any</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">({</span><span class="s">&#39;i&#39;</span><span class="p">,</span><span class="s">&#39;j&#39;</span><span class="p">,</span><span class="s">&#39;k&#39;</span><span class="p">},</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">))</span>
+                <span class="n">tf</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+                <span class="k">return</span>
+            <span class="k">end</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;unsupported type %s&#39;</span><span class="p">,</span> <span class="n">type</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span>surfs, varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% give deprecation notice</span>
+    <span class="k">if</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">surfs</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;Second argument must be a cell with a surface &#39;</span><span class="c">...</span>
+                <span class="s">&#39;definition (as of Jan 2015, the syntax for this &#39;</span><span class="c">...</span>
+                <span class="s">&#39;function has changed)&#39;</span><span class="p">]);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>circle_def<span class="p">=</span><span class="nf">get_circle_def</span><span class="p">(</span>opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">metric2circle_def_func</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">metric2circle_def_func</span><span class="p">.</span><span class="n">radius</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="n">x</span><span class="p">;</span>
+    <span class="n">metric2circle_def_func</span><span class="p">.</span><span class="n">count</span><span class="p">=@(</span><span class="n">x</span><span class="p">)[</span><span class="mi">0</span> <span class="n">x</span><span class="p">];</span> <span class="c">% fixed initial radius</span>
+    <span class="n">metric2circle_def_func</span><span class="p">.</span><span class="n">direct</span><span class="p">=@</span><span class="n">get_direct_circle_def</span><span class="p">;</span>
+
+    <span class="c">% options are mutually exclusive</span>
+    <span class="n">metrics</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">metric2circle_def_func</span><span class="p">);</span>
+    <span class="n">metric_msk</span><span class="p">=</span><span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="n">metrics</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">sum</span><span class="p">(</span><span class="n">metric_msk</span><span class="p">)</span><span class="o">~=</span><span class="mi">1</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Use one of these arguments to define neighbors: %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">metrics</span><span class="p">,</span> <span class="s">&#39;, &#39;</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="n">metric</span><span class="p">=</span><span class="n">metrics</span><span class="p">{</span><span class="n">metric_msk</span><span class="p">};</span>
+    <span class="n">func</span><span class="p">=</span><span class="n">metric2circle_def_func</span><span class="p">.(</span><span class="n">metric</span><span class="p">);</span>
+    <span class="n">param</span><span class="p">=</span><span class="n">opt</span><span class="p">.(</span><span class="n">metric</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">param</span><span class="p">)</span> <span class="o">||</span> <span class="n">param</span><span class="o">&lt;</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;value for &#39;&#39;%s&#39;&#39; must be a scalar not less than zero&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="n">metric</span><span class="p">);</span>
+    <span class="k">end</span>
+    <span class="n">circle_def</span><span class="p">=</span><span class="n">func</span><span class="p">(</span><span class="n">opt</span><span class="p">.(</span><span class="n">metric</span><span class="p">));</span>
+
+<span class="k">function</span><span class="w"> </span>circle_def<span class="p">=</span><span class="nf">get_direct_circle_def</span><span class="p">(</span>radius<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% false or 0 give a zero radius, otherwise NaN</span>
+    <span class="k">if</span> <span class="nb">isnan</span><span class="p">(</span><span class="n">radius</span><span class="p">)</span> <span class="o">||</span> <span class="n">radius</span>
+        <span class="n">circle_def</span><span class="p">=</span><span class="n">NaN</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">circle_def</span><span class="p">=[</span><span class="mi">5</span> <span class="mi">1</span><span class="p">];</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_surface_dataset_skl.html"
+                        title="previous chapter">cosmo surface dataset skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_synthetic_dataset_skl.html"
+                        title="next chapter">cosmo synthetic dataset skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_surficial_neighborhood_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_synthetic_dataset_skl.html" title="cosmo synthetic dataset skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_surface_dataset_skl.html" title="cosmo surface dataset skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

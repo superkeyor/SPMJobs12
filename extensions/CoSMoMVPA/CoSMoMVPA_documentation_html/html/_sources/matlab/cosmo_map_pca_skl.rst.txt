@@ -1,0 +1,7 @@
+.. _cosmo_map_pca_skl:
+
+cosmo map pca skl
+=================
+
+.. include :: cosmo_map_pca_skl.txt
+

@@ -1,0 +1,7 @@
+.. _test_fmri_io:
+
+test fmri io
+============
+
+.. include :: test_fmri_io.txt
+

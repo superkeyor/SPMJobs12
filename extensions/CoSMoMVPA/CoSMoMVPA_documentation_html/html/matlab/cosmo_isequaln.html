@@ -1,0 +1,194 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo isequaln &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo isfield" href="cosmo_isfield.html" />
+    <link rel="prev" title="cosmo interval neighborhood" href="cosmo_interval_neighborhood.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_isfield.html" title="cosmo isfield"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_interval_neighborhood.html" title="cosmo interval neighborhood"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-isequaln">
+<span id="id1"></span><h1>cosmo isequaln<a class="headerlink" href="#cosmo-isequaln" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">cosmo_isequaln</span><span class="p">(</span>x,y<span class="p">)</span><span class="w"></span>
+<span class="c">% compares two input for equality with NaNs considered being equal</span>
+<span class="c">%</span>
+<span class="c">% tf=cosmo_isequaln(x,y)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   x                   first input</span>
+<span class="c">%   y                   second input, to be compared with first input</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%   tf                  true if x and y are equal, with NaNs considered</span>
+<span class="c">%                       to be equal; false otherwise</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">% cosmo_isequaln(2,2)</span>
+<span class="c">% &gt; true</span>
+<span class="c">% cosmo_isequaln(2,3)</span>
+<span class="c">% &gt; false</span>
+<span class="c">% % using the builtin isequal, NaNs are considered not equal to each other</span>
+<span class="c">% isequal(NaN,NaN)</span>
+<span class="c">% &gt; false</span>
+<span class="c">% % using cosmo_isequaln, NaNs are considered to be equal to each other</span>
+<span class="c">% cosmo_isequaln(NaN,NaN)</span>
+<span class="c">% &gt; true</span>
+
+<span class="c">% Notes:</span>
+<span class="c">%   - in earlier versions of Matlab, isequaln did not exist;</span>
+<span class="c">%     isequalwithequalnans was used instead. However isequaln will be</span>
+<span class="c">%     deprecated in GNU Octave 4.2. This function is there included for</span>
+<span class="c">%     compatibility with both old versions of Matlab and future versions of</span>
+<span class="c">%     GNU Octave</span>
+<span class="c">%</span>
+<span class="c">% See also: isequaln, isequalwithequalnans</span>
+
+    <span class="n">comparison_func</span><span class="p">=</span><span class="n">get_comparison_func</span><span class="p">();</span>
+    <span class="n">tf</span><span class="p">=</span><span class="n">comparison_func</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>func<span class="p">=</span><span class="nf">get_comparison_func</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">cached_comparison_func</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">cached_comparison_func</span><span class="p">)</span>
+        <span class="n">cached_comparison_func</span><span class="p">=</span><span class="n">find_comparison_func_helper</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">func</span><span class="p">=</span><span class="n">cached_comparison_func</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>func<span class="p">=</span><span class="nf">find_comparison_func_helper</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">candidates</span><span class="p">={@</span><span class="n">isequaln</span><span class="p">,@</span><span class="nb">isequalwithequalnans</span><span class="p">};</span>
+
+    <span class="n">has_func</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="n">func2str</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="s">&#39;builtin&#39;</span><span class="p">));</span>
+    <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(</span><span class="n">has_func</span><span class="p">,</span><span class="n">candidates</span><span class="p">),</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;first&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">idx</span><span class="p">)</span>
+        <span class="n">func</span><span class="p">=</span><span class="n">candidates</span><span class="p">{</span><span class="n">idx</span><span class="p">};</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+
+    <span class="n">candidates_str</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="n">func2str</span><span class="p">,</span> <span class="n">candidates</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;No comparison function found from candidates: %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">candidates_str</span><span class="p">,</span><span class="s">&#39;, &#39;</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_interval_neighborhood.html"
+                        title="previous chapter">cosmo interval neighborhood</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_isfield.html"
+                        title="next chapter">cosmo isfield</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_isequaln.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_isfield.html" title="cosmo isfield"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_interval_neighborhood.html" title="cosmo interval neighborhood"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

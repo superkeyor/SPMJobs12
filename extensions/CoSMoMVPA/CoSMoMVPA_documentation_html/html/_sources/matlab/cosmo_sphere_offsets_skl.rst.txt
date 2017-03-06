@@ -1,0 +1,7 @@
+.. _cosmo_sphere_offsets_skl:
+
+cosmo sphere offsets skl
+========================
+
+.. include :: cosmo_sphere_offsets_skl.txt
+

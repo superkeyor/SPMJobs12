@@ -1,0 +1,7 @@
+.. _cosmo_confusion_matrix_skl:
+
+cosmo confusion matrix skl
+==========================
+
+.. include :: cosmo_confusion_matrix_skl.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_parcellfun:
+
+cosmo parcellfun
+================
+
+.. include :: cosmo_parcellfun.txt
+

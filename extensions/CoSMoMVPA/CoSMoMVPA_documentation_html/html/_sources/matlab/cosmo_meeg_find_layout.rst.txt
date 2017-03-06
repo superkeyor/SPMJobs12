@@ -1,0 +1,7 @@
+.. _cosmo_meeg_find_layout:
+
+cosmo meeg find layout
+======================
+
+.. include :: cosmo_meeg_find_layout.txt
+

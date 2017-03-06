@@ -1,0 +1,7 @@
+.. _test_montecarlo_cluster_stat_distribution:
+
+test montecarlo cluster stat distribution
+=========================================
+
+.. include :: test_montecarlo_cluster_stat_distribution.txt
+

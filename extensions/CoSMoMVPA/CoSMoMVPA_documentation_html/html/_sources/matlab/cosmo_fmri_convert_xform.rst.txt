@@ -1,0 +1,7 @@
+.. _cosmo_fmri_convert_xform:
+
+cosmo fmri convert xform
+========================
+
+.. include :: cosmo_fmri_convert_xform.txt
+

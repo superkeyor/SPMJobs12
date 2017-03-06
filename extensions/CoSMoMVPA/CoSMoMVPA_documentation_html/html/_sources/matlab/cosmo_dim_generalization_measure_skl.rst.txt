@@ -1,0 +1,7 @@
+.. _cosmo_dim_generalization_measure_skl:
+
+cosmo dim generalization measure skl
+====================================
+
+.. include :: cosmo_dim_generalization_measure_skl.txt
+

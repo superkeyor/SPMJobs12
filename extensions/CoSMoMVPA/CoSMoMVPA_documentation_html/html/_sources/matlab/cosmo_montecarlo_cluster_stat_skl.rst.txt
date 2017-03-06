@@ -1,0 +1,7 @@
+.. _cosmo_montecarlo_cluster_stat_skl:
+
+cosmo montecarlo cluster stat skl
+=================================
+
+.. include :: cosmo_montecarlo_cluster_stat_skl.txt
+

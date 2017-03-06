@@ -1,0 +1,7 @@
+.. _test_dim_insert:
+
+test dim insert
+===============
+
+.. include :: test_dim_insert.txt
+

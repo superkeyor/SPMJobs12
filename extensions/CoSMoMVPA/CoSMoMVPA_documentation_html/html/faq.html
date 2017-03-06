@@ -1,0 +1,1362 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Frequently Asked/Anticipated Questions &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Contact information" href="contact.html" />
+    <link rel="prev" title="demo surface tfce" href="matlab/demo_surface_tfce.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="contact.html" title="Contact information"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="matlab/demo_surface_tfce.html" title="demo surface tfce"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" accesskey="U">Documentation</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="frequently-asked-anticipated-questions">
+<span id="faq"></span><h1><a class="toc-backref" href="#id3">Frequently Asked/Anticipated Questions</a><a class="headerlink" href="#frequently-asked-anticipated-questions" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#frequently-asked-anticipated-questions" id="id3">Frequently Asked/Anticipated Questions</a><ul>
+<li><a class="reference internal" href="#general" id="id4">General</a><ul>
+<li><a class="reference internal" href="#how-should-i-cite-cosmomvpa" id="id5">How should I cite CoSMoMVPA?</a></li>
+<li><a class="reference internal" href="#what-is-the-history-of-cosmomvpa" id="id6">What is the history of CoSMoMVPA?</a></li>
+<li><a class="reference internal" href="#what-are-the-main-features" id="id7">What are the main features?</a></li>
+<li><a class="reference internal" href="#what-does-cosmomvpa-not-provide" id="id8">What does CoSMoMVPA <em>not</em> provide?</a></li>
+<li><a class="reference internal" href="#does-it-integrate-with-pymvpa" id="id9">Does it integrate with PyMVPA?</a></li>
+<li><a class="reference internal" href="#does-it-run-on-gnu-octave" id="id10">Does it run on GNU Octave?</a></li>
+<li><a class="reference internal" href="#how-fast-does-it-run" id="id11">How fast does it run?</a></li>
+<li><a class="reference internal" href="#what-should-i-use-as-input-for-mvpa" id="id12">What should I use as input for MVPA?</a></li>
+<li><a class="reference internal" href="#who-are-the-developers-of-cosmomvpa" id="id13">Who are the developers of CoSMoMVPA?</a></li>
+<li><a class="reference internal" href="#which-classifiers-are-available" id="id14">Which classifiers are available?</a></li>
+<li><a class="reference internal" href="#which-platforms-does-it-support" id="id15">Which platforms does it support?</a></li>
+<li><a class="reference internal" href="#what-future-features-can-be-expected" id="id16">What future features can be expected?</a></li>
+<li><a class="reference internal" href="#how-can-i-contact-the-developers-directly" id="id17">How can I contact the developers directly?</a></li>
+<li><a class="reference internal" href="#is-there-a-mailinglist" id="id18">Is there a mailinglist?</a></li>
+<li><a class="reference internal" href="#why-do-you-encourage-balanced-partitions" id="id19">Why do you encourage balanced partitions?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-do-i" id="id20">How do I ...</a><ul>
+<li><a class="reference internal" href="#find-the-correspondence-between-voxel-indices-in-afni-and-feature-indices-in-cosmomvpa" id="id21">Find the correspondence between voxel indices in AFNI and feature indices in CoSMoMVPA</a></li>
+<li><a class="reference internal" href="#get-ecog-data-in-a-cosmomvpa-struct" id="id22">Get ECoG data in a CoSMoMVPA struct</a></li>
+<li><a class="reference internal" href="#get-temporal-data-in-a-cosmomvpa-struct" id="id23">Get temporal data in a CoSMoMVPA struct</a></li>
+<li><a class="reference internal" href="#run-group-analysis" id="id24">Run group analysis</a></li>
+<li><a class="reference internal" href="#make-an-intersection-mask-across-participants" id="id25">Make an intersection mask across participants</a></li>
+<li><a class="reference internal" href="#run-group-analysis-on-time-by-time-generalization-measures" id="id26">Run group analysis on time-by-time generalization measures</a></li>
+<li><a class="reference internal" href="#use-libsvm" id="id27">Use LIBSVM</a></li>
+<li><a class="reference internal" href="#use-surface-based-mapping-with-a-low-resolution-output-surface" id="id28">Use surface-based mapping with a low-resolution output surface</a></li>
+<li><a class="reference internal" href="#correct-for-multiple-comparisons" id="id29">Correct for multiple comparisons</a></li>
+<li><a class="reference internal" href="#do-cross-modal-decoding-across-three-modalities" id="id30">Do cross-modal decoding across three modalities</a></li>
+<li><a class="reference internal" href="#compute-classification-accuracies-manually" id="id31">Compute classification accuracies manually</a></li>
+<li><a class="reference internal" href="#merge-surface-data-from-two-hemispheres" id="id32">Merge surface data from two hemispheres</a></li>
+<li><a class="reference internal" href="#visualize-and-store-multiple-fmri-volumes" id="id33">Visualize and store multiple fMRI volumes</a></li>
+<li><a class="reference internal" href="#average-along-features-in-a-neighborhood" id="id34">Average along features in a neighborhood</a></li>
+<li><a class="reference internal" href="#select-a-time-interval-in-an-meeg-dataset" id="id35">Select a time interval in an MEEG dataset</a></li>
+<li><a class="reference internal" href="#select-a-particular-channel-type-in-an-meeg-dataset" id="id36">Select a particular channel type in an MEEG dataset</a></li>
+<li><a class="reference internal" href="#use-only-a-subset-of-channels-for-my-analysis" id="id37">Use only a subset of channels for my analysis?</a></li>
+<li><a class="reference internal" href="#should-i-fisher-transform-correlation-values" id="id38">Should I Fisher-transform correlation values?</a></li>
+<li><a class="reference internal" href="#average-samples-in-a-deterministic-manner" id="id39">Average samples in a deterministic manner?</a></li>
+<li><a class="reference internal" href="#select-only-a-subset-of-features-in-a-neighborhood" id="id40">Select only a subset of features in a neighborhood?</a></li>
+<li><a class="reference internal" href="#use-multiple-comparison-correction-for-a-time-course" id="id41">Use multiple-comparison correction for a time course?</a></li>
+<li><a class="reference internal" href="#classify-different-groups-of-participants-such-as-patients-versus-controls" id="id42">Classify different groups of participants (such as patients versus controls)?</a></li>
+<li><a class="reference internal" href="#when-running-an-meeg-searchlight-have-the-same-channels-in-the-output-dataset-as-in-the-input-dataset" id="id43">When running an MEEG searchlight, have the same channels in the output dataset as in the input dataset?</a></li>
+<li><a class="reference internal" href="#save-meeg-data-when-i-get-the-error-value-for-fdim-channel-label-is-not-supported" id="id44">Save MEEG data when I get the error &#8220;value for fdim channel label is not supported&#8221;?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="general">
+<h2><a class="toc-backref" href="#id4">General</a><a class="headerlink" href="#general" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="how-should-i-cite-cosmomvpa">
+<span id="how-to-cite"></span><h3><a class="toc-backref" href="#id5">How should I cite CoSMoMVPA?</a><a class="headerlink" href="#how-should-i-cite-cosmomvpa" title="Permalink to this headline">¶</a></h3>
+<p>Please cite <a class="reference internal" href="references.html#och16" id="id1">[OCH16]</a>:</p>
+<blockquote>
+<div>Oosterhof, N. N., Connolly, A. C., and Haxby, J. V. (2016). CoSMoMVPA: multi-modal multivariate pattern analysis of neuroimaging data in Matlab / GNU Octave. Frontiers in Neuroinformatics, <a class="reference external" href="http://dx.doi.org/10.3389/fninf.2016.00027">doi:10.3389/fninf.2016.00027</a>.</div></blockquote>
+<p>BiBTeX record:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="nd">@article</span><span class="p">{</span><span class="n">OCH16</span><span class="p">,</span>
+<span class="n">author</span> <span class="o">=</span> <span class="p">{</span><span class="n">Oosterhof</span><span class="p">,</span> <span class="n">Nikolaas</span> <span class="n">N</span> <span class="ow">and</span> <span class="n">Connolly</span><span class="p">,</span> <span class="n">Andrew</span> <span class="n">C</span> <span class="ow">and</span> <span class="n">Haxby</span><span class="p">,</span> <span class="n">James</span> <span class="n">V</span><span class="p">},</span>
+<span class="n">title</span> <span class="o">=</span> <span class="p">{{</span><span class="n">CoSMoMVPA</span><span class="p">:</span> <span class="n">multi</span><span class="o">-</span><span class="n">modal</span> <span class="n">multivariate</span> <span class="n">pattern</span> <span class="n">analysis</span> <span class="n">of</span> <span class="n">neuroimaging</span> <span class="n">data</span> <span class="ow">in</span> <span class="n">Matlab</span> <span class="o">/</span> <span class="n">GNU</span> <span class="n">Octave</span><span class="p">}},</span>
+<span class="n">journal</span> <span class="o">=</span> <span class="p">{</span><span class="n">Frontiers</span> <span class="ow">in</span> <span class="n">Neuroinformatics</span><span class="p">},</span>
+<span class="n">doi</span> <span class="o">=</span> <span class="p">{</span><span class="mf">10.3389</span><span class="o">/</span><span class="n">fninf</span><span class="o">.</span><span class="mf">2016.00027</span><span class="p">},</span>
+<span class="n">year</span> <span class="o">=</span> <span class="p">{</span><span class="mi">2016</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="what-is-the-history-of-cosmomvpa">
+<h3><a class="toc-backref" href="#id6">What is the history of CoSMoMVPA?</a><a class="headerlink" href="#what-is-the-history-of-cosmomvpa" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>CoSMoMVPA was started when Gunnar Blohm and Sara Fabri invited the developers (ACC and NNO) to speak at the <em>2013 Summer School in Computational Sensory-Motor Neuroscience</em> ( <a class="reference external" href="http://www.compneurosci.com/CoSMo2013/">CoSMo 2013 workshop</a> ) about multivariate pattern analysis methods.</p>
+<p>In a few days they wrote the basic functionality including the dataset structure (inspired by <a class="reference external" href="http://pymvpa.org">PyMVPA</a>), basic input/output support for the NIFTI format, correlation analysis, several classifiers, cross-validation, and representational similarity analysis. They also decided to use restructured text to build a website, and wrote a custom build script to generate documentation for the website, including multiple versions of Matlab files to generate both exercises files (with some code to be filled in) and solution files (with all the code).</p>
+<p>Their plan was to let participants write a basic MVPA toolbox in two days (see the <a class="reference internal" href="cosmo2013.html#cosmo2013"><span class="std std-ref">exercises</span></a>). This was, with hindsight, a tad ambitious.</p>
+<p>The initial components in <a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a> still stand, but quite a few things have changed in the meantime. CoSMoMVPA has added support for various file formats, including surface-based data and MEEG data. It also supports a wider range of analyses. Finally, there is a new set of <a class="reference internal" href="rhul2016.html#rhul2016"><span class="std std-ref">exercises</span></a>, less aimed at writing your own toolbox, but more at understanding and implementing basic MVPA techniques using <a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a>.</p>
+<p>For recent changes, see the <a class="reference internal" href="changelog.html#changelog"><span class="std std-ref">Changelog</span></a>.</p>
+</div></blockquote>
+</div>
+<div class="section" id="what-are-the-main-features">
+<h3><a class="toc-backref" href="#id7">What are the main features?</a><a class="headerlink" href="#what-are-the-main-features" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a> provides:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">A simple, yet powerful, <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-dataset"><span class="std std-ref">data structure</span></a> that treats fMRI and MEEG data both as first-class citizens.</p>
+</li>
+<li><p class="first"><em>Simple</em>, <em>light-weight</em>, and <em>modular</em> functions.</p>
+</li>
+<li><p class="first">Implementations of <em>all common MVPA analyses</em> through <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-measure"><span class="std std-ref">measures</span></a>, such as:</p>
+<blockquote>
+<div><ul class="simple">
+<li>correlation split-half</li>
+<li>representational similarity</li>
+<li>crossvalidation with classifiers</li>
+<li>generalization over time</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first"><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-neighborhood"><span class="std std-ref">Neighborhoods</span></a> in various spaces, including</p>
+<blockquote>
+<div><ul>
+<li><p class="first">volumetric and surface-based (fMRI)</p>
+</li>
+<li><p class="first">time, frequency, sensors, and source elements (MEEG)</p>
+</li>
+<li><p class="first">all combinations of the above, for example:</p>
+<blockquote>
+<div><ul class="simple">
+<li>voxel x time (volumetric fMRI)</li>
+<li>node x time (surface-based fMRI)</li>
+<li>time x sensor (MEEG)</li>
+<li>time x frequency x sensor (MEEG)</li>
+<li>time x source element (MEEG)</li>
+<li>time x frequency x source element (MEEG)</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+<p>where each of the above <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-measure"><span class="std std-ref">measures</span></a> can be used with a neighborhood to run searchlights in all the above spaces.</p>
+</li>
+<li><p class="first">Support for a wide variety of image formats, including:</p>
+<blockquote>
+<div><ul class="simple">
+<li><a class="reference external" href="http://afni.nimh.nih.gov">AFNI</a></li>
+<li><a class="reference external" href="http://www.fil.ion.ucl.ac.uk/spm/">SPM</a></li>
+<li><a class="reference external" href="http://www.nitrc.org/projects/nifti">NIFTI</a></li>
+<li><a class="reference external" href="http://imaging.mrc-cbu.cam.ac.uk/imaging/FormatSpmAnalyze">ANALYZE</a></li>
+<li><a class="reference external" href="http://www.brainvoyager.com">BrainVoyager</a></li>
+<li><a class="reference external" href="http://fieldtrip.fcdonders.nl">FieldTrip</a></li>
+<li><a class="reference external" href="http://sccn.ucsd.edu/eeglab">EEGLAB</a> (ASCII)</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">proper Monte Carlo cluster-based <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">multiple comparison correction</span></a> (<a class="reference internal" href="matlab/demo_surface_tfce.html#demo-surface-tfce"><span class="std std-ref">example</span></a>), using either Threshold-Free Cluster Enhancement or traditional cluster-size based Monte Carlo simulations, in all the supported neighborhood spaces..</p>
+</li>
+<li><p class="first">support for both the <a class="reference external" href="http://www.mathworks.com/products/matlab/">Matlab</a> and GNU <a class="reference external" href="https://www.gnu.org/software/octave/">Octave</a> platforms.</p>
+</li>
+<li><p class="first">various runnable <a class="reference internal" href="contents_demo.html#contents-demo-rst"><span class="std std-ref">example scripts</span></a> and <a class="reference internal" href="rhul2016.html#rhul2016"><span class="std std-ref">exerices</span></a>, describing both on how to perform certain types of analyses (i.e., from a user perspective), and on how typical MVP analyses can be implemented (from a programmer persective).</p>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="what-does-cosmomvpa-not-provide">
+<h3><a class="toc-backref" href="#id8">What does CoSMoMVPA <em>not</em> provide?</a><a class="headerlink" href="#what-does-cosmomvpa-not-provide" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>It does not provide (and probably never will):</p>
+<ul class="simple">
+<li>Preprocessing of data. It assumed that the data has been preprocessed using other packages (such as AFNI, SPM, or FieldTrip). For fMRI analyses, in most use-case scenarios, it is preferable to use response estimates from a General Linear Model.</li>
+<li>Implementations of complicated analyses (such as hyperalignment, nested cross validation, recursive feature elimination). If you want to do these, consider using <a class="reference external" href="http://pymvpa.org">PyMVPA</a>.</li>
+<li>A Graphical User Interface (GUI). First, it&#8217;s a lot of work to build such a thing. Second, writing the code to perform the analyses could be considered as more instructive: it requires one to actually <em>think</em> about the analysis, rather than just clicking on buttons.</li>
+<li>Pretty visualization of fMRI data. Although there is basic functionality for showing slices of fMRI data (through <code class="docutils literal"><span class="pre">cosmo_plot_slices</span></code>, for better visualization we suggest to use either your preferred fMRI analysis package, or <a class="reference external" href="http://www.nitrc.org/projects/mricron">MRIcron</a>.</li>
+</ul>
+<p>Also, it does not make coffee for you.</p>
+</div></blockquote>
+</div>
+<div class="section" id="does-it-integrate-with-pymvpa">
+<h3><a class="toc-backref" href="#id9">Does it integrate with PyMVPA?</a><a class="headerlink" href="#does-it-integrate-with-pymvpa" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Yes. Dataset structures are pretty much identical in <a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a> (<a class="reference external" href="http://pymvpa.org">PyMVPA</a> provided inspiration for the data structures). The <code class="docutils literal"><span class="pre">mvpa2/datasets/cosmo.py</span></code> module in <a class="reference external" href="http://pymvpa.org">PyMVPA</a> provides input and output support between CoSMoMVPA and PyMVPA datasets and neighborhoods. This means that, for example, searchlights defined in CoSMoMVPA can be run in PyMVPA (possibly benefitting from its multi-threaded implementation), and the results converted back to CoSMoMVPA format.</div></blockquote>
+</div>
+<div class="section" id="does-it-run-on-gnu-octave">
+<h3><a class="toc-backref" href="#id10">Does it run on GNU Octave?</a><a class="headerlink" href="#does-it-run-on-gnu-octave" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Almost all functionality runs in <a class="reference external" href="https://www.gnu.org/software/octave/">Octave</a> 3.8, including unit tests through <a class="reference external" href="https://github.com/MOxUnit/MOxUnit">MOxUnit</a>, but there may be parts that function with limitations:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Unit tests require <a class="reference external" href="https://github.com/MOxUnit/MOxUnit">MOxUnit</a> (because <a class="reference external" href="http://www.mathworks.com/matlabcentral/fileexchange/22846-matlab-xunit-test-framework">xUnit</a> uses object-oriented features not supported by <a class="reference external" href="https://www.gnu.org/software/octave/">Octave</a>), and doc-tests are not supported in <a class="reference external" href="https://github.com/MOxUnit/MOxUnit">MOxUnit</a> (because <a class="reference external" href="https://www.gnu.org/software/octave/">Octave</a> does not provide <code class="docutils literal"><span class="pre">evalc_</span></code>).</li>
+<li><a class="reference external" href="http://www.brainvoyager.com">BrainVoyager</a> support through <a class="reference external" href="http://neuroelf.net">NeuroElf</a> is not supported, because <a class="reference external" href="http://neuroelf.net">NeuroElf</a> uses object-oriented features not supported by <a class="reference external" href="https://www.gnu.org/software/octave/">Octave</a>.</li>
+</ul>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="how-fast-does-it-run">
+<h3><a class="toc-backref" href="#id11">How fast does it run?</a><a class="headerlink" href="#how-fast-does-it-run" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a> is not a speed monster, but on our hardware (Macbook Pro early 2012) a searchlight using typical fMRI data takes one minute for simple analyses (correlation split-half), and a few minutes for more advanced analyses (classifier with cross-validation). The naive Bayes searchlights takes a few seconds for whole-brain fMRI per classification fold. Analyses on regions of interest are typically completed in seconds.</div></blockquote>
+</div>
+<div class="section" id="what-should-i-use-as-input-for-mvpa">
+<h3><a class="toc-backref" href="#id12">What should I use as input for MVPA?</a><a class="headerlink" href="#what-should-i-use-as-input-for-mvpa" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>We suggest the following:</p>
+<ul>
+<li><p class="first">fMRI options:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Apply the GLM for each run seperately, with separate predictors for each condition. Each run is a chunk, and each experimental condition is a target. You can use either beta estimates or t-statistics.</li>
+<li>Split the data in halves (even and odd) and apply the GLM to each of these (i.e. treat the experiment as consisting of two &#8216;runs&#8217;). In this case there are two chunks, and the same number of unique targets as there are experimental conditions.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">MEEG options:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">Preprocess the data (e.g. bandpassing, artifact rejection, downsampling).</p>
+</li>
+<li><p class="first">For chunk assignment, either:</p>
+<blockquote>
+<div><ul class="simple">
+<li>Assign chunks based on the run number.</li>
+<li>If the data in different trials in the same run can be assumed to be independent, use unique chunk values for each trial. If that gives you a lot of chunks (which makes crossvalidation slow), use <a class="reference internal" href="matlab/cosmo_chunkize.html#cosmo-chunkize"><span class="std std-ref">cosmo chunkize</span></a>.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="who-are-the-developers-of-cosmomvpa">
+<h3><a class="toc-backref" href="#id13">Who are the developers of CoSMoMVPA?</a><a class="headerlink" href="#who-are-the-developers-of-cosmomvpa" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Currently the developers are Nikolaas N. Oosterhof and Andrew C. Connolly. In the code you may find their initials (<code class="docutils literal"><span class="pre">NNO</span></code>, <code class="docutils literal"><span class="pre">ACC</span></code>) in commented header sections.</div></blockquote>
+</div>
+<div class="section" id="which-classifiers-are-available">
+<h3><a class="toc-backref" href="#id14">Which classifiers are available?</a><a class="headerlink" href="#which-classifiers-are-available" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>Naive Bayes (<a class="reference internal" href="matlab/cosmo_classify_naive_bayes.html#cosmo-classify-naive-bayes"><span class="std std-ref">cosmo classify naive bayes</span></a>).</li>
+<li>Nearest neighbor (<a class="reference internal" href="matlab/cosmo_classify_nn.html#cosmo-classify-nn"><span class="std std-ref">cosmo classify nn</span></a>).</li>
+<li>k-nearest neighbor (<a class="reference internal" href="matlab/cosmo_classify_knn.html#cosmo-classify-knn"><span class="std std-ref">cosmo classify knn</span></a>).</li>
+<li>Support Vector Machine (<a class="reference internal" href="matlab/cosmo_classify_svm.html#cosmo-classify-svm"><span class="std std-ref">cosmo classify svm</span></a>); requires the Matlab <code class="docutils literal"><span class="pre">stats</span></code> or <code class="docutils literal"><span class="pre">bioinfo</span></code> toolbox, or <a class="reference external" href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">LIBSVM</a>.</li>
+<li>Linear Discriminant Analysis (<a class="reference internal" href="matlab/cosmo_classify_lda.html#cosmo-classify-lda"><span class="std std-ref">cosmo classify lda</span></a>).</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="which-platforms-does-it-support">
+<h3><a class="toc-backref" href="#id15">Which platforms does it support?</a><a class="headerlink" href="#which-platforms-does-it-support" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>It has been tested with Windows, Mac and Linux.</div></blockquote>
+</div>
+<div class="section" id="what-future-features-can-be-expected">
+<h3><a class="toc-backref" href="#id16">What future features can be expected?</a><a class="headerlink" href="#what-future-features-can-be-expected" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Time permitting, there are some features that may be added in the future:</p>
+<ul class="simple">
+<li>MEEG tutorial.</li>
+<li>Snippets of useful code no the website.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="how-can-i-contact-the-developers-directly">
+<h3><a class="toc-backref" href="#id17">How can I contact the developers directly?</a><a class="headerlink" href="#how-can-i-contact-the-developers-directly" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>Please send an email to a&#64;c or b&#64;d, where a=andrew.c.connolly, b=nikolaas.oosterhof, c=dartmouth.edu, d=unitn.it.</div></blockquote>
+</div>
+<div class="section" id="is-there-a-mailinglist">
+<h3><a class="toc-backref" href="#id18">Is there a mailinglist?</a><a class="headerlink" href="#is-there-a-mailinglist" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>There is the <a class="reference external" href="https://groups.google.com/forum/#!forum/cosmomvpa">CoSMoMVPA Google group</a>.</div></blockquote>
+</div>
+<div class="section" id="why-do-you-encourage-balanced-partitions">
+<h3><a class="toc-backref" href="#id19">Why do you encourage balanced partitions?</a><a class="headerlink" href="#why-do-you-encourage-balanced-partitions" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>&#8216;I noticed that CoSMoMVPA heavily &#8216;encourages&#8217; balanced class distributions (with equal number of samples in each class), and recommends to remove data to balance; why?&#8217;</div></blockquote>
+<p>TL;DR: it&#8217;s much simpler and you don&#8217;t lose much by enforcing balanced partitions.</p>
+<p>Longer version:the main reason for encouraging (almost enforcing) balanced partitions is a combination of simplicity and avoiding mistakes with &#8216;above chance&#8217; classification.
+It is considerably simple when chance is 1/c, with c the number of classes; in particular, this simplifies second level (group) analysis and allows for a relatively quick Monte Carlo based multiple-comparison correction through sign-swapping (as implemented in <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a>).
+In addition, most paradigms use quite balanced designs anyway, so you do not loose much trials by enforcing balancing. If not using all trials would be a concern, one can re-use the same samples multiple times in different cross-validation folds through cosmo_balance_partitions with the &#8216;nrepeats&#8217; or &#8216;nmin&#8217; arguments.</p>
+</div>
+</div>
+<div class="section" id="how-do-i">
+<h2><a class="toc-backref" href="#id20">How do I ...</a><a class="headerlink" href="#how-do-i" title="Permalink to this headline">¶</a></h2>
+<div class="contents local topic" id="id2">
+<ul class="simple">
+<li><a class="reference internal" href="#find-the-correspondence-between-voxel-indices-in-afni-and-feature-indices-in-cosmomvpa" id="id45">Find the correspondence between voxel indices in AFNI and feature indices in CoSMoMVPA</a></li>
+<li><a class="reference internal" href="#get-ecog-data-in-a-cosmomvpa-struct" id="id46">Get ECoG data in a CoSMoMVPA struct</a></li>
+<li><a class="reference internal" href="#get-temporal-data-in-a-cosmomvpa-struct" id="id47">Get temporal data in a CoSMoMVPA struct</a></li>
+<li><a class="reference internal" href="#run-group-analysis" id="id48">Run group analysis</a></li>
+<li><a class="reference internal" href="#make-an-intersection-mask-across-participants" id="id49">Make an intersection mask across participants</a></li>
+<li><a class="reference internal" href="#run-group-analysis-on-time-by-time-generalization-measures" id="id50">Run group analysis on time-by-time generalization measures</a></li>
+<li><a class="reference internal" href="#use-libsvm" id="id51">Use LIBSVM</a></li>
+<li><a class="reference internal" href="#use-surface-based-mapping-with-a-low-resolution-output-surface" id="id52">Use surface-based mapping with a low-resolution output surface</a></li>
+<li><a class="reference internal" href="#correct-for-multiple-comparisons" id="id53">Correct for multiple comparisons</a></li>
+<li><a class="reference internal" href="#do-cross-modal-decoding-across-three-modalities" id="id54">Do cross-modal decoding across three modalities</a></li>
+<li><a class="reference internal" href="#compute-classification-accuracies-manually" id="id55">Compute classification accuracies manually</a></li>
+<li><a class="reference internal" href="#merge-surface-data-from-two-hemispheres" id="id56">Merge surface data from two hemispheres</a></li>
+<li><a class="reference internal" href="#visualize-and-store-multiple-fmri-volumes" id="id57">Visualize and store multiple fMRI volumes</a></li>
+<li><a class="reference internal" href="#average-along-features-in-a-neighborhood" id="id58">Average along features in a neighborhood</a></li>
+<li><a class="reference internal" href="#select-a-time-interval-in-an-meeg-dataset" id="id59">Select a time interval in an MEEG dataset</a></li>
+<li><a class="reference internal" href="#select-a-particular-channel-type-in-an-meeg-dataset" id="id60">Select a particular channel type in an MEEG dataset</a></li>
+<li><a class="reference internal" href="#use-only-a-subset-of-channels-for-my-analysis" id="id61">Use only a subset of channels for my analysis?</a></li>
+<li><a class="reference internal" href="#should-i-fisher-transform-correlation-values" id="id62">Should I Fisher-transform correlation values?</a></li>
+<li><a class="reference internal" href="#average-samples-in-a-deterministic-manner" id="id63">Average samples in a deterministic manner?</a></li>
+<li><a class="reference internal" href="#select-only-a-subset-of-features-in-a-neighborhood" id="id64">Select only a subset of features in a neighborhood?</a></li>
+<li><a class="reference internal" href="#use-multiple-comparison-correction-for-a-time-course" id="id65">Use multiple-comparison correction for a time course?</a></li>
+<li><a class="reference internal" href="#classify-different-groups-of-participants-such-as-patients-versus-controls" id="id66">Classify different groups of participants (such as patients versus controls)?</a></li>
+<li><a class="reference internal" href="#when-running-an-meeg-searchlight-have-the-same-channels-in-the-output-dataset-as-in-the-input-dataset" id="id67">When running an MEEG searchlight, have the same channels in the output dataset as in the input dataset?</a></li>
+<li><a class="reference internal" href="#save-meeg-data-when-i-get-the-error-value-for-fdim-channel-label-is-not-supported" id="id68">Save MEEG data when I get the error &#8220;value for fdim channel label is not supported&#8221;?</a></li>
+</ul>
+</div>
+<div class="section" id="find-the-correspondence-between-voxel-indices-in-afni-and-feature-indices-in-cosmomvpa">
+<h3><a class="toc-backref" href="#id45">Find the correspondence between voxel indices in AFNI and feature indices in CoSMoMVPA</a><a class="headerlink" href="#find-the-correspondence-between-voxel-indices-in-afni-and-feature-indices-in-cosmomvpa" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>In the AFNI GUI, you can view voxel indices by right-clicking on the coordinate field in the very left-top corner. Note that:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">ds.fa.i</span></code>, <code class="docutils literal"><span class="pre">ds.fa.j</span></code>, and <code class="docutils literal"><span class="pre">ds.fa.k</span></code> are base-<code class="docutils literal"><span class="pre">1</span></code> whereas AFNI uses base-<code class="docutils literal"><span class="pre">0</span></code>. So, to convert AFNI&#8217;s <code class="docutils literal"><span class="pre">ijk</span></code>-indices to CoSMoMVPA&#8217;s, add <code class="docutils literal"><span class="pre">1</span></code> to AFNI&#8217;s coordinates.</li>
+<li>CoSMoMVPA&#8217;s coordinates are valid for LPI-orientations, meaning that the first dimension is from left (lower values) to right (higher values), the second dimension is from posterior (lower values) to anterior (higher values), and the third dimension from inferior (lower values) to superior (higher values). To convert a dataset to LPI-orientation using AFNI, do:</li>
+</ul>
+<div class="highlight-shell"><div class="highlight"><pre><span></span>3dresample -orient LPI -inset my_data+orig -prefix my_data_lpi+orig.
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="get-ecog-data-in-a-cosmomvpa-struct">
+<span id="faq-get-ecog-data-in-cosmomvpa-struct"></span><h3><a class="toc-backref" href="#id46">Get ECoG data in a CoSMoMVPA struct</a><a class="headerlink" href="#get-ecog-data-in-a-cosmomvpa-struct" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><blockquote>
+<div>&#8216;I have eCog data in a 3D array (<code class="docutils literal"><span class="pre">channels</span> <span class="pre">x</span> <span class="pre">time</span> <span class="pre">x</span> <span class="pre">trials</span></code>). How can I get this in a CoSMoMVPA struct?&#8217;</div></blockquote>
+<p>Let&#8217;s assume there is data with those characteristics; here we generate synthetic data for illustration. This data has 7 time points, 3 channels, and 10 trials:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">time_axis</span><span class="p">=</span><span class="o">-</span><span class="p">.</span><span class="mi">1</span><span class="p">:.</span><span class="mi">1</span><span class="p">:.</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">channel_axis</span><span class="p">={</span><span class="s">&#39;chan1&#39;</span><span class="p">,</span><span class="s">&#39;chan2&#39;</span><span class="p">,</span><span class="s">&#39;chan3&#39;</span><span class="p">};</span>
+
+<span class="n">n_trials</span><span class="p">=</span><span class="mi">10</span><span class="p">;</span>
+<span class="n">n_time</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">time_axis</span><span class="p">);</span>
+<span class="n">n_channels</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">channel_axis</span><span class="p">);</span>
+
+<span class="n">data</span><span class="p">=</span><span class="nb">randn</span><span class="p">([</span><span class="n">n_channels</span><span class="p">,</span><span class="n">n_time</span><span class="p">,</span><span class="n">n_trials</span><span class="p">]);</span> <span class="c">% Gaussian random data</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Because in CoSMoMVPA, samples are in the first dimension, the order of the dimensions have to be shifted so that the <code class="docutils literal"><span class="pre">trials</span></code> (samples) dimension comes first:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">data_samples_first_dim</span><span class="p">=</span><span class="nb">shiftdim</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Now the data can be flattened to a CoSMoMVPA data struct with:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_flatten</span><span class="p">(</span><span class="n">data_samples_first_dim</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;chan&#39;</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="n">channel_axis</span><span class="p">,</span><span class="n">time_axis</span><span class="p">});</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Combinations of <code class="docutils literal"><span class="pre">chan</span></code> and <code class="docutils literal"><span class="pre">time</span></code> are the features of the dataset. For example, to see how informative the data is for different time points (across all channels), one could define a <a class="reference internal" href="matlab/cosmo_interval_neighborhood.html#cosmo-interval-neighborhood"><span class="std std-ref">cosmo interval neighborhood</span></a> for the time dimension and run a <a class="reference internal" href="matlab/cosmo_searchlight.html#cosmo-searchlight"><span class="std std-ref">searchlight</span></a>.</p>
+<p>If one would only want to consider the <code class="docutils literal"><span class="pre">chan</span></code> dimension as features, and consider <code class="docutils literal"><span class="pre">time</span></code> as a sample dimension, do:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds_time_in_sample_dim</span><span class="p">=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">ds</span><span class="p">,{</span><span class="s">&#39;time&#39;</span><span class="p">},</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>When the data is in this form, one can analyse how well information <a class="reference internal" href="matlab/demo_meeg_timeseries_generalization.html#demo-meeg-timeseries-generalization"><span class="std std-ref">generalizes over time</span></a> .</p>
+</div></blockquote>
+</div>
+<div class="section" id="get-temporal-data-in-a-cosmomvpa-struct">
+<h3><a class="toc-backref" href="#id47">Get temporal data in a CoSMoMVPA struct</a><a class="headerlink" href="#get-temporal-data-in-a-cosmomvpa-struct" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><blockquote>
+<div>&#8216;Using MEEG dataset, using custom written software I have precomputed RSA correlations across channels for a group of subjects for each timepoints; the result is <code class="docutils literal"><span class="pre">data</span></code> matrix of size <code class="docutils literal"><span class="pre">17x300</span></code>, corresponding to <code class="docutils literal"><span class="pre">subjects</span> <span class="pre">x</span> <span class="pre">time</span></code>. How can I get this in a CoSMoMVPA dataset struct, and use <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> for multiple comparison correction?&#8217;</div></blockquote>
+<p>We will generate some (random) data with these characteristics:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% generate pseudo-random data</span>
+<span class="n">data</span><span class="p">=</span><span class="n">cosmo_rand</span><span class="p">(</span><span class="mi">17</span><span class="p">,</span><span class="mi">300</span><span class="p">);</span>
+
+<span class="c">% set the time (in seconds) for each column</span>
+<span class="c">% Here, the first time point is 200ms pre-stimulus</span>
+<span class="c">% and each time step is 2ms. The last time point</span>
+<span class="c">% is at 398 ms</span>
+<span class="n">time_axis</span><span class="p">=</span><span class="o">-</span><span class="p">.</span><span class="mi">2</span><span class="p">:.</span><span class="mi">002</span><span class="p">:.</span><span class="mi">398</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>To get the data in a dataset structure, a similar approach is followed as in another FAQ entry (<a class="reference internal" href="#faq-get-ecog-data-in-cosmomvpa-struct"><span class="std std-ref">Get ECoG data in a CoSMoMVPA struct</span></a>) - but note that there is only a time axis here to use as a feature dimension:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_flatten</span><span class="p">(</span><span class="n">data</span><span class="p">,{</span><span class="s">&#39;time&#39;</span><span class="p">},{</span><span class="n">time_axis</span><span class="p">},</span><span class="mi">2</span><span class="p">)</span>
+</pre></div>
+</div>
+<p>Clustering with  <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> requires (as usual) a clustering neighborhood computed by <a class="reference internal" href="matlab/cosmo_cluster_neighborhood.html#cosmo-cluster-neighborhood"><span class="std std-ref">cosmo cluster neighborhood</span></a>:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% cluster neighborhood over time points</span>
+<span class="n">cl_nh</span><span class="p">=</span><span class="n">cosmo_cluster_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>To use <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a>, it is required to set targets and chunks. In this case there is a single sample per subject, which is reflected in <code class="docutils literal"><span class="pre">.sa.targets</span></code> and <code class="docutils literal"><span class="pre">.sa.chunks</span></code>.</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">n_subjects</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="n">n_subjects</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subjects</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+</pre></div>
+</div>
+<p>To run  <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> it is required to set the number of iterations and (for a one-sample t-test) the expected mean under the null hypothesis.</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+<span class="c">% use at least 10000 iterations for publication-quality analyses</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">niter</span><span class="p">=</span><span class="mi">10000</span><span class="p">;</span>
+
+<span class="c">% expected mean under null hypothesis.</span>
+<span class="c">% For this example (pre-computed RSA correlation values)</span>
+<span class="c">% the expected mean is zero.</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">h0_mean</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c">% compute z-scores after TFCE correction</span>
+<span class="n">tfce_z_ds</span><span class="p">=</span><span class="n">cosmo_montecarlo_cluster_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">cl_nh</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>Note that clusters are computed across the time dimension, so if a cluster survives between (say) 100 and 150 ms, one <em>cannot</em> infer that at 100 ms there is significant information present that explains the non-zero correlations. Instead, the inferences can only be made at the cluster level, i.e. there is evidence for significant information at a cluster of time points. To be able to make inferences at the individual time point level, use a cluster neighborhood that does not connect clusters across the time dimension:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% cluster neighborhood not connecting time points</span>
+<span class="n">cl_nh_not_over_time</span><span class="p">=</span><span class="n">cosmo_cluster_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+</pre></div>
+</div>
+<p>in which case a significant feature at (say) 100 ms can directly be interpreted as evidence for information being present at 100 ms. However, such a test is less sensitive than a neighborhood that connects features across time.</p>
+</div></blockquote>
+</div>
+<div class="section" id="run-group-analysis">
+<span id="faq-run-group-analysis"></span><h3><a class="toc-backref" href="#id48">Run group analysis</a><a class="headerlink" href="#run-group-analysis" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><blockquote>
+<div>&#8216;I ran an fMRI searchlight analysis using <a class="reference internal" href="matlab/cosmo_searchlight.html#cosmo-searchlight"><span class="std std-ref">cosmo searchlight</span></a> with <a class="reference internal" href="matlab/cosmo_spherical_neighborhood.html#cosmo-spherical-neighborhood"><span class="std std-ref">cosmo spherical neighborhood</span></a> and got a result map for a single participant. Now I want to repeat this for my other participants, and then do a group analysis. It is my understanding that I should use <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a>, but the documentation refers to <a class="reference internal" href="matlab/cosmo_cluster_neighborhood.html#cosmo-cluster-neighborhood"><span class="std std-ref">cosmo cluster neighborhood</span></a>.&#8217;</div></blockquote>
+<p>Indeed <a class="reference internal" href="matlab/cosmo_cluster_neighborhood.html#cosmo-cluster-neighborhood"><span class="std std-ref">cosmo cluster neighborhood</span></a> should be used with <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a>, because that neighborhood function returns a neighborhood structure indicating which features (voxels) are next to each other. This is different from, say, a spherical neighborhood with a radius of 3 voxels.</p>
+<blockquote>
+<div><p>(Technically <a class="reference internal" href="matlab/cosmo_cluster_neighborhood.html#cosmo-cluster-neighborhood"><span class="std std-ref">cosmo cluster neighborhood</span></a>, when applied on a typical fMRI dataset (that is, without other feature dimensions), returns by default a neighborhood that is equivalent to a spherical neighborhood with a radius between <code class="docutils literal"><span class="pre">sqrt(3)</span></code> and <code class="docutils literal"><span class="pre">2</span></code>, meaning that under the assumption of isotropocy, voxels are neighbors if they share at least a vertex (corner).</p>
+<p>Also, <a class="reference internal" href="matlab/cosmo_cluster_neighborhood.html#cosmo-cluster-neighborhood"><span class="std std-ref">cosmo cluster neighborhood</span></a> works on other types of datasets, including surface-based fMRI, timelocked MEEG, and time-frequency MEEG.)</p>
+</div></blockquote>
+<p>Assuming that <code class="docutils literal"><span class="pre">result</span></code> was constructed as above, a group analysis using Threshold-Free Cluster Enhancement and using 1000 permutations can now by done quite easily. For a one-sample t-test (one sample per participant, it is however required to specify the mean under the null hypothesis. When the <a class="reference internal" href="matlab/cosmo_correlation_measure.html#cosmo-correlation-measure"><span class="std std-ref">cosmo correlation measure</span></a> or <a class="reference internal" href="matlab/cosmo_target_dsm_corr_measure.html#cosmo-target-dsm-corr-measure"><span class="std std-ref">cosmo target dsm corr measure</span></a> is used, this is typically zero, whereas for <a class="reference internal" href="matlab/cosmo_crossvalidation_measure.html#cosmo-crossvalidation-measure"><span class="std std-ref">cosmo crossvalidation measure</span></a>, this is typically 1 divided by the number of classes (e.g. <code class="docutils literal"><span class="pre">0.25</span></code> for 4-class discrimination).</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% one-sample t-test against 0</span>
+<span class="c">% (for representational similarity analysis)</span>
+<span class="n">h0_mean</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+<span class="c">% number of null iterations.</span>
+<span class="c">% values of at least 10,000 are recommended for publication-quality</span>
+<span class="n">niter</span><span class="p">=</span><span class="mi">1000</span><span class="p">;</span>
+
+<span class="c">%</span>
+<span class="c">% Set neighborhood for clustering</span>
+<span class="n">cluster_nbrhood</span><span class="p">=</span><span class="n">cosmo_cluster_neighborhood</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+
+<span class="n">stat_map</span><span class="p">=</span><span class="n">cosmo_montecarlo_cluster_stat</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">cluster_nbrhood</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;niter&#39;</span><span class="p">,</span> <span class="n">niter</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;h0_mean&#39;</span><span class="p">,</span> <span class="n">h0_mean</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="make-an-intersection-mask-across-participants">
+<h3><a class="toc-backref" href="#id49">Make an intersection mask across participants</a><a class="headerlink" href="#make-an-intersection-mask-across-participants" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div>&#8216;I ran my analysis for multiple participants, each with their own mask. Now I want to do group analysis, but combining the data using <a class="reference internal" href="matlab/cosmo_stack.html#cosmo-stack"><span class="std std-ref">cosmo stack</span></a> gives an error because feature attributes do not match. How can I combine data across participants?</div></blockquote>
+<p>If <code class="docutils literal"><span class="pre">ds_cell</span></code> is a cell so that <code class="docutils literal"><span class="pre">ds_cell{k}</span></code> contains the dataset from the <code class="docutils literal"><span class="pre">k</span></code>-th participant, an intersection (based on features common across participants) can be computed though:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">idxs</span><span class="p">,</span><span class="n">ds_intersect_cell</span><span class="p">]=</span><span class="n">cosmo_mask_dim_intersect</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>For (second level) group analysis, in general, it is a good idea to assign <code class="docutils literal"><span class="pre">chunks</span></code> (if not done already) and <code class="docutils literal"><span class="pre">targets</span></code>. The general approach to setting chunks is by indicating that data from different participants is assumed to be independent; for setting targets, see the help of <a class="reference internal" href="matlab/cosmo_stat.html#cosmo-stat"><span class="std std-ref">cosmo stat</span></a>:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">n_subjects</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">ds_intersect_cell</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">subject_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subjects</span>
+    <span class="c">% get dataset</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">ds_intersect_cell</span><span class="p">{</span><span class="n">subject_i</span><span class="p">];</span>
+
+    <span class="c">% assign chunks</span>
+    <span class="n">n_samples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">*</span><span class="n">subject_i</span><span class="p">;</span>
+
+    <span class="c">% assign targets</span>
+    <span class="c">% Your code comes here; see cosmo_stat on how to assign</span>
+    <span class="c">% targets depending on subsequent analysis</span>
+    <span class="c">% (one-sample or two-sample t-test, or one-way or</span>
+    <span class="c">% repeated-measures ANOVA).</span>
+
+
+    <span class="c">% store results</span>
+    <span class="n">ds_intersect_cell</span><span class="p">{</span><span class="n">subject_i</span><span class="p">}=</span><span class="n">ds</span><span class="p">;</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The the resulting datasets can be combined through:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds_all</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">(</span><span class="n">ds_intersect_cell</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note: The above line may give an error <code class="docutils literal"><span class="pre">non-unique</span> <span class="pre">elements</span> <span class="pre">in</span> <span class="pre">fa.X</span></code>, with <code class="docutils literal"><span class="pre">X</span></code> some feature attribute such as <code class="docutils literal"><span class="pre">center_ids</span></code> or <code class="docutils literal"><span class="pre">radius</span></code>. This is to be expected if the datasets are the result from another analysis, such as <a class="reference internal" href="matlab/cosmo_searchlight.html#cosmo-searchlight"><span class="std std-ref">cosmo searchlight</span></a>. In that case, the data can be combined using:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds_all</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">(</span><span class="n">ds_intersect_cell</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;drop_nonunique&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="run-group-analysis-on-time-by-time-generalization-measures">
+<h3><a class="toc-backref" href="#id50">Run group analysis on time-by-time generalization measures</a><a class="headerlink" href="#run-group-analysis-on-time-by-time-generalization-measures" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><blockquote>
+<div><p>&#8216;I used <a class="reference internal" href="matlab/cosmo_dim_generalization_measure.html#cosmo-dim-generalization-measure"><span class="std std-ref">cosmo dim generalization measure</span></a> on MEEG data to get time-by-time generalization results. How do I run group analysis with cluster correction (<a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a>) on these?&#8217;</p>
+<p>Let&#8217;s assume the data from all subjects is stored in a cell <code class="docutils literal"><span class="pre">ds_cell</span></code>, with <code class="docutils literal"><span class="pre">ds_cell{k}</span></code> is a dataset struct with the output from  <a class="reference internal" href="matlab/cosmo_dim_generalization_measure.html#cosmo-dim-generalization-measure"><span class="std std-ref">cosmo dim generalization measure</span></a> for the <code class="docutils literal"><span class="pre">k</span></code>-th subject. Each dataset has the <code class="docutils literal"><span class="pre">train_time</span></code> and <code class="docutils literal"><span class="pre">test_time</span></code> attribute in the sample dimension, and they have to be moved to the feature dimension to use <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a>):</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">n_subjects</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">);</span>
+<span class="n">ds_cell_tr</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n_subjects</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subjects</span>
+    <span class="n">ds_cell_tr</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">ds_cell</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;train_time&#39;</span><span class="p">,</span><span class="s">&#39;test_time&#39;</span><span class="p">},</span><span class="mi">2</span><span class="p">);</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+<p>Then, it is almost always necessary to set the <code class="docutils literal"><span class="pre">.sa.targets</span></code> and <code class="docutils literal"><span class="pre">.sa.chunks</span></code> attributes. The former refers to conditions; the latter to (in this case) the subject. See <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> how to define these generally for various tests. In the simple case of a one-sample t-test, these would be set as follows:</p>
+<blockquote>
+<div><blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_subjects</span>
+    <span class="c">% here we assume a single output (sample) for each</span>
+    <span class="c">% searchlight. For statistical analysis later, where</span>
+    <span class="c">% we want to do a one-sample t-test, we set</span>
+    <span class="c">% .sa.targets to 1 (any constant value will do) and</span>
+    <span class="c">% .sa.chunks to the subject number.</span>
+    <span class="c">% nsamples=size(result.samples,1);</span>
+    <span class="c">%</span>
+    <span class="c">% Notes:</span>
+    <span class="c">% - these values can also be set after the analysis is run,</span>
+    <span class="c">%   although that may be more error-prone</span>
+    <span class="c">% - for other statistical tests, such as one-way ANOVA,</span>
+    <span class="c">%   repeated-measures ANOVA, paired-sample t-test and</span>
+    <span class="c">%   two-sample t-tests, chunks and targets have to be</span>
+    <span class="c">%   set differently. See the documentation of</span>
+    <span class="c">%   cosmo_montecarlo_cluster_stat for details.</span>
+
+    <span class="n">ds_cell_tr</span><span class="p">{</span><span class="n">k</span><span class="p">}.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="n">k</span><span class="p">;</span>  <span class="c">% k-th subject</span>
+    <span class="n">ds_cell_tr</span><span class="p">{</span><span class="n">k</span><span class="p">}.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span> <span class="c">% all same condition</span>
+
+<span class="k">end</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>and results would be joined into a single dataset by:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds_tr</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">(</span><span class="n">ds_cell_tr</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Now group analysis can proceed using <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> as described in <a class="reference internal" href="#faq-run-group-analysis">faq_run_group_analysis</a>.</p>
+<p>To convert the output (say <code class="docutils literal"><span class="pre">stat_map</span></code>) from  <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> to matrix form (time by time), do</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">values</span><span class="p">]=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">stat_map</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">data_mat</span><span class="p">=</span><span class="nb">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div></blockquote>
+</div></blockquote>
+</div>
+<div class="section" id="use-libsvm">
+<h3><a class="toc-backref" href="#id51">Use LIBSVM</a><a class="headerlink" href="#use-libsvm" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><p>Download <a class="reference external" href="http://www.csie.ntu.edu.tw/~cjlin/libsvm/">LIBSVM</a>, then in Matlab or Octave, do</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">cd</span> <span class="n">libsvm</span><span class="p">;</span> <span class="c">% change this to the directory where you put LIBSVM</span>
+<span class="n">cd</span> <span class="n">matlab</span>  <span class="c">% go to matlab sub-directory</span>
+<span class="n">make</span>       <span class="c">% compile libsvm mex functions; requires a working compiler</span>
+<span class="n">rmpath</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span>   <span class="c">% } ensure directory is on top</span>
+<span class="n">addpath</span><span class="p">(</span><span class="n">pwd</span><span class="p">)</span>  <span class="c">% } of the search path</span>
+
+<span class="c">% verify it worked.</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;libsvm&#39;</span><span class="p">);</span> <span class="c">% should not give an error</span>
+</pre></div>
+</div>
+</div></blockquote>
+<ul>
+<li><p class="first">If the <code class="docutils literal"><span class="pre">make</span></code> command failed, make sure you are in the LIBSVM&#8217;s <code class="docutils literal"><span class="pre">matlab</span></code> subdirectory, and that you have a working <a class="reference external" href="http://it.mathworks.com/help/matlab/matlab_external/what-you-need-to-build-mex-files.html">compiler under Matlab</a> or <a class="reference external" href="https://www.gnu.org/software/octave/doc/interpreter/Getting-Started-with-Mex_002dFiles.html">compiler under Octave</a>.</p>
+</li>
+<li><p class="first">If you want to store the path, you can also do</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">savepath</span>
+</pre></div>
+</div>
+</div></blockquote>
+</li>
+</ul>
+<p>so that the next time you start Matlab or Octave, the correct path is used.</p>
+<p>Matlab also provides an SVM implementation in the <code class="docutils literal"><span class="pre">stats</span></code> (and possible other) toolboxes, and the naming of the training functions are not compatible with LIBSVM. Thus, you can use either Matlab&#8217;s SVM or LIBSVM, but not both at the same time. To select which SVM implementation is used, set the Matlab search path so that either LIBSVM is on top (comes earlier; to use LIBSVM) or at the bottom (comes later; to use Matlab&#8217;s SVM).</p>
+</div></blockquote>
+</div>
+<div class="section" id="use-surface-based-mapping-with-a-low-resolution-output-surface">
+<h3><a class="toc-backref" href="#id52">Use surface-based mapping with a low-resolution output surface</a><a class="headerlink" href="#use-surface-based-mapping-with-a-low-resolution-output-surface" title="Permalink to this headline">¶</a></h3>
+<p>The typical use case scenarion is using <a class="reference external" href="http://freesurfer.net">FreeSurfer</a> pial and white matter surfaces that are resampled to standard topology using MapIcosahedron. Then, the high-resolution surfaces are used to define which voxels are associated with each searchlight, whereas the low-resolution surface is used as centers for the searchlight. The former aims to result in more precise selection of voxels; the latter in fewer centers, and thus reduced execution time for the searchlight.</p>
+<p>In this scenario, it is required that the vertices in low-resolution surface are a subset of the pair-wise averages of vertices in the high-resolution pial and white surfaces. A typical use case is using standard topologies from AFNI&#8217;s MapIcosahedron, where the high resolution surfaces are constructed using X linear divisionsof the triangles of an icosahedron, the low-resolution surface is constructed with Y linear divisions, and Y&lt;X and X is an integer multiple of Y.</p>
+<p>The <a class="reference external" href="https://github.com/PyMVPA/PyMVPA/blob/master/bin/pymvpa2-prep-afni-surf">pymvpa2-prep-afni-surf</a> script (part of <a class="reference external" href="http://pymvpa.org">PyMVPA</a>, which is required to run it) provides exactly this functionality. It will resample the surfaces to various resolutions, ranging from 4 linear divisions (162 nodes per hemisphere) to 128 linear divisions (163842 nodes per hemisphere) in steps of powers of two. It will also generate intermediate surfaces (pair-wise avarages of the nodes of the pial and white matter surfaes), and merge left (<code class="docutils literal"><span class="pre">lh</span></code>) and right (<code class="docutils literal"><span class="pre">rh</span></code>) hemisphere into a single hemisphere (<code class="docutils literal"><span class="pre">mh</span></code>). The merged surfaces have the advantages that the searchlight has to be run only once to get results for both hemispheres.</p>
+</div>
+<div class="section" id="correct-for-multiple-comparisons">
+<h3><a class="toc-backref" href="#id53">Correct for multiple comparisons</a><a class="headerlink" href="#correct-for-multiple-comparisons" title="Permalink to this headline">¶</a></h3>
+<p>For second level (group analysis), <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> provides cluster-based correction.</p>
+<p>There are three <em>components</em> in this, and they can be crossed arbitrarily:</p>
+<blockquote>
+<div><ol class="arabic">
+<li><dl class="first docutils">
+<dt>clustering method: either ‘standard’ fixed-uncorrected thresholding, or using Threshold-Free Cluster Enhancement (TFCE). The latter is the default in CoSMoMVPA, as it has been proposed it has several advantages (Nichols &amp; Smith, 2009, Neuroimage), including:</dt>
+<dd><ul class="first last simple">
+<li>&#8220;TFCE gives generally better sensitivity than other methods over a wide range of test signal shapes and SNR values&#8221;.</li>
+<li>avoids &#8220;the need to define the initial cluster-forming threshold (e.g., threshold the raw t-statistic image at t&gt;2.5)&#8221;.</li>
+<li>avoids the issue that &#8220;initial hard thresholding introduces instability in the overall processing chain; small variations in the data around the threshold level can have a large effect on the final output.&#8221;</li>
+<li>deals properly with different smoothing levels of the data.</li>
+<li>makes it easier to &#8220;directly interpret the meaning of (what may ideally be) separable sub-clusters or local maxima within very extended clusters&#8221;.</li>
+<li>is less affected by nonstationarity.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">support for any type of modality that CoSMoMVPA supports, including:</p>
+<blockquote>
+<div><ul class="simple">
+<li>fMRI volumetric, e.g. voxel, or voxel x time</li>
+<li>fMRI surface-based, e.g. node, or node x time</li>
+<li>MEEG time x channel (both in sensor and source space)</li>
+<li>MEEG time x channel x frequency (both in sensor and source space)</li>
+</ul>
+<p>In the case of multiple dimensions (such as time x channel x frequency) it is possible to cluster only over a subset of the dimensions. For example, a time x channel x frequency dataset can be clustered over all dimensions, or clustered over channel x frequency (which allows for more precise temporal inferences), or over channel x time (for more precise frequency inferences).</p>
+</div></blockquote>
+</li>
+<li><p class="first">support for either standard permutation test, or the method by Stelzer et al. (2012). To use the Stelzer approach, the user has to generate null datasets themselves. <a class="reference internal" href="matlab/cosmo_randomize_targets.html#cosmo-randomize-targets"><span class="std std-ref">cosmo randomize targets</span></a> can be used for this, but requires using a for-loop to generate multiple null datasets.</p>
+</li>
+</ol>
+</div></blockquote>
+<p>Because components 1-3 can be crossed arbitrarily, it allows for multiple comparison correction for a wide variety of applications.</p>
+<dl class="docutils">
+<dt>Notes:</dt>
+<dd><ul class="first last simple">
+<li>There is no function for within-subject significance testing; through cosmo_randomize_targets and a <code class="docutils literal"><span class="pre">for</span></code>-loop the user can do that themselves.</li>
+<li>There is also univariate cosmo_stat for one-sample and two-sample t-tests, and one-way and repeated measures ANOVA.</li>
+</ul>
+</dd>
+</dl>
+</div>
+<div class="section" id="do-cross-modal-decoding-across-three-modalities">
+<h3><a class="toc-backref" href="#id54">Do cross-modal decoding across three modalities</a><a class="headerlink" href="#do-cross-modal-decoding-across-three-modalities" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have a dataset with three modalities (visual, auditory, tactile) and would like to do both within-modality and cross-modality decoding. How should I proceed?&#8217;</p>
+<p><a class="reference internal" href="matlab/cosmo_nchoosek_partitioner.html#cosmo-nchoosek-partitioner"><span class="std std-ref">cosmo nchoosek partitioner</span></a> can deal with two modalities quite easily, but three or more is not directly supported. Instead you can slice the dataset multiple times to select the samples of interest, as in this example:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% generate synthetic example data with 3 modalities, 8 chunks</span>
+<span class="n">n_modalities</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="n">n_modalities</span><span class="o">*</span><span class="mi">8</span><span class="p">,</span><span class="s">&#39;sigma&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">modality</span><span class="p">=</span><span class="nb">mod</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">,</span><span class="n">n_modalities</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span> <span class="c">% in range 1:n_modalities</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="nb">ceil</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="o">/</span><span class="n">n_modalities</span><span class="p">);</span>    <span class="c">% 8 chunks</span>
+
+<span class="c">% allocate space for output</span>
+<span class="n">accuracies</span><span class="p">=</span><span class="n">NaN</span><span class="p">(</span><span class="n">n_modalities</span><span class="p">);</span>
+
+<span class="c">% do all combinations for training and test modalities</span>
+<span class="k">for</span> <span class="n">train_modality</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_modalities</span>
+    <span class="k">for</span> <span class="n">test_modality</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n_modalities</span>
+
+        <span class="c">% select data in train and test modality</span>
+        <span class="n">msk</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">modality</span><span class="p">,[</span><span class="n">train_modality</span> <span class="n">test_modality</span><span class="p">]);</span>
+        <span class="n">ds_sel</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">msk</span><span class="p">);</span>
+
+
+        <span class="k">if</span> <span class="n">train_modality</span><span class="o">==</span><span class="n">test_modality</span>
+            <span class="c">% within-modality cross-validation</span>
+            <span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_nchoosek_partitioner</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="c">% cross-modality cross-validation</span>
+            <span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_nchoosek_partitioner</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;modality&#39;</span><span class="p">,</span><span class="n">test_modality</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">partitions</span><span class="p">;</span>
+        <span class="n">opt</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+
+        <span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+
+        <span class="c">% Run the measure.</span>
+        <span class="c">%</span>
+        <span class="c">% (alternatively a searchlight can be used, through</span>
+        <span class="c">%</span>
+        <span class="c">%   ds_searchlight_result=cosmo_searchlight(ds,nh,measure,opt);</span>
+        <span class="c">%</span>
+        <span class="c">% where nh is a neighborhood)</span>
+        <span class="n">ds_result</span><span class="p">=</span><span class="n">measure</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+        <span class="n">accuracies</span><span class="p">(</span><span class="n">train_modality</span><span class="p">,</span><span class="n">test_modality</span><span class="p">)=</span><span class="n">ds_result</span><span class="p">.</span><span class="n">samples</span><span class="p">;</span>
+    <span class="k">end</span>
+<span class="k">end</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="compute-classification-accuracies-manually">
+<h3><a class="toc-backref" href="#id55">Compute classification accuracies manually</a><a class="headerlink" href="#compute-classification-accuracies-manually" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I computed predictions using <a class="reference internal" href="matlab/cosmo_crossvalidation_measure.html#cosmo-crossvalidation-measure"><span class="std std-ref">cosmo crossvalidation measure</span></a> with the <code class="docutils literal"><span class="pre">output</span></code> option set to <code class="docutils literal"><span class="pre">'predictions'</span></code>, but now I would like to compute the classification accuracies afterwards. How can I do that?&#8217;</p>
+<p>If <code class="docutils literal"><span class="pre">pred_ds</span></code> is the dataset with predictions, then accuracies can be computed by:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">acc_ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">pred_ds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>  <span class="c">% take single slice</span>
+<span class="n">acc_ds</span><span class="p">.</span><span class="n">sa</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>             <span class="c">% reset sample attributes</span>
+<span class="n">acc_ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">nanmean</span><span class="p">(</span><span class="nb">bsxfun</span><span class="p">(@</span><span class="n">eq</span><span class="p">,</span><span class="n">pred_ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="n">pred_ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">));</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="merge-surface-data-from-two-hemispheres">
+<h3><a class="toc-backref" href="#id56">Merge surface data from two hemispheres</a><a class="headerlink" href="#merge-surface-data-from-two-hemispheres" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have surface-based data from two hemispheres. How can I combine these into a single surface dataset structure?&#8217;</p>
+<p>In the following example, <code class="docutils literal"><span class="pre">ds_left</span></code> and <code class="docutils literal"><span class="pre">ds_right</span></code> are two dataset structs (for example, obtained through <a class="reference internal" href="matlab/cosmo_surface_dataset.html#cosmo-surface-dataset"><span class="std std-ref">cosmo surface dataset</span></a>) from the left and right hemisphere. They can be combined into a single dataset as follows:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% generate synthetic left and right hemisphere data</span>
+<span class="c">% (this is just example data for illustration)</span>
+<span class="n">ds_left</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;surface&#39;</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ds_right</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;surface&#39;</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c">% Set the number of vertices of the left surface.</span>
+<span class="c">% If the surface is sparse (it does not have data for all nodes), it *may*</span>
+<span class="c">% be necessary to adjust this value manually. In that case, consider to:</span>
+<span class="c">%</span>
+<span class="c">%  - compute the number of vertices, if it is a standardized surface from</span>
+<span class="c">%    MapIcosahedron. If the ld parameter was set to 64, then the number of</span>
+<span class="c">%    vertices is 10*64^2+2=40962.</span>
+<span class="c">%  - get the number of vertices using:</span>
+<span class="c">%       [v,f]=surfing_read(&#39;left_surface.asc&#39;);</span>
+<span class="c">%       nverts=max(size(v));</span>
+<span class="c">%</span>
+<span class="p">[</span><span class="n">unused</span><span class="p">,</span> <span class="n">index</span><span class="p">]=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds_left</span><span class="p">,</span> <span class="s">&#39;node_indices&#39;</span><span class="p">);</span>
+<span class="n">nverts_left</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">ds_left</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">});</span>
+
+<span class="c">% get the offset to set the feature attribute index later</span>
+<span class="n">offset_left</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">ds_left</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">});</span>
+
+<span class="c">% update node indices to support indexing data from two hemispheres</span>
+<span class="n">node_indices</span><span class="p">=[</span><span class="n">ds_left</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">},</span> <span class="c">...</span>
+                <span class="n">nverts_left</span><span class="o">+</span><span class="n">ds_right</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">}];</span>
+<span class="n">ds_left</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">}=</span><span class="n">node_indices</span><span class="p">;</span>
+<span class="n">ds_right</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">index</span><span class="p">}=</span><span class="n">node_indices</span><span class="p">;</span>
+
+<span class="c">% update node indices for right hemisphere</span>
+<span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">ds_left</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="o">&lt;</span><span class="p">=</span><span class="n">offset_left</span><span class="p">));</span> <span class="c">% safety check</span>
+<span class="n">ds_right</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="p">=</span><span class="n">ds_right</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">node_indices</span><span class="o">+</span><span class="n">offset_left</span><span class="p">;</span>
+
+<span class="c">% merge hemisphes</span>
+<span class="n">ds_left_right</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">({</span><span class="n">ds_left</span><span class="p">,</span><span class="n">ds_right</span><span class="p">},</span><span class="mi">2</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The resulting dataset <code class="docutils literal"><span class="pre">ds_left_right</span></code> can be stored in a file using <a class="reference internal" href="matlab/cosmo_map2surface.html#cosmo-map2surface"><span class="std std-ref">cosmo map2surface</span></a>.</p>
+</div>
+<div class="section" id="visualize-and-store-multiple-fmri-volumes">
+<h3><a class="toc-backref" href="#id57">Visualize and store multiple fMRI volumes</a><a class="headerlink" href="#visualize-and-store-multiple-fmri-volumes" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have an fMRI volumetric dataset with three volumes. <a class="reference internal" href="matlab/cosmo_plot_slices.html#cosmo-plot-slices"><span class="std std-ref">cosmo plot slices</span></a> gives an error when trying to visualize this dataset. How can I visualize the volumes and store them as NIFTI files?&#8217;</p>
+<p>In this example, <code class="docutils literal"><span class="pre">ds</span></code> is a dataset structure with three volumes. To visualize and store the third volume, do:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds3</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>              <span class="c">% select third sample (volume)</span>
+
+<span class="n">cosmo_plot_slices</span><span class="p">(</span><span class="n">ds3</span><span class="p">);</span>             <span class="c">% visualization in CoSMoMVPA</span>
+
+<span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds3</span><span class="p">,</span><span class="s">&#39;volume3.nii&#39;</span><span class="p">);</span>  <span class="c">% for visualization in</span>
+                                    <span class="c">% other programs</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note that several fMRI visualization packages can also visualize fMRI datasets with multiple volumes. To store all volumes in a single NIFTI file, simply do:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">cosmo_map2fmri</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;all_volumes.nii&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>For example, <a class="reference external" href="http://www.nitrc.org/projects/mricron">MRIcron</a> can be used to visualize each of the volumes in the resulting NIFTI file.</p>
+</div>
+<div class="section" id="average-along-features-in-a-neighborhood">
+<h3><a class="toc-backref" href="#id58">Average along features in a neighborhood</a><a class="headerlink" href="#average-along-features-in-a-neighborhood" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have defined a <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-neighborhood"><span class="std std-ref">neighborhood</span></a> for my dataset, and now I would like to compute the average across features at each searchlight location. How can I do that?&#8217;</p>
+<p>To average along features, you can define a new measure:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>ds_mean<span class="p">=</span><span class="nf">my_averaging_measure</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="c">% compute the average along features, and copies .sa</span>
+<span class="c">% and .a.sdim, if present</span>
+
+    <span class="n">ds_mean</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">ds_mean</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">mean</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">)</span>
+        <span class="n">ds_mean</span><span class="p">.</span><span class="n">sa</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a.sdim&#39;</span><span class="p">)</span>
+        <span class="n">ds_mean</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">;</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>This measure can then be used directly with <a class="reference internal" href="matlab/cosmo_searchlight.html#cosmo-searchlight"><span class="std std-ref">cosmo searchlight</span></a>. Note that the output has the same number of samples as the input dataset (i.e., <code class="docutils literal"><span class="pre">.samples</span></code> has the same number of rows); depending on how the neighborhood is defined, the number of features in the output dataset may either be the same as or different from the input dataset.</p>
+<p>It is also possible to define such a measure <em>inline</em>; for example, if the input dataset has <code class="docutils literal"><span class="pre">.sa</span></code> but not <code class="docutils literal"><span class="pre">.a.sdim</span></code> (this is the most common case; but exceptions are outputs from <a class="reference internal" href="matlab/cosmo_dim_generalization_measure.html#cosmo-dim-generalization-measure"><span class="std std-ref">cosmo dim generalization measure</span></a> and <a class="reference internal" href="matlab/cosmo_dissimilarity_matrix_measure.html#cosmo-dissimilarity-matrix-measure"><span class="std std-ref">cosmo dissimilarity matrix measure</span></a>), then the following computes the average across voxels at each neighborhood location:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% tiny dataset: 6 voxels</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+
+<span class="c">% tiny radius: 1 voxel</span>
+<span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c">% define averaging measure inline</span>
+<span class="n">my_averageing_measure</span><span class="p">=@(</span><span class="n">x</span><span class="p">,</span><span class="n">opt</span><span class="p">)</span> <span class="n">cosmo_structjoin</span><span class="p">(</span><span class="c">...</span>
+                                    <span class="s">&#39;samples&#39;</span><span class="p">,</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">),</span><span class="c">...</span>
+                                    <span class="s">&#39;sa&#39;</span><span class="p">,</span><span class="n">x</span><span class="p">.</span><span class="n">sa</span><span class="p">);</span>
+
+<span class="c">% compute average in each neighorhood location across features (voxels)</span>
+<span class="n">ds_mean</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">my_averageing_measure</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>The line approach may be a bit slower than defining a separate function, but the speed difference is usually not substantial.</p>
+</div>
+<div class="section" id="select-a-time-interval-in-an-meeg-dataset">
+<h3><a class="toc-backref" href="#id59">Select a time interval in an MEEG dataset</a><a class="headerlink" href="#select-a-time-interval-in-an-meeg-dataset" title="Permalink to this headline">¶</a></h3>
+<p>To select only a particular time range, consider the following:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% for this example, generate synthetic data</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;meeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;huge&#39;</span><span class="p">);</span>
+
+<span class="c">% Select time points between 50 and 300 ms</span>
+<span class="n">time_selector</span><span class="p">=@(</span><span class="n">t</span><span class="p">)</span> <span class="n">t</span><span class="o">&gt;</span><span class="p">=.</span><span class="mi">04999</span> <span class="o">&amp;</span> <span class="n">t</span><span class="o">&lt;</span><span class="p">=</span><span class="mf">0.3001</span><span class="p">;</span>
+<span class="n">time_msk</span><span class="p">=</span><span class="n">cosmo_dim_match</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="n">time_selector</span><span class="p">=@);</span>
+<span class="c">%</span>
+<span class="c">% (alternative to the above is</span>
+
+<span class="c">% slice dataset</span>
+<span class="n">ds_time</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">time_msk</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c">% Optionally prune the dataset</span>
+<span class="c">% - without cosmo_dim_prune: the output of map2meeg(ds_time) will</span>
+<span class="c">%   have all the time points of the original dataset; data for</span>
+<span class="c">%   missing time points will be set to zero or NaN.</span>
+<span class="c">% - with cosmo_dim_prune: the output of map2meeg(ds_time) will</span>
+<span class="c">%   not contain the removed time points.</span>
+
+<span class="n">ds_time</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds_time</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Note that in the example above, the <cite>time_selector</cite> variable is a function handle that is used to specify a time range. The minimal and maximum values of 0.04999 and 0.30001 (instead of 0.05 and 0.30) are used to address potential tiny rounding errors, as it may be the case that the time points stored in the datasets are not exact multiples of <cite>1/1000</cite>. For example, in the following expression:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="p">(((</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="mi">70</span><span class="p">)</span><span class="o">*</span><span class="mi">70</span><span class="p">)</span><span class="o">-</span><span class="p">(</span><span class="mi">0</span><span class="p">:.</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>one might expect a vector of only zeros because of the identities <cite>a==(a+b)-b</cite> and <cite>a==(a/b)/b</cite> (for finite, non-zero values of <cite>a</cite> and <cite>b</cite>), yet both Matlab and GNU Octave return:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="nb">ans</span> <span class="p">=</span>
+
+   <span class="mf">1.0e-15</span> <span class="o">*</span>
+
+  <span class="n">Columns</span> <span class="mi">1</span> <span class="n">through</span> <span class="mi">6</span>
+
+         <span class="mi">0</span>         <span class="mi">0</span>         <span class="mi">0</span>   <span class="o">-</span><span class="mf">0.0555</span>         <span class="mi">0</span>         <span class="mi">0</span>
+
+  <span class="n">Columns</span> <span class="mi">7</span> <span class="n">through</span> <span class="mi">11</span>
+
+         <span class="mi">0</span>    <span class="mf">0.1110</span>         <span class="mi">0</span>         <span class="mi">0</span>         <span class="mi">0</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>See also: <a class="reference internal" href="matlab/cosmo_dim_match.html#cosmo-dim-match"><span class="std std-ref">cosmo dim match</span></a>, <a class="reference internal" href="matlab/cosmo_slice.html#cosmo-slice"><span class="std std-ref">cosmo slice</span></a>, <a class="reference internal" href="matlab/cosmo_dim_prune.html#cosmo-dim-prune"><span class="std std-ref">cosmo dim prune</span></a>.</p>
+</div>
+<div class="section" id="select-a-particular-channel-type-in-an-meeg-dataset">
+<h3><a class="toc-backref" href="#id60">Select a particular channel type in an MEEG dataset</a><a class="headerlink" href="#select-a-particular-channel-type-in-an-meeg-dataset" title="Permalink to this headline">¶</a></h3>
+<p>To select channels of a particular type, consider the following:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% for this example, generate synthetic data</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;meeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;huge&#39;</span><span class="p">);</span>
+
+<span class="c">%%</span>
+<span class="c">% select channels</span>
+<span class="c">% (the output of chantypes in the command below</span>
+<span class="c">%  indicates which channel types can be selected)</span>
+<span class="p">[</span><span class="n">chantypes</span><span class="p">,</span><span class="n">senstypes</span><span class="p">]=</span><span class="n">cosmo_meeg_chantype</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="c">% in this example, select MEG planar combined channel</span>
+<span class="n">chan_type_of_interest</span><span class="p">=</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">;</span>
+
+<span class="n">chan_indices</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">chantypes</span><span class="p">,</span><span class="c">...</span>
+                          <span class="n">chan_type_of_interest</span><span class="p">));</span>
+
+<span class="c">% define channel mask</span>
+<span class="n">chan_msk</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">chan</span><span class="p">,</span><span class="n">chan_indices</span><span class="p">);</span>
+
+<span class="c">% slice the dataset</span>
+<span class="n">ds_chan</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">chan_msk</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+
+<span class="c">% Optionally prune the dataset</span>
+<span class="c">% - without cosmo_dim_prune: the output of map2meeg(ds_chan) will</span>
+<span class="c">%   have all the channels of the original dataset; data for</span>
+<span class="c">%   missing channels will be set to zero or NaN.</span>
+<span class="c">% - with cosmo_dim_prune: the output of running map2meeg(ds_chan) will</span>
+<span class="c">%   not contain the removed channels.</span>
+
+<span class="n">ds_chan</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds_chan</span><span class="p">);</span> <span class="c">% to really remove channels</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>See also: <a class="reference internal" href="matlab/cosmo_meeg_chantype.html#cosmo-meeg-chantype"><span class="std std-ref">cosmo meeg chantype</span></a>, <a class="reference internal" href="matlab/cosmo_slice.html#cosmo-slice"><span class="std std-ref">cosmo slice</span></a>, <a class="reference internal" href="matlab/cosmo_match.html#cosmo-match"><span class="std std-ref">cosmo match</span></a>, <a class="reference internal" href="matlab/cosmo_dim_prune.html#cosmo-dim-prune"><span class="std std-ref">cosmo dim prune</span></a>.</p>
+</div>
+<div class="section" id="use-only-a-subset-of-channels-for-my-analysis">
+<h3><a class="toc-backref" href="#id61">Use only a subset of channels for my analysis?</a><a class="headerlink" href="#use-only-a-subset-of-channels-for-my-analysis" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have time-frequency MEEG data for all channels in the layout. How can I select data from a region of interest, in other words use only a subset? Also, how can I compute the response averaged over the selected channels?&#8217;</p>
+<p>First, in order to select a subset of channels of interest, consider the following:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% generate some example data</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;huge&#39;</span><span class="p">,</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;timefreq&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="c">% define channels of interest</span>
+<span class="n">channels_of_interest</span><span class="p">={</span><span class="s">&#39;MEG0941&#39;</span><span class="p">,</span><span class="s">&#39;MEG0942&#39;</span><span class="p">,</span><span class="c">...</span>
+                      <span class="s">&#39;MEG1831&#39;</span><span class="p">,</span><span class="s">&#39;MEG1832&#39;</span><span class="p">,</span><span class="c">...</span>
+                      <span class="p">};</span>
+
+<span class="c">% define mask</span>
+<span class="n">msk</span><span class="p">=</span><span class="n">cosmo_dim_match</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;chan&#39;</span><span class="p">,</span> <span class="n">channels_of_interest</span><span class="p">);</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;Selecting %.1f%% of the channels\n&#39;</span><span class="p">,</span><span class="mi">100</span><span class="o">*</span><span class="n">mean</span><span class="p">(</span><span class="n">msk</span><span class="p">));</span>
+
+<span class="c">% select data</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c">% prune dataset</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Then, to compute the average for each time point and frequency bin:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% average for each time point and frequency bin seperately</span>
+<span class="n">other_dims</span><span class="p">={</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="s">&#39;freq&#39;</span><span class="p">};</span>
+<span class="n">feature_averager</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="n">mean</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">ds_avg</span><span class="p">=</span><span class="n">cosmo_fx</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">feature_averager</span><span class="p">,</span><span class="n">other_dims</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="c">% remove the channel dimension</span>
+<span class="n">ds_avg</span><span class="p">=</span><span class="n">cosmo_dim_remove</span><span class="p">(</span><span class="n">ds_avg</span><span class="p">,</span><span class="s">&#39;chan&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>In this case the data is in time-frequency space. If there is only one sample (i.e. .samples is a row vector), it can be visualized as a time by frequency matrix:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% safety check</span>
+<span class="n">assert</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">ds_avg</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;only a single sample is supported&#39;</span><span class="p">);</span>
+
+<span class="c">% unflatten</span>
+<span class="p">[</span><span class="n">data</span><span class="p">,</span><span class="n">labels</span><span class="p">,</span><span class="n">values</span><span class="p">]=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">ds_avg</span><span class="p">);</span>
+<span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">labels</span><span class="p">,{</span><span class="s">&#39;freq&#39;</span><span class="p">;</span><span class="s">&#39;time&#39;</span><span class="p">}));</span> <span class="c">% safety check</span>
+
+<span class="c">% make it a matrix</span>
+<span class="n">freq_time</span><span class="p">=</span><span class="nb">squeeze</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+
+<span class="c">% visualize data</span>
+<span class="n">label_step</span><span class="p">=</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">freq_values</span><span class="p">=</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+<span class="n">n_freq</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">freq_values</span><span class="p">);</span>
+<span class="n">keep_freq</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">label_step</span><span class="p">:</span><span class="n">n_freq</span><span class="p">;</span>
+
+<span class="n">time_values</span><span class="p">=</span><span class="n">values</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+<span class="n">n_time</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">time_values</span><span class="p">);</span>
+<span class="n">keep_time</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">label_step</span><span class="p">:</span><span class="n">n_time</span><span class="p">;</span>
+
+<span class="n">imagesc</span><span class="p">(</span><span class="n">freq_time</span><span class="p">,[</span><span class="o">-</span><span class="mi">3</span> <span class="mi">3</span><span class="p">]);</span>
+<span class="n">colorbar</span><span class="p">();</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">time_values</span><span class="p">(</span><span class="n">keep_time</span><span class="p">),</span><span class="s">&#39;XTick&#39;</span><span class="p">,</span><span class="n">keep_time</span><span class="p">);</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">freq_values</span><span class="p">(</span><span class="n">keep_freq</span><span class="p">),</span><span class="s">&#39;YTick&#39;</span><span class="p">,</span><span class="n">keep_freq</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="should-i-fisher-transform-correlation-values">
+<h3><a class="toc-backref" href="#id62">Should I Fisher-transform correlation values?</a><a class="headerlink" href="#should-i-fisher-transform-correlation-values" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;When using <a class="reference internal" href="matlab/cosmo_correlation_measure.html#cosmo-correlation-measure"><span class="std std-ref">cosmo correlation measure</span></a>, <a class="reference internal" href="matlab/cosmo_target_dsm_corr_measure.html#cosmo-target-dsm-corr-measure"><span class="std std-ref">cosmo target dsm corr measure</span></a>, or <a class="reference internal" href="matlab/cosmo_dissimilarity_matrix_measure.html#cosmo-dissimilarity-matrix-measure"><span class="std std-ref">cosmo dissimilarity matrix measure</span></a>, should I transform the data, for example using Fisher transformation (<code class="docutils literal"><span class="pre">atanh</span></code>)?&#8217;</p>
+<p>Assuming you would like to do second-level (group) anaysis:</p>
+<ul class="simple">
+<li><a class="reference internal" href="matlab/cosmo_correlation_measure.html#cosmo-correlation-measure"><span class="std std-ref">cosmo correlation measure</span></a>: the correlations are already Fisher transformed (the transformation can be changed and/or disabled using the <code class="docutils literal"><span class="pre">post_corr_func</span></code> option)</li>
+<li><a class="reference internal" href="matlab/cosmo_target_dsm_corr_measure.html#cosmo-target-dsm-corr-measure"><span class="std std-ref">cosmo target dsm corr measure</span></a>: correlation values are not Fisher transformed. You could consider applying <code class="docutils literal"><span class="pre">atanh</span></code> to the <code class="docutils literal"><span class="pre">.samples</span></code> output</li>
+<li><a class="reference internal" href="matlab/cosmo_dissimilarity_matrix_measure.html#cosmo-dissimilarity-matrix-measure"><span class="std std-ref">cosmo dissimilarity matrix measure</span></a>: the <code class="docutils literal"><span class="pre">.samples</span></code> field contains, by default, one minus the correlation, and thus its range is the interval <code class="docutils literal"><span class="pre">[0,</span> <span class="pre">2]</span></code>. Fisher-transformation should not be used, as values greater than 1 are transformed to complex (non-real) numbers.</li>
+</ul>
+</div>
+<div class="section" id="average-samples-in-a-deterministic-manner">
+<h3><a class="toc-backref" href="#id63">Average samples in a deterministic manner?</a><a class="headerlink" href="#average-samples-in-a-deterministic-manner" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;When using <a class="reference internal" href="matlab/cosmo_average_samples.html#cosmo-average-samples"><span class="std std-ref">cosmo average samples</span></a> multiple times on the same dataset, I get different avaraged datasets. How can I get the same result every time?&#8217;</p>
+<p><a class="reference internal" href="matlab/cosmo_average_samples.html#cosmo-average-samples"><span class="std std-ref">cosmo average samples</span></a>  has a <code class="docutils literal"><span class="pre">seed</span></code> option; you can use any integer for a seed. For example, if <code class="docutils literal"><span class="pre">ds</span></code> is a dataset, then</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">ds_avg</span><span class="p">=</span><span class="n">cosmo_average_samples</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>will pseudo-deterministically select the same samples upon repeated evaluations of the expression, and thus return the same result</p>
+</div>
+<div class="section" id="select-only-a-subset-of-features-in-a-neighborhood">
+<h3><a class="toc-backref" href="#id64">Select only a subset of features in a neighborhood?</a><a class="headerlink" href="#select-only-a-subset-of-features-in-a-neighborhood" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;When using <a class="reference internal" href="matlab/cosmo_spherical_neighborhood.html#cosmo-spherical-neighborhood"><span class="std std-ref">cosmo spherical neighborhood</span></a> with the <code class="docutils literal"><span class="pre">radius</span></code> option, some elements in <code class="docutils literal"><span class="pre">.neighborhood</span></code> have only a few elements. How can I exclude them from subsequent searchlight analyses?</p>
+<p>Although <a class="reference internal" href="matlab/cosmo_slice.html#cosmo-slice"><span class="std std-ref">cosmo slice</span></a> does not support neighborhood structures (yet), consider the following example using tiny example datasets and neighborhoods:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">min_count</span><span class="p">=</span><span class="mi">4</span><span class="p">;</span> <span class="c">% in most use cases this is more than 4</span>
+
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">();</span>
+<span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="n">keep_msk</span><span class="p">=</span><span class="n">nh</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">nvoxels</span><span class="o">&gt;</span><span class="p">=</span><span class="n">min_count</span><span class="p">;</span>
+
+<span class="n">nh</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">nh</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">keep_msk</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;struct&#39;</span><span class="p">);</span>
+<span class="n">nh</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">nh</span><span class="p">.</span><span class="n">neighbors</span><span class="p">,</span><span class="n">keep_msk</span><span class="p">);</span>
+
+<span class="n">cosmo_check_neighborhood</span><span class="p">(</span><span class="n">nh</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span> <span class="c">% sanity check</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>Alternatively, <a class="reference internal" href="matlab/cosmo_spherical_neighborhood.html#cosmo-spherical-neighborhood"><span class="std std-ref">cosmo spherical neighborhood</span></a> (and <a class="reference internal" href="matlab/cosmo_surficial_neighborhood.html#cosmo-surficial-neighborhood"><span class="std std-ref">cosmo surficial neighborhood</span></a>) can be used with a &#8216;count&#8217; argument - it keeps the number of elements across neighborhoods more constant.</p>
+</div>
+<div class="section" id="use-multiple-comparison-correction-for-a-time-course">
+<h3><a class="toc-backref" href="#id65">Use multiple-comparison correction for a time course?</a><a class="headerlink" href="#use-multiple-comparison-correction-for-a-time-course" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have a matrix of beta values (Nsubjects x Ntimepoints) for each predictor and I want to test for each timepoint (i.e. each column) if the mean beta is significantly different from zero. I ran a t-test but I wonder if I should test for multiple comparisons as well.
+What would be the best way to test for significance here?&#8217;</p>
+<p>You could use multiple comparison correction using Threshold-Free Cluster Enhancement with a temporal neighborhood. Suppose your data is in the following data matrix:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% generate gaussian example data with no signal;</span>
+<span class="n">n_subjects</span><span class="p">=</span><span class="mi">15</span><span class="p">;</span>
+<span class="n">time_axis</span><span class="p">=</span><span class="o">-</span><span class="p">.</span><span class="mi">1</span><span class="p">:.</span><span class="mi">01</span><span class="p">:.</span><span class="mi">5</span><span class="p">;</span>
+
+<span class="n">n_time</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">time_axis</span><span class="p">);</span>
+<span class="n">data</span><span class="p">=</span><span class="nb">randn</span><span class="p">(</span><span class="n">n_subjects</span><span class="p">,</span><span class="n">n_time</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>then the first step is to put this data in a dataset structure:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% make a dataset</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">data</span><span class="p">;</span>
+
+<span class="c">% insert time dimension</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_dim_insert</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">0</span><span class="p">,{</span><span class="s">&#39;time&#39;</span><span class="p">},{</span><span class="n">time_axis</span><span class="p">},{</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">time_axis</span><span class="p">)});</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>You would have to decide how to form clusters, i.e. whether you want to make inferences at the individual time point level, or at the cluster-of-timepoints level. Then use <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> to estimate significance.</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% Make a temporal neighborhood for clustering</span>
+<span class="c">%</span>
+<span class="c">% In the following, if</span>
+<span class="c">%</span>
+<span class="c">%   allow_clustering_over_time=true</span>
+<span class="c">% then clusters can form over multiple time points. This makes the analysis</span>
+<span class="c">% more sensitive if there is a true effect in the data over multiple</span>
+<span class="c">% consecutive time points. However, when allow_clustering_over_time=true</span>
+<span class="c">% then one cannot make inferences about a specific time point (i.e.</span>
+<span class="c">% &quot;the effect was significant at t=100ms&quot;), only about a cluster (i.e</span>
+<span class="c">% &quot;the effect was significant in a cluster stretching between t=50 and</span>
+<span class="c">% t=150 ms&quot;). If, on the ohter hand,</span>
+<span class="c">%</span>
+<span class="c">%   allow_clustering_over_time=false</span>
+<span class="c">%</span>
+<span class="c">% then inferences can be made at the individual time point level, at the</span>
+<span class="c">% expensive of sensitivity of detecting any significant effect if there is</span>
+<span class="c">% a true effect that spans multiple consecutive time points</span>
+<span class="n">allow_clustering_over_time</span><span class="p">=</span><span class="n">false</span><span class="p">;</span> <span class="c">% true or false</span>
+
+<span class="c">% define the neighborhood</span>
+<span class="n">nh_cl</span><span class="p">=</span><span class="n">cosmo_cluster_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="n">allow_clustering_over_time</span><span class="p">);</span>
+
+<span class="c">% set subject information</span>
+<span class="n">n_samples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=(</span><span class="mi">1</span><span class="p">:</span><span class="n">n_samples</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>     <span class="c">% all subjects are independent</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="n">n_samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="c">% one-sample t-test</span>
+
+<span class="c">% set clustering</span>
+<span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">h0_mean</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span> <span class="c">% expected mean against which t-test is run</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">niter</span><span class="p">=</span><span class="mi">10000</span><span class="p">;</span> <span class="c">% 10,000 is recommdended for publication-quality analyses</span>
+
+<span class="c">% run TFCE Monte Carlo multiple comparison correction</span>
+<span class="c">% in the output map, z-scores above 1.65 (for one-tailed) or 1.96 (for</span>
+<span class="c">% two-tailed) tests are significant</span>
+<span class="n">ds_tfce</span><span class="p">=</span><span class="n">cosmo_montecarlo_cluster_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh_cl</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="classify-different-groups-of-participants-such-as-patients-versus-controls">
+<h3><a class="toc-backref" href="#id66">Classify different groups of participants (such as patients versus controls)?</a><a class="headerlink" href="#classify-different-groups-of-participants-such-as-patients-versus-controls" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;I have participants in three groups, patients1, patients2, and controls. How can I see where in the brain people these groups can be discriminated above chance level?&#8217;</p>
+<blockquote>
+<div><p>To do so, consider a standard searchlight using <a class="reference internal" href="matlab/cosmo_searchlight.html#cosmo-searchlight"><span class="std std-ref">cosmo searchlight</span></a> with <cite>cosmo_crossvalidation_measure</cite>. Group membership is set in <code class="docutils literal"><span class="pre">.sa.targets</span></code>. Since all participants are assumed to be independent, values in <code class="docutils literal"><span class="pre">.sa.chunks</span></code> are all unique.</p>
+<p>Correcting for multiple comparisons is more difficult. Since it is not possible to do a &#8216;standard&#8217; t-test (two groups) or ANOVA F-test (three or more groups), instead generate null datasets manually by randomly permuting the <code class="docutils literal"><span class="pre">.sa.targets</span></code> labels. Then use these null datasets directly as input for <a class="reference internal" href="matlab/cosmo_montecarlo_cluster_stat.html#cosmo-montecarlo-cluster-stat"><span class="std std-ref">cosmo montecarlo cluster stat</span></a> without computing a feature statistic.</p>
+<p>Consider the following example:</p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">% set number of groups and number of participants in each group</span>
+<span class="n">ngroups</span><span class="p">=</span><span class="mi">3</span><span class="p">;</span>
+<span class="n">nchunks</span><span class="p">=</span><span class="mi">10</span><span class="p">;</span>
+
+<span class="c">% generate example dataset with some signal that discriminates</span>
+<span class="c">% the participants</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="n">ngroups</span><span class="p">,</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="n">nchunks</span><span class="p">);</span>
+
+<span class="c">% since all participants are independent, all chunks are set to</span>
+<span class="c">% unique values</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(:)=</span><span class="mi">1</span><span class="p">:(</span><span class="n">ngroups</span><span class="o">*</span><span class="n">nchunks</span><span class="p">);</span>
+
+<span class="c">% define partitions</span>
+<span class="n">fold_count</span><span class="p">=</span><span class="mi">50</span><span class="p">;</span>
+<span class="n">test_count</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_independent_samples_partitioner</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;fold_count&#39;</span><span class="p">,</span><span class="n">fold_count</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;test_count&#39;</span><span class="p">,</span><span class="n">test_count</span><span class="p">);</span>
+
+<span class="c">% define neighborhood</span>
+<span class="n">radius_in_voxels</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span> <span class="c">% typical is 3 voxels</span>
+<span class="n">nh</span><span class="p">=</span><span class="n">cosmo_spherical_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="n">radius_in_voxels</span><span class="p">);</span>
+
+<span class="c">% run searchlight on original data</span>
+<span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">partitions</span><span class="p">;</span>
+
+<span class="n">result</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+<span class="c">% generate null dataset</span>
+<span class="n">niter</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span> <span class="c">% at least 1000 is iterations is recommended, 10000 is better</span>
+<span class="n">ds_null_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">niter</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+<span class="k">for</span> <span class="n">iter</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">niter</span>
+    <span class="n">ds_null</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+
+    <span class="n">ds_null</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="n">cosmo_randomize_targets</span><span class="p">(</span><span class="n">ds_null</span><span class="p">);</span>
+
+    <span class="c">% update partitions</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_independent_samples_partitioner</span><span class="p">(</span><span class="n">ds_null</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;fold_count&#39;</span><span class="p">,</span><span class="n">fold_count</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;test_count&#39;</span><span class="p">,</span><span class="n">test_count</span><span class="p">);</span>
+
+
+    <span class="n">null_result</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds_null</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="c">...</span>
+                            <span class="p">@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">ds_null_cell</span><span class="p">{</span><span class="n">iter</span><span class="p">}=</span><span class="n">null_result</span><span class="p">;</span>
+<span class="k">end</span>
+<span class="c">%%</span>
+
+<span class="c">% Since partitions are balanced, chance level</span>
+<span class="c">% is the inverse of the number of groups. For example,</span>
+<span class="c">% with 4 groups, chance level is 1/4 = 0.25 = 25%.</span>
+<span class="n">chance_level</span><span class="p">=</span><span class="mi">1</span><span class="o">/</span><span class="n">ngroups</span><span class="p">;</span>
+<span class="n">tfce_dh</span><span class="p">=</span><span class="mf">0.01</span><span class="p">;</span> <span class="c">% should be sufficient for accuracies</span>
+
+<span class="n">opt</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">h0_mean</span><span class="p">=</span><span class="n">chance_level</span><span class="p">;</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">dh</span><span class="p">=</span><span class="n">tfce_dh</span><span class="p">;</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">feature_stat</span><span class="p">=</span><span class="s">&#39;none&#39;</span><span class="p">;</span>
+<span class="n">opt</span><span class="p">.</span><span class="n">null</span><span class="p">=</span><span class="n">ds_null_cell</span><span class="p">;</span>
+
+<span class="n">cl_nh</span><span class="p">=</span><span class="n">cosmo_cluster_neighborhood</span><span class="p">(</span><span class="n">result</span><span class="p">);</span>
+
+<span class="c">%% compute TFCE map with z-scores</span>
+<span class="c">% z-scores above 1.65 are signficant at p=0.05 one-tailed.</span>
+
+<span class="n">tfce_map</span><span class="o">-</span><span class="n">cosmo_montecarlo_cluster_stat</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="n">cl_nh</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="when-running-an-meeg-searchlight-have-the-same-channels-in-the-output-dataset-as-in-the-input-dataset">
+<h3><a class="toc-backref" href="#id67">When running an MEEG searchlight, have the same channels in the output dataset as in the input dataset?</a><a class="headerlink" href="#when-running-an-meeg-searchlight-have-the-same-channels-in-the-output-dataset-as-in-the-input-dataset" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;When I run an MEEG searchlight over channels, the searchlight dataset map has more channels than the input dataset. Is this normal?&#8217;</p>
+<p>This is quite possible because the <a class="reference internal" href="matlab/cosmo_meeg_chan_neighborhood.html#cosmo-meeg-chan-neighborhood"><span class="std std-ref">cosmo meeg chan neighborhood</span></a> uses, by default, the layout that best fits the dataset. The output from the searchlight has then all channels from this layout, rather than only the channels from the input dataset. This is done so that in individual particpants different channels can be removed in the preprocessing step, while group analysis on the output maps can be done on maps that have the same channels for all participants.</p>
+<p>If you want to use only the channels from the input dataset (say <code class="docutils literal"><span class="pre">ds</span></code>) you can set the <code class="docutils literal"><span class="pre">label</span></code> option to &#8216;dataset&#8217;. See the following example, where <code class="docutils literal"><span class="pre">chan_nh</span></code> has only channels from the input dataset.</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">chan_nh</span><span class="p">=</span><span class="n">cosmo_meeg_chan_neighborhood</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+<div class="section" id="save-meeg-data-when-i-get-the-error-value-for-fdim-channel-label-is-not-supported">
+<h3><a class="toc-backref" href="#id68">Save MEEG data when I get the error &#8220;value for fdim channel label is not supported&#8221;?</a><a class="headerlink" href="#save-meeg-data-when-i-get-the-error-value-for-fdim-channel-label-is-not-supported" title="Permalink to this headline">¶</a></h3>
+<p>&#8216;When I try to export MEEG searchlight maps with channel information as MEEG data using <code class="docutils literal"><span class="pre">cosmo_map2meeg(ds,'-dattimef')</span></code>, I get the error &#8220;value for fdim channel label is not supported&#8221;? Also I am unable to visualize the data in FieldTrip. Any idea how to fix this?&#8217;</p>
+<p>This is probably caused by a wrong feature dimension order when crossing the neighborhood with <a class="reference internal" href="matlab/cosmo_cross_neighborhood.html#cosmo-cross-neighborhood"><span class="std std-ref">cosmo cross neighborhood</span></a>. The FieldTrip convention for the order is <code class="docutils literal"><span class="pre">'chan','time'</span></code> (for time-locked data) or <code class="docutils literal"><span class="pre">'chan','time','freq'</span></code> (for time-frequency data). (As of 16 December 2016, a warning has been added if a non-standard dimension order is detected).</p>
+<p>It is possible to change the feature dimension order afterwards. First, the feature dimension order for a dataset struct <code class="docutils literal"><span class="pre">ds</span></code> can be displayed by running:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="nb">disp</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>If the order is, for example, <code class="docutils literal"><span class="pre">'freq',</span> <span class="pre">'time',</span> <span class="pre">'chan'</span></code> then the channel dimension should be moved from position 3 to position 1 to become <code class="docutils literal"><span class="pre">'chan','freq','time'</span></code>. To move the channel dimension, first remove the dimension, than insert it at another position, as follows:</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">label_to_move</span><span class="p">=</span><span class="s">&#39;chan&#39;</span><span class="p">;</span>
+<span class="n">target_pos</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="p">[</span><span class="n">ds</span><span class="p">,</span><span class="n">attr</span><span class="p">,</span><span class="n">values</span><span class="p">]=</span><span class="n">cosmo_dim_remove</span><span class="p">(</span><span class="n">ds</span><span class="p">,{</span><span class="n">label_to_move</span><span class="p">});</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_dim_insert</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">target_pos</span><span class="p">,{</span><span class="n">label_to_move</span><span class="p">},</span><span class="n">values</span><span class="p">,</span><span class="n">attr</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Frequently Asked/Anticipated Questions</a><ul>
+<li><a class="reference internal" href="#general">General</a><ul>
+<li><a class="reference internal" href="#how-should-i-cite-cosmomvpa">How should I cite CoSMoMVPA?</a></li>
+<li><a class="reference internal" href="#what-is-the-history-of-cosmomvpa">What is the history of CoSMoMVPA?</a></li>
+<li><a class="reference internal" href="#what-are-the-main-features">What are the main features?</a></li>
+<li><a class="reference internal" href="#what-does-cosmomvpa-not-provide">What does CoSMoMVPA <em>not</em> provide?</a></li>
+<li><a class="reference internal" href="#does-it-integrate-with-pymvpa">Does it integrate with PyMVPA?</a></li>
+<li><a class="reference internal" href="#does-it-run-on-gnu-octave">Does it run on GNU Octave?</a></li>
+<li><a class="reference internal" href="#how-fast-does-it-run">How fast does it run?</a></li>
+<li><a class="reference internal" href="#what-should-i-use-as-input-for-mvpa">What should I use as input for MVPA?</a></li>
+<li><a class="reference internal" href="#who-are-the-developers-of-cosmomvpa">Who are the developers of CoSMoMVPA?</a></li>
+<li><a class="reference internal" href="#which-classifiers-are-available">Which classifiers are available?</a></li>
+<li><a class="reference internal" href="#which-platforms-does-it-support">Which platforms does it support?</a></li>
+<li><a class="reference internal" href="#what-future-features-can-be-expected">What future features can be expected?</a></li>
+<li><a class="reference internal" href="#how-can-i-contact-the-developers-directly">How can I contact the developers directly?</a></li>
+<li><a class="reference internal" href="#is-there-a-mailinglist">Is there a mailinglist?</a></li>
+<li><a class="reference internal" href="#why-do-you-encourage-balanced-partitions">Why do you encourage balanced partitions?</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#how-do-i">How do I ...</a><ul>
+<li><a class="reference internal" href="#find-the-correspondence-between-voxel-indices-in-afni-and-feature-indices-in-cosmomvpa">Find the correspondence between voxel indices in AFNI and feature indices in CoSMoMVPA</a></li>
+<li><a class="reference internal" href="#get-ecog-data-in-a-cosmomvpa-struct">Get ECoG data in a CoSMoMVPA struct</a></li>
+<li><a class="reference internal" href="#get-temporal-data-in-a-cosmomvpa-struct">Get temporal data in a CoSMoMVPA struct</a></li>
+<li><a class="reference internal" href="#run-group-analysis">Run group analysis</a></li>
+<li><a class="reference internal" href="#make-an-intersection-mask-across-participants">Make an intersection mask across participants</a></li>
+<li><a class="reference internal" href="#run-group-analysis-on-time-by-time-generalization-measures">Run group analysis on time-by-time generalization measures</a></li>
+<li><a class="reference internal" href="#use-libsvm">Use LIBSVM</a></li>
+<li><a class="reference internal" href="#use-surface-based-mapping-with-a-low-resolution-output-surface">Use surface-based mapping with a low-resolution output surface</a></li>
+<li><a class="reference internal" href="#correct-for-multiple-comparisons">Correct for multiple comparisons</a></li>
+<li><a class="reference internal" href="#do-cross-modal-decoding-across-three-modalities">Do cross-modal decoding across three modalities</a></li>
+<li><a class="reference internal" href="#compute-classification-accuracies-manually">Compute classification accuracies manually</a></li>
+<li><a class="reference internal" href="#merge-surface-data-from-two-hemispheres">Merge surface data from two hemispheres</a></li>
+<li><a class="reference internal" href="#visualize-and-store-multiple-fmri-volumes">Visualize and store multiple fMRI volumes</a></li>
+<li><a class="reference internal" href="#average-along-features-in-a-neighborhood">Average along features in a neighborhood</a></li>
+<li><a class="reference internal" href="#select-a-time-interval-in-an-meeg-dataset">Select a time interval in an MEEG dataset</a></li>
+<li><a class="reference internal" href="#select-a-particular-channel-type-in-an-meeg-dataset">Select a particular channel type in an MEEG dataset</a></li>
+<li><a class="reference internal" href="#use-only-a-subset-of-channels-for-my-analysis">Use only a subset of channels for my analysis?</a></li>
+<li><a class="reference internal" href="#should-i-fisher-transform-correlation-values">Should I Fisher-transform correlation values?</a></li>
+<li><a class="reference internal" href="#average-samples-in-a-deterministic-manner">Average samples in a deterministic manner?</a></li>
+<li><a class="reference internal" href="#select-only-a-subset-of-features-in-a-neighborhood">Select only a subset of features in a neighborhood?</a></li>
+<li><a class="reference internal" href="#use-multiple-comparison-correction-for-a-time-course">Use multiple-comparison correction for a time course?</a></li>
+<li><a class="reference internal" href="#classify-different-groups-of-participants-such-as-patients-versus-controls">Classify different groups of participants (such as patients versus controls)?</a></li>
+<li><a class="reference internal" href="#when-running-an-meeg-searchlight-have-the-same-channels-in-the-output-dataset-as-in-the-input-dataset">When running an MEEG searchlight, have the same channels in the output dataset as in the input dataset?</a></li>
+<li><a class="reference internal" href="#save-meeg-data-when-i-get-the-error-value-for-fdim-channel-label-is-not-supported">Save MEEG data when I get the error &#8220;value for fdim channel label is not supported&#8221;?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="matlab/demo_surface_tfce.html"
+                        title="previous chapter">demo surface tfce</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contact.html"
+                        title="next chapter">Contact information</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/faq.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="contact.html" title="Contact information"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="matlab/demo_surface_tfce.html" title="demo surface tfce"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

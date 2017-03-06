@@ -1,0 +1,173 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Representational similarity analysis &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="MEEG Searchlights" href="ex_meeg_searchlight.html" />
+    <link rel="prev" title="Use the searchlight with a neighborhood and a measure" href="ex_searchlight_measure.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ex_meeg_searchlight.html" title="MEEG Searchlights"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="ex_searchlight_measure.html" title="Use the searchlight with a neighborhood and a measure"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="representational-similarity-analysis">
+<h1>Representational similarity analysis<a class="headerlink" href="#representational-similarity-analysis" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="visualizing-dissimilarity-matrices">
+<h2>Visualizing dissimilarity matrices<a class="headerlink" href="#visualizing-dissimilarity-matrices" title="Permalink to this headline">¶</a></h2>
+<p>Dissimilarities, based on neural data, behavioural data, and/or model data, can be visualised in various ways.</p>
+<p>Compute the similarities in the <code class="docutils literal"><span class="pre">ev</span></code> and <code class="docutils literal"><span class="pre">vt</span></code> regions for participant <code class="docutils literal"><span class="pre">s01</span></code> across the six categories, and load the model similarities for the behavioural ratings. Then visualize the similarities in three ways:</p>
+<ul class="simple">
+<li>with dissimilarity matrices</li>
+<li>with dendograms</li>
+<li>with multi-dimensional scaling</li>
+</ul>
+<p>Hint: <a class="reference internal" href="matlab/run_rsa_visualize_skl.html#run-rsa-visualize-skl"><span class="std std-ref">run rsa visualize skl</span></a>.</p>
+<p>Solution: <a class="reference internal" href="matlab/run_rsa_visualize.html#run-rsa-visualize"><span class="std std-ref">run rsa visualize</span></a> / <a class="reference external" href="_static/publish/run_rsa_visualize.html">Matlab output: run_rsa_visualize</a>.</p>
+</div>
+<div class="section" id="comparing-dissimilarity-matrices">
+<h2>Comparing dissimilarity matrices<a class="headerlink" href="#comparing-dissimilarity-matrices" title="Permalink to this headline">¶</a></h2>
+<p>It is easy to compare dissimilarity matrices by computing the
+Pearson correlation between two flattened upper triangle DSMs using the
+<a class="reference internal" href="matlab/cosmo_corr.html#cosmo-corr"><span class="std std-ref">cosmo corr</span></a> function. For the next exercise, stack flattened DSMs vertically
+into a single matrix starting with all of the EV DSMs from every subject then
+all of the VT DSM. You should have an 16x15 matrix. Then add the v1 model and the
+behavioral DSMs to make it a 18x15 matrix. Now compute the cross-correlation
+matrix using <a class="reference internal" href="matlab/cosmo_corr.html#cosmo-corr"><span class="std std-ref">cosmo corr</span></a>. Visualize the cross-correlation matrix with
+<strong>imagesc</strong>. Try this with demeaning and without demeaning to compare the
+results. Finally, use matlabs <strong>boxplot</strong> function to view the distributions of
+correlations between neural simiilarities and model/behavioral DSMs.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_compare_dsm_skl.html#run-compare-dsm-skl"><span class="std std-ref">run compare dsm skl</span></a>.</p>
+<p>Solution: <a class="reference internal" href="matlab/run_compare_dsm.html#run-compare-dsm"><span class="std std-ref">run compare dsm</span></a> / <a class="reference external" href="_static/publish/run_compare_dsm.html">Matlab output: run_compare_dsm</a>.</p>
+</div>
+<div class="section" id="target-dissimilarity-matrix-searchlight">
+<h2>Target dissimilarity matrix searchlight<a class="headerlink" href="#target-dissimilarity-matrix-searchlight" title="Permalink to this headline">¶</a></h2>
+<p>The function <a class="reference internal" href="matlab/cosmo_target_dsm_corr_measure.html#cosmo-target-dsm-corr-measure"><span class="std std-ref">cosmo target dsm corr measure</span></a> implements representational similarity. Use this measure to map where the neural similarity is similar to the behavioural similarity.</p>
+<p>It is recommended to center the data using the <code class="docutils literal"><span class="pre">center_data</span></code> option.</p>
+<p>Advanced exercise: the <a class="reference internal" href="matlab/cosmo_target_dsm_corr_measure.html#cosmo-target-dsm-corr-measure"><span class="std std-ref">cosmo target dsm corr measure</span></a> function can also run regression on multiple dissimilarity matrices. Use this function to estimate the contribution of the V1 and behavioural model using a searchlight.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_rsm_measure_searchlight_skl.html#run-rsm-measure-searchlight-skl"><span class="std std-ref">run rsm measure searchlight skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_rsm_measure_searchlight.html#run-rsm-measure-searchlight"><span class="std std-ref">run rsm measure searchlight</span></a> / <a class="reference external" href="_static/publish/run_rmm_measure_searchlight.html">run_rsm_measure_searchlight_pb</a></p>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Representational similarity analysis</a><ul>
+<li><a class="reference internal" href="#visualizing-dissimilarity-matrices">Visualizing dissimilarity matrices</a></li>
+<li><a class="reference internal" href="#comparing-dissimilarity-matrices">Comparing dissimilarity matrices</a></li>
+<li><a class="reference internal" href="#target-dissimilarity-matrix-searchlight">Target dissimilarity matrix searchlight</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="ex_searchlight_measure.html"
+                        title="previous chapter">Use the searchlight with a neighborhood and a measure</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ex_meeg_searchlight.html"
+                        title="next chapter">MEEG Searchlights</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_rsa_tutorial.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ex_meeg_searchlight.html" title="MEEG Searchlights"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="ex_searchlight_measure.html" title="Use the searchlight with a neighborhood and a measure"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

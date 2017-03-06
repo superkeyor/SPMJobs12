@@ -1,0 +1,259 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>run meeg time generalization skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="run meeg timelock measures skl" href="run_meeg_timelock_measures_skl.html" />
+    <link rel="prev" title="run measure searchlight skl" href="run_measure_searchlight_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="run_meeg_timelock_measures_skl.html" title="run meeg timelock measures skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="run_measure_searchlight_skl.html" title="run measure searchlight skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" accesskey="U">Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="run-meeg-time-generalization-skl">
+<span id="id1"></span><h1>run meeg time generalization skl<a class="headerlink" href="#run-meeg-time-generalization-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% MEEG time generalization in a region (in space-time) of interest</span>
+<span class="c">%</span>
+<span class="c">% This example shows MVPA analyses performed on MEEG data.</span>
+<span class="c">%</span>
+<span class="c">% The input dataset involved a paradigm where a participant saw</span>
+<span class="c">% images of six object categories.</span>
+<span class="c">%</span>
+<span class="c">% The code presented here can be adapted for other MEEG analyses, but</span>
+<span class="c">% there are a few potential caveats:</span>
+<span class="c">% * assignment of chunks (parts of the data that are assumed to be</span>
+<span class="c">%   independent) is based on a trial-by-trial basis. For cross-validation,</span>
+<span class="c">%   the number of chunks is reduced to two to speed up the analysis.</span>
+<span class="c">% * the current examples do not perform baseline corrections or signal</span>
+<span class="c">%   normalizations, which may reduce discriminatory power.</span>
+<span class="c">%</span>
+<span class="c">% Note: running this code requires FieldTrip.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+
+<span class="c">%% get timelock data in CoSMoMVPA format</span>
+
+<span class="c">% set configuration</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;meg_obj6&#39;</span><span class="p">);</span>
+
+<span class="c">% show dataset information</span>
+<span class="n">readme_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;README&#39;</span><span class="p">);</span>
+<span class="n">cosmo_type</span><span class="p">(</span><span class="n">readme_fn</span><span class="p">);</span>
+
+<span class="c">% reset citation list</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-tic&#39;</span><span class="p">);</span>
+
+<span class="c">% load preprocessed data</span>
+<span class="n">data_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;meg_obj6_s00.mat&#39;</span><span class="p">);</span>
+<span class="n">data_tl</span><span class="p">=</span><span class="n">load</span><span class="p">(</span><span class="n">data_fn</span><span class="p">);</span>
+
+<span class="c">% convert to cosmomvpa struct and show the dataset</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_meeg_dataset</span><span class="p">(</span><span class="n">data_tl</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+
+<span class="c">%%</span>
+
+<span class="c">% set the targets (trial condition)</span>
+<span class="c">% Hint: use the first column from ds.sa.trialinfo</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% set the chunks (independent measurements)</span>
+<span class="c">% all trials are here considered to be independent</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% in addition give a label to each trial</span>
+<span class="n">index2label</span><span class="p">={</span><span class="s">&#39;body&#39;</span><span class="p">,</span><span class="s">&#39;car&#39;</span><span class="p">,</span><span class="s">&#39;face&#39;</span><span class="p">,</span><span class="s">&#39;flower&#39;</span><span class="p">,</span><span class="s">&#39;insect&#39;</span><span class="p">,</span><span class="s">&#39;scene&#39;</span><span class="p">};</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">index2label</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">num2cell</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">));</span>
+
+<span class="c">% just to check everything is ok</span>
+<span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+<span class="c">%% Select subset of sensors and time points</span>
+
+<span class="c">% Select posterior gradiometers</span>
+<span class="n">sensor_posterior_planar</span><span class="p">={</span><span class="s">&#39;MEG1632&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1642&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1732&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1842&#39;</span><span class="p">,</span> <span class="c">...</span>
+                        <span class="s">&#39;MEG1912&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1922&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1942&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2232&#39;</span><span class="p">,</span> <span class="c">...</span>
+                        <span class="s">&#39;MEG2312&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2322&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2342&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2432&#39;</span><span class="p">,</span> <span class="c">...</span>
+                        <span class="s">&#39;MEG2442&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2512&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2532&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MEG1633&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1643&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1733&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1843&#39;</span><span class="p">,</span> <span class="c">...</span>
+                        <span class="s">&#39;MEG1913&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1923&#39;</span><span class="p">,</span> <span class="s">&#39;MEG1943&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2233&#39;</span><span class="p">,</span> <span class="c">...</span>
+                        <span class="s">&#39;MEG2313&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2323&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2343&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2433&#39;</span><span class="p">,</span> <span class="c">...</span>
+                        <span class="s">&#39;MEG2443&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2513&#39;</span><span class="p">,</span> <span class="s">&#39;MEG2533&#39;</span><span class="p">};</span>
+
+<span class="n">msk</span><span class="p">=</span><span class="n">cosmo_dim_match</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;chan&#39;</span><span class="p">,</span><span class="n">sensor_posterior_planar</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;time&#39;</span><span class="p">,@(</span><span class="n">t</span><span class="p">)</span><span class="n">t</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">0</span> <span class="o">&amp;</span> <span class="n">t</span><span class="o">&lt;</span><span class="p">=.</span><span class="mi">3</span><span class="p">);</span>
+
+<span class="n">ds_sel</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">ds_sel</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">);</span>
+
+<span class="c">% Reduce the number of chunks to have only two chunks</span>
+<span class="c">% Hint: use cosmo_chunkize</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% Now use cosmo_dim_transpose to make &#39;time&#39; a sample dimension</span>
+<span class="c">% Hint: the third argument to cosmo_dim_transpose must be 1, because</span>
+<span class="c">% time now describes the first (sample) dimension in .samples</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+
+
+<span class="c">% Set the measure to be a function handle to</span>
+<span class="c">% cosmo_dim_generalization_measure</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_dim_generalization_measure</span><span class="p">;</span>
+
+<span class="c">% Set measure arguments</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+<span class="c">% Use the measure with the following arugments:</span>
+<span class="c">% - measure: @cosmo_crossvalidation_measure</span>
+<span class="c">% - classifier: @cosmo_classify_lda</span>
+<span class="c">% - dimension: &#39;time&#39;</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">dimension</span><span class="p">=</span><span class="s">&#39;time&#39;</span><span class="p">;</span>
+
+<span class="c">% Now apply the measure to the dataset, and store the output in a variable</span>
+<span class="c">% &#39;result&#39;</span>
+<span class="n">result</span><span class="p">=</span><span class="n">measure</span><span class="p">(</span><span class="n">ds_tr</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="c">%% Visualize results</span>
+
+<span class="c">% Unflatten the dataset using cosmo_unflatten, and assign the result</span>
+<span class="c">% to three variables: data, labels and values</span>
+<span class="c">% Hint: the second argument to cosmo_unflatten must be 1</span>
+
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+
+<span class="c">% Visualize the data matrix using imagesc</span>
+<span class="c">%%%% &gt;&gt;&gt; Your code here &lt;&lt;&lt; %%%%</span>
+<span class="n">colorbar</span><span class="p">();</span>
+
+<span class="c">% Show labels</span>
+<span class="n">nticks</span><span class="p">=</span><span class="mi">5</span><span class="p">;</span>
+<span class="n">ytick</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">numel</span><span class="p">(</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}),</span> <span class="n">nticks</span><span class="p">));</span>
+<span class="n">ylabel</span><span class="p">(</span><span class="n">strrep</span><span class="p">(</span><span class="n">labels</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">));</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;Ytick&#39;</span><span class="p">,</span><span class="n">ytick</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}(</span><span class="n">ytick</span><span class="p">));</span>
+
+<span class="n">xtick</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">numel</span><span class="p">(</span><span class="n">values</span><span class="p">{</span><span class="mi">2</span><span class="p">}),</span> <span class="n">nticks</span><span class="p">));</span>
+<span class="n">xlabel</span><span class="p">(</span><span class="n">strrep</span><span class="p">(</span><span class="n">labels</span><span class="p">{</span><span class="mi">2</span><span class="p">},</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">));</span>
+<span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;Xtick&#39;</span><span class="p">,</span><span class="n">xtick</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">values</span><span class="p">{</span><span class="mi">2</span><span class="p">}(</span><span class="n">xtick</span><span class="p">));</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="run_measure_searchlight_skl.html"
+                        title="previous chapter">run measure searchlight skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="run_meeg_timelock_measures_skl.html"
+                        title="next chapter">run meeg timelock measures skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/run_meeg_time_generalization_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="run_meeg_timelock_measures_skl.html" title="run meeg timelock measures skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="run_measure_searchlight_skl.html" title="run measure searchlight skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl_run.html" >Runnable examples - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

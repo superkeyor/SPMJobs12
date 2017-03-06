@@ -1,0 +1,7 @@
+.. _cosmo_classify_matlabsvm_2class_hdr:
+
+cosmo classify matlabsvm 2class hdr
+===================================
+
+.. include :: cosmo_classify_matlabsvm_2class_hdr.txt
+

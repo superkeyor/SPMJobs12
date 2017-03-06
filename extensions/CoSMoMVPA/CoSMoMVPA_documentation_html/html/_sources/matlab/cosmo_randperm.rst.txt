@@ -1,0 +1,7 @@
+.. _cosmo_randperm:
+
+cosmo randperm
+==============
+
+.. include :: cosmo_randperm.txt
+

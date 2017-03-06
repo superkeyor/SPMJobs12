@@ -1,0 +1,225 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo check dataset hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo check external hdr" href="cosmo_check_external_hdr.html" />
+    <link rel="prev" title="cosmo cartprod hdr" href="cosmo_cartprod_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_check_external_hdr.html" title="cosmo check external hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_cartprod_hdr.html" title="cosmo cartprod hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-check-dataset-hdr">
+<span id="id1"></span><h1>cosmo check dataset hdr<a class="headerlink" href="#cosmo-check-dataset-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">cosmo_check_dataset</span><span class="p">(</span>ds, ds_type, error_if_not_ok<span class="p">)</span><span class="w"></span>
+<span class="c">% Check consistency of a dataset.</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% is_ok=cosmo_dataset_check(ds, [ds_type,][,error_if_not_ok])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                     dataset struct.</span>
+<span class="c">%   ds_type                string indicating the specific type of dataset.</span>
+<span class="c">%                          Currently  supports &#39;fmri&#39; and &#39;meeg&#39;.</span>
+<span class="c">%   error_if_not_ok        if true (the default) or a string, an error is</span>
+<span class="c">%                          raised if the dataset is not kosher (see below).</span>
+<span class="c">%                          If a string, then it is prefixed in the error</span>
+<span class="c">%                          message. If false, then no error is raised.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   is_ok                  boolean indicating kosherness of ds.</span>
+<span class="c">%                          It is consider ok if:</span>
+<span class="c">%                          - it has a field .samples with a PxQ array.</span>
+<span class="c">%                          - if it has a field .features [.samples], then</span>
+<span class="c">%                            it should be a struct, and each field in it</span>
+<span class="c">%                            should have P [Q] elements along the first</span>
+<span class="c">%                            [second] dimension or be empty.</span>
+<span class="c">%                          - .sa.{targets,chunks} are numeric vectors with</span>
+<span class="c">%                            integers (if present)</span>
+<span class="c">%                          - if ds_type is provided, then some more tests</span>
+<span class="c">%                            (depending on ds_type) are performed.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     cosmo_check_dataset([])</span>
+<span class="c">%     &gt; error(&#39;dataset not a struct&#39;)</span>
+<span class="c">%</span>
+<span class="c">%     cosmo_check_dataset(struct())</span>
+<span class="c">%     &gt; error(&#39;dataset has no field .samples&#39;)</span>
+<span class="c">%</span>
+<span class="c">%     % this (very minimal) dataset is kosher</span>
+<span class="c">%     cosmo_check_dataset(struct(&#39;samples&#39;,zeros(2)))</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%</span>
+<span class="c">%     % error can be silenced</span>
+<span class="c">%     cosmo_check_dataset(&#39;this is not ok&#39;,false)</span>
+<span class="c">%     &gt; false</span>
+<span class="c">%</span>
+<span class="c">%     % run some more tests</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;fmri&#39;);</span>
+<span class="c">%     cosmo_check_dataset(ds)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%     ds.sa.chunks=[2;3]; % wrong size</span>
+<span class="c">%     cosmo_check_dataset(ds)</span>
+<span class="c">%     &gt; error(&#39;sa.chunks has 2 values in dimension 1, expected 6&#39;)</span>
+<span class="c">%     ds.sa.chunks={&#39;a&#39;,&#39;b&#39;,&#39;c&#39;,&#39;a&#39;,&#39;b&#39;,&#39;c&#39;}&#39;;</span>
+<span class="c">%     cosmo_check_dataset(ds)</span>
+<span class="c">%     &gt; error(&#39;.sa.chunks must be numeric vector with integers&#39;)</span>
+<span class="c">%</span>
+<span class="c">%     % set illegal dimension values</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;fmri&#39;);</span>
+<span class="c">%     ds.a.fdim.values{1}=[1 2];</span>
+<span class="c">%     cosmo_check_dataset(ds)</span>
+<span class="c">%     &gt; error(&#39;.fa.i must be vector with integers in range 1..2&#39;)</span>
+<span class="c">%</span>
+<span class="c">%     % check for specific type of dataset</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;fmri&#39;);</span>
+<span class="c">%     cosmo_check_dataset(ds,&#39;meeg&#39;)</span>
+<span class="c">%     &gt; error(&#39;missing field .a.meeg for meeg-dataset&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % destroy crucial information in fmri dataset</span>
+<span class="c">%     % this error is only caught if explicit checking for fmri dataset is</span>
+<span class="c">%     % enabled, because the dataset remains valid when considered as a</span>
+<span class="c">%     % non-fmri dataset</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;fmri&#39;);</span>
+<span class="c">%     % destroy volume information</span>
+<span class="c">%     ds.a=rmfield(ds.a,&#39;vol&#39;);</span>
+<span class="c">%     cosmo_check_dataset(ds)</span>
+<span class="c">%     &gt; true  % error not caught</span>
+<span class="c">%     cosmo_check_dataset(ds,&#39;fmri&#39;)</span>
+<span class="c">%     &gt; error(&#39;missing field .a.vol for fmri-dataset&#39;)</span>
+<span class="c">%</span>
+<span class="c">%     % check meeg dataset</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;meeg&#39;);</span>
+<span class="c">%     cosmo_check_dataset(ds,&#39;meeg&#39;)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%     ds.fa.chan=ds.fa.chan+6; % outside range</span>
+<span class="c">%     cosmo_check_dataset(ds)</span>
+<span class="c">%     &gt; error(&#39;.fa.chan must be vector with integers in range 1..3&#39;)</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%  - if the second argument is a boolean then its value is used for</span>
+<span class="c">%    error_if_not_ok, and ds_type is not used</span>
+<span class="c">%  - this function throws one error at most, even if it is inconsistent for</span>
+<span class="c">%    several reasons.</span>
+<span class="c">%  - it is good practice to use this function when a new dataset is created</span>
+<span class="c">%    to ensure consistency of the data</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_cartprod_hdr.html"
+                        title="previous chapter">cosmo cartprod hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_check_external_hdr.html"
+                        title="next chapter">cosmo check external hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_check_dataset_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_check_external_hdr.html" title="cosmo check external hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_cartprod_hdr.html" title="cosmo cartprod hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

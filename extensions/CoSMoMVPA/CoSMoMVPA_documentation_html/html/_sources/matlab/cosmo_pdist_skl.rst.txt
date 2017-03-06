@@ -1,0 +1,7 @@
+.. _cosmo_pdist_skl:
+
+cosmo pdist skl
+===============
+
+.. include :: cosmo_pdist_skl.txt
+

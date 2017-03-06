@@ -1,0 +1,343 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo rand &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo randomize targets" href="cosmo_randomize_targets.html" />
+    <link rel="prev" title="cosmo publish run scripts" href="cosmo_publish_run_scripts.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_randomize_targets.html" title="cosmo randomize targets"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_publish_run_scripts.html" title="cosmo publish run scripts"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-rand">
+<span id="id1"></span><h1>cosmo rand<a class="headerlink" href="#cosmo-rand" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>result<span class="p">=</span><span class="nf">cosmo_rand</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% generate uniform pseudo-random numbers, optionally using a seed value</span>
+<span class="c">%</span>
+<span class="c">% result=cosmo_rand(s1,...,sN,[&#39;seed&#39;,seed])</span>
+<span class="c">%</span>
+<span class="c">% Input:</span>
+<span class="c">%    s*              scalar or vector indicating dimensions of the result</span>
+<span class="c">%    &#39;seed&#39;, seed    (optional) if provided, use this seed value for</span>
+<span class="c">%                    pseudo-random number generation</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%    result          array of size s1 x s2 x ... sN. If the seed option is</span>
+<span class="c">%                    used, repeated calls with the same seed and element</span>
+<span class="c">%                    dimensions gives the same result</span>
+<span class="c">% Example:</span>
+<span class="c">%     % generate 2x2 pseudo-random number matrices twice, just like &#39;rand&#39;</span>
+<span class="c">%     % (repeated calls give different outputs)</span>
+<span class="c">%     x1=cosmo_rand(2,2);</span>
+<span class="c">%     x2=cosmo_rand(2,2);</span>
+<span class="c">%     isequal(x1,x2)</span>
+<span class="c">%     &gt; false</span>
+<span class="c">%     %</span>
+<span class="c">%     % as above, but specify a seed; repeated calls give the same output</span>
+<span class="c">%     x3=cosmo_rand(2,2,&#39;seed&#39;,314);</span>
+<span class="c">%     x4=cosmo_rand(2,2,&#39;seed&#39;,314);</span>
+<span class="c">%     isequal(x3,x4)</span>
+<span class="c">%     &gt; true</span>
+<span class="c">%     %</span>
+<span class="c">%     % using a different seed gives a different output</span>
+<span class="c">%     x5=cosmo_rand(2,2,&#39;seed&#39;,315);</span>
+<span class="c">%     isequal(x3,x5)</span>
+<span class="c">%     &gt; false</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - this function behaves identically to the builtin &#39;rand&#39; function,</span>
+<span class="c">%     except that it supports a &#39;seed&#39; option, which allows for</span>
+<span class="c">%     deterministic pseudo-number generation</span>
+<span class="c">%   - when using the &#39;seed&#39; option, this function gives identical output</span>
+<span class="c">%     under both matlab and octave. To achieve this, the PRNG is set to a</span>
+<span class="c">%     different state for the two platforms</span>
+<span class="c">%   - this function uses the Mersenne twister algorithm by default, even</span>
+<span class="c">%     when &#39;seed&#39; is used (unlike Matlab and Octave).</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="p">[</span><span class="n">sizes</span><span class="p">,</span><span class="n">seed</span><span class="p">,</span><span class="n">class_func</span><span class="p">]=</span><span class="n">process_input</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:});</span>
+
+    <span class="n">randomizer</span><span class="p">=@</span><span class="nb">rand</span><span class="p">;</span> <span class="c">% default</span>
+    <span class="k">if</span> <span class="n">seed</span><span class="o">~=</span><span class="mi">0</span>
+        <span class="n">is_matlab</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="n">is_matlab</span>
+            <span class="n">rng_state</span><span class="p">=</span><span class="n">get_mersenne_state_from_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">is_matlab</span><span class="p">);</span>
+
+            <span class="n">stream</span><span class="p">=</span><span class="n">RandStream</span><span class="p">(</span><span class="s">&#39;mt19937ar&#39;</span><span class="p">,</span><span class="s">&#39;Seed&#39;</span><span class="p">,</span><span class="n">rng_state</span><span class="p">.</span><span class="n">Seed</span><span class="p">);</span>
+            <span class="n">stream</span><span class="p">.</span><span class="n">State</span><span class="p">=</span><span class="n">rng_state</span><span class="p">.</span><span class="n">State</span><span class="p">;</span>
+
+            <span class="n">randomizer</span><span class="p">=@</span><span class="n">stream</span><span class="p">.</span><span class="nb">rand</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="c">% preserve old PRNG state</span>
+            <span class="n">orig_rng_state</span><span class="p">=</span><span class="nb">rand</span><span class="p">(</span><span class="s">&#39;state&#39;</span><span class="p">);</span>
+            <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="nb">rand</span><span class="p">(</span><span class="s">&#39;state&#39;</span><span class="p">,</span><span class="n">orig_rng_state</span><span class="p">));</span>
+
+            <span class="c">% set random number generation state</span>
+            <span class="n">rng_state</span><span class="p">=</span><span class="n">get_mersenne_state_from_seed</span><span class="p">(</span><span class="n">seed</span><span class="p">,</span> <span class="n">is_matlab</span><span class="p">);</span>
+            <span class="nb">rand</span><span class="p">(</span><span class="s">&#39;state&#39;</span><span class="p">,</span><span class="n">rng_state</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">result</span><span class="p">=</span><span class="n">class_func</span><span class="p">(</span><span class="n">randomizer</span><span class="p">(</span><span class="n">sizes</span><span class="p">));</span>
+
+
+<span class="k">function</span><span class="w"> </span>rng_state<span class="p">=</span><span class="nf">get_mersenne_state_from_seed</span><span class="p">(</span>seed, is_matlab<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% set the PRNG of the mersenne twister based on seed</span>
+    <span class="c">%</span>
+    <span class="c">% based on pseudo-code from wikipedia:</span>
+    <span class="c">% http://en.wikipedia.org/wiki/Mersenne_twister</span>
+    <span class="k">persistent</span> <span class="n">cached_seed</span>
+    <span class="k">persistent</span> <span class="n">cached_rng_state</span>
+
+    <span class="k">if</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">cached_seed</span><span class="p">,</span><span class="n">seed</span><span class="p">)</span>
+        <span class="n">rng_state</span><span class="p">=</span><span class="n">cached_rng_state</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">max_uint32</span><span class="p">=</span><span class="mi">2</span>^<span class="mi">32</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">state</span><span class="p">=</span><span class="n">uint64</span><span class="p">(</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">625</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+    <span class="n">state</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="n">bitand</span><span class="p">(</span><span class="n">uint64</span><span class="p">(</span><span class="n">seed</span><span class="p">),</span><span class="n">max_uint32</span><span class="p">);</span>
+
+    <span class="n">mersenne_mult</span><span class="p">=</span><span class="n">uint64</span><span class="p">(</span><span class="mi">1812433253</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">623</span>
+        <span class="n">v</span><span class="p">=</span><span class="n">mersenne_mult</span><span class="o">.*</span><span class="n">bitxor</span><span class="p">(</span><span class="n">state</span><span class="p">(</span><span class="nb">j</span><span class="p">),</span><span class="n">bitshift</span><span class="p">(</span><span class="n">state</span><span class="p">(</span><span class="nb">j</span><span class="p">),</span><span class="o">-</span><span class="mi">30</span><span class="p">))</span><span class="o">+</span><span class="n">uint64</span><span class="p">(</span><span class="nb">j</span><span class="p">);</span>
+        <span class="n">state</span><span class="p">(</span><span class="nb">j</span><span class="o">+</span><span class="mi">1</span><span class="p">)=</span><span class="n">bitand</span><span class="p">(</span><span class="n">v</span><span class="p">,</span><span class="n">max_uint32</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">state</span><span class="p">(</span><span class="k">end</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">is_matlab</span>
+        <span class="c">% reverse counter relative to Octave</span>
+        <span class="c">% (this is undocumented in both Matlab and Octave)</span>
+        <span class="n">state</span><span class="p">(</span><span class="k">end</span><span class="p">)=</span><span class="n">uint64</span><span class="p">(</span><span class="mi">625</span><span class="p">)</span><span class="o">-</span><span class="n">state</span><span class="p">(</span><span class="k">end</span><span class="p">);</span>
+
+        <span class="c">% matlab uses a struct to set the state</span>
+        <span class="n">rng_state</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">rng_state</span><span class="p">.</span><span class="n">State</span><span class="p">=</span><span class="n">uint32</span><span class="p">(</span><span class="n">state</span><span class="p">);</span>
+        <span class="n">rng_state</span><span class="p">.</span><span class="n">Type</span><span class="p">=</span><span class="s">&#39;twister&#39;</span><span class="p">;</span>
+        <span class="n">rng_state</span><span class="p">.</span><span class="n">Seed</span><span class="p">=</span><span class="n">uint32</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="c">% octave uses a vector to set the state</span>
+        <span class="n">rng_state</span><span class="p">=</span><span class="n">state</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">cached_rng_state</span><span class="p">=</span><span class="n">rng_state</span><span class="p">;</span>
+    <span class="n">cached_seed</span><span class="p">=</span><span class="n">seed</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>x<span class="p">=</span><span class="nf">identify_func</span><span class="p">(</span>x<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% do nothing</span>
+
+<span class="k">function</span><span class="w"> </span>[sizes,seed,class_func]<span class="p">=</span><span class="nf">process_input</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">cached_varargin</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_sizes</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_seed</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_class_func</span><span class="p">;</span>
+    <span class="k">if</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">varargin</span><span class="p">,</span><span class="n">cached_varargin</span><span class="p">)</span>
+        <span class="n">sizes</span><span class="p">=</span><span class="n">cached_sizes</span><span class="p">;</span>
+        <span class="n">seed</span><span class="p">=</span><span class="n">cached_seed</span><span class="p">;</span>
+        <span class="n">class_func</span><span class="p">=</span><span class="n">cached_class_func</span><span class="p">;</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="n">seed</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">sizes_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+    <span class="n">class_func</span><span class="p">=[];</span>
+
+    <span class="n">has_processed_sizes</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+
+    <span class="c">% process each argument</span>
+    <span class="n">k</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">while</span> <span class="n">k</span><span class="o">&lt;</span><span class="n">n</span>
+        <span class="n">k</span><span class="p">=</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">arg</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="k">if</span> <span class="n">has_processed_sizes</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;size argument not allowed after string argument&#39;</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="n">ensure_positive_vector</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">arg</span><span class="p">);</span>
+            <span class="n">sizes_cell</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">arg</span><span class="p">(:)</span><span class="o">&#39;</span><span class="p">;</span>
+
+        <span class="k">elseif</span> <span class="n">ischar</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+            <span class="n">has_processed_sizes</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+            <span class="k">switch</span> <span class="n">arg</span>
+                <span class="k">case</span> <span class="s">&#39;single&#39;</span>
+                    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">class_func</span><span class="p">)</span>
+                        <span class="n">error</span><span class="p">(</span><span class="s">&#39;type can only be set once&#39;</span><span class="p">);</span>
+                    <span class="k">end</span>
+                    <span class="n">class_func</span><span class="p">=@</span><span class="n">single</span><span class="p">;</span>
+
+                <span class="k">case</span> <span class="s">&#39;double&#39;</span>
+                    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">class_func</span><span class="p">)</span>
+                        <span class="n">error</span><span class="p">(</span><span class="s">&#39;type can only be set once&#39;</span><span class="p">);</span>
+                    <span class="k">end</span>
+                    <span class="n">class_func</span><span class="p">=@</span><span class="n">identify_func</span><span class="p">;</span>
+
+                <span class="k">case</span> <span class="s">&#39;seed&#39;</span>
+                    <span class="n">k</span><span class="p">=</span><span class="n">k</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+                    <span class="k">if</span> <span class="n">k</span><span class="o">&gt;</span><span class="n">n</span>
+                        <span class="n">error</span><span class="p">(</span><span class="s">&#39;missing value after key &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="p">);</span>
+                    <span class="k">end</span>
+                    <span class="n">value</span><span class="p">=</span><span class="n">varargin</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+                    <span class="n">ensure_positive_scalar</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">value</span><span class="p">);</span>
+                    <span class="n">seed</span><span class="p">=</span><span class="n">value</span><span class="p">;</span>
+
+                <span class="k">otherwise</span>
+                    <span class="n">error</span><span class="p">(</span><span class="s">&#39;unsupported key &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">arg</span><span class="p">);</span>
+            <span class="k">end</span>
+
+        <span class="k">else</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal input at position %d&#39;</span><span class="p">,</span> <span class="n">k</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">sizes</span><span class="p">=[</span><span class="n">sizes_cell</span><span class="p">{:}];</span>
+
+    <span class="c">% no size provided, output is scalar</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">sizes</span><span class="p">)</span>
+        <span class="n">sizes</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">class_func</span><span class="p">)</span>
+        <span class="n">class_func</span><span class="p">=@</span><span class="n">identify_func</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">cached_varargin</span><span class="p">=</span><span class="n">varargin</span><span class="p">;</span>
+    <span class="n">cached_sizes</span><span class="p">=</span><span class="n">sizes</span><span class="p">;</span>
+    <span class="n">cached_seed</span><span class="p">=</span><span class="n">seed</span><span class="p">;</span>
+    <span class="n">cached_class_func</span><span class="p">=</span><span class="n">class_func</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">ensure_positive_scalar</span><span class="p">(</span>k,arg<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">ensure_positive_vector</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">arg</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;argument at position %d is not a scalar&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">ensure_positive_vector</span><span class="p">(</span>k,arg<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="nb">isvector</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">||</span> <span class="o">~</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">arg</span><span class="p">)</span> <span class="o">||</span> <span class="o">~</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">arg</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">0</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;argument at position %d is not positive&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_publish_run_scripts.html"
+                        title="previous chapter">cosmo publish run scripts</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_randomize_targets.html"
+                        title="next chapter">cosmo randomize targets</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_rand.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_randomize_targets.html" title="cosmo randomize targets"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_publish_run_scripts.html" title="cosmo publish run scripts"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_meeg_dataset_skl:
+
+cosmo meeg dataset skl
+======================
+
+.. include :: cosmo_meeg_dataset_skl.txt
+

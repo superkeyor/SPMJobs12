@@ -1,0 +1,275 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo dim find skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo dim generalization measure skl" href="cosmo_dim_generalization_measure_skl.html" />
+    <link rel="prev" title="cosmo dataset slice sa skl" href="cosmo_dataset_slice_sa_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_generalization_measure_skl.html" title="cosmo dim generalization measure skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dataset_slice_sa_skl.html" title="cosmo dataset slice sa skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-dim-find-skl">
+<span id="id1"></span><h1>cosmo dim find skl<a class="headerlink" href="#cosmo-dim-find-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span>function [dim, index, attr_name, dim_name, values]=cosmo_dim_find(ds, dim_label, raise)
+% find dimension attribute in dataset
+%
+% [dim, index, attr_name, dim_name]=cosmo_dim_find(ds, dim_label[, raise])
+%
+% Inputs:
+%   ds              dataset struct
+%   dim_label       dimension label
+%   raise           if true, raise an error if the dimension is not found.
+%                   Default: false
+%
+% Outputs:
+%   dim             dimension where dim_label was found, 1=sample
+%                   dimension, 2=feature dimension
+%   index           position where dim_label was found, so that:
+%                     ds.a.(dim_name).values{index}==dim_label
+%   attr_name       &#39;sa&#39; if dim==1, &#39;fa&#39; if dim==2
+%   dim_name        &#39;sdim&#39; if dim==1, &#39;fdim&#39; if dim==2
+%   values          the values associated with the dimension
+%
+% Examples:
+%     % fMRI dataset, find first voxel dimension
+%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;fmri&#39;);
+%     [dim, index, attr_name, dim_name, values]=cosmo_dim_find(ds,&#39;i&#39;)
+%     &gt; dim = 2
+%     &gt; index = 1
+%     &gt; attr_name = fa
+%     &gt; dim_name = fdim
+%     &gt; values = 1 2 3
+%
+%     % MEEG time-frequency dataset, find &#39;time&#39; dimension
+%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timefreq&#39;,&#39;size&#39;,&#39;big&#39;);
+%     [dim, index, attr_name, dim_name, values]=cosmo_dim_find(ds,&#39;time&#39;)
+%     &gt; dim = 2
+%     &gt; index = 3
+%     &gt; attr_name = fa
+%     &gt; dim_name = fdim
+%     &gt; values = -0.2000 -0.1500 -0.1000 -0.0500 0
+%     %
+%     % move &#39;time&#39; from feature to sample dimension
+%     dst=cosmo_dim_transpose(ds,&#39;time&#39;,1);
+%     [dim, index, attr_name, dim_name, values]=cosmo_dim_find(dst,&#39;time&#39;)
+%     &gt; dim = 1
+%     &gt; index = 1
+%     &gt; attr_name = sa
+%     &gt; dim_name = sdim
+%     &gt; values = -0.2000 -0.1500 -0.1000 -0.0500 0
+%
+% #   For CoSMoMVPA&#39;s copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+
+    if nargin&lt;3, raise=true; end
+
+    is_singleton=ischar(dim_label);
+    if is_singleton
+        dim_label={dim_label};
+    elseif ~iscellstr(dim_label)
+        error(&#39;Second input must be string or cell with strings&#39;);
+    end
+
+    nlabel=numel(dim_label);
+
+    dim=[];
+    index=zeros(nlabel,1);
+    values=cell(nlabel,1);
+    for k=1:nlabel
+        [d,i,an,dn,vs]=find_singleton(ds,dim_label{k},raise);
+
+        if k==1
+            dim=d;
+            attr_name=an;
+            dim_name=dn;
+        end
+
+        if isempty(d) || dim~=d || ~isequal(attr_name,an) || ...
+                                    ~isequal(dim_name,dn)
+            dim=[];
+            break;
+        end
+
+        index(k)=i;
+        values{k}=vs;
+    end
+
+    if isempty(dim)
+        index=[];
+        attr_name=[];
+        dim_name=[];
+        values=[];
+
+        if raise
+            error(&#39;Unable to find all labels in the same dimension: %s&#39;,...
+                        cosmo_strjoin(dim_label,&#39;, &#39;));
+        end
+    else
+        if dim==1
+            index=index&#39;;
+            values=values&#39;;
+        end
+        if is_singleton
+            values=values{1};
+        end
+    end
+
+
+
+function [dim, index, attr_name, dim_name, values]=find_singleton(ds,...
+                                                        dim_label,raise)
+    infixes=&#39;sf&#39;;
+    for dim=1:numel(infixes)
+        infix=infixes(dim);
+
+        attr_name=[infix &#39;a&#39;];
+        dim_name=[infix &#39;dim&#39;];
+
+        if cosmo_isfield(ds, [&#39;a.&#39; dim_name &#39;.labels&#39;])
+            labels=ds.a.(dim_name).labels;
+            m=cosmo_match(labels, dim_label);
+            if any(m)
+                index=find(m);
+                if numel(index)&gt;1 &amp;&amp; raise
+                    error(&#39;Duplicate label %s in .a.%s.labels&#39;, ...
+                                    dim_label, dim_name);
+                elseif ~cosmo_isfield(ds, [&#39;a.&#39; dim_name &#39;.values&#39;],...
+                                                        raise)
+                    % not all fields present
+
+                else
+                    values=ds.a.(dim_name).values{index};
+                    return
+                end
+            end
+        end
+    end
+
+    dim=[];
+    index=[];
+    attr_name=[];
+    dim_name=[];
+    values=[];
+
+    if raise
+        error(&#39;Not found: dimension label %s&#39;, dim_label);
+    end
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_dataset_slice_sa_skl.html"
+                        title="previous chapter">cosmo dataset slice sa skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_dim_generalization_measure_skl.html"
+                        title="next chapter">cosmo dim generalization measure skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_dim_find_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_generalization_measure_skl.html" title="cosmo dim generalization measure skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dataset_slice_sa_skl.html" title="cosmo dataset slice sa skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_anova_feature_selector_hdr:
+
+cosmo anova feature selector hdr
+================================
+
+.. include :: cosmo_anova_feature_selector_hdr.txt
+

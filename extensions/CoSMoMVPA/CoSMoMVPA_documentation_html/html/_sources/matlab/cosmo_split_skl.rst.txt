@@ -1,0 +1,7 @@
+.. _cosmo_split_skl:
+
+cosmo split skl
+===============
+
+.. include :: cosmo_split_skl.txt
+

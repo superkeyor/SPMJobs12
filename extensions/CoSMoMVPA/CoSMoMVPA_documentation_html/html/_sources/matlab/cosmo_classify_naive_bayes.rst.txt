@@ -1,0 +1,7 @@
+.. _cosmo_classify_naive_bayes:
+
+cosmo classify naive bayes
+==========================
+
+.. include :: cosmo_classify_naive_bayes.txt
+

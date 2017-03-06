@@ -1,0 +1,7 @@
+.. _cosmo_check_external_skl:
+
+cosmo check external skl
+========================
+
+.. include :: cosmo_check_external_skl.txt
+

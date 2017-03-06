@@ -1,0 +1,9 @@
+.. _run_fmri_correlation_searchlight_trivial:
+
+run fmri correlation searchlight trivial
+========================================
+
+:run_up:`run_fmri_correlation_searchlight_trivial`
+
+.. include :: run_fmri_correlation_searchlight_trivial.txt
+

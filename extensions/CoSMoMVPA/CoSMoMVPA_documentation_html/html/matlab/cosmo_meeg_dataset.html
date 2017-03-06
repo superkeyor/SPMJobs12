@@ -1,0 +1,1119 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo meeg dataset &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo meeg find layout" href="cosmo_meeg_find_layout.html" />
+    <link rel="prev" title="cosmo meeg chantype" href="cosmo_meeg_chantype.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_find_layout.html" title="cosmo meeg find layout"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_chantype.html" title="cosmo meeg chantype"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-meeg-dataset">
+<span id="id1"></span><h1>cosmo meeg dataset<a class="headerlink" href="#cosmo-meeg-dataset" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span>function ds=cosmo_meeg_dataset(filename, varargin)
+% Returns a dataset structure based on MEEG data
+%
+% ds=cosmo_meeg_dataset(filename, varargin)
+%
+% Inputs:
+%   filename          filename of MEEG data to be loaded. Currently
+%                     supported are files with extensions:
+%                       .mat :        FieldTrip time-locked or
+%                                     time-frequency  data at  either the
+%                                     sensor or source level.
+%                       .txt :        exported EEGLab with time-locked
+%                                     data.
+%                       .daterp       time-locked               }
+%                       .icaerp       ICA time-locked           } EEGLab
+%                       .dattimef     time-freq                 }
+%                       .icatimef     ICA time-freq             }
+%                       .datitc       inter-trial coherence     }
+%                       .icaitc       ICA inter-trial coherence }
+%                       .datersp      ERSP data                 }
+%                       .icaersp      ICA ERSP data             }
+%                     Alternatively it can be a FieldTrip or EEGLab struct
+%                     with time-locked or time-frequency data
+%   &#39;targets&#39;, t      Px1 targets for P samples; these will be stored in
+%                     the output as ds.sa.targets (optional)
+%   &#39;chunks&#39;, c       Px1 chunks for P samples; these will be stored in the
+%                     the output as ds.sa.chunks (optional)
+%   &#39;data_field&#39;, f   - For FieldTrip MEEG source dataset with multiple
+%                       data fields (such as &#39;pow&#39; and &#39;mom&#39;), this sets
+%                       which data is returned. (only for source data)
+%                     - For EEGLAB &#39;ersp&#39; data
+%                        f=&#39;ersp&#39;       the original data is returned
+%                                       (without baseline correction),
+%                                       with data for each channel,
+%                                       frequency and time point.
+%                                       Based on datasets generated by
+%                                       EEGLAB that were inspected when
+%                                       writing this function, it seems
+%                                       that this data represents raw power
+%                                       values.
+%                        f=&#39;erspbase&#39;   the baseline is returned, with data
+%                                       for each channel and frequency
+%                                       (but not time point)
+%                        Note: this function does currently not support
+%                              returning baseline-corrected data.
+%   &#39;trials&#39;, idx     Mx1 array with indices of trials to load (optional).
+%                     If not provided then all trials are loaded. The
+%                     output has a .samples field with the number of rows
+%                     equal to numel(idx).
+%
+% Returns:
+%   ds                dataset struct with the following fields
+%     .samples        PxQ for P samples and Q features.
+%     .sa.targets     Px1 sample targets (if provided)
+%     .sa.chunks      Px1 sample chunks (if provided)
+%     .a
+%       .meeg
+%         .sample_field   name of sample field. One of &#39;fourierspctrm&#39;,
+%                         &#39;powspctrm&#39;, or &#39;trial&#39;.
+%         .samples_type   &#39;timelock&#39; or &#39;timefreq&#39;.
+%         .samples_label  Usually &#39;rpt&#39;; or the first field of .dimord
+%                         for FieldTrip data
+%       .dim
+%         .labels     1xS cell struct with labels for the feature
+%                     dimensions of the input. Usually this is
+%                     {&#39;chan&#39;,&#39;time&#39;} or {&#39;chan&#39;,&#39;freq&#39;,&#39;time&#39;}.
+%         .values     1xS cell struct with values associated with .labels.
+%                     If the K-th value has N_K values, this means that
+%                     the feature dimension .labels{K} takes the
+%                     values in .values{K}. For example, if
+%                     .labels{1}==&#39;chan&#39;, then .values{1} contains the
+%                     channel labels.
+%     .fa
+%       .{D}          if D==a.fdim.labels{K} is the label for the K-th
+%                     feature dimension, then .{D} contains the
+%                     indices referencing a.fdim.values. Thus, all values in
+%                     .{D} are in the range 1:N_K if a.fdim.values{K} has
+%                     N_K values, and the J-th feature has dimension value
+%                     .dim.values{K}(.{D}(J)) in the K-th dimension.
+%
+% Notes:
+%  - The resulting dataset can be mapped back to MEEG format using
+%    cosmo_map2meeg
+%  - if the input contains data from a single sample (such as an average)
+%    the .sample_field is set to .trial, and mapping back to MEEG format
+%    adds a singleton dimension to the .trial data output field.
+%  - For single-subject MVPA of single trials using data preprocessed with
+%    FieldTrip, consider setting, depending on the data type:
+%       * timelock (ft_timelockanalysis): cfg.keeptrials = &#39;yes&#39;
+%       * timefreq (ft_timefreqanalysis): cfg.keeptrials = &#39;yes&#39;
+%       * source   (ft_sourceanalysis)  : cfg.keeptrials = &#39;yes&#39; *and*
+%                                                   cfg.rawtrials = &#39;yes&#39;
+%  - Most MVPA applications require that .sa.targets (experimental
+%    condition of each sample) and .sa.chunks (partitioning of the samples
+%    in independent sets) are set, either by using this function or
+%    manually afterwards.
+%  - If the input is a FieldTrip struct with a field .trialinfo, then this
+%    field is present in .sa.trialinfo. Depending on the contents of
+%    .trialinfo, this could be used to specify conditions in each trial.
+%    For example, if the third column of .trialinfo contains an integer
+%    specifying the condition of each trial, after running this function
+%    one can do
+%
+%       ds.sa.targets=ds.sa.trialinfo(:,3)
+%
+%    to set the trial conditions.
+%  - Implementation note: when loading EEGLAB data from a file, using the
+%    &#39;trials&#39; option means that data from different channels are loaded
+%    through different &#39;load&#39; commands. When loading a subset of all
+%    trials, the advantage of this implementation is that significant
+%    less memory is needed compared to an alternative implementation in
+%    which the full dataset is loaded and then the trials of interest
+%    are selected through slicing. The disadvantage is that loading may
+%    take longer, because the file is opened and closed multiple times. yet
+%    this approach allows one to load subsets of trials from data files
+%    that are larger than the available RAM.
+%    Such memory reductions are currently not available for FieldTrip
+%    data, as FieldTrip&#39;s data structures do not store data for different
+%    channels in different variables.
+%
+% See also: cosmo_map2meeg
+%
+% #   For CoSMoMVPA&#39;s copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+    % Input parsing stuff
+
+    defaults=struct();
+    defaults.targets=[];
+    defaults.chunks=[];
+
+    params = cosmo_structjoin(defaults, varargin);
+
+    if cosmo_check_dataset(filename,&#39;meeg&#39;,false)
+        % it is already a dataset
+        ds=filename;
+    else
+        % get image format and verify it is supported
+        img_format=get_img_format(filename);
+        supported_image_formats=get_supported_image_formats();
+
+        % check externals
+        cosmo_check_external(supported_image_formats.(img_format).externals);
+
+        % get the reader
+        reader=supported_image_formats.(img_format).reader;
+
+        % read the dataset
+        ds=reader(filename, params);
+    end
+
+    % set targets and chunks
+    ds=set_vec_sa(ds,&#39;targets&#39;,params.targets);
+    ds=set_vec_sa(ds,&#39;chunks&#39;,params.chunks);
+
+
+    % check consistency
+    cosmo_check_dataset(ds,&#39;meeg&#39;);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% general helper functions
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function ds=set_vec_sa(ds, label, values)
+    if isempty(values)
+        return;
+    end
+    if numel(values)==1
+        nsamples=size(ds.samples,1);
+        values=repmat(values,nsamples,1);
+    end
+    ds.sa.(label)=values(:);
+
+
+function img_format=get_img_format(filename)
+    % helper functgion to detect image format based on filename.
+    % uses &#39;get_supported_image_formats&#39;.
+    img_formats=get_supported_image_formats();
+
+    fns=fieldnames(img_formats);
+    for k=1:numel(fns)
+        fn=fns{k};
+
+        img_spec=img_formats.(fn);
+        if img_spec.file_matcher(filename)
+            img_format=fn;
+            return
+        end
+    end
+    error(&#39;Unknown image format&#39;);
+
+function img_formats=get_supported_image_formats()
+    % helper function to return the image format based on the filename
+    img_formats=struct();
+
+    % helper function to see if a filename ends with a certain string.
+    % uses currying - who doesn&#39;t like curry?
+    ends_with=@(ext) @(fn) ischar(fn) &amp;&amp; ...
+                        isempty(cosmo_strsplit(fn,ext,-1));
+    ends_with_any=@(exts) @(fn) ischar(fn) &amp;&amp; any(...
+                            cellfun(@(x)isempty(...
+                                        cosmo_strsplit(fn,x,-1)),exts));
+
+    % eeglab txt files
+    img_formats.eeglab_txt.file_matcher=ends_with(&#39;.txt&#39;);
+    img_formats.eeglab_txt.reader=@read_eeglab_txt;
+    img_formats.eeglab_txt.externals={};
+
+    img_formats.eeglab.file_matcher=ends_with_any({&#39;.daterp&#39;,...
+                                                   &#39;.icaerp&#39;,...
+                                                   &#39;.dattimef&#39;,...
+                                                   &#39;.icatimef&#39;,...
+                                                   &#39;.datitc&#39;,...
+                                                   &#39;.icaitc&#39;,...
+                                                   &#39;.datersp&#39;,...
+                                                   &#39;.icaersp&#39;});
+    img_formats.eeglab.reader=@read_eeglab;
+    img_formats.eeglab.externals={};
+
+    img_formats.eeglab_struct.file_matcher=@is_eeglab_struct;
+    img_formats.eeglab_struct.reader=@convert_eeglab_struct;
+    img_formats.eeglab_struct.externals={};
+
+
+
+    % fieldtrip
+    % XXX any .mat file is currently assumed to be a fieldtrip struct
+    img_formats.ft.file_matcher=ends_with(&#39;.mat&#39;);
+    img_formats.ft.reader=@read_ft;
+    img_formats.ft.externals={};
+
+    % fieldtrip matlab struct
+    img_formats.ft_struct.file_matcher=@(x) is_ft_struct(x);
+    img_formats.ft_struct.reader=@convert_ft;
+    img_formats.ft_struct.externals={};
+
+
+function ds=posthoc_slice_dataset_if_necessary(ds,opt)
+    if ~isfield(opt,&#39;trials&#39;)
+        return;
+    end
+
+    trial_idx=opt.trials;
+    verify_trial_params(size(ds.samples,1),trial_idx);
+    ds=cosmo_slice(ds,trial_idx);
+
+function verify_trial_params(nsamples,trial_idx)
+    if ~isnumeric(trial_idx)
+        error(&#39;.trials option must be numeric&#39;);
+    end
+
+    bad_msk=trial_idx&lt;1 | ...
+                trial_idx&gt;nsamples | ...
+                round(trial_idx)~=trial_idx;
+
+    if any(bad_msk)
+        bad_pos=find(bad_msk,1);
+        error([&#39;.trials option has illegal value at position %d; &#39;...
+                &#39;all values must be in (1:%d)&#39;],...
+                bad_pos,nsamples);
+    end
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% fieldtrip helper function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function ds=read_ft(filename, opt)
+    % reads it from a .mat data file
+    ft=importdata(filename);
+    ds=convert_ft(ft, opt);
+
+
+function ds=convert_ft(ft, opt)
+    [data, samples_field, fdim]=get_ft_data(ft, opt);
+
+    ds=cosmo_flatten(data, fdim.labels, fdim.values,2,...
+                                &#39;matrix_labels&#39;,get_ft_matrix_labels());
+    ds.a.meeg.samples_field=samples_field;
+
+    if is_ft_source_struct(ft)
+        ds=apply_ft_source_inside(ds,fdim.labels,fdim.values,...
+                                        ft.inside);
+        ds.a.meeg.dim=ft.dim;
+    end
+
+    ds.a.meeg=set_samples_label_explicitly_if_necessary(ds.a.meeg,ft);
+
+    nsamples=size(ds.samples,1);
+    ft_fields={&#39;rpt&#39;,&#39;trialinfo&#39;,&#39;cumtapcnt&#39;};
+    ds.sa=copy_fields_for_matching_sample_size(ft,nsamples,ft_fields);
+
+    ds=posthoc_slice_dataset_if_necessary(ds,opt);
+
+
+function a_meeg=set_samples_label_explicitly_if_necessary(a_meeg,ft)
+    % deal with grand average data
+    if ~cosmo_isfield(ft,&#39;dimord&#39;)
+        return;
+    end
+
+    first_label=cosmo_strsplit(ft.dimord,&#39;_&#39;,1);
+
+    if cosmo_match({first_label},{&#39;subj&#39;})
+        a_meeg.samples_label=first_label;
+    end
+
+
+function [data,samples_field,fdim]=get_ft_data(ft,opt)
+    [data, samples_field]=get_data_ft(ft,opt);
+    [dim_labels,ft_dim_labels]=get_ft_dim_labels(ft, samples_field);
+
+    nlabels=numel(dim_labels);
+    dim_values=cell(nlabels,1);
+    matrix_labels=get_ft_matrix_labels();
+    for k=1:nlabels
+        label=ft_dim_labels{k};
+        value=ft.(label);
+        if cosmo_match({label},matrix_labels)
+            dim_values{k}=value&#39;;
+        else
+            dim_values{k}=value(:)&#39;;
+        end
+    end
+
+    fdim.labels=dim_labels;
+    fdim.values=dim_values;
+
+    if is_ft_source_struct(ft)
+        fdim=add_ft_mom_field_if_present(fdim, samples_field, size(data));
+        [data,fdim]=fix_ft_lcmv_if_necessary(data,fdim);
+    end
+
+
+function [data,fdim]=fix_ft_lcmv_if_necessary(data,fdim)
+    % FT LCMV does something weird for average data; the .avg.pow field
+    % is 1xNCHAN for a NCHAN x NTIME field.
+    % To address this:
+    % - reshape the data
+    % - average the time field
+    dim_labels=fdim.labels;
+    data_size=size(data);
+
+    pos_pos=find(cosmo_match(dim_labels,&#39;pos&#39;));
+    if ~isempty(pos_pos) &amp;&amp; ... % has pos field
+                pos_pos&lt;numel(dim_labels)
+
+        npos=size(fdim.values{pos_pos},2);
+        next_dim_pos=pos_pos+1;
+
+        if data_size(pos_pos+1)==1 &amp;&amp; data_size(next_dim_pos+1)==npos
+            new_data_size=data_size;
+
+            % fix with next dimension
+            new_data_size(pos_pos+1)=npos;
+            new_data_size(next_dim_pos+1)=1;
+
+            data=reshape(data,new_data_size);
+
+            % the next dimension (typically time) is averaged if
+            % necessary
+            next_dim_value=fdim.values{next_dim_pos};
+            if numel(next_dim_value)~=1
+                fdim.values{next_dim_pos}=mean(next_dim_value);
+            end
+
+        end
+    end
+
+
+
+function fdim=add_ft_mom_field_if_present(fdim, samples_field, size_data)
+    % insert .mom field for source struct
+    samples_field_split=cosmo_strsplit(samples_field,&#39;.&#39;);
+    has_mom=numel(samples_field_split)==2 &amp;&amp; ...
+                    strcmp(samples_field_split{2},&#39;mom&#39;);
+    if has_mom
+        ndim=size_data(3);
+        fdim.labels=[fdim.labels(1);...
+                                {&#39;mom&#39;};...
+                                fdim.labels(2:end)];
+        switch ndim
+            case 1
+                values={&#39;xyz&#39;};
+            case 3
+                values={&#39;x&#39;,&#39;y&#39;,&#39;z&#39;};
+            otherwise
+                error(&#39;Unsupported number of dimensions for %s: %d&#39;,...
+                            samples_field,ndim);
+        end
+        fdim.values=[fdim.values(1);...
+                                {values};...
+                                fdim.values(2:end)];
+    end
+
+
+function labels=get_ft_matrix_labels()
+    labels={&#39;pos&#39;};
+
+function [cosmo_dim_labels,ft_dim_labels]=get_ft_dim_labels(ft, ...
+                                                        samples_field)
+    cosmo_ft_dim_labels={ &#39;pos&#39;,&#39;pos&#39;;...
+                          &#39;chan&#39;,&#39;label&#39;;...
+                          &#39;freq&#39;,&#39;freq&#39;;...
+                          &#39;time&#39;,&#39;time&#39;};
+
+    is_source=is_ft_source_struct(ft);
+
+    if is_source==isfield(ft,&#39;dimord&#39;)
+        error(&#39;Weird fieldtrip data: .pos and .dimord are not compatible&#39;);
+    end
+
+    if is_source
+        % source data
+        keys=fieldnames(ft);
+        labels_msk=cosmo_match(cosmo_ft_dim_labels(:,2),keys);
+    else
+
+
+        dimord_labels=cosmo_strsplit(ft.dimord,&#39;_&#39;);
+
+        sample_field=get_sample_dimord_field(ft);
+        sample_msk=cosmo_match(dimord_labels, sample_field);
+
+        dimord_labels_without_sample=dimord_labels(~sample_msk);
+
+        labels_msk=cosmo_match(cosmo_ft_dim_labels(:,1),...
+                                dimord_labels_without_sample);
+    end
+
+    ft_dim_labels=cosmo_ft_dim_labels(labels_msk,2);
+    cosmo_dim_labels=cosmo_ft_dim_labels(labels_msk,1);
+
+
+
+
+
+function sample_field=get_sample_dimord_field(ft)
+    sample_field=&#39;&#39;;
+
+    sample_dimord_fields={&#39;rpt&#39;,&#39;trial&#39;,&#39;subj&#39;};
+    if isfield(ft,&#39;dimord&#39;)
+        ft_dimord_fields=cosmo_strsplit(ft.dimord,&#39;_&#39;);
+        msk=cosmo_match(ft_dimord_fields,sample_dimord_fields);
+        if any(msk)
+            assert(sum(msk)==1);
+            sample_field=sample_dimord_fields{msk};
+        end
+    end
+
+
+function sa=copy_fields_for_matching_sample_size(ft,nsamples,keys)
+    n=numel(keys);
+
+    sa=struct();
+    for k=1:n
+        key=keys{k};
+        if isfield(ft,key)
+            value=ft.(key);
+            if size(value,1)==nsamples
+                sa.(key)=value;
+            end
+        end
+    end
+
+
+
+
+
+
+
+function ds=apply_ft_source_inside(ds,dim_labels,dim_values,ft_inside)
+    ndim=numel(dim_labels);
+    dim_sizes=cellfun(@numel,dim_values);
+
+    pos_idx=find(cosmo_match(dim_labels,&#39;pos&#39;),1);
+    assert(~isempty(pos_idx),[&#39;this function should only be called &#39;...
+                                &#39;with source datasets&#39;]);
+
+    if isnumeric(ft_inside)
+        pos=ds.a.fdim.values{pos_idx};
+        [three,npos]=size(pos);
+        assert(three==3);
+        inside_mask=false(npos,1);
+        inside_mask(ft_inside)=true;
+    elseif islogical(ft_inside)
+        inside_mask=ft_inside;
+    else
+        error(&#39;.inside must either be numeric or logical&#39;);
+    end
+
+
+    inside_vec_size=[1 ones(1,ndim)];
+    inside_vec_size(1+pos_idx)=numel(inside_mask);
+    inside_array_vec=reshape(inside_mask, inside_vec_size);
+
+    other_dim_size=[1 dim_sizes(:)&#39;];
+    other_dim_size(1+pos_idx)=1;
+
+    inside_array=repmat(inside_array_vec,other_dim_size);
+    inside_ds=cosmo_flatten(inside_array, dim_labels, dim_values,2,...
+                                         &#39;matrix_labels&#39;,{&#39;pos&#39;});
+    ds=cosmo_slice(ds,inside_ds.samples,2);
+
+
+
+
+function [data, sample_field]=get_data_ft(ft,opt)
+    if is_ft_source_struct(ft)
+        [data, sample_field]=get_source_data_ft(ft, opt);
+    else
+        [data, sample_field]=get_sensor_data_ft(ft);
+    end
+
+function [data, sample_field]=get_source_data_ft(ft, opt)
+    main_fields={&#39;trial&#39;,&#39;avg&#39;};
+    sub_fields={&#39;pow&#39;,&#39;mom&#39;};
+
+    msk_main=cosmo_match(main_fields,fieldnames(ft));
+    switch sum(msk_main)
+        case 0
+            error(&#39;No data found in source struct&#39;);
+
+        case 1
+            % ok
+
+        otherwise
+            error(&#39;Multiple data fields found in source struct&#39;);
+    end
+
+    main_field=main_fields{msk_main};
+    main_data=ft.(main_field);
+
+    sub_field_option=&#39;data_field&#39;;
+    if isfield(opt,sub_field_option)
+        sub_field=opt.(sub_field_option);
+    else
+        msk_sub=cosmo_match(sub_fields,fieldnames(main_data));
+
+        switch sum(msk_sub)
+            case 0
+                error(&#39;No data found in .%s source struct&#39;, main_field);
+
+            case 1
+                sub_field=sub_fields{msk_sub};
+
+            otherwise
+                error([&#39;Multiple data fields found in .%s source &#39;...
+                        &#39;struct: &#39;&#39;%s&#39;&#39;. To select one of these, use &#39;...
+                        &#39;the &#39;&#39;%s&#39;&#39; option&#39;],...
+                        main_field,...
+                        cosmo_strjoin(sub_fields(msk_sub),&#39;&#39;&#39;, &#39;&#39;&#39;),...
+                        sub_field_option);
+        end
+    end
+
+    data=extract_source_data_array_ft(main_data, sub_field);
+    sample_field=sprintf(&#39;%s.%s&#39;,main_field,sub_field);
+
+function data=extract_source_data_array_ft(main_data, sub_field)
+    nsamples=numel(main_data);
+    first_data=main_data(1).(sub_field);
+    data_cell=cell(nsamples,1);
+
+
+    switch sub_field
+        case &#39;mom&#39;
+            npos=numel(first_data);
+            data_inside_pos=find(~cellfun(@isempty,first_data));
+            ninside=numel(data_inside_pos);
+
+            [nmom, nfeatures]=size(first_data{data_inside_pos(1)});
+
+            data_arr_empty=NaN(1,npos,nmom,nfeatures);
+
+            for j=1:nsamples
+                data_cell_cell=main_data(j).(sub_field);
+                data_arr=data_arr_empty;
+
+                for k=1:ninside
+                    pos=data_inside_pos(k);
+                    data_arr(1,pos,:,:)=data_cell_cell{pos};
+                end
+
+                data_cell{j}=data_arr;
+            end
+
+
+        case &#39;pow&#39;
+            feature_size=size(first_data);
+
+            for j=1:nsamples
+                data_arr=main_data(j).(sub_field);
+                data_cell{j}=reshape(data_arr,[1 feature_size]);
+            end
+
+        otherwise
+            error(&#39;not supported sub_field: %s&#39;, sub_field);
+    end
+
+    data=cat(1,data_cell{:});
+
+
+
+
+function [data, sample_field]=get_sensor_data_ft(ft)
+    % order precedence: if .trial and .avg both exist, take .trial
+    sample_fields_in_order={&#39;trial&#39;,&#39;individual&#39;,...
+                            &#39;fourierspctrm&#39;,&#39;powspctrm&#39;,&#39;avg&#39;};
+    msk=cosmo_match(sample_fields_in_order, fieldnames(ft));
+
+    if ~any(msk)
+        error([&#39;No supported data field found in sensor data struct. &#39;...
+                &#39;If this data struct was generated by FieldTrip, &#39;...
+                &#39;consider contacting CoSMoMVPA&#39;&#39;s authors.&#39;]);
+    end
+
+    i=find(msk,1);
+    sample_field=sample_fields_in_order{i};
+
+    data=ft.(sample_field);
+
+    if isempty(get_sample_dimord_field(ft))
+                        % no &#39;rpt_...&#39; or &#39;subj_&#39;
+        data=reshape(data,[1 size(data)]);
+    end
+
+
+
+function tf=is_ft_source_struct(ft)
+    tf=isstruct(ft) &amp;&amp; isfield(ft,&#39;pos&#39;) &amp;&amp; isfield(ft,&#39;inside&#39;);
+
+function tf=is_ft_sensor_struct(ft)
+    tf=isfield(ft,&#39;dimord&#39;) &amp;&amp; isfield(ft,&#39;label&#39;);
+
+function tf=is_ft_struct(ft)
+    tf=is_ft_source_struct(ft) || is_ft_sensor_struct(ft);
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% eeglab struct helper function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+function tf=is_eeglab_struct(s)
+    tf=isstruct(s) &amp;&amp; ...
+            isfield(s,&#39;times&#39;) &amp;&amp; ...
+            isfield(s,&#39;datatype&#39;);
+
+
+function ds=read_eeglab(fn,opt)
+    if isfield(opt,&#39;trials&#39;)
+        % can have significant reduction in memory requirements
+        % at the expense of loading different parts of the same file
+        % multiple times.
+        s=eeglab_load_with_trials(fn,opt.trials);
+        opt=rmfield(opt,&#39;trials&#39;);
+    else
+        s=load(fn,&#39;-mat&#39;);
+    end
+    ds=convert_eeglab_struct(s,opt);
+
+function s=eeglab_load_with_trials(fn,trial_idx)
+    % can save memory by loaded each channel seperately
+    s_minimal=load(fn,&#39;-mat&#39;,&#39;datatype&#39;);
+    has_freq=helper_eeglab_get_freq_info(s_minimal);
+
+    w=whos(&#39;-file&#39;,fn);
+    s_surrogate=struct();
+    for k=1:numel(w)
+        s_surrogate.(w(k).name)=[];
+    end
+
+    [chan_prefix,chan_suffix]=eeglab_get_chan_pre_suffix(s_surrogate);
+    [chan_labels]=eeglab_get_chan_labels(s_surrogate,...
+                                    chan_prefix,chan_suffix);
+    other_labels=setdiff({w.name},chan_labels);
+    assert(numel(other_labels)&lt;numel(w));
+
+    s=load(fn,&#39;-mat&#39;,other_labels{:});
+    n_chan=numel(chan_labels);
+    for k=1:n_chan
+        label=chan_labels{k};
+        data_struct=load(fn,&#39;-mat&#39;,label);
+        data=data_struct.(label);
+
+        sliced_data=helper_eeglab_slice_chan(data,trial_idx,has_freq);
+        s.(label)=sliced_data;
+    end
+
+
+function result=helper_eeglab_slice_chan(data, trial_idx, has_freq)
+    assert(islogical(has_freq));
+
+    if has_freq
+        trial_dim=3;
+    else
+        trial_dim=1;
+    end
+
+    % ensure enough trials
+    n_trials=size(data,trial_dim);
+    verify_trial_params(n_trials,trial_idx);
+
+    if has_freq
+        result=data(:,:,trial_idx);
+    else
+        assert(numel(size(data))&lt;=2);
+        result=data(trial_idx,:);
+    end
+
+function [has_freq,freq_label,freq_values]=helper_eeglab_get_freq_info(s)
+    samples_type=eeglab_get_samples_type(s);
+    has_freq=strcmp(samples_type,&#39;timefreq&#39;);
+    if nargout&lt;=1
+        return;
+    end
+
+    if has_freq
+        freq_label={&#39;freq&#39;};
+        freq_values={s.freqs};
+    else
+        freq_label={};
+        freq_values={};
+    end
+
+
+
+function ds=convert_eeglab_struct(s, opt)
+    samples_type=eeglab_get_samples_type(s);
+    [has_freq,freq_label,freq_values]=helper_eeglab_get_freq_info(s);
+    freq_size=cellfun(@numel,freq_values);
+
+    [chan_prefix,chan_suffix]=eeglab_get_chan_pre_suffix(s, opt);
+
+    is_baseline=~isempty(regexp(chan_suffix,&#39;base$&#39;,&#39;once&#39;));
+    if is_baseline
+        % because the baseline is computed over time
+        time_size=[];
+        time_values={};
+        time_label={};
+    else
+        time_values={s.times};
+        time_label={&#39;time&#39;};
+        time_size=numel(time_values{1});
+    end
+
+    % set channels
+    [eeglab_labels,chan_values]=eeglab_get_chan_labels(...
+                                        s,chan_prefix,chan_suffix);
+    n_chan=numel(chan_values);
+
+    if isfield(s,&#39;chanlabels&#39;)
+        assert(numel(s.chanlabels)==n_chan);
+    end
+
+
+
+    data_cell=cell(n_chan,1);
+    for k=1:n_chan
+        % load data for each channel
+        key=eeglab_labels{k};
+        value=s.(key);
+
+        if has_freq
+            % it seems that for freq data, single trial data is the last
+            % dimension, whereas for erp data, single trial data is the first
+            % dimension. In any case we want to make single trial data the
+            % first dimension
+            has_trial_dim=size(value,3)~=1;
+            if has_trial_dim
+                value=shiftdim(value,2);
+            else
+                value=shiftdim(value,-1); % insert singleton dimension
+            end
+        end
+
+        n_samples=size(value,1);
+        size_chan_singleton=[n_samples,1,[freq_size],time_size];
+
+        value_rs=reshape(value,size_chan_singleton);
+        data_cell{k}=value_rs;
+    end
+
+    meeg_parameters=s.parameters;
+    clear s;
+
+    data=cat(2,data_cell{:});
+    clear data_cell;
+
+    ds=cosmo_flatten(data,[{chan_prefix},freq_label,time_label],...
+                          [{chan_values},freq_values,time_values]);
+    clear data;
+
+    ds.sa=struct();
+    ds.a.meeg.samples_field=&#39;trial&#39;;
+    ds.a.meeg.samples_type=samples_type;
+    ds.a.meeg.samples_label=&#39;rpt&#39;;
+
+    ds.a.meeg.parameters=meeg_parameters;
+
+    ds=posthoc_slice_dataset_if_necessary(ds,opt);
+
+
+function [chan_prefix,chan_suffix]=eeglab_get_chan_pre_suffix(s,opt)
+    keys=fieldnames(s);
+
+    numeric_infix=&#39;1&#39;;
+    pat=[&#39;^(\D+)&#39; numeric_infix &#39;([\D_]*$)&#39;];
+    matches=regexp(keys,pat,&#39;once&#39;,&#39;tokens&#39;);
+
+    match_idx=find(~cellfun(@isempty,matches));
+
+    if numel(match_idx)==1
+        unique_match=matches{match_idx};
+    else
+        unique_match=eeglab_select_idx_chan_pref_suffix(matches,opt);
+    end
+
+    chan_prefix=unique_match{1};
+    chan_suffix=unique_match{2};
+
+
+function match=eeglab_select_idx_chan_pref_suffix(all_matches,opt)
+% typical use case is data with *_erspbase and _ersp data
+    key=&#39;data_field&#39;;
+
+    % &#39;erspboot&#39; are bootstrap estimates - no idea how to deal with these
+    % so for now they are not supported
+    not_supported_values={&#39;erspboot&#39;};
+
+    % get fieldnames to keep
+    get_match_name=@(x)x{2}(2:end);
+    match_func=@(x)~isempty(x) &amp;&amp; ...
+                    ~cosmo_match({get_match_name(x)},not_supported_values);
+    match_msk=cellfun(match_func,all_matches);
+    matches=all_matches(match_msk);
+
+    valid_values=cellfun(get_match_name,matches,...
+                           &#39;UniformOutput&#39;,false);
+
+    suffix=sprintf(&#39;Valid options for the &#39;&#39;%s&#39;&#39; option are &#39;&#39;%s&#39;&#39;.&#39;,...
+                         key,cosmo_strjoin(valid_values,&#39;&#39;&#39;, &#39;&#39;&#39;));
+
+    % try to be helpful
+    is_ersp=all(cosmo_match({&#39;erspbase&#39;;&#39;ersp&#39;}, valid_values));
+    if is_ersp
+        suffix=sprintf([&#39;%s\nThis data looks like an EEGLAB &#39;...
+                    &#39;ERSP data structure. Note &#39;...
+                    &#39;that the &#39;&#39;ersp&#39;&#39; option returns a &#39;...
+                    &#39;raw dataset (presumably without baseline, &#39;,...
+                    &#39;correction), whereas &#39;&#39;erspbase&#39;&#39; returns the &#39;...
+                    &#39; baseline &#39;...
+                    &#39;values themselves (that can be used for baseline &#39;...
+                    &#39;correction). It is currently not possible to &#39;...
+                    &#39;return baseline corrected data with this &#39;...
+                    &#39;function.&#39;],suffix);
+    end
+
+    if ~isfield(opt,key)
+        error(&#39;The &#39;&#39;%s&#39;&#39; option is required. %s&#39;, key, suffix);
+    end
+
+    value=opt.(key);
+    if ~ischar(value)
+        error(&#39;The &#39;&#39;%s&#39;&#39; option must be a string. %s&#39;,key, suffix);
+    end
+
+    idx=find(cosmo_match(valid_values,value));
+
+    if isempty(idx)
+        error(suffix);
+    end
+    match=matches{idx};
+
+
+
+function [eeglab_labels,cosmo_labels]=eeglab_get_chan_labels(...
+                                s,chan_prefix,chan_suffix)
+
+    make_eeglab_label=@(idx)sprintf(&#39;%s%d%s&#39;,chan_prefix,idx,chan_suffix);
+    % see how many labels there are
+    count=0;
+    while true
+        label=make_eeglab_label(count+1);
+        if ~isfield(s,label)
+            break
+        end
+        count=count+1;
+    end
+
+    idxs=1:count;
+
+    eeglab_labels=arrayfun(make_eeglab_label,idxs,&#39;UniformOutput&#39;,false);
+    if strcmp(chan_prefix,&#39;comp&#39;)
+        assert(~isfield(s,&#39;chanlabels&#39;));
+        make_comp_label=@(idx)sprintf(&#39;comp%d&#39;,idx);
+        cosmo_labels=arrayfun(make_comp_label,idxs,&#39;UniformOutput&#39;,false);
+    else
+        cosmo_labels=s.chanlabels;
+    end
+
+
+
+
+
+
+function samples_type=eeglab_get_samples_type(s)
+    mapping={&#39;erp&#39;,&#39;timelock&#39;;...
+            &#39;timef&#39;,&#39;timefreq&#39;;...
+            &#39;itc&#39;,&#39;timefreq&#39;;...
+            &#39;ersp&#39;,&#39;timefreq&#39;;...
+            &#39;erspbase&#39;,&#39;baseline&#39;};
+    for k=1:size(mapping,1)
+        row=mapping(k,:);
+        if strcmp(lower(s.datatype),row{1})
+            samples_type=row{2};
+            return;
+        end
+    end
+
+    error(&#39;unsupported datatype mapping &#39;&#39;%s&#39;&#39;&#39;,s.datatype);
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% eeglab txt helper function
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+function ds=read_eeglab_txt(fn, opt)
+    % reads eeglab time series data. returns data in fieldtrip-like format
+    fid=fopen(fn);
+
+    header_line=fgetl(fid); % read header
+    chan_labels=cosmo_strsplit(header_line,&#39;\t&#39;);
+    chan_labels=chan_labels(2:(end-1)); % omit first &amp; last bogus element
+
+    nchan=numel(chan_labels);
+    data_pat=cosmo_strjoin(repmat({&#39;%n&#39;},1,nchan+1),&#39; &#39;);
+
+    % read data from file
+    cell_data=textscan(fid,data_pat);
+
+    % check all data was read
+    neg_one=fgetl(fid);
+    if neg_one~=-1
+        error(&#39;Could not read all data from %s&#39;, fn);
+    end
+
+    %%%%%%%%%%%%%%%
+    % data consistency checks
+
+    % timepoints are in the first column, data in other columns
+    timepoints=cell_data{1};
+    nrows=numel(timepoints);
+
+    [unused,t_trial]=cosmo_index_unique(timepoints);
+    ntime=numel(t_trial);
+
+    if mod(nrows,ntime)~=0 || ...
+                ~all(all(bsxfun(@eq,reshape(timepoints,ntime,[]),...
+                                  t_trial)))
+        error(&#39;Data not contiguous or unexpected order of time points&#39;);
+    end
+
+    % number of trials
+    ntrial=nrows/ntime;
+
+
+    %%%%%%%%%%%%%%%
+    % put the data in 3D array
+    data=zeros(ntrial,nchan,ntime);
+    for chan=1:nchan
+        chan_data=cell_data{chan+1}; % skip first column as it has timepoints
+        data(:,chan,:)=reshape(chan_data,ntime,ntrial)&#39;;
+    end
+
+    %%%%%%%%%%%%%%%
+    % flatten and make it a dataset
+    % (convert miliseconds to seconds along the way)
+    dim_labels={&#39;chan&#39;;&#39;time&#39;};
+    dim_values={chan_labels(:)&#39;;.001*t_trial(:)&#39;};
+
+    % make a dataset
+    ds=cosmo_flatten(data, dim_labels, dim_values);
+
+    % set datatype to timelock-ish in fieldtrip-compatible way
+    ds.a.meeg.samples_field=&#39;trial&#39;;
+    ds.a.meeg.samples_type=&#39;timelock&#39;;
+    ds.a.meeg.samples_label=&#39;rpt&#39;;
+
+    % set sample info
+    ds.sa.(ds.a.meeg.samples_label)=(1:ntrial)&#39;;
+
+    ds=posthoc_slice_dataset_if_necessary(ds,opt);
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_meeg_chantype.html"
+                        title="previous chapter">cosmo meeg chantype</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_meeg_find_layout.html"
+                        title="next chapter">cosmo meeg find layout</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_meeg_dataset.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_meeg_find_layout.html" title="cosmo meeg find layout"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_meeg_chantype.html" title="cosmo meeg chantype"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

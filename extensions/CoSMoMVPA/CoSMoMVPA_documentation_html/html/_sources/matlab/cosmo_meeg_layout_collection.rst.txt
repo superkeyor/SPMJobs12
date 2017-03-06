@@ -1,0 +1,7 @@
+.. _cosmo_meeg_layout_collection:
+
+cosmo meeg layout collection
+============================
+
+.. include :: cosmo_meeg_layout_collection.txt
+

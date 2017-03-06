@@ -1,0 +1,7 @@
+.. _cosmo_meeg_senstype2layout_mapping_skl:
+
+cosmo meeg senstype2layout mapping skl
+======================================
+
+.. include :: cosmo_meeg_senstype2layout_mapping_skl.txt
+

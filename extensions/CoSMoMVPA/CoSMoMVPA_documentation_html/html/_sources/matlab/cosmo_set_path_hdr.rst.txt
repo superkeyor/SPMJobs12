@@ -1,0 +1,7 @@
+.. _cosmo_set_path_hdr:
+
+cosmo set path hdr
+==================
+
+.. include :: cosmo_set_path_hdr.txt
+

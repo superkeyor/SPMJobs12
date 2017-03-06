@@ -1,0 +1,7 @@
+.. _cosmo_dim_insert:
+
+cosmo dim insert
+================
+
+.. include :: cosmo_dim_insert.txt
+

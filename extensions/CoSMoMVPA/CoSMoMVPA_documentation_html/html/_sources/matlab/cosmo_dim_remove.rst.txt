@@ -1,0 +1,7 @@
+.. _cosmo_dim_remove:
+
+cosmo dim remove
+================
+
+.. include :: cosmo_dim_remove.txt
+

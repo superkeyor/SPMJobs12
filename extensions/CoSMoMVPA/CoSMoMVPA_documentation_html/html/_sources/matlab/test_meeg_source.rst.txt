@@ -1,0 +1,7 @@
+.. _test_meeg_source:
+
+test meeg source
+================
+
+.. include :: test_meeg_source.txt
+

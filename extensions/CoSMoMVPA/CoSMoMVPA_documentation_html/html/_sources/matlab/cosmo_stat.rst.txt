@@ -1,0 +1,7 @@
+.. _cosmo_stat:
+
+cosmo stat
+==========
+
+.. include :: cosmo_stat.txt
+

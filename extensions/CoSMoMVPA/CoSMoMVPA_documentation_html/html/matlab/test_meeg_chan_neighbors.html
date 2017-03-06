@@ -1,0 +1,572 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test meeg chan neighbors &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test meeg chantype" href="test_meeg_chantype.html" />
+    <link rel="prev" title="test meeg chan neighborhood" href="test_meeg_chan_neighborhood.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_meeg_chantype.html" title="test meeg chantype"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_meeg_chan_neighborhood.html" title="test meeg chan neighborhood"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-meeg-chan-neighbors">
+<span id="id1"></span><h1>test meeg chan neighbors<a class="headerlink" href="#test-meeg-chan-neighbors" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>test_suite<span class="p">=</span><span class="nf">test_meeg_chan_neighbors</span><span class="p">()</span><span class="w"></span>
+<span class="c">% tests for cosmo_meeg_chan_neighbors</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_meeg_neighbors</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;fieldtrip&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% switch off warnings by fieldtrip</span>
+    <span class="n">warning_state</span><span class="p">=</span><span class="n">warning</span><span class="p">(</span><span class="s">&#39;query&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+    <span class="n">cleaner</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">warning</span><span class="p">(</span><span class="n">warning_state</span><span class="p">));</span>
+    <span class="n">warning</span><span class="p">(</span><span class="s">&#39;off&#39;</span><span class="p">,</span><span class="s">&#39;all&#39;</span><span class="p">);</span>
+
+    <span class="n">props</span><span class="p">=</span><span class="n">get_props</span><span class="p">();</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">props</span><span class="p">);</span>
+
+    <span class="c">% test a subset</span>
+    <span class="n">ntest</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="p">.</span><span class="mi">5</span><span class="p">);</span>
+
+
+    <span class="c">% test a subset for fieldtrip</span>
+    <span class="c">% (fieldtrip is very slow, so testing all would take too long)</span>
+    <span class="n">ntest_fieldtrip</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c">% visit in random order</span>
+    <span class="n">rp</span><span class="p">=</span><span class="n">randperm</span><span class="p">(</span><span class="n">n</span><span class="p">);</span>
+
+    <span class="n">prev_sens</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntest</span>
+        <span class="n">prop</span><span class="p">=</span><span class="n">props</span><span class="p">{</span><span class="n">rp</span><span class="p">(</span><span class="n">k</span><span class="p">)};</span>
+
+        <span class="n">sens</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">layout_name</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+        <span class="n">args</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">3</span><span class="p">};</span>
+        <span class="n">nchan</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">4</span><span class="p">};</span>
+        <span class="n">chan_stats</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">5</span><span class="p">};</span>
+        <span class="n">chan_labels</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">6</span><span class="p">};</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">sens</span><span class="p">,</span><span class="n">prev_sens</span><span class="p">)</span>
+            <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;type&#39;</span><span class="p">,</span><span class="s">&#39;meeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;sens&#39;</span><span class="p">,</span><span class="n">sens</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;size&#39;</span><span class="p">,</span><span class="s">&#39;big&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">nbrs</span><span class="p">=</span><span class="n">cosmo_meeg_chan_neighbors</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">args</span><span class="p">{:});</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbrs</span><span class="p">),</span><span class="n">nchan</span><span class="p">);</span>
+
+
+        <span class="n">chan_count</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,{</span><span class="n">nbrs</span><span class="p">.</span><span class="n">neighblabel</span><span class="p">});</span>
+        <span class="n">stats</span><span class="p">=[</span><span class="n">min</span><span class="p">(</span><span class="n">chan_count</span><span class="p">),</span> <span class="n">max</span><span class="p">(</span><span class="n">chan_count</span><span class="p">),</span> <span class="n">mean</span><span class="p">(</span><span class="n">chan_count</span><span class="p">)];</span>
+        <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">stats</span><span class="p">,</span> <span class="n">chan_stats</span><span class="p">,</span><span class="s">&#39;relative&#39;</span><span class="p">,</span><span class="mf">1e-3</span><span class="p">);</span>
+
+        <span class="c">% test neighbor labels</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">chan_labels</span><span class="p">)</span>
+            <span class="n">chan_label</span><span class="p">=</span><span class="n">chan_labels</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+            <span class="n">center</span><span class="p">=</span><span class="n">chan_label</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+            <span class="n">around</span><span class="p">=</span><span class="n">chan_label</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+
+            <span class="c">% little optimization for finding first and last channel</span>
+            <span class="k">if</span> <span class="nb">j</span><span class="o">==</span><span class="mi">1</span>
+                <span class="n">pos</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+            <span class="k">else</span>
+                <span class="n">pos</span><span class="p">=</span><span class="n">nchan</span><span class="p">;</span>
+            <span class="k">end</span>
+
+
+            <span class="k">if</span> <span class="o">~</span><span class="n">strcmp</span><span class="p">(</span><span class="n">center</span><span class="p">,</span><span class="n">nbrs</span><span class="p">(</span><span class="n">pos</span><span class="p">).</span><span class="n">label</span><span class="p">)</span>
+                <span class="n">pos</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">nbrs</span><span class="p">.</span><span class="n">label</span><span class="p">},</span><span class="n">center</span><span class="p">));</span>
+                <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">pos</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">);</span>
+            <span class="k">end</span>
+
+
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">around</span><span class="p">(:)),</span><span class="n">sort</span><span class="p">(</span><span class="n">nbrs</span><span class="p">(</span><span class="n">pos</span><span class="p">).</span><span class="n">neighblabel</span><span class="p">));</span>
+        <span class="k">end</span>
+
+        <span class="n">can_test_fieldtrip</span><span class="p">=</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">layout_name</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                <span class="nb">isequal</span><span class="p">(</span><span class="n">args</span><span class="p">{</span><span class="mi">4</span><span class="p">},</span><span class="s">&#39;layout&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                <span class="o">~</span><span class="n">strcmp</span><span class="p">(</span><span class="n">args</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="s">&#39;count&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">can_test_fieldtrip</span> <span class="o">&amp;&amp;</span> <span class="n">ntest_fieldtrip</span><span class="o">&gt;</span><span class="mi">0</span>
+            <span class="n">cfg</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+            <span class="n">cfg</span><span class="p">.</span><span class="n">layout</span><span class="p">=</span><span class="n">layout_name</span><span class="p">;</span>
+            <span class="k">switch</span> <span class="n">args</span><span class="p">{</span><span class="mi">1</span><span class="p">}</span>
+                <span class="k">case</span> <span class="s">&#39;delaunay&#39;</span>
+                    <span class="n">cfg</span><span class="p">.</span><span class="n">method</span><span class="p">=</span><span class="s">&#39;triangulation&#39;</span><span class="p">;</span>
+                <span class="k">case</span> <span class="s">&#39;radius&#39;</span>
+                    <span class="n">cfg</span><span class="p">.</span><span class="n">method</span><span class="p">=</span><span class="s">&#39;distance&#39;</span><span class="p">;</span>
+                    <span class="n">cfg</span><span class="p">.</span><span class="n">neighbourdist</span><span class="p">=</span><span class="n">args</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+                <span class="k">otherwise</span>
+                    <span class="n">assert</span><span class="p">(</span><span class="n">false</span><span class="p">);</span>
+            <span class="k">end</span>
+            <span class="n">y</span><span class="p">=</span><span class="n">ft_prepare_neighbours</span><span class="p">(</span><span class="n">cfg</span><span class="p">);</span>
+
+            <span class="c">% reorder the labels if necessary</span>
+            <span class="n">nbrs_cell</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">){</span><span class="n">x</span><span class="p">},{</span><span class="n">nbrs</span><span class="p">.</span><span class="n">label</span><span class="p">},</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+            <span class="n">y_cell</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">){</span><span class="n">x</span><span class="p">},{</span><span class="n">y</span><span class="p">.</span><span class="n">label</span><span class="p">},</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+            <span class="n">p</span><span class="p">=</span><span class="n">cosmo_overlap</span><span class="p">(</span><span class="n">nbrs_cell</span><span class="p">,</span><span class="n">y_cell</span><span class="p">);</span>
+            <span class="p">[</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="nb">find</span><span class="p">(</span><span class="n">p</span><span class="o">==</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">y</span><span class="p">=</span><span class="n">y</span><span class="p">(</span><span class="nb">i</span><span class="p">);</span>
+
+            <span class="n">assertEqual</span><span class="p">({</span><span class="n">nbrs</span><span class="p">.</span><span class="n">label</span><span class="p">},{</span><span class="n">y</span><span class="p">.</span><span class="n">label</span><span class="p">});</span>
+
+            <span class="p">[</span><span class="n">p</span><span class="p">,</span><span class="n">q</span><span class="p">]=</span><span class="n">cosmo_overlap</span><span class="p">({</span><span class="n">nbrs</span><span class="p">.</span><span class="n">neighblabel</span><span class="p">},{</span><span class="n">y</span><span class="p">.</span><span class="n">neighblabel</span><span class="p">});</span>
+            <span class="n">dp</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">p</span><span class="p">);</span>
+            <span class="n">dq</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">q</span><span class="p">);</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">dp</span><span class="p">(</span><span class="nb">isfinite</span><span class="p">(</span><span class="n">dp</span><span class="p">)))</span><span class="o">&gt;</span><span class="p">.</span><span class="mi">9</span><span class="p">);</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">mean</span><span class="p">(</span><span class="n">dq</span><span class="p">(</span><span class="nb">isfinite</span><span class="p">(</span><span class="n">dq</span><span class="p">)))</span><span class="o">&gt;</span><span class="p">.</span><span class="mi">8</span><span class="p">);</span>
+
+            <span class="n">ntest_fieldtrip</span><span class="p">=</span><span class="n">ntest_fieldtrip</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+
+
+
+
+<span class="k">function</span><span class="w"> </span>props<span class="p">=</span><span class="nf">get_props</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="c">% properties to test; each cell has these elements:</span>
+    <span class="c">% - dataset type</span>
+    <span class="c">% - arguments for neighbors</span>
+    <span class="c">% - number of neighbors</span>
+    <span class="c">% - min, max, mean number of channels</span>
+    <span class="c">% - a few channel labels and their neighbors</span>
+    <span class="n">props</span><span class="p">={{</span><span class="s">&#39;neuromag306_all&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;neuromag306mag.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">102</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">11</span> <span class="mf">7.9412</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MEG0111&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG0111&#39;</span><span class="p">,</span><span class="s">&#39;MEG0121&#39;</span><span class="p">,</span><span class="s">&#39;MEG0131&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0141&#39;</span><span class="p">,</span><span class="s">&#39;MEG0341&#39;</span><span class="p">,</span><span class="s">&#39;MEG0511&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MEG2641&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG1331&#39;</span><span class="p">,</span><span class="s">&#39;MEG2421&#39;</span><span class="p">,</span><span class="s">&#39;MEG2431&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2441&#39;</span><span class="p">,</span><span class="s">&#39;MEG2521&#39;</span><span class="p">,</span><span class="s">&#39;MEG2611&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2621&#39;</span><span class="p">,</span><span class="s">&#39;MEG2631&#39;</span><span class="p">,</span><span class="s">&#39;MEG2641&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_all&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;neuromag306planar.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">204</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">12</span> <span class="mf">8.0392</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MEG0113&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG0113&#39;</span><span class="p">,</span><span class="s">&#39;MEG0112&#39;</span><span class="p">,</span><span class="s">&#39;MEG0122&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0132&#39;</span><span class="p">,</span><span class="s">&#39;MEG0133&#39;</span><span class="p">,</span><span class="s">&#39;MEG0142&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0343&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MEG2643&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG1333&#39;</span><span class="p">,</span><span class="s">&#39;MEG2423&#39;</span><span class="p">,</span><span class="s">&#39;MEG2422&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2612&#39;</span><span class="p">,</span><span class="s">&#39;MEG2623&#39;</span><span class="p">,</span><span class="s">&#39;MEG2622&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2642&#39;</span><span class="p">,</span><span class="s">&#39;MEG2643&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;neuromag306planar.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">204</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">14</span> <span class="mf">8.9118</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MEG0113&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG0113&#39;</span><span class="p">,</span><span class="s">&#39;MEG0112&#39;</span><span class="p">,</span><span class="s">&#39;MEG0122&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0132&#39;</span><span class="p">,</span><span class="s">&#39;MEG0133&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MEG2643&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG2423&#39;</span><span class="p">,</span><span class="s">&#39;MEG2422&#39;</span><span class="p">,</span><span class="s">&#39;MEG2623&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2622&#39;</span><span class="p">,</span><span class="s">&#39;MEG2632&#39;</span><span class="p">,</span><span class="s">&#39;MEG2642&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2643&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;neuromag306planar.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">102</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">16</span> <span class="mf">8.9804</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MEG0112+0113&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG0112&#39;</span><span class="p">,</span><span class="s">&#39;MEG0113&#39;</span><span class="p">,</span><span class="s">&#39;MEG0122&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0123&#39;</span><span class="p">,</span><span class="s">&#39;MEG0132&#39;</span><span class="p">,</span><span class="s">&#39;MEG0133&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MEG2642+2643&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG2422&#39;</span><span class="p">,</span><span class="s">&#39;MEG2423&#39;</span><span class="p">,</span><span class="s">&#39;MEG2622&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2623&#39;</span><span class="p">,</span><span class="s">&#39;MEG2632&#39;</span><span class="p">,</span><span class="s">&#39;MEG2633&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2642&#39;</span><span class="p">,</span><span class="s">&#39;MEG2643&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;neuromag306cmb.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">102</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MEG0112+0113&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG0112+0113&#39;</span><span class="p">,</span><span class="s">&#39;MEG0122+0123&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0132+0133&#39;</span><span class="p">,</span><span class="s">&#39;MEG0212+0213&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG0342+0343&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MEG2642+2643&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MEG2422+2423&#39;</span><span class="p">,</span><span class="s">&#39;MEG2432+2433&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2622+2623&#39;</span><span class="p">,</span><span class="s">&#39;MEG2632+2633&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MEG2642+2643&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;CTF151.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">151</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">11</span> <span class="mf">8.404</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MLC12&#39;</span><span class="p">,</span><span class="s">&#39;MLC21&#39;</span><span class="p">,</span><span class="s">&#39;MLF41&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MLF51&#39;</span><span class="p">,</span><span class="s">&#39;MLF52&#39;</span><span class="p">,</span><span class="s">&#39;MRC11&#39;</span><span class="p">,</span><span class="s">&#39;MZC01&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZF03&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MZP02&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLO11&#39;</span><span class="p">,</span><span class="s">&#39;MLP21&#39;</span><span class="p">,</span><span class="s">&#39;MLP31&#39;</span><span class="p">,</span><span class="s">&#39;MRO11&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MRP21&#39;</span><span class="p">,</span><span class="s">&#39;MRP31&#39;</span><span class="p">,</span><span class="s">&#39;MZO01&#39;</span><span class="p">,</span><span class="s">&#39;MZP01&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZP02&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;CTF151.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">151</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">11</span> <span class="mf">8.404</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MLC12&#39;</span><span class="p">,</span><span class="s">&#39;MLC21&#39;</span><span class="p">,</span><span class="s">&#39;MLF41&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MLF51&#39;</span><span class="p">,</span><span class="s">&#39;MLF52&#39;</span><span class="p">,</span><span class="s">&#39;MRC11&#39;</span><span class="p">,</span><span class="s">&#39;MZC01&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZF03&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MZP02&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLO11&#39;</span><span class="p">,</span><span class="s">&#39;MLP21&#39;</span><span class="p">,</span><span class="s">&#39;MLP31&#39;</span><span class="p">,</span><span class="s">&#39;MRO11&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MRP21&#39;</span><span class="p">,</span><span class="s">&#39;MRP31&#39;</span><span class="p">,</span><span class="s">&#39;MZO01&#39;</span><span class="p">,</span><span class="s">&#39;MZP01&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZP02&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">[],</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC12_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC13_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MLC14_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC15_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC21_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MRT41_dV&#39;</span><span class="p">,</span><span class="s">&#39;MRT42_dV&#39;</span><span class="p">,</span><span class="s">&#39;MRT43_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MRT44_dV&#39;</span><span class="p">,</span><span class="s">&#39;MZC01_dV&#39;</span><span class="p">,</span><span class="s">&#39;MZC02_dV&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mf">2.3333</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC12_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC21_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZC01_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MZC02_dV&#39;</span><span class="p">,{</span><span class="s">&#39;MZC02_dV&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">[],</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC12_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC13_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MLC14_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC15_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC21_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MRT41_dV&#39;</span><span class="p">,</span><span class="s">&#39;MRT42_dV&#39;</span><span class="p">,</span><span class="s">&#39;MRT43_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;MRT44_dV&#39;</span><span class="p">,</span><span class="s">&#39;MZC01_dV&#39;</span><span class="p">,</span><span class="s">&#39;MZC02_dV&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">4</span> <span class="mf">2.3333</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC12_dH&#39;</span><span class="p">,</span><span class="s">&#39;MLC21_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZC01_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MZC02&#39;</span><span class="p">,{</span> <span class="s">&#39;MZC02_dV&#39;</span> <span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;CTF151.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">151</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MLC12&#39;</span><span class="p">,</span><span class="s">&#39;MLF51&#39;</span><span class="p">,</span><span class="s">&#39;MRC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZF03&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MZP02&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLO11&#39;</span><span class="p">,</span><span class="s">&#39;MLP21&#39;</span><span class="p">,</span><span class="s">&#39;MRO11&#39;</span><span class="p">,</span><span class="s">&#39;MRP21&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZP02&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;CTF151.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">151</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MLC12&#39;</span><span class="p">,</span><span class="s">&#39;MLF51&#39;</span><span class="p">,</span><span class="s">&#39;MRC11&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZF03&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;MZP02&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;MLO11&#39;</span><span class="p">,</span><span class="s">&#39;MLP21&#39;</span><span class="p">,</span><span class="s">&#39;MRO11&#39;</span><span class="p">,</span><span class="s">&#39;MRP21&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;MZP02&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d148&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D148.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A146&#39;</span><span class="p">,</span><span class="s">&#39;A145&#39;</span><span class="p">,</span><span class="s">&#39;A144&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A143&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A8&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">9</span> <span class="mf">6.8333</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A8&#39;</span><span class="p">,{</span><span class="s">&#39;A8&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A143&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A143&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A148&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d148&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D148.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A146&#39;</span><span class="p">,</span><span class="s">&#39;A145&#39;</span><span class="p">,</span><span class="s">&#39;A144&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A143&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A8&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">9</span> <span class="mf">6.8333</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A8&#39;</span><span class="p">,{</span><span class="s">&#39;A8&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A143&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A143&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A148&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d148_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">[],</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">296</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">20</span> <span class="mf">13.1351</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="s">&#39;A1_dV&#39;</span><span class="p">,</span><span class="s">&#39;A2_dH&#39;</span><span class="p">,</span><span class="s">&#39;A2_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A3_dH&#39;</span><span class="p">,</span><span class="s">&#39;A3_dV&#39;</span><span class="p">,</span><span class="s">&#39;A5_dH&#39;</span><span class="p">,</span><span class="s">&#39;A5_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A6_dH&#39;</span><span class="p">,</span><span class="s">&#39;A6_dV&#39;</span><span class="p">,</span><span class="s">&#39;A7_dH&#39;</span><span class="p">,</span><span class="s">&#39;A7_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A10_dH&#39;</span><span class="p">,</span><span class="s">&#39;A10_dV&#39;</span><span class="p">,</span><span class="s">&#39;A11_dH&#39;</span><span class="p">,</span><span class="s">&#39;A11_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A12_dH&#39;</span><span class="p">,</span><span class="s">&#39;A12_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A129_dH&#39;</span><span class="p">,</span><span class="s">&#39;A129_dV&#39;</span><span class="p">,</span><span class="s">&#39;A130_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A130_dV&#39;</span><span class="p">,</span><span class="s">&#39;A148_dH&#39;</span><span class="p">,</span><span class="s">&#39;A148_dV&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d148_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">[],</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">148</span><span class="p">,[</span><span class="mi">4</span> <span class="mi">20</span> <span class="mf">13.1351</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A10_dH&#39;</span><span class="p">,</span><span class="s">&#39;A10_dV&#39;</span><span class="p">,</span><span class="s">&#39;A11_dH&#39;</span><span class="p">,</span><span class="s">&#39;A11_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A12_dH&#39;</span><span class="p">,</span><span class="s">&#39;A12_dV&#39;</span><span class="p">,</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="s">&#39;A1_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A2_dH&#39;</span><span class="p">,</span><span class="s">&#39;A2_dV&#39;</span><span class="p">,</span><span class="s">&#39;A3_dH&#39;</span><span class="p">,</span><span class="s">&#39;A3_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A5_dH&#39;</span><span class="p">,</span><span class="s">&#39;A5_dV&#39;</span><span class="p">,</span><span class="s">&#39;A6_dH&#39;</span><span class="p">,</span><span class="s">&#39;A6_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A7_dH&#39;</span><span class="p">,</span><span class="s">&#39;A7_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A129_dH&#39;</span><span class="p">,</span><span class="s">&#39;A129_dV&#39;</span><span class="p">,</span><span class="s">&#39;A130_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A130_dV&#39;</span><span class="p">,</span><span class="s">&#39;A148_dH&#39;</span><span class="p">,</span><span class="s">&#39;A148_dV&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d148_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D148.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A146&#39;</span><span class="p">,</span><span class="s">&#39;A145&#39;</span><span class="p">,</span><span class="s">&#39;A144&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A143&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A8&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A8&#39;</span><span class="p">,{</span><span class="s">&#39;A8&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,{</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A145&#39;</span><span class="p">,</span><span class="s">&#39;A146&#39;</span><span class="p">,</span><span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A148&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d148_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D148.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,</span><span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A146&#39;</span><span class="p">,</span><span class="s">&#39;A145&#39;</span><span class="p">,</span><span class="s">&#39;A144&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A143&#39;</span><span class="p">,</span><span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;A8&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A8&#39;</span><span class="p">,{</span><span class="s">&#39;A8&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A148&#39;</span><span class="p">,{</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A145&#39;</span><span class="p">,</span><span class="s">&#39;A146&#39;</span><span class="p">,</span><span class="s">&#39;A147&#39;</span><span class="p">,</span><span class="s">&#39;A148&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d248&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D248.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">248</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">12</span> <span class="mf">8.2903</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A2&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A14&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A248&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A151&#39;</span><span class="p">,</span><span class="s">&#39;A152&#39;</span><span class="p">,</span><span class="s">&#39;A194&#39;</span><span class="p">,</span><span class="s">&#39;A195&#39;</span><span class="p">,</span><span class="s">&#39;A227&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A228&#39;</span><span class="p">,</span><span class="s">&#39;A246&#39;</span><span class="p">,</span><span class="s">&#39;A247&#39;</span><span class="p">,</span><span class="s">&#39;A248&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d248&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D248.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">248</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">12</span> <span class="mf">8.2903</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A2&#39;</span><span class="p">,</span><span class="s">&#39;A9&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A11&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A13&#39;</span><span class="p">,</span><span class="s">&#39;A14&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A248&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A151&#39;</span><span class="p">,</span><span class="s">&#39;A152&#39;</span><span class="p">,</span><span class="s">&#39;A194&#39;</span><span class="p">,</span><span class="s">&#39;A195&#39;</span><span class="p">,</span><span class="s">&#39;A227&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A228&#39;</span><span class="p">,</span><span class="s">&#39;A246&#39;</span><span class="p">,</span><span class="s">&#39;A247&#39;</span><span class="p">,</span><span class="s">&#39;A248&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d248_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">[],</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">496</span><span class="p">,[</span><span class="mi">8</span> <span class="mi">32</span> <span class="mf">22.1452</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="s">&#39;A1_dV&#39;</span><span class="p">,</span><span class="s">&#39;A2_dH&#39;</span><span class="p">,</span><span class="s">&#39;A2_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A9_dH&#39;</span><span class="p">,</span><span class="s">&#39;A9_dV&#39;</span><span class="p">,</span><span class="s">&#39;A10_dH&#39;</span><span class="p">,</span><span class="s">&#39;A10_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A11_dH&#39;</span><span class="p">,</span><span class="s">&#39;A11_dV&#39;</span><span class="p">,</span><span class="s">&#39;A12_dH&#39;</span><span class="p">,</span><span class="s">&#39;A12_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A13_dH&#39;</span><span class="p">,</span><span class="s">&#39;A13_dV&#39;</span><span class="p">,</span><span class="s">&#39;A14_dH&#39;</span><span class="p">,</span><span class="s">&#39;A14_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A15_dH&#39;</span><span class="p">,</span><span class="s">&#39;A15_dV&#39;</span><span class="p">,</span><span class="s">&#39;A25_dH&#39;</span><span class="p">,</span><span class="s">&#39;A25_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A28_dH&#39;</span><span class="p">,</span><span class="s">&#39;A28_dV&#39;</span><span class="p">,</span><span class="s">&#39;A30_dH&#39;</span><span class="p">,</span><span class="s">&#39;A30_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A31_dH&#39;</span><span class="p">,</span><span class="s">&#39;A31_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A248_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A194_dH&#39;</span><span class="p">,</span><span class="s">&#39;A194_dV&#39;</span><span class="p">,</span><span class="s">&#39;A227_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A227_dV&#39;</span><span class="p">,</span><span class="s">&#39;A228_dH&#39;</span><span class="p">,</span><span class="s">&#39;A228_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A247_dH&#39;</span><span class="p">,</span><span class="s">&#39;A247_dV&#39;</span><span class="p">,</span><span class="s">&#39;A248_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A248_dV&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d248_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">[],</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">248</span><span class="p">,[</span><span class="mi">8</span> <span class="mi">32</span> <span class="mf">22.1452</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A10_dH&#39;</span><span class="p">,</span><span class="s">&#39;A10_dV&#39;</span><span class="p">,</span><span class="s">&#39;A11_dH&#39;</span><span class="p">,</span><span class="s">&#39;A11_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A12_dH&#39;</span><span class="p">,</span><span class="s">&#39;A12_dV&#39;</span><span class="p">,</span><span class="s">&#39;A13_dH&#39;</span><span class="p">,</span><span class="s">&#39;A13_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A14_dH&#39;</span><span class="p">,</span><span class="s">&#39;A14_dV&#39;</span><span class="p">,</span><span class="s">&#39;A15_dH&#39;</span><span class="p">,</span><span class="s">&#39;A15_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="s">&#39;A1_dV&#39;</span><span class="p">,</span><span class="s">&#39;A25_dH&#39;</span><span class="p">,</span><span class="s">&#39;A25_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A28_dH&#39;</span><span class="p">,</span><span class="s">&#39;A28_dV&#39;</span><span class="p">,</span><span class="s">&#39;A2_dH&#39;</span><span class="p">,</span><span class="s">&#39;A2_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A30_dH&#39;</span><span class="p">,</span><span class="s">&#39;A30_dV&#39;</span><span class="p">,</span><span class="s">&#39;A31_dH&#39;</span><span class="p">,</span><span class="s">&#39;A31_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A9_dH&#39;</span><span class="p">,</span><span class="s">&#39;A9_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A248&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;A194_dH&#39;</span><span class="p">,</span><span class="s">&#39;A194_dV&#39;</span><span class="p">,</span><span class="s">&#39;A227_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A227_dV&#39;</span><span class="p">,</span><span class="s">&#39;A228_dH&#39;</span><span class="p">,</span><span class="s">&#39;A228_dV&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A247_dH&#39;</span><span class="p">,</span><span class="s">&#39;A247_dV&#39;</span><span class="p">,</span><span class="s">&#39;A248_dH&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;A248_dV&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d248_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D248.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_axial&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">248</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1&#39;</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A2&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A14&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A248&#39;</span><span class="p">,{</span><span class="s">&#39;A194&#39;</span><span class="p">,</span><span class="s">&#39;A227&#39;</span><span class="p">,</span><span class="s">&#39;A228&#39;</span><span class="p">,</span><span class="s">&#39;A247&#39;</span><span class="p">,</span><span class="s">&#39;A248&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;4d248_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;4D248.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;meg_planar_combined&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">248</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">5</span> <span class="mi">5</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;A1&#39;</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A2&#39;</span><span class="p">,</span><span class="s">&#39;A10&#39;</span><span class="p">,</span><span class="s">&#39;A12&#39;</span><span class="p">,</span><span class="s">&#39;A14&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;A248&#39;</span><span class="p">,{</span><span class="s">&#39;A194&#39;</span><span class="p">,</span><span class="s">&#39;A227&#39;</span><span class="p">,</span><span class="s">&#39;A228&#39;</span><span class="p">,</span><span class="s">&#39;A247&#39;</span><span class="p">,</span><span class="s">&#39;A248&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;eeg1005&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;EEG1005.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;delaunay&#39;</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;dataset&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;eeg&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">335</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">11</span> <span class="mf">8.3851</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,</span><span class="s">&#39;AFp9h&#39;</span><span class="p">,</span><span class="s">&#39;AFp7h&#39;</span><span class="p">,</span><span class="s">&#39;AFp5h&#39;</span><span class="p">,</span><span class="s">&#39;Fp1h&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;AFp9&#39;</span><span class="p">,</span><span class="s">&#39;AFp7&#39;</span><span class="p">,</span><span class="s">&#39;AFp5&#39;</span><span class="p">,</span><span class="s">&#39;AFp3&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;OI2&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="p">{</span><span class="s">&#39;O2&#39;</span><span class="p">,</span><span class="s">&#39;I2&#39;</span><span class="p">,</span><span class="s">&#39;POO8h&#39;</span><span class="p">,</span><span class="s">&#39;POO10h&#39;</span><span class="p">,</span><span class="s">&#39;OI2h&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;O2h&#39;</span><span class="p">,</span><span class="s">&#39;I2h&#39;</span><span class="p">,</span><span class="s">&#39;POO6&#39;</span><span class="p">,</span><span class="s">&#39;POO8&#39;</span><span class="p">,</span><span class="s">&#39;POO10&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="s">&#39;OI2&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;eeg1010&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;EEG1010.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;radius&#39;</span><span class="p">,</span><span class="mf">0.1</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;TP10&#39;</span><span class="p">,</span><span class="s">&#39;TP7&#39;</span><span class="p">,</span><span class="s">&#39;TP8&#39;</span><span class="p">,</span><span class="s">&#39;TP9&#39;</span><span class="p">,</span><span class="s">&#39;CP1&#39;</span><span class="p">,</span><span class="s">&#39;CP2&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;PO8&#39;</span><span class="p">,</span><span class="s">&#39;PO9&#39;</span><span class="p">,</span><span class="s">&#39;POz&#39;</span><span class="p">,</span><span class="s">&#39;O1&#39;</span><span class="p">,</span><span class="s">&#39;O2&#39;</span><span class="p">,</span><span class="s">&#39;Oz&#39;</span><span class="p">},</span><span class="c">...</span>
+                    <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">12</span><span class="p">,[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mf">1.5</span><span class="p">],{{</span><span class="s">&#39;TP9&#39;</span><span class="p">,{</span><span class="s">&#39;TP9&#39;</span><span class="p">,</span><span class="s">&#39;TP7&#39;</span><span class="p">}},{</span><span class="s">&#39;O2&#39;</span><span class="p">,{</span><span class="s">&#39;O2&#39;</span><span class="p">}}}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;eeg1020&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="s">&#39;EEG1020.lay&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="p">{</span><span class="s">&#39;count&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;label&#39;</span><span class="p">,</span><span class="s">&#39;layout&#39;</span><span class="p">,</span><span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;eeg&#39;</span><span class="p">},</span><span class="c">...</span>
+                <span class="mi">21</span><span class="p">,[</span><span class="mi">5</span> <span class="mi">6</span> <span class="mf">5.0476</span><span class="p">],</span><span class="c">...</span>
+                <span class="p">{{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,</span><span class="s">&#39;Fpz&#39;</span><span class="p">,</span><span class="s">&#39;F7&#39;</span><span class="p">,</span><span class="s">&#39;F3&#39;</span><span class="p">,</span><span class="s">&#39;Fz&#39;</span><span class="p">}},</span><span class="c">...</span>
+                    <span class="p">{</span><span class="s">&#39;O2&#39;</span><span class="p">,{</span><span class="s">&#39;Pz&#39;</span><span class="p">,</span><span class="s">&#39;P4&#39;</span><span class="p">,</span><span class="s">&#39;O1&#39;</span><span class="p">,</span><span class="s">&#39;Oz&#39;</span><span class="p">,</span><span class="s">&#39;O2&#39;</span><span class="p">}}}}</span>
+        <span class="p">};</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_meeg_chan_neighborhood.html"
+                        title="previous chapter">test meeg chan neighborhood</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_meeg_chantype.html"
+                        title="next chapter">test meeg chantype</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_meeg_chan_neighbors.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_meeg_chantype.html" title="test meeg chantype"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_meeg_chan_neighborhood.html" title="test meeg chan neighborhood"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

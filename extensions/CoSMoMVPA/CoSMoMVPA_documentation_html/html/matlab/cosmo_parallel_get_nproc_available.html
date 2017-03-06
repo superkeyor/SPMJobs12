@@ -1,0 +1,335 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo parallel get nproc available &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo parcellfun" href="cosmo_parcellfun.html" />
+    <link rel="prev" title="cosmo overlap" href="cosmo_overlap.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_parcellfun.html" title="cosmo parcellfun"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_overlap.html" title="cosmo overlap"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-parallel-get-nproc-available">
+<span id="id1"></span><h1>cosmo parallel get nproc available<a class="headerlink" href="#cosmo-parallel-get-nproc-available" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span>function nproc_available=cosmo_parallel_get_nproc_available(varargin)
+% get number of processes available from Matlab parallel processing pool
+%
+% nproc=cosmo_parallel_get_nproc_available()
+%
+% Input:
+%   &#39;nproc&#39;,nproc_wanted            Number of desired processes (optional)
+%                                   If not provided, then the number of
+%                                   available cores is returned.
+%                                   Use &#39;nproc&#39;,inf to get as many
+%                                   cores as there available.
+%   &#39;nproc_available_query_func&#39;,f  Function handle to determine how many
+%                                   processes are available. This function
+%                                   is intended for use by developers only;
+%                                   by default it selects the appropriate
+%                                   function based on the platform (Octave,
+%                                   Matlab &lt;= 2013b, or Matlab &gt; 2013b)
+%
+% Output:
+%   nproc_available                 Number of available parallel processes.
+%                                   - On Matlab: this requires the parallel
+%                                     computing toolbox
+%                                   - On Octave: this requires the parallel
+%                                     toolbox
+%                                   If the required toolbox is not
+%                                   available, then nproc_available=1.
+%                                   If there are nproc_available
+%                                   processes available and
+%                                       nproc_available&lt;nproc_wanted
+%                                   then nproc=nproc_available is returned.
+%
+% Notes:
+%   - If no parallel processing pool has been started, then this function
+%     will try to start one (with as many parallel processes as possible)
+%     before counting the number of processes available.
+%   - If a parallel processing pool has already been started, then this
+%     function returns the number of processes available it that pool. This
+%     function *does not* close an existing pool and open a new one. This
+%     means that if a user has started a pool with M processes on a machine
+%     with N processes available (i.e. a pool has started with fewer
+%     processes than available), then this function will return M (and not
+%     N if M&lt;N). If you need a fresh pool with
+%
+% See also: parcellfun, matlabpool
+%
+% #   For CoSMoMVPA&#39;s copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+    defaults=struct();
+    opt=cosmo_structjoin(defaults,varargin{:});
+    check_inputs(opt);
+
+    [has_nproc_wanted,nproc_wanted]=get_nproc_wanted(opt);
+    if has_nproc_wanted &amp;&amp; nproc_wanted&lt;=1
+        nproc_available=1;
+        return;
+    end
+
+    max_nproc_available_query_func=get_max_nproc_available_func(opt);
+    [max_nproc_available,msg]=max_nproc_available_query_func();
+
+    if ~has_nproc_wanted
+        nproc_available=max_nproc_available;
+        return;
+    end
+
+    % getting here it means opt.nproc&gt;1, i.e. the user asked for more than
+    %
+    nproc_wanted=opt.nproc;
+    nproc_available=max_nproc_available;
+
+    if nproc_wanted&gt;max_nproc_available
+        full_msg=sprintf([&#39;&#39;&#39;nproc&#39;&#39;=%d requested, but %s. &#39;...
+                            &#39;Using &#39;&#39;nproc&#39;&#39;=%d&#39;],...
+                            nproc_wanted,msg,nproc_available);
+
+        if ~isinf(nproc_wanted)
+            % do not show warning if nproc_wanted is infinity
+            cosmo_warning(full_msg);
+        end
+    end
+
+    if nproc_wanted&lt;nproc_available
+        nproc_available=nproc_wanted;
+    end
+
+
+function [has_nproc_wanted,nproc_wanted]=get_nproc_wanted(opt)
+    nproc_wanted=NaN;
+
+    has_nproc_wanted=isfield(opt,&#39;nproc&#39;);
+    if has_nproc_wanted
+        nproc_wanted=opt.nproc;
+    end
+
+
+
+function func=get_max_nproc_available_func(opt)
+    override_key=&#39;nproc_available_query_func&#39;;
+    if isfield(opt,override_key)
+        func=opt.(override_key);
+        return;
+    end
+
+    if cosmo_wtf(&#39;is_matlab&#39;)
+        v_num=cosmo_wtf(&#39;version_number&#39;);
+        % Matlab 2013b is version 8.2
+        is_matlab_ge_2013b=v_num(1)&gt;=8 &amp;&amp; v_num(2)&gt;=2;
+
+        if is_matlab_ge_2013b
+            func=@matlab_get_max_nproc_available_ge2013b;
+        else
+            func=@matlab_get_max_nproc_available_lt2013b;
+        end
+    elseif cosmo_wtf(&#39;is_octave&#39;)
+        func=@octave_get_max_nproc_available;
+    else
+        assert(false,&#39;this should not happen&#39;);
+    end
+
+
+function check_inputs(opt)
+    if isfield(opt,&#39;nproc&#39;)
+        nproc=opt.nproc;
+        if ~(isnumeric(nproc) &amp;&amp; ...
+                    isscalar(nproc) &amp;&amp; ...
+                    nproc&gt;=1 &amp;&amp; ...
+                    round(nproc)==nproc)
+            error(&#39;nproc must be a positive scalar&#39;);
+        end
+    end
+
+
+function [nproc_available,msg]=matlab_get_max_nproc_available_lt2013b()
+    nproc_available=1;
+    msg=check_java_and_funcs({&#39;matlabpool&#39;});
+
+    if ~isempty(msg)
+        return;
+    end
+
+    pool_func=@matlabpool;
+    open_pool_func=pool_func;
+    query_pool_func=@()pool_func(&#39;size&#39;);
+
+    % get number of processes
+    nproc_available=query_pool_func();
+    pool_is_open=nproc_available&gt;0;
+
+    if ~pool_is_open
+        % try to open pool
+        open_pool_func();
+        nproc_available=query_pool_func();
+    end
+
+    % ensure nproc_available&gt;=1
+    nproc_available=max(nproc_available,1);
+
+
+
+function [nproc_available,msg]=matlab_get_max_nproc_available_ge2013b()
+    msg=&#39;&#39;;
+    nproc_available=1;
+
+    matlab_parallel_functions={&#39;gcp&#39;,&#39;parpool&#39;};
+    if ~(usejava(&#39;jvm&#39;) &amp;&amp; ...
+                platform_has_functions(matlab_parallel_functions))
+        msg=&#39;java or parallel functions not available&#39;;
+        return;
+    end
+
+    pool = gcp();
+
+    if isempty(pool)
+        msg=[&#39;Parallel toolbox is available, but &#39;...
+                        &#39;unable to open pool&#39;];
+        return;
+    end
+
+    nproc_available=pool.NumWorkers();
+
+
+function msg=check_java_and_funcs(function_names)
+    msg=&#39;&#39;;
+    if ~(usejava(&#39;jvm&#39;) &amp;&amp; ...
+                platform_has_functions(function_names))
+        msg=&#39;java or parallel functions not available&#39;;
+        return;
+    end
+
+
+function [nproc_available,msg]=octave_get_max_nproc_available
+    msg=&#39;&#39;;
+    nproc_available=1;
+
+    if ~cosmo_check_external(&#39;octave_pkg_parallel&#39;,false)
+        msg=&#39;parallel toolbox is not available&#39;;
+        return;
+    end
+
+    nproc_available=nproc(&#39;overridable&#39;);
+
+
+function tf=platform_has_functions(function_names)
+    tf=all(cellfun(@(x)~isempty(which(x)),function_names));
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_overlap.html"
+                        title="previous chapter">cosmo overlap</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_parcellfun.html"
+                        title="next chapter">cosmo parcellfun</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_parallel_get_nproc_available.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_parcellfun.html" title="cosmo parcellfun"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_overlap.html" title="cosmo overlap"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

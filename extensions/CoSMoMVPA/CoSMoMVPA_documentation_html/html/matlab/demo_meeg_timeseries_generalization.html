@@ -1,0 +1,402 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>demo meeg timeseries generalization &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="demo surface searchlight lda" href="demo_surface_searchlight_lda.html" />
+    <link rel="prev" title="demo meeg timeseries classification" href="demo_meeg_timeseries_classification.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="demo_surface_searchlight_lda.html" title="demo surface searchlight lda"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="demo_meeg_timeseries_classification.html" title="demo meeg timeseries classification"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" accesskey="U">Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="demo-meeg-timeseries-generalization">
+<span id="id1"></span><h1>demo meeg timeseries generalization<a class="headerlink" href="#demo-meeg-timeseries-generalization" title="Permalink to this headline">¶</a></h1>
+<p><a class="reference external" href="../_static/publish/demo_meeg_timeseries_generalization.html">Matlab output: demo_meeg_timeseries_generalization</a></p>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="c">%% MEEG time-by-time transfer classification</span>
+<span class="c">%</span>
+<span class="c">% This example shows MVPA generalization across time. The input is a</span>
+<span class="c">% time-locked dataset (chan x time), the output is either:</span>
+<span class="c">%</span>
+<span class="c">% * (train_time x test_time) indicating for each combination of time points</span>
+<span class="c">%   in the training and test set how similar the patterns are</span>
+<span class="c">% * (train_time x test_time x chan), which uses a searchlight and</span>
+<span class="c">%   indicates for each combination of time points in the training and</span>
+<span class="c">%   test set how similar the patterns are in the neighborhood of each</span>
+<span class="c">%   channel.</span>
+<span class="c">%</span>
+<span class="c">% Results can be visualized in FieldTrip.</span>
+<span class="c">%</span>
+<span class="c">% The input dataset involved a paradigm with electrical median nerve</span>
+<span class="c">% stimulation for durations of 2s at 20Hz.</span>
+<span class="c">%</span>
+<span class="c">% The code presented here can be adapted for other MEEG analyses, but</span>
+<span class="c">% there are a few potential caveats:</span>
+<span class="c">%</span>
+<span class="c">% * assignment of targets (labels of conditions) is based here on</span>
+<span class="c">%   stimulation periods versus pre-stimulation periods. In typical</span>
+<span class="c">%   analyses the targets should be based on different trial conditions, for</span>
+<span class="c">%   example as set a FieldTrip .trialinfo field.</span>
+<span class="c">% * the time window used for analyses is rather small. This means that in</span>
+<span class="c">%   particular for time-freq analysis a lot of data is missing, especially</span>
+<span class="c">%   for early and late timepoints in the lower frequency bands. For typical</span>
+<span class="c">%   analyses it may be preferred to use a wider time window.</span>
+<span class="c">% * the current examples do not perform baseline corrections or signal</span>
+<span class="c">%   normalizations, which may reduce discriminatory power.</span>
+<span class="c">%</span>
+<span class="c">% Note: running this code requires FieldTrip.</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+<span class="c">% set configuration</span>
+<span class="n">config</span><span class="p">=</span><span class="n">cosmo_config</span><span class="p">();</span>
+<span class="n">data_path</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">config</span><span class="p">.</span><span class="n">tutorial_data_path</span><span class="p">,</span><span class="s">&#39;meg_20hz&#39;</span><span class="p">);</span>
+
+<span class="c">% show dataset information</span>
+<span class="n">readme_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;README&#39;</span><span class="p">);</span>
+<span class="n">cosmo_type</span><span class="p">(</span><span class="n">readme_fn</span><span class="p">);</span>
+
+<span class="c">% reset citation list</span>
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-tic&#39;</span><span class="p">);</span>
+
+<span class="c">% load data</span>
+<span class="n">data_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">data_path</span><span class="p">,</span><span class="s">&#39;subj102_B01_20Hz_timelock.mat&#39;</span><span class="p">);</span>
+<span class="n">data_tl</span><span class="p">=</span><span class="n">load</span><span class="p">(</span><span class="n">data_fn</span><span class="p">);</span>
+
+<span class="c">% convert to cosmomvpa struct</span>
+<span class="n">ds_tl</span><span class="p">=</span><span class="n">cosmo_meeg_dataset</span><span class="p">(</span><span class="n">data_tl</span><span class="p">);</span>
+
+<span class="c">% set the target (trial condition)</span>
+<span class="n">ds_tl</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="n">ds_tl</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">trialinfo</span><span class="p">(:,</span><span class="mi">1</span><span class="p">);</span> <span class="c">% 1=pre, 2=peri/post</span>
+
+<span class="c">% set the chunks (independent measurements)</span>
+<span class="c">% in this dataset, the first half of the samples (in order)</span>
+<span class="c">% are the post-trials;</span>
+<span class="c">% the second half the pre-trials</span>
+<span class="n">ds_tl</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=[(</span><span class="mi">1</span><span class="p">:</span><span class="mi">145</span><span class="p">)</span> <span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="mi">145</span><span class="p">)]</span><span class="o">&#39;</span><span class="p">;</span>
+
+<span class="c">% in addition give a label to each trial</span>
+<span class="n">index2label</span><span class="p">={</span><span class="s">&#39;pre&#39;</span><span class="p">,</span><span class="s">&#39;post&#39;</span><span class="p">};</span> <span class="c">% 1=pre, 2=peri/post</span>
+<span class="n">ds_tl</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">index2label</span><span class="p">(</span><span class="n">x</span><span class="p">),</span><span class="n">num2cell</span><span class="p">(</span><span class="n">ds_tl</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">));</span>
+
+<span class="c">% just to check everything is ok</span>
+<span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds_tl</span><span class="p">);</span>
+
+<span class="c">%% reduce the number of time points</span>
+<span class="c">% to allow this example to run relatively fast, only use the &#39;even&#39;</span>
+<span class="c">% timepoints and only use timepoints between 0 and 300 ms relative to</span>
+<span class="c">% stimulus onset.</span>
+<span class="c">% for a publication-quality analysis this step could be omitted.</span>
+<span class="n">msk</span><span class="p">=</span><span class="n">cosmo_dim_match</span><span class="p">(</span><span class="n">ds_tl</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,@(</span><span class="n">x</span><span class="p">)</span> <span class="mi">0</span><span class="o">&lt;</span><span class="n">x</span> <span class="o">&amp;</span><span class="n">x</span><span class="o">&lt;</span><span class="p">.</span><span class="mi">3</span><span class="p">)</span> <span class="o">&amp;</span> <span class="c">...</span>
+                        <span class="nb">mod</span><span class="p">(</span><span class="n">ds_tl</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">time</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span><span class="p">;</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds_tl</span><span class="p">,</span><span class="n">msk</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+<span class="n">ds</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+
+<span class="c">%% Set up chunks</span>
+<span class="c">% use half of the data for training and half for testing. Here both chunks</span>
+<span class="c">% come from the same session, but it is also possible to use different</span>
+<span class="c">% sessions for training and testing.</span>
+<span class="c">%</span>
+<span class="c">% For example, the train data can contain responses to auditory stimuli</span>
+<span class="c">% with the words &#39;face&#39; and &#39;house&#39;, while the test session measures</span>
+<span class="c">% responses to visual stimuli. In that case the chunks should be assigned</span>
+<span class="c">% &#39;manually&#39; (without cosmo_chunkize)</span>
+<span class="n">nchunks</span><span class="p">=</span><span class="mi">2</span><span class="p">;</span> <span class="c">% two chunks are required for this analysis</span>
+<span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="n">cosmo_chunkize</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nchunks</span><span class="p">);</span>
+
+
+<span class="c">%% time-by-time generalization on magneto- and gradio-meters seperately</span>
+<span class="c">% compute and plot accuracies for magnetometers and gradiometers separately</span>
+<span class="n">chan_types</span><span class="p">={</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">};</span>
+<span class="n">nchan_types</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">chan_types</span><span class="p">);</span>
+
+<span class="c">% set arguments for the cosmo_dim_generalization_measure</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+
+<span class="c">% the cosmo_dim_generalization_measure requires that another</span>
+<span class="c">% measure (here: the crossvalidation measure) is specified. The</span>
+<span class="c">% specified measure is applied for each combination of time points</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+
+<span class="c">% When used ordinary, the cosmo_crossvalidation_measure itself</span>
+<span class="c">% requires two arguments:</span>
+<span class="c">% - classifier (here: LDA)</span>
+<span class="c">% - partitions</span>
+<span class="c">% However, because the cosmo_dim_generalization_measure defines</span>
+<span class="c">% the partitions itself, they are not set here.</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">classifier</span><span class="p">=@</span><span class="n">cosmo_classify_lda</span><span class="p">;</span>
+
+<span class="c">% define the dimension over which generalization takes place</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">dimension</span><span class="p">=</span><span class="s">&#39;time&#39;</span><span class="p">;</span>
+
+<span class="c">% define the radius for the time dimension. Here not just a single</span>
+<span class="c">% time-point is used, but also the time-point before it and the time-point</span>
+<span class="c">% after it.</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">radius</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+
+<span class="c">% try both channel types (axial and planar)</span>
+<span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nchan_types</span>
+    <span class="n">use_chan_type</span><span class="p">=</span><span class="n">chan_types</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+    <span class="c">% get layout for mag or planar labels, and select only those channels</span>
+    <span class="n">ds_chan_types</span><span class="p">=</span><span class="n">cosmo_meeg_chantype</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">ds_chan_idxs</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds_chan_types</span><span class="p">,</span><span class="n">use_chan_type</span><span class="p">));</span>
+    <span class="n">feature_msk</span><span class="p">=</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">chan</span><span class="p">,</span><span class="n">ds_chan_idxs</span><span class="p">);</span>
+    <span class="n">ds_sel</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span> <span class="n">feature_msk</span><span class="p">,</span> <span class="mi">2</span><span class="p">);</span>
+
+    <span class="c">% make &#39;time&#39; a sample dimension</span>
+    <span class="c">% (this necessary for cosmo_dim_generalization_measure)</span>
+    <span class="n">ds_time</span><span class="p">=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The input for channel type %s is:\n&#39;</span><span class="p">,</span> <span class="n">use_chan_type</span><span class="p">)</span>
+    <span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds_time</span><span class="p">);</span>
+
+    <span class="c">% run transfer across time with the searchlight neighborhood</span>
+    <span class="c">%cdt_ds=cosmo_cartesian_dim_transfer(ds_time,&#39;time&#39;,measure,...</span>
+    <span class="c">%                        &#39;args&#39;,measure_args);</span>
+    <span class="n">cdt_ds</span><span class="p">=</span><span class="n">cosmo_dim_generalization_measure</span><span class="p">(</span><span class="n">ds_time</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+
+    <span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The output is:\n&#39;</span><span class="p">)</span>
+    <span class="n">cosmo_disp</span><span class="p">(</span><span class="n">cdt_ds</span><span class="p">);</span>
+
+    <span class="c">% unflatten the data to get train_time x test_time matrix</span>
+    <span class="p">[</span><span class="n">data</span><span class="p">,</span> <span class="n">labels</span><span class="p">,</span> <span class="n">values</span><span class="p">]=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">cdt_ds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% show the results</span>
+    <span class="n">figure</span><span class="p">()</span>
+    <span class="n">imagesc</span><span class="p">(</span><span class="n">data</span><span class="p">,</span> <span class="p">[.</span><span class="mi">3</span> <span class="p">.</span><span class="mi">7</span><span class="p">]);</span>
+    <span class="n">title</span><span class="p">(</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;classification accuracy for %s&#39;</span><span class="p">,</span> <span class="n">use_chan_type</span><span class="p">));</span>
+    <span class="n">colorbar</span><span class="p">();</span>
+    <span class="n">nticks</span><span class="p">=</span><span class="mi">5</span><span class="p">;</span>
+
+    <span class="n">ytick</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">numel</span><span class="p">(</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}),</span> <span class="n">nticks</span><span class="p">));</span>
+    <span class="n">ylabel</span><span class="p">(</span><span class="n">strrep</span><span class="p">(</span><span class="n">labels</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">));</span>
+    <span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;Ytick&#39;</span><span class="p">,</span><span class="n">ytick</span><span class="p">,</span><span class="s">&#39;YTickLabel&#39;</span><span class="p">,</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}(</span><span class="n">ytick</span><span class="p">));</span>
+
+    <span class="n">xtick</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="nb">linspace</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span> <span class="nb">numel</span><span class="p">(</span><span class="n">values</span><span class="p">{</span><span class="mi">2</span><span class="p">}),</span> <span class="n">nticks</span><span class="p">));</span>
+    <span class="n">xlabel</span><span class="p">(</span><span class="n">strrep</span><span class="p">(</span><span class="n">labels</span><span class="p">{</span><span class="mi">2</span><span class="p">},</span><span class="s">&#39;_&#39;</span><span class="p">,</span><span class="s">&#39; &#39;</span><span class="p">));</span>
+    <span class="n">set</span><span class="p">(</span><span class="n">gca</span><span class="p">,</span><span class="s">&#39;Xtick&#39;</span><span class="p">,</span><span class="n">xtick</span><span class="p">,</span><span class="s">&#39;XTickLabel&#39;</span><span class="p">,</span><span class="n">values</span><span class="p">{</span><span class="mi">2</span><span class="p">}(</span><span class="n">xtick</span><span class="p">));</span>
+
+    <span class="n">colorbar</span><span class="p">();</span>
+<span class="k">end</span>
+
+
+<span class="c">%% time-by-time generalization using a searchlight with correlation measure</span>
+<span class="c">% how many channel locations in each searchlight</span>
+<span class="n">nchannel_locations_searchlight</span><span class="p">=</span><span class="mi">10</span><span class="p">;</span>
+
+
+<span class="c">% make &#39;time&#39; a sample dimension (necessary for cartesian_dim_transfer)</span>
+<span class="n">ds_time</span><span class="p">=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+
+<span class="c">% use planar channels as input; output is</span>
+<span class="c">% like combine-planar</span>
+<span class="n">use_chan_type</span><span class="p">=</span><span class="s">&#39;meg_combined_from_planar&#39;</span><span class="p">;</span>
+
+<span class="c">% define searchlight neighborhood</span>
+<span class="n">nbrhood</span><span class="p">=</span><span class="n">cosmo_meeg_chan_neighborhood</span><span class="p">(</span><span class="n">ds_time</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;count&#39;</span><span class="p">,</span><span class="n">nchannel_locations_searchlight</span><span class="p">,</span><span class="c">...</span>
+                        <span class="s">&#39;chantype&#39;</span><span class="p">,</span><span class="n">use_chan_type</span><span class="p">);</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The input is:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">ds_time</span><span class="p">);</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The neighborhood is:\n&#39;</span><span class="p">);</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">);</span>
+
+<span class="c">% set the measure to be the dim generalization measure</span>
+<span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_dim_generalization_measure</span><span class="p">;</span>
+
+<span class="c">% define the arguments for the measure. One of them is called &#39;measure&#39;,</span>
+<span class="c">% because that measure is applied to combinations of samples in the</span>
+<span class="c">% train and test set</span>
+<span class="n">measure_args</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_correlation_measure</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">radius</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+<span class="n">measure_args</span><span class="p">.</span><span class="n">dimension</span><span class="p">=</span><span class="s">&#39;time&#39;</span><span class="p">;</span>
+
+
+<span class="c">% run transfer across time with the searchlight neighborhood</span>
+<span class="n">cdt_ds</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds_time</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">measure_args</span><span class="p">);</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The output is:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">cdt_ds</span><span class="p">)</span>
+
+<span class="c">% move {train,test}_time from being sample dimensions to feature</span>
+<span class="c">% dimensions, so they can be mapped to a fieldtrip struct</span>
+<span class="n">cdt_tf_ds</span><span class="p">=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">cdt_ds</span><span class="p">,{</span><span class="s">&#39;train_time&#39;</span><span class="p">,</span><span class="s">&#39;test_time&#39;</span><span class="p">},</span><span class="mi">2</span><span class="p">);</span>
+
+<span class="n">fprintf</span><span class="p">(</span><span class="s">&#39;The output after transposing is:\n&#39;</span><span class="p">)</span>
+<span class="n">cosmo_disp</span><span class="p">(</span><span class="n">cdt_ds</span><span class="p">)</span>
+
+<span class="c">% trick fieldtrip into thinking this is a time-freq-chan dataset, by</span>
+<span class="c">% renaming train_time and test_time to freq and time, respectively</span>
+<span class="n">cdt_tf_ds</span><span class="p">=</span><span class="n">cosmo_dim_rename</span><span class="p">(</span><span class="n">cdt_tf_ds</span><span class="p">,</span><span class="s">&#39;train_time&#39;</span><span class="p">,</span><span class="s">&#39;freq&#39;</span><span class="p">);</span>
+<span class="n">cdt_tf_ds</span><span class="p">=</span><span class="n">cosmo_dim_rename</span><span class="p">(</span><span class="n">cdt_tf_ds</span><span class="p">,</span><span class="s">&#39;test_time&#39;</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">);</span>
+
+<span class="c">%% Show correlation time-by-time generalization searchlight results</span>
+
+<span class="c">% determine layout</span>
+<span class="n">layout</span><span class="p">=</span><span class="n">cosmo_meeg_find_layout</span><span class="p">(</span><span class="n">cdt_tf_ds</span><span class="p">);</span>
+
+
+<span class="c">% convert to fieldtrip format</span>
+<span class="n">ft</span><span class="p">=</span><span class="n">cosmo_map2meeg</span><span class="p">(</span><span class="n">cdt_tf_ds</span><span class="p">);</span>
+
+<span class="c">% show train_time x test_time x chan figure</span>
+<span class="c">%</span>
+<span class="c">% * train_time is on the vertical (&#39;freq&#39;) axis</span>
+<span class="c">% * test_time on the horizontal (&#39;time&#39;) axis)</span>
+<span class="n">figure</span><span class="p">();</span>
+<span class="n">cfg</span> <span class="p">=</span> <span class="p">[];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">interactive</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">showlabels</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">zlim</span><span class="p">=[</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">layout</span>       <span class="p">=</span> <span class="n">layout</span><span class="p">;</span>
+<span class="n">ft_multiplotTFR</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ft</span><span class="p">);</span>
+
+<span class="c">% show train_time x test_time figure for selected channels</span>
+<span class="n">figure</span><span class="p">();</span>
+<span class="n">cfg</span> <span class="p">=</span> <span class="p">[];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">interactive</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">showlabels</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">zlim</span><span class="p">=[</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">layout</span>       <span class="p">=</span> <span class="n">layout</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">channel</span><span class="p">={</span><span class="s">&#39;MEG0322+0323&#39;</span><span class="p">,</span> <span class="s">&#39;MEG0332+0333&#39;</span><span class="p">,</span> <span class="s">&#39;MEG0412+0413&#39;</span><span class="p">,</span> <span class="c">...</span>
+            <span class="s">&#39;MEG0422+0423&#39;</span><span class="p">,</span> <span class="s">&#39;MEG0632+0633&#39;</span><span class="p">,</span> <span class="s">&#39;MEG0642+0643&#39;</span><span class="p">};</span>
+
+<span class="n">ft_singleplotTFR</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span><span class="n">ft</span><span class="p">);</span>
+
+<span class="c">% show channel topology for timewindow over train_time x test_time</span>
+<span class="n">figure</span><span class="p">();</span>
+<span class="n">cfg</span> <span class="p">=</span> <span class="p">[];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">interactive</span> <span class="p">=</span> <span class="s">&#39;yes&#39;</span><span class="p">;</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">xlim</span><span class="p">=[.</span><span class="mi">2</span> <span class="p">.</span><span class="mi">25</span><span class="p">];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">ylim</span><span class="p">=[.</span><span class="mi">2</span> <span class="p">.</span><span class="mi">25</span><span class="p">];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">zlim</span><span class="p">=[</span><span class="o">-</span><span class="mi">1</span> <span class="mi">1</span><span class="p">];</span>
+<span class="n">cfg</span><span class="p">.</span><span class="n">layout</span>       <span class="p">=</span> <span class="n">layout</span><span class="p">;</span>
+<span class="n">ft_topoplotTFR</span><span class="p">(</span><span class="n">cfg</span><span class="p">,</span> <span class="n">ft</span><span class="p">);</span>
+
+
+<span class="c">%% show citation information</span>
+
+<span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;-cite&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="demo_meeg_timeseries_classification.html"
+                        title="previous chapter">demo meeg timeseries classification</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="demo_surface_searchlight_lda.html"
+                        title="next chapter">demo surface searchlight lda</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/demo_meeg_timeseries_generalization.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="demo_surface_searchlight_lda.html" title="demo surface searchlight lda"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="demo_meeg_timeseries_classification.html" title="demo meeg timeseries classification"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_demo.html" >Demonstrations</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

@@ -1,0 +1,7 @@
+.. _cosmo_notify_test_skipped_hdr:
+
+cosmo notify test skipped hdr
+=============================
+
+.. include :: cosmo_notify_test_skipped_hdr.txt
+

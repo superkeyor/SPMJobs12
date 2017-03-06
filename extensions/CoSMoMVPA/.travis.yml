@@ -1,0 +1,269 @@
+# vim ft=yaml
+# travis-ci.org definition for CoSMoMVPA build (based on PyMVPA, which is
+# based on nipype configuration, which in turn was based on nipy)
+#
+# We pretend to be java because we need GNU Octave which is not 
+# available (as of April 2015)
+
+language: java
+cache:
+  - apt
+env:
+  global:
+    - COVERALLS_PARALLEL=true
+  matrix:
+    - TRAVIS_WITH_EXTERNALS=false TRAVIS_WITH_COVERAGE=false COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=false COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=1 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=2 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=3 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=4 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=5 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=6 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=7 PARTITION_COUNT=8 COVERALLS_PARALLEL=false
+    - TRAVIS_WITH_EXTERNALS=true  TRAVIS_WITH_COVERAGE=true PARTITION_INDEX=8 PARTITION_COUNT=8 TRAVIS_AFTER_ALL_ARGS='--is_master' COVERALLS_PARALLEL=true
+before_install:
+    # to prevent IPv6 being used for APT
+    - sudo bash -c "echo 'Acquire::ForceIPv4 \"true\";' > /etc/apt/apt.conf.d/99force-ipv4"
+    # ensure up-to-date prior to software-properties-common
+    - travis_retry sudo apt-get -y -qq update
+    # get Octave 4.0
+    - travis_retry sudo apt-get install -y -qq software-properties-common python-software-properties libtool autoconf automake m4
+    - travis_retry sudo apt-add-repository -y ppa:octave/stable
+    - travis_retry sudo apt-get -y -qq update
+    - travis_retry sudo apt-get -y install octave
+    - travis_retry sudo apt-get -y install liboctave-dev
+    - travis_retry sudo apt-get -y -qq install octave
+
+    # when installing externals, get recent GCC for Octave parallel toolbox
+    - if [[ "${TRAVIS_WITH_EXTERNALS}" == "true" ]]; then
+          travis_retry sudo add-apt-repository 'ppa:ubuntu-toolchain-r/test' -y;
+          travis_retry sudo apt-get update -y -q;
+          travis_retry sudo apt-get install gcc-4.8 g++-4.8 -y -q;
+          travis_retry sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-4.8 20;
+          travis_retry sudo update-alternatives --install /usr/bin/g++ g++ /usr/bin/g++-4.8 20;
+          travis_retry sudo update-alternatives --config gcc;
+          travis_retry sudo update-alternatives --config g++;
+          travis_retry sudo apt-get install gcc-multilib;
+          travis_retry sudo apt-get install libgomp1;
+          c++ --version;
+          g++ --version;
+          NAME=automake;
+          VERSION=1.6;
+          FULL=${NAME}-${VERSION};
+          wget https://ftp.gnu.org/gnu/${NAME}/${FULL}.tar.gz;
+          tar -xzf ${FULL}.tar.gz;
+          cd ${FULL};
+          ./configure && make && sudo make install;
+          cd ..;
+          NAME=autoconf;
+          VERSION=2.69;
+          FULL=${NAME}-${VERSION};
+          wget https://ftp.gnu.org/gnu/${NAME}/${FULL}.tar.gz;
+          tar -xzf ${FULL}.tar.gz;
+          cd ${FULL};
+          ./configure && make && sudo make install;
+          cd ..;
+      fi
+
+    # go up one level
+    - cd ..
+
+    # retrieve MOxUnit
+    - rm -rf MOxUnit
+    - travis_retry git clone -v git://github.com/MOxUnit/MOxUnit.git
+    - make -C MOxUnit install
+
+    # optionally retrieve MOcov
+    - if [[ "$TRAVIS_WITH_COVERAGE" == "true" ]]; then
+          rm -rf MOcov;
+          git clone git://github.com/MOcov/MOcov.git;
+          make -C MOcov install;
+      fi
+    # Show package info
+    - autoconf --version
+    - automake --version
+    - m4 --version
+
+install:
+    - PTH=`pwd`
+    - OCTAVERC=~/.octaverc
+    - OCTAVEPTH=`pwd`/CoSMoMVPA/mvpa
+    - CHECKEXTCMD=""
+    - OCTAVE_DISABLE_WARNINGS=" Octave:array-to-scalar
+                                Octave:imag-to-real
+                                Octave:language-extension
+                                Octave:missing-semicolon
+                                Octave:resize-on-range-error
+                                Octave:separator-insert
+                                Octave:single-quote-string
+                                Octave:str-to-num
+                                Octave:mixed-string-concat
+                                Octave:variable-switch-label"
+    - OCTAVE=octave
+    - if [[ "$TRAVIS_WITH_EXTERNALS" == "true" ]]; then
+          EXTERNALS="
+                     afni
+                     surfing
+                     fieldtrip
+                     libsvm
+                     gifti
+                     octave_pkg_struct
+                     octave_pkg_parallel
+                     octave_pkg_statistics
+                     octave_pkg_miscellaneous
+                     octave_savannah_evalc
+                    ";
+      fi
+
+
+    # ensure Octave rc file exists
+    - echo "" >> $OCTAVERC;
+
+    # load Octave io package
+    - $RETRY $OCTAVE --eval "pkg('install','-auto','-forge','io');";
+
+
+    # optionally enable Octave struct package
+    - if [[ " $EXTERNALS " = *" octave_pkg_struct "* ]]; then
+          $RETRY $OCTAVE --eval "pkg('install','-auto','-forge','struct');";
+      fi
+
+    - if [[ " $EXTERNALS " = *" octave_pkg_parallel "* ]]; then
+          $RETRY $OCTAVE --eval "pkg('install','-auto','-forge','parallel');";
+      fi
+
+
+    # optionally install surfing toolbox
+    - if [[ " $EXTERNALS " = *" surfing "* ]]; then
+          rm -rf surfing;
+          git clone git://github.com/nno/surfing.git --depth 1;
+          make -C surfing install;
+      fi
+
+    # optionally install afni
+    - if [[ " $EXTERNALS " = *" afni "* ]]; then
+          rm -rf afni;
+          git clone git://github.com/afni/afni.git --depth 1;
+          $OCTAVE --eval "addpath('${PTH}/afni/src/matlab');savepath();";
+      fi
+
+    # optionally install FieldTrip
+    - if [[ " $EXTERNALS " = *" fieldtrip "* ]]; then
+          rm -rf fieldtrip;
+          git clone git://github.com/fieldtrip/fieldtrip.git --depth 1;
+          $OCTAVE --eval "cd('${PTH}/fieldtrip');
+                            ft_defaults();
+                            savepath();";
+      fi
+
+    # optionally install libsvm
+    - if [[ " $EXTERNALS " = *" libsvm "* ]]; then
+          rm -rf libsvm;
+          git clone git://github.com/cjlin1/libsvm.git;
+          $OCTAVE --eval "cd('${PTH}/libsvm/matlab');
+                        make;
+                        addpath(pwd);
+                        savepath();";
+      fi
+
+    # optionally install gifti library
+    - if [[ " $EXTERNALS " = *" gifti "* ]]; then
+          GIFTI_VERSION=1.5;
+          GIFTI_NAME=gifti-${GIFTI_VERSION};
+          rm -rf ${GIFTI_NAME}.zip;
+          wget http://www.artefact.tk/software/matlab/gifti/${GIFTI_NAME}.zip;
+          unzip ${GIFTI_NAME}.zip;
+          $OCTAVE --eval "cd('${PTH}/${GIFTI_NAME}/@gifti/private');
+                          mex('zstream.c');
+                          addpath('${PTH}/${GIFTI_NAME}');
+                          savepath();";
+      fi
+
+    # disable "more"
+    - echo "more('off');" >> $OCTAVERC
+
+    # prevent shippable from re-using old test results
+    - if [[  "$SHIPPABLE" == "true"  ]]; then
+          rm -f shippable/testresults/*.xml;
+      fi
+ 
+before_script:
+    # (note: Shippable.com does not work properly if the
+    #        Octave pacakges are installed in the "install" section)
+
+    # Shippable.com seems to puke on travis_retry with quoted arguments,
+    # so only use travis_retry on travis
+    - if [[ "$SHIPPABLE" != "true" ]] && [[  "$TRAVIS" == "true"  ]]; then
+          RETRY=travis_retry;
+      fi
+
+
+
+    # optionally enable Octave statistics package
+    - if [[ " $EXTERNALS " = *" octave_pkg_statistics "* ]]; then
+          $RETRY $OCTAVE --eval "pkg('install','-auto','-forge','statistics');";
+      fi
+
+    # optionally enable Octave miscellaneous package
+    # (the "general" package is required for the "miscellaneous" package)
+    # (the "miscellaneous" package also requires "units")
+    - if [[ " $EXTERNALS " = *" octave_pkg_miscellaneous "* ]]; then
+          $RETRY $OCTAVE --eval "pkg('install','-auto','-forge','general');";
+          $RETRY sudo apt-get -y -qq install units;
+          $RETRY $OCTAVE --eval "pkg('install','-auto','-forge','miscellaneous');";
+      fi
+
+
+    # optionally enable experimental evalc implementation
+    - if [[ " $EXTERNALS " = *" octave_savannah_evalc "* ]]; then
+          mkdir savannah_evalc;
+          $RETRY wget -O savannah_evalc/evalc.cc https://savannah.gnu.org/patch/download.php?file_id=34015;
+          $RETRY $OCTAVE --eval "cd('savannah_evalc');mkoctfile('evalc.cc');addpath(pwd);savepath();";
+      fi
+
+    # show Octave-rc
+    - echo "Octave-rc:"; cat $OCTAVERC
+
+
+    # show which packages are installed
+    - $OCTAVE --eval "pkg('list')"
+
+     # show WTF
+    - $OCTAVE --eval "addpath('${PTH}/CoSMoMVPA/mvpa');cosmo_wtf()"
+
+script:
+    - cd CoSMoMVPA
+    - ls
+    - if [[  "$TRAVIS_WITH_COVERAGE" == "true" ]]; then
+          TEST_ARGS=WITH_COVERAGE=true;
+          COVER_ARGS=COVER=`pwd`/mvpa;
+
+          if [[  "$SHIPPABLE" == "true"  ]]; then
+              OUTPUT_ARGS=COVER_XML_FILE=shippable/codecoverage/coverage.xml;
+          elif [[  "$TRAVIS" == "true"  ]]; then
+              OUTPUT_ARGS=COVER_JSON_FILE=`pwd`/coveralls.json;
+              AFTER_SCRIPT="curl --verbose -F json_file=@`pwd`/coveralls.json https://coveralls.io/api/v1/jobs";
+              if [ ! -z "$PARTITION_INDEX" ]; then
+                  PARTITION_ARGS="TEST_PARTITION_INDEX=${PARTITION_INDEX} TEST_PARTITION_COUNT=${PARTITION_COUNT}";
+              fi
+          fi;
+      elif [[  "$SHIPPABLE" == "true"  ]]; then
+          RESULT_ARGS=JUNIT_XML_FILE=shippable/testresults/test_results.xml;
+      fi
+
+    - make test $TEST_ARGS $COVER_ARGS $OUTPUT_ARGS $RESULT_ARGS $PARTITION_ARGS
+
+after_script:
+  - echo "After script"
+  - tools/travis_after_all.py $TRAVIS_AFTER_ALL_ARGS
+  - cat .to_export_back
+  - export $(cat .to_export_back)
+  - if [[  "$TRAVIS_WITH_COVERAGE" == "true" ]]; then
+        if [[  "$TRAVIS" == "true"  ]]; then
+            echo "Sending json";
+            cat `pwd`/coveralls.json;
+        fi;
+    fi
+  - $AFTER_SCRIPT
+

@@ -1,0 +1,468 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo dim generalization measure &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo dim insert" href="cosmo_dim_insert.html" />
+    <link rel="prev" title="cosmo dim find" href="cosmo_dim_find.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_insert.html" title="cosmo dim insert"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dim_find.html" title="cosmo dim find"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-dim-generalization-measure">
+<span id="id1"></span><h1>cosmo dim generalization measure<a class="headerlink" href="#cosmo-dim-generalization-measure" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>result<span class="p">=</span><span class="nf">cosmo_dim_generalization_measure</span><span class="p">(</span>ds,varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% measure generalization across pairwise combinations over time (or any other dimension)</span>
+<span class="c">%</span>
+<span class="c">% result=cosmo_dim_generalization_measure(ds,varargin)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                  dataset struct with d being a sample dimension, and</span>
+<span class="c">%                       with ds.sa.chunks==1 for samples to use for</span>
+<span class="c">%                       training and ds.sa.chunks==2 for those to use for</span>
+<span class="c">%                       testing. Other values for chunks are not allowed.</span>
+<span class="c">%   &#39;measure&#39;,m         function handle to apply to combinations of samples</span>
+<span class="c">%                       in the input dataset ds, such as</span>
+<span class="c">%                       - @cosmo_correlation_measure</span>
+<span class="c">%                       - @cosmo_crossvalidation_measure</span>
+<span class="c">%                       - @cosmo_target_dsm_corr_measure</span>
+<span class="c">%   &#39;dimension&#39;,d       dimension along which to generalize. Typically this</span>
+<span class="c">%                       will be &#39;time&#39; for MEEG data</span>
+<span class="c">%   &#39;radius&#39;,r          radius used for the d dimension. For example, when</span>
+<span class="c">%                       set to r=4 with d=&#39;time&#39;, then 4*2+1 time points</span>
+<span class="c">%                       are used to asses generalization, (except on the</span>
+<span class="c">%                       edges). Note that when using a radius&gt;0, it is</span>
+<span class="c">%                       assumed that splits of the dataset by dimension d</span>
+<span class="c">%                       have corresponding elements in the same order</span>
+<span class="c">%                       (such as provided by cosmo_dim_transpose).</span>
+<span class="c">%   K,V                 any other key-value pairs necessary for the measure</span>
+<span class="c">%                       m, for example &#39;classifier&#39; if</span>
+<span class="c">%                       m=@cosmo_crossvalidation_measure.</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%    result             dataset with [&#39;train_&#39; d] and [&#39;test_&#39; d] as sample</span>
+<span class="c">%                       dimensions, i.e. these are in ds.a.sdim.labels</span>
+<span class="c">%                       result.samples is Nx1, where N=K*J is the number of</span>
+<span class="c">%                       combinations of (1) the K points in ds with</span>
+<span class="c">%                       chunks==1 and different values in dimension d, and</span>
+<span class="c">%                       (2) the J points in ds with chunks==2 and different</span>
+<span class="c">%                       values in dimension d.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%</span>
+<span class="c">%     sz=&#39;big&#39;;</span>
+<span class="c">%     train_ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timelock&#39;,&#39;size&#39;,sz,...</span>
+<span class="c">%                                              &#39;nchunks&#39;,2,&#39;seed&#39;,1);</span>
+<span class="c">%     test_ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timelock&#39;,&#39;size&#39;,sz,...</span>
+<span class="c">%                                              &#39;nchunks&#39;,3,&#39;seed&#39;,2);</span>
+<span class="c">%     % set chunks</span>
+<span class="c">%     train_ds.sa.chunks(:)=1;</span>
+<span class="c">%     test_ds.sa.chunks(:)=2;</span>
+<span class="c">%     %</span>
+<span class="c">%     % construct the dataset</span>
+<span class="c">%     ds=cosmo_stack({train_ds, test_ds});</span>
+<span class="c">%     %</span>
+<span class="c">%     % make time a sample dimension</span>
+<span class="c">%     dim_label=&#39;time&#39;;</span>
+<span class="c">%     ds_time=cosmo_dim_transpose(ds,dim_label,1);</span>
+<span class="c">%     %</span>
+<span class="c">%     % set measure and its arguments</span>
+<span class="c">%     measure_args=struct();</span>
+<span class="c">%     %</span>
+<span class="c">%     % use correlation measure</span>
+<span class="c">%     measure_args.measure=@cosmo_correlation_measure;</span>
+<span class="c">%     % dimension of interest is &#39;time&#39;</span>
+<span class="c">%     measure_args.dimension=dim_label;</span>
+<span class="c">%     %</span>
+<span class="c">%     % run time-by-time generalization analysis</span>
+<span class="c">%     dgm_ds=cosmo_dim_generalization_measure(ds_time,measure_args,...</span>
+<span class="c">%                                               &#39;progress&#39;,false);</span>
+<span class="c">%     %</span>
+<span class="c">%     % the output has train_time and test_time as sample dimensions</span>
+<span class="c">%     cosmo_disp(dgm_ds.a)</span>
+<span class="c">%     &gt; .sdim</span>
+<span class="c">%     &gt;   .labels</span>
+<span class="c">%     &gt;     { &#39;train_time&#39;  &#39;test_time&#39; }</span>
+<span class="c">%     &gt;   .values</span>
+<span class="c">%     &gt;     { [  -0.2        [  -0.2</span>
+<span class="c">%     &gt;         -0.15          -0.15</span>
+<span class="c">%     &gt;          -0.1           -0.1</span>
+<span class="c">%     &gt;           :              :</span>
+<span class="c">%     &gt;             0              0</span>
+<span class="c">%     &gt;          0.05           0.05</span>
+<span class="c">%     &gt;           0.1 ]@7x1      0.1 ]@7x1 }</span>
+<span class="c">%     %</span>
+<span class="c">%     % Searchlight example</span>
+<span class="c">%     %</span>
+<span class="c">%     % only to make this example run fast, most channels are eliminated</span>
+<span class="c">%     % (there is no other reason to do this step)</span>
+<span class="c">%     ds_time=cosmo_slice(ds_time,ds_time.fa.chan&lt;=20,2);</span>
+<span class="c">%     ds_time=cosmo_dim_prune(ds_time);</span>
+<span class="c">%     %</span>
+<span class="c">%     % define neighborhood for channels</span>
+<span class="c">%     nbrhood=cosmo_meeg_chan_neighborhood(ds_time,...</span>
+<span class="c">%                                 &#39;chantype&#39;,&#39;meg_combined_from_planar&#39;,...</span>
+<span class="c">%                                 &#39;count&#39;,5,&#39;label&#39;,&#39;dataset&#39;);</span>
+<span class="c">%     %</span>
+<span class="c">%     % run searchlight with generalization measure</span>
+<span class="c">%     measure=@cosmo_dim_generalization_measure;</span>
+<span class="c">%     dgm_sl_ds=cosmo_searchlight(ds_time,nbrhood,measure,measure_args,...</span>
+<span class="c">%                                                 &#39;progress&#39;,false);</span>
+<span class="c">%     %</span>
+<span class="c">%     % the output has train_time and test_time as sample dimensions,</span>
+<span class="c">%     % and chan as feature dimension</span>
+<span class="c">%     cosmo_disp(dgm_sl_ds.a,&#39;edgeitems&#39;,1)</span>
+<span class="c">%     &gt; .fdim</span>
+<span class="c">%     &gt;   .labels</span>
+<span class="c">%     &gt;     { &#39;chan&#39; }</span>
+<span class="c">%     &gt;   .values</span>
+<span class="c">%     &gt;     { { &#39;MEG0112+0113&#39; ... &#39;MEG0712+0713&#39;   }@1x7 }</span>
+<span class="c">%     &gt; .meeg</span>
+<span class="c">%     &gt;   .samples_type</span>
+<span class="c">%     &gt;     &#39;timelock&#39;</span>
+<span class="c">%     &gt;   .samples_field</span>
+<span class="c">%     &gt;     &#39;trial&#39;</span>
+<span class="c">%     &gt;   .samples_label</span>
+<span class="c">%     &gt;     &#39;rpt&#39;</span>
+<span class="c">%     &gt; .sdim</span>
+<span class="c">%     &gt;   .labels</span>
+<span class="c">%     &gt;     { &#39;train_time&#39;  &#39;test_time&#39; }</span>
+<span class="c">%     &gt;   .values</span>
+<span class="c">%     &gt;     { [ -0.2        [ -0.2</span>
+<span class="c">%     &gt;           :             :</span>
+<span class="c">%     &gt;          0.1 ]@7x1     0.1 ]@7x1 }</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - this function can be used together with searchlight</span>
+<span class="c">%   - to make a dimension d a sample dimension from a feature dimension</span>
+<span class="c">%     (usually necessary before running this function), or the other way</span>
+<span class="c">%     around (usually necessary after running this function), use</span>
+<span class="c">%     cosmo_dim_transpose.</span>
+<span class="c">%   - a &#39;partition&#39; argument should not be provided, because this function</span>
+<span class="c">%     generates them itself. The partitions are generated so that there</span>
+<span class="c">%     is a single fold; samples with chunks==1 are always used for training</span>
+<span class="c">%     and those with chunks==2 are used for testing (e.g. when using</span>
+<span class="c">%     m=@cosmo_crossvalidation_measure). In the case of using</span>
+<span class="c">%     m=@cosmo_correlation_measure, this amounts to split-half</span>
+<span class="c">%     correlations.</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_correlation_measure, cosmo_crossvalidation_measure</span>
+<span class="c">%           cosmo_target_dsm_corr_measure, cosmo_searchlight,</span>
+<span class="c">%           cosmo_dim_transpose</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">defaults</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">radius</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">check_partitions</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">check_input</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% get training and test set</span>
+    <span class="n">halves</span><span class="p">=</span><span class="n">split_dataset_in_train_and_test</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="c">% split the data in two halves</span>
+    <span class="p">[</span><span class="n">train_values</span><span class="p">,</span><span class="n">train_splits</span><span class="p">]=</span><span class="n">split_half_by_dimension</span><span class="p">(</span><span class="n">halves</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="n">opt</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">test_values</span><span class="p">,</span><span class="n">test_splits</span><span class="p">]=</span><span class="n">split_half_by_dimension</span><span class="p">(</span><span class="n">halves</span><span class="p">{</span><span class="mi">2</span><span class="p">},</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="n">halves</span><span class="p">=[];</span> <span class="c">% let GC do its work</span>
+
+    <span class="c">% set partitions in case a crossvalidation or correlation measure is</span>
+    <span class="c">% used</span>
+    <span class="n">ntrain_elem</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">train_splits</span><span class="p">);</span>
+    <span class="n">ntest_elem</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">test_splits</span><span class="p">);</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% remove the dimension and measure arguments from the input</span>
+    <span class="n">dimension</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">dimension</span><span class="p">;</span>
+    <span class="n">measure</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">measure</span><span class="p">;</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;dimension&#39;</span><span class="p">);</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;measure&#39;</span><span class="p">);</span>
+
+    <span class="n">train_label</span><span class="p">=[</span><span class="s">&#39;train_&#39;</span> <span class="n">dimension</span><span class="p">];</span>
+    <span class="n">test_label</span><span class="p">=[</span><span class="s">&#39;test_&#39;</span> <span class="n">dimension</span><span class="p">];</span>
+
+    <span class="c">% see if progress has to be shown</span>
+    <span class="n">show_progress</span><span class="p">=</span><span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">show_progress</span>
+        <span class="n">prev_progress_msg</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+        <span class="n">clock_start</span><span class="p">=</span><span class="n">clock</span><span class="p">();</span>
+    <span class="k">end</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">ntrain</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">train_values</span><span class="p">);</span>
+    <span class="n">ntest</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">test_values</span><span class="p">);</span>
+
+    <span class="n">result_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">ntrain</span><span class="o">*</span><span class="n">ntest</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% last non-empty row in result_cell</span>
+    <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntrain</span>
+        <span class="c">% update partitions train set</span>
+        <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">.</span><span class="n">train_indices</span><span class="p">{</span><span class="mi">1</span><span class="p">}=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntrain_elem</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntest</span>
+            <span class="c">% update partitions test set</span>
+            <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">.</span><span class="n">test_indices</span><span class="p">{</span><span class="mi">1</span><span class="p">}=</span><span class="n">ntrain_elem</span><span class="p">(</span><span class="n">k</span><span class="p">)</span><span class="o">+</span><span class="c">...</span>
+                                                <span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ntest_elem</span><span class="p">(</span><span class="nb">j</span><span class="p">));</span>
+            <span class="c">% merge training and test dataset</span>
+            <span class="n">ds_merged</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">({</span><span class="n">train_splits</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="n">test_splits</span><span class="p">{</span><span class="nb">j</span><span class="p">}},</span><span class="c">...</span>
+                                                        <span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+
+            <span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">=</span><span class="n">cosmo_balance_partitions</span><span class="p">(</span><span class="n">opt</span><span class="p">.</span><span class="n">partitions</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="n">ds_merged</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+            <span class="c">% apply measure</span>
+            <span class="n">ds_result</span><span class="p">=</span><span class="n">measure</span><span class="p">(</span><span class="n">ds_merged</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+            <span class="c">% set dimension attributes</span>
+            <span class="n">nsamples</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds_result</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">ds_result</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">train_label</span><span class="p">)=</span><span class="nb">repmat</span><span class="p">(</span><span class="n">k</span><span class="p">,</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">ds_result</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">test_label</span><span class="p">)=</span><span class="nb">repmat</span><span class="p">(</span><span class="nb">j</span><span class="p">,</span><span class="n">nsamples</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+            <span class="c">% store result</span>
+            <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">result_cell</span><span class="p">{</span><span class="n">pos</span><span class="p">}=</span><span class="n">ds_result</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">show_progress</span>
+            <span class="n">msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%d / %d&#39;</span><span class="p">,</span> <span class="n">k</span><span class="o">*</span><span class="n">ntest</span><span class="p">,</span> <span class="n">ntrain</span><span class="o">*</span><span class="n">ntest</span><span class="p">);</span>
+            <span class="n">prev_progress_msg</span><span class="p">=</span><span class="n">cosmo_show_progress</span><span class="p">(</span><span class="n">clock_start</span><span class="p">,</span> <span class="c">...</span>
+                            <span class="n">k</span><span class="o">/</span><span class="n">ntrain</span><span class="p">,</span> <span class="n">msg</span><span class="p">,</span> <span class="n">prev_progress_msg</span><span class="p">);</span>
+        <span class="k">end</span>
+
+    <span class="k">end</span>
+
+    <span class="c">% merge results into a dataset</span>
+    <span class="n">result</span><span class="p">=</span><span class="n">cosmo_stack</span><span class="p">(</span><span class="n">result_cell</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;drop_nonunique&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">result</span><span class="p">,</span><span class="s">&#39;sa&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isfield</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">dimension</span><span class="p">)</span>
+        <span class="n">result</span><span class="p">.</span><span class="n">sa</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">dimension</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% set dimension attributes in the sample dimension</span>
+    <span class="n">result</span><span class="p">=</span><span class="n">add_sample_attr</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="p">{</span><span class="n">train_label</span><span class="p">;</span><span class="n">test_label</span><span class="p">},</span><span class="c">...</span>
+                                    <span class="p">{</span><span class="n">train_values</span><span class="p">;</span><span class="n">test_values</span><span class="p">});</span>
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span>ds,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% ensure input is kosher</span>
+    <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,{</span><span class="s">&#39;dimension&#39;</span><span class="p">,</span><span class="s">&#39;measure&#39;</span><span class="p">},</span><span class="n">true</span><span class="p">);</span>
+
+    <span class="n">dimension</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">dimension</span><span class="p">;</span>
+    <span class="n">dim_pos</span><span class="p">=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">dimension</span><span class="p">,</span><span class="n">true</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">dim_pos</span><span class="o">~=</span><span class="mi">1</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;&#39;&#39;%s&#39;&#39; must be a sample dimension (not a feature) &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;dimension. To make &#39;&#39;%s&#39;&#39; a sample dimension in &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;a dataset struct ds, use\n\n&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;  cosmo_dim_transpose(ds,&#39;&#39;%s&#39;&#39;,1);&#39;</span><span class="p">],</span><span class="c">...</span>
+                    <span class="n">dimension</span><span class="p">,</span><span class="n">dimension</span><span class="p">,</span><span class="n">dimension</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">measure</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">measure</span><span class="p">;</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">isa</span><span class="p">(</span><span class="n">measure</span><span class="p">,</span><span class="s">&#39;function_handle&#39;</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;the &#39;&#39;measure&#39;&#39; argument must be a function handle&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;partitions&#39;</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;the partitions argument is not allowed for this &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;function, because it generates partitions itself.&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;The dataset should have two chunks, with &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;chunks set to 1 for the training set and &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;set to 2 for the testing set&#39;</span><span class="p">]);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>halves<span class="p">=</span><span class="nf">split_dataset_in_train_and_test</span><span class="p">(</span>ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% return cell with {train_ds,test_ds}</span>
+    <span class="n">halves</span><span class="p">=</span><span class="n">cosmo_split</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;chunks&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">halves</span><span class="p">)</span><span class="o">~=</span><span class="mi">2</span> <span class="o">||</span> <span class="c">...</span>
+            <span class="n">halves</span><span class="p">{</span><span class="mi">1</span><span class="p">}.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">~=</span><span class="mi">1</span> <span class="o">||</span> <span class="c">...</span>
+            <span class="n">halves</span><span class="p">{</span><span class="mi">2</span><span class="p">}.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">~=</span><span class="mi">2</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;chunks must be 1 (for the training set) or 2&#39;</span><span class="c">...</span>
+                <span class="s">&#39;(for the testing set)&#39;</span> <span class="p">]);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>[values,splits]<span class="p">=</span><span class="nf">split_half_by_dimension</span><span class="p">(</span>ds,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% split dataset by ds.a.(opt.dimension)</span>
+    <span class="n">dimension</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">dimension</span><span class="p">;</span>
+    <span class="n">ds_pruned</span><span class="p">=</span><span class="n">cosmo_dim_prune</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;labels&#39;</span><span class="p">,{</span><span class="n">dimension</span><span class="p">},</span><span class="s">&#39;dim&#39;</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">ds_tr</span><span class="p">=</span><span class="n">cosmo_dim_transpose</span><span class="p">(</span><span class="n">ds_pruned</span><span class="p">,</span><span class="n">dimension</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="n">nbrhood</span><span class="p">=</span><span class="n">cosmo_interval_neighborhood</span><span class="p">(</span><span class="n">ds_tr</span><span class="p">,</span><span class="n">dimension</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">,{</span><span class="n">dimension</span><span class="p">}));</span>
+
+    <span class="n">counts</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">);</span>
+
+    <span class="n">keep_nbrs</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">counts</span><span class="o">==</span><span class="n">max</span><span class="p">(</span><span class="n">counts</span><span class="p">));</span>
+
+    <span class="c">% remove dimension information</span>
+    <span class="n">ds_tr</span><span class="p">=</span><span class="n">remove_fa_field</span><span class="p">(</span><span class="n">ds_tr</span><span class="p">,</span><span class="n">dimension</span><span class="p">);</span>
+
+    <span class="n">values</span><span class="p">=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="mi">1</span><span class="p">}(</span><span class="n">keep_nbrs</span><span class="p">);</span>
+    <span class="n">sz</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">values</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">sz</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span>
+        <span class="n">values</span><span class="p">=</span><span class="n">values</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="k">elseif</span> <span class="n">sz</span><span class="p">(</span><span class="mi">2</span><span class="p">)</span><span class="o">~=</span><span class="mi">1</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;dimension %s must be a row vector&#39;</span><span class="p">,</span> <span class="n">dimension</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">keep_nbrs</span><span class="p">);</span>
+    <span class="n">splits</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">idx</span><span class="p">=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="n">keep_nbrs</span><span class="p">(</span><span class="n">k</span><span class="p">)};</span>
+        <span class="n">splits</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds_tr</span><span class="p">,</span><span class="n">idx</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>ds<span class="p">=</span><span class="nf">add_sample_attr</span><span class="p">(</span>ds, dim_labels, dim_values<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">,</span><span class="s">&#39;sdim&#39;</span><span class="p">)</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">values</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">values</span><span class="p">=[</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">values</span><span class="p">(:);</span> <span class="n">dim_values</span><span class="p">]</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">labels</span><span class="p">=[</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">labels</span><span class="p">(:);</span> <span class="n">dim_labels</span><span class="p">]</span><span class="o">&#39;</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>ds<span class="p">=</span><span class="nf">remove_fa_field</span><span class="p">(</span>ds,label<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">label</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">rmfield</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">,</span><span class="n">label</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="p">[</span><span class="n">dim</span><span class="p">,</span> <span class="n">index</span><span class="p">,</span> <span class="n">attr_name</span><span class="p">,</span> <span class="n">dim_name</span><span class="p">]=</span><span class="n">cosmo_dim_find</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">label</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">dim</span><span class="p">)</span>
+        <span class="n">sfdim</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.(</span><span class="n">dim_name</span><span class="p">);</span>
+        <span class="n">m</span><span class="p">=</span><span class="o">~</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">sfdim</span><span class="p">.</span><span class="n">labels</span><span class="p">,</span><span class="n">label</span><span class="p">);</span>
+        <span class="n">sfdim</span><span class="p">.</span><span class="n">values</span><span class="p">=</span><span class="n">sfdim</span><span class="p">.</span><span class="n">values</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">sfdim</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">sfdim</span><span class="p">.</span><span class="n">labels</span><span class="p">(</span><span class="n">m</span><span class="p">);</span>
+        <span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.(</span><span class="n">dim_name</span><span class="p">)=</span><span class="n">sfdim</span><span class="p">;</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_dim_find.html"
+                        title="previous chapter">cosmo dim find</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_dim_insert.html"
+                        title="next chapter">cosmo dim insert</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_dim_generalization_measure.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_dim_insert.html" title="cosmo dim insert"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dim_find.html" title="cosmo dim find"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

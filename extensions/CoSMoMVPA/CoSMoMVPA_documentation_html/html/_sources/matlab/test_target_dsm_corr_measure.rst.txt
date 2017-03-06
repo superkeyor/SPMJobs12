@@ -1,0 +1,7 @@
+.. _test_target_dsm_corr_measure:
+
+test target dsm corr measure
+============================
+
+.. include :: test_target_dsm_corr_measure.txt
+

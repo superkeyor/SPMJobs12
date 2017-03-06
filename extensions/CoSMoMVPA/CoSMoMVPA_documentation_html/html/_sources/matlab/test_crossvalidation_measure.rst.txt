@@ -1,0 +1,7 @@
+.. _test_crossvalidation_measure:
+
+test crossvalidation measure
+============================
+
+.. include :: test_crossvalidation_measure.txt
+

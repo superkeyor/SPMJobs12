@@ -1,0 +1,489 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>roi-based MVPA with group-analysis</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_splithalf_correlations.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>roi-based MVPA with group-analysis</h1><!--introduction--><p>Load t-stat data from all subjects, apply 'vt' mask, compute difference of (fisher-transformed) between on- and off diagonal split-half correlation values, and perform a random effects analysis.</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set analysis parameters</a></li><li><a href="#2">Loop over rois</a></li><li><a href="#4">Computations for each subject</a></li><li><a href="#5">compute t statistic and print the result</a></li><li><a href="#7">advanced exercise</a></li></ul></div><h2>Set analysis parameters<a name="1"></a></h2><pre class="codeinput">subject_ids={<span class="string">'s01'</span>,<span class="string">'s02'</span>,<span class="string">'s03'</span>,<span class="string">'s04'</span>,<span class="string">'s05'</span>,<span class="string">'s06'</span>,<span class="string">'s07'</span>,<span class="string">'s08'</span>};
+rois={<span class="string">'ev'</span>; <span class="string">'vt'</span>; <span class="string">'brain'</span>};
+labels = {<span class="string">'monkey'</span>; <span class="string">'lemur'</span>; <span class="string">'mallard'</span>; <span class="string">'warbler'</span>; <span class="string">'ladybug'</span>; <span class="string">'lunamoth'</span>};
+
+nsubjects=numel(subject_ids);
+
+<span class="comment">% allocate space for output</span>
+sum_weighted_zs_all=zeros(nsubjects,1);
+
+config=cosmo_config();
+study_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>);
+</pre><h2>Loop over rois<a name="2"></a></h2><pre class="codeinput">nrois=numel(rois);
+<span class="keyword">for</span> i_roi = 1:nrois
+</pre><pre class="codeinput">    <span class="comment">% pre-allocate space weighted correlation difference</span>
+    <span class="comment">% in each subject</span>
+    sum_weighted_zs_all=zeros(nsubjects,1);
+</pre><h2>Computations for each subject<a name="4"></a></h2><pre class="codeinput">    <span class="keyword">for</span> i_subj=1:nsubjects
+        subject_id=subject_ids{i_subj};
+
+        data_path=fullfile(study_path, subject_id);
+
+        <span class="comment">% file locations for both halves</span>
+        half1_fn=fullfile(data_path,<span class="string">'glm_T_stats_odd.nii'</span>);
+        half2_fn=fullfile(data_path,<span class="string">'glm_T_stats_even.nii'</span>);
+
+        <span class="comment">%mask name for given subject and roi</span>
+        mask_fn=fullfile(data_path,[rois{i_roi},<span class="string">'_mask.nii'</span>]);
+
+        <span class="comment">% load two halves as CoSMoMVPA dataset structs.</span>
+        half1_ds=cosmo_fmri_dataset(half1_fn,<span class="string">'mask'</span>,mask_fn);
+        half2_ds=cosmo_fmri_dataset(half2_fn,<span class="string">'mask'</span>,mask_fn);
+
+        <span class="comment">% get the sample data</span>
+        <span class="comment">% each half has six samples:</span>
+        <span class="comment">% monkey, lemur, mallard, warbler, ladybug, lunamoth.</span>
+        half1_samples=half1_ds.samples;
+        half2_samples=half2_ds.samples;
+
+        <span class="comment">% compute all correlation values between the two halves, resulting</span>
+        <span class="comment">% in a 6x6 matrix. Store this matrix in a variable 'rho'.</span>
+        <span class="comment">% Hint: use cosmo_corr</span>
+        <span class="comment">% &gt;@@&gt;</span>
+        rho=cosmo_corr(half1_samples',half2_samples');
+        <span class="comment">% &lt;@@&lt;</span>
+
+        <span class="comment">% for the advanced exercise ('compute the average of all individual</span>
+        <span class="comment">% correlation matrices'): if the first subject and roi,</span>
+        <span class="comment">% allocate space for a 'rho_sum' array with three dimensions;</span>
+        <span class="comment">% the first two dimensions for the two halves, the third</span>
+        <span class="comment">% one for different rois.</span>
+        <span class="comment">% Then add 'rho' to 'rho_sum'</span>
+        <span class="comment">%</span>
+        <span class="comment">% (If you don't want to do the advanced</span>
+        <span class="comment">% exercise, yo don't have to do anything here.)</span>
+        <span class="comment">% &gt;@@&gt;</span>
+        <span class="keyword">if</span> i_subj == 1 &amp;&amp; i_roi == 1
+            <span class="comment">% first correlation was just computed, and we now know</span>
+            <span class="comment">% the number of conditions through the size of rho.</span>
+            <span class="comment">%</span>
+            <span class="comment">% allocate space for sum over subjects</span>
+            nclasses=size(rho,1);
+            rho_sum=zeros([nclasses,nclasses,nrois]);
+        <span class="keyword">end</span>
+        rho_sum(:, :, i_roi)=rho_sum(:, :, i_roi)+rho;
+
+        <span class="comment">% &lt;@@&lt;</span>
+
+        <span class="comment">% To make these correlations more 'normal', apply a Fisher</span>
+        <span class="comment">% transformation and store this in a variable 'z' (use atanh).</span>
+        <span class="comment">% &gt;@@&gt;</span>
+        z=atanh(rho);
+        <span class="comment">% &lt;@@&lt;</span>
+
+        <span class="comment">% visualize the matrix 'z'</span>
+        subplot(3,3,i_subj);
+        <span class="comment">% &gt;@@&gt;</span>
+        imagesc(z);
+        colorbar()
+        title([subject_id <span class="string">' '</span> rois{i_roi}]);
+        <span class="comment">% &lt;@@&lt;</span>
+
+        <span class="comment">% define in a variable 'contrast_matrix' how correlations values</span>
+        <span class="comment">% are going to be weighted.</span>
+        <span class="comment">% The matrix must have a mean of zero, positive values on diagonal,</span>
+        <span class="comment">% negative elsewhere.</span>
+
+        nclasses=size(rho,1);
+        <span class="comment">% sanity check; in this example there are 6 conditions</span>
+        assert(nclasses==6);
+
+        <span class="comment">% set contrast matrix. It has a mean of zero, the diagonal elements</span>
+        <span class="comment">% sum to 1, and the non-diagonal element sum to -1</span>
+        contrast_matrix=(eye(nclasses)-1/nclasses)/(nclasses-1);
+
+        <span class="keyword">if</span> abs(mean(contrast_matrix(:)))&gt;1e-14
+            error(<span class="string">'illegal contrast matrix'</span>);
+        <span class="keyword">end</span>
+
+        <span class="comment">% Weigh the values in the matrix 'z' by those in the</span>
+        <span class="comment">% contrast_matrix and then sum them (hint: use the '.*'</span>
+        <span class="comment">% operator for element-wise multiplication). Store the results in</span>
+        <span class="comment">% a variable 'sum_weighted_z'.</span>
+        <span class="comment">% &gt;@@&gt;</span>
+        weighted_z=z.*contrast_matrix;
+
+        sum_weighted_z=sum(weighted_z(:));
+        <span class="comment">% &lt;@@&lt;</span>
+
+        <span class="comment">% store the result for this subject in sum_weighted_zs_all</span>
+        <span class="comment">% (at the i_subj-th position), so that</span>
+        <span class="comment">% group statistics can be computed</span>
+        <span class="comment">% &gt;@@&gt;</span>
+        sum_weighted_zs_all(i_subj)=sum_weighted_z;
+        <span class="comment">% &lt;@@&lt;</span>
+    <span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="run_splithalf_correlations_01.png" alt=""> <img vspace="5" hspace="5" src="run_splithalf_correlations_02.png" alt=""> <img vspace="5" hspace="5" src="run_splithalf_correlations_03.png" alt=""> <h2>compute t statistic and print the result<a name="5"></a></h2><p>run one-sample t-test again zero</p><pre class="codeinput">    <span class="comment">% Using matlab's stat toolbox (if present)</span>
+    <span class="keyword">if</span> cosmo_check_external(<span class="string">'@stats'</span>,false)
+
+        <span class="comment">% &gt;@@&gt;</span>
+        [h,p,ci,stats]=ttest(sum_weighted_zs_all);
+        fprintf([<span class="string">'correlation difference in %s at group level: '</span><span class="keyword">...</span>
+            <span class="string">'%.3f +/- %.3f, t_%d=%.3f, p=%.5f (using matlab stats '</span><span class="keyword">...</span>
+            <span class="string">'toolbox)\n'</span>],<span class="keyword">...</span>
+            rois{i_roi},mean(sum_weighted_zs_all),<span class="keyword">...</span>
+                        std(sum_weighted_zs_all),<span class="keyword">...</span>
+            stats.df,stats.tstat,p);
+        <span class="comment">% &lt;@@&lt;</span>
+    <span class="keyword">else</span>
+        fprintf(<span class="string">'Matlab stats toolbox not available\n'</span>);
+    <span class="keyword">end</span>
+
+    <span class="comment">% Apart from using the 'ttest' function (if available), one can</span>
+    <span class="comment">% also use 'cosmo_stat' for univaraite statistics.</span>
+    <span class="comment">% For this approach, data must be represented in a dataset struct.</span>
+    <span class="comment">%</span>
+    <span class="comment">% The targets are chunks are set to indicate that all samples are from</span>
+    <span class="comment">% the same class (condition), and each observation is independent from</span>
+    <span class="comment">% the others</span>
+    sum_weighted_zs_ds=struct();
+    sum_weighted_zs_ds.samples=sum_weighted_zs_all;
+    sum_weighted_zs_ds.sa.targets=ones(nsubjects,1);
+    sum_weighted_zs_ds.sa.chunks=(1:nsubjects)';
+
+    ds_t=cosmo_stat(sum_weighted_zs_ds,<span class="string">'t'</span>);     <span class="comment">% t-test against zero</span>
+    ds_p=cosmo_stat(sum_weighted_zs_ds,<span class="string">'t'</span>,<span class="string">'p'</span>); <span class="comment">% convert to p-value</span>
+
+    fprintf([<span class="string">'correlation difference in %s at group level: '</span><span class="keyword">...</span>
+        <span class="string">'%.3f +/- %.3f, %s=%.3f, p=%.5f (using cosmo_stat)\n'</span>],<span class="keyword">...</span>
+        rois{i_roi},mean(sum_weighted_zs_all),std(sum_weighted_zs_all),<span class="keyword">...</span>
+        ds_t.sa.stats{1},ds_t.samples,ds_p.samples);
+</pre><pre class="codeoutput">correlation difference in ev at group level: 0.379 +/- 0.137, t_7=7.854, p=0.00010 (using matlab stats toolbox)
+correlation difference in ev at group level: 0.379 +/- 0.137, Ttest(7)=7.854, p=0.00010 (using cosmo_stat)
+</pre><pre class="codeoutput">correlation difference in vt at group level: 0.397 +/- 0.163, t_7=6.864, p=0.00024 (using matlab stats toolbox)
+correlation difference in vt at group level: 0.397 +/- 0.163, Ttest(7)=6.864, p=0.00024 (using cosmo_stat)
+</pre><pre class="codeoutput">correlation difference in brain at group level: 0.074 +/- 0.026, t_7=7.987, p=0.00009 (using matlab stats toolbox)
+correlation difference in brain at group level: 0.074 +/- 0.026, Ttest(7)=7.987, p=0.00009 (using cosmo_stat)
+</pre><pre class="codeinput"><span class="keyword">end</span>
+</pre><h2>advanced exercise<a name="7"></a></h2><pre class="codeinput"><span class="comment">% plot an image of the correlation matrix averaged over</span>
+<span class="comment">% participants (one for each roi)</span>
+
+<span class="comment">% allocate space for axis handles, so that later all plots can be set to</span>
+<span class="comment">% have the same color limits</span>
+ax_handles=zeros(nrois,1);
+col_limits=zeros(nrois,2);
+
+<span class="keyword">for</span> i_roi = 1:nrois
+    figure
+
+    <span class="comment">% store axis handle for current figure</span>
+    ax_handles(i_roi) = gca;
+
+    <span class="comment">% compute the average correlation matrix using 'rho_sum', and store the</span>
+    <span class="comment">% result in a variable 'rho_mean'. Note that the number of subjects is</span>
+    <span class="comment">% stored in a variable 'nsubjects'</span>
+    <span class="comment">% &gt;@@&gt;</span>
+    rho_mean=rho_sum(:, :, i_roi)/nsubjects;
+    <span class="comment">% &lt;@@&lt;</span>
+
+    <span class="comment">% visualize the rho_mean matrix using imagesc</span>
+    <span class="comment">% &gt;@@&gt;</span>
+    imagesc(rho_mean);
+    <span class="comment">% &lt;@@&lt;</span>
+
+    <span class="comment">% set labels, colorbar and title</span>
+    set(gca, <span class="string">'xtick'</span>, 1:numel(labels), <span class="string">'xticklabel'</span>, labels)
+    set(gca, <span class="string">'ytick'</span>, 1:numel(labels), <span class="string">'yticklabel'</span>, labels)
+
+    colorbar
+    desc=sprintf([<span class="string">'Average splithalf correlation across subjects '</span><span class="keyword">...</span>
+                    <span class="string">'in mask ''%s'''</span>], rois{i_roi});
+    title(desc)
+
+
+    col_limits(i_roi,:) = get(gca, <span class="string">'clim'</span>);
+<span class="keyword">end</span>
+
+<span class="comment">% give all figures the same color limits such that correlations can be</span>
+<span class="comment">% compared visually</span>
+set(ax_handles, <span class="string">'clim'</span>, [min(col_limits(:)), max(col_limits(:))])
+</pre><img vspace="5" hspace="5" src="run_splithalf_correlations_04.png" alt=""> <img vspace="5" hspace="5" src="run_splithalf_correlations_05.png" alt=""> <img vspace="5" hspace="5" src="run_splithalf_correlations_06.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% roi-based MVPA with group-analysis
+%
+% Load t-stat data from all subjects, apply 'vt' mask, compute difference
+% of (fisher-transformed) between on- and off diagonal split-half
+% correlation values, and perform a random effects analysis.
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+%% Set analysis parameters
+subject_ids={'s01','s02','s03','s04','s05','s06','s07','s08'};
+rois={'ev'; 'vt'; 'brain'};
+labels = {'monkey'; 'lemur'; 'mallard'; 'warbler'; 'ladybug'; 'lunamoth'};
+
+nsubjects=numel(subject_ids);
+
+% allocate space for output
+sum_weighted_zs_all=zeros(nsubjects,1);
+
+config=cosmo_config();
+study_path=fullfile(config.tutorial_data_path,'ak6');
+
+
+%% Loop over rois
+nrois=numel(rois);
+for i_roi = 1:nrois
+
+    % pre-allocate space weighted correlation difference
+    % in each subject
+    sum_weighted_zs_all=zeros(nsubjects,1);
+
+    %% Computations for each subject
+    for i_subj=1:nsubjects
+        subject_id=subject_ids{i_subj};
+
+        data_path=fullfile(study_path, subject_id);
+
+        % file locations for both halves
+        half1_fn=fullfile(data_path,'glm_T_stats_odd.nii');
+        half2_fn=fullfile(data_path,'glm_T_stats_even.nii');
+
+        %mask name for given subject and roi
+        mask_fn=fullfile(data_path,[rois{i_roi},'_mask.nii']);
+
+        % load two halves as CoSMoMVPA dataset structs.
+        half1_ds=cosmo_fmri_dataset(half1_fn,'mask',mask_fn);
+        half2_ds=cosmo_fmri_dataset(half2_fn,'mask',mask_fn);
+
+        % get the sample data
+        % each half has six samples:
+        % monkey, lemur, mallard, warbler, ladybug, lunamoth.
+        half1_samples=half1_ds.samples;
+        half2_samples=half2_ds.samples;
+
+        % compute all correlation values between the two halves, resulting
+        % in a 6x6 matrix. Store this matrix in a variable 'rho'.
+        % Hint: use cosmo_corr
+        % >@@>
+        rho=cosmo_corr(half1_samples',half2_samples');
+        % <@@<
+
+        % for the advanced exercise ('compute the average of all individual
+        % correlation matrices'): if the first subject and roi,
+        % allocate space for a 'rho_sum' array with three dimensions;
+        % the first two dimensions for the two halves, the third
+        % one for different rois.
+        % Then add 'rho' to 'rho_sum'
+        %
+        % (If you don't want to do the advanced
+        % exercise, yo don't have to do anything here.)
+        % >@@>
+        if i_subj == 1 && i_roi == 1
+            % first correlation was just computed, and we now know
+            % the number of conditions through the size of rho.
+            %
+            % allocate space for sum over subjects
+            nclasses=size(rho,1);
+            rho_sum=zeros([nclasses,nclasses,nrois]);
+        end
+        rho_sum(:, :, i_roi)=rho_sum(:, :, i_roi)+rho;
+
+        % <@@<
+
+        % To make these correlations more 'normal', apply a Fisher
+        % transformation and store this in a variable 'z' (use atanh).
+        % >@@>
+        z=atanh(rho);
+        % <@@<
+
+        % visualize the matrix 'z'
+        subplot(3,3,i_subj);
+        % >@@>
+        imagesc(z);
+        colorbar()
+        title([subject_id ' ' rois{i_roi}]);
+        % <@@<
+
+        % define in a variable 'contrast_matrix' how correlations values
+        % are going to be weighted.
+        % The matrix must have a mean of zero, positive values on diagonal,
+        % negative elsewhere.
+
+        nclasses=size(rho,1);
+        % sanity check; in this example there are 6 conditions
+        assert(nclasses==6);
+
+        % set contrast matrix. It has a mean of zero, the diagonal elements
+        % sum to 1, and the non-diagonal element sum to -1
+        contrast_matrix=(eye(nclasses)-1/nclasses)/(nclasses-1);
+
+        if abs(mean(contrast_matrix(:)))>1e-14
+            error('illegal contrast matrix');
+        end
+
+        % Weigh the values in the matrix 'z' by those in the
+        % contrast_matrix and then sum them (hint: use the '.*'
+        % operator for element-wise multiplication). Store the results in
+        % a variable 'sum_weighted_z'.
+        % >@@>
+        weighted_z=z.*contrast_matrix;
+
+        sum_weighted_z=sum(weighted_z(:));
+        % <@@<
+
+        % store the result for this subject in sum_weighted_zs_all
+        % (at the i_subj-th position), so that
+        % group statistics can be computed
+        % >@@>
+        sum_weighted_zs_all(i_subj)=sum_weighted_z;
+        % <@@<
+    end
+
+    %% compute t statistic and print the result
+    % run one-sample t-test again zero
+
+    % Using matlab's stat toolbox (if present)
+    if cosmo_check_external('@stats',false)
+
+        % >@@>
+        [h,p,ci,stats]=ttest(sum_weighted_zs_all);
+        fprintf(['correlation difference in %s at group level: '...
+            '%.3f +/- %.3f, t_%d=%.3f, p=%.5f (using matlab stats '...
+            'toolbox)\n'],...
+            rois{i_roi},mean(sum_weighted_zs_all),...
+                        std(sum_weighted_zs_all),...
+            stats.df,stats.tstat,p);
+        % <@@<
+    else
+        fprintf('Matlab stats toolbox not available\n');
+    end
+
+    % Apart from using the 'ttest' function (if available), one can
+    % also use 'cosmo_stat' for univaraite statistics.
+    % For this approach, data must be represented in a dataset struct.
+    %
+    % The targets are chunks are set to indicate that all samples are from
+    % the same class (condition), and each observation is independent from
+    % the others
+    sum_weighted_zs_ds=struct();
+    sum_weighted_zs_ds.samples=sum_weighted_zs_all;
+    sum_weighted_zs_ds.sa.targets=ones(nsubjects,1);
+    sum_weighted_zs_ds.sa.chunks=(1:nsubjects)';
+
+    ds_t=cosmo_stat(sum_weighted_zs_ds,'t');     % t-test against zero
+    ds_p=cosmo_stat(sum_weighted_zs_ds,'t','p'); % convert to p-value
+
+    fprintf(['correlation difference in %s at group level: '...
+        '%.3f +/- %.3f, %s=%.3f, p=%.5f (using cosmo_stat)\n'],...
+        rois{i_roi},mean(sum_weighted_zs_all),std(sum_weighted_zs_all),...
+        ds_t.sa.stats{1},ds_t.samples,ds_p.samples);
+
+end
+
+%% advanced exercise
+
+% plot an image of the correlation matrix averaged over
+% participants (one for each roi)
+
+% allocate space for axis handles, so that later all plots can be set to
+% have the same color limits
+ax_handles=zeros(nrois,1);
+col_limits=zeros(nrois,2);
+
+for i_roi = 1:nrois
+    figure
+
+    % store axis handle for current figure
+    ax_handles(i_roi) = gca;
+
+    % compute the average correlation matrix using 'rho_sum', and store the
+    % result in a variable 'rho_mean'. Note that the number of subjects is
+    % stored in a variable 'nsubjects'
+    % >@@>
+    rho_mean=rho_sum(:, :, i_roi)/nsubjects;
+    % <@@<
+
+    % visualize the rho_mean matrix using imagesc
+    % >@@>
+    imagesc(rho_mean);
+    % <@@<
+
+    % set labels, colorbar and title
+    set(gca, 'xtick', 1:numel(labels), 'xticklabel', labels)
+    set(gca, 'ytick', 1:numel(labels), 'yticklabel', labels)
+
+    colorbar
+    desc=sprintf(['Average splithalf correlation across subjects '...
+                    'in mask ''%s'''], rois{i_roi});
+    title(desc)
+
+
+    col_limits(i_roi,:) = get(gca, 'clim');
+end
+
+% give all figures the same color limits such that correlations can be
+% compared visually
+set(ax_handles, 'clim', [min(col_limits(:)), max(col_limits(:))])
+
+##### SOURCE END #####
+--></body></html>

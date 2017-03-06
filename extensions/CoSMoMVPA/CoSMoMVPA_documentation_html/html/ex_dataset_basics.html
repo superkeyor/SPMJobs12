@@ -1,0 +1,265 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Dataset basics &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Split-half correlation-based MVPA with group analysis" href="ex_splithalf_correlations.html" />
+    <link rel="prev" title="Exercises" href="cimec2016_ex_toc.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="ex_splithalf_correlations.html" title="Split-half correlation-based MVPA with group analysis"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cimec2016_ex_toc.html" title="Exercises"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" accesskey="U">Exercises</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="dataset-basics">
+<h1>Dataset basics<a class="headerlink" href="#dataset-basics" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="reading-material">
+<h2>Reading material<a class="headerlink" href="#reading-material" title="Permalink to this headline">¶</a></h2>
+<ul class="simple">
+<li><a class="reference internal" href="references.html#och16" id="id1">[OCH16]</a> - CoSMoMVPA manuscript</li>
+<li><a class="reference internal" href="references.html#hhs-09a" id="id2">[HHS+09a]</a> - PyMVPA manuscript, which inspired CoSMoMVPA data structures</li>
+<li><a class="reference internal" href="references.html#npd-06" id="id3">[NPDH06]</a> - an early MVPA review paper</li>
+</ul>
+<div class="section" id="fmri-dataset-basics">
+<h3>fMRI dataset basics<a class="headerlink" href="#fmri-dataset-basics" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="make-sure-your-setup-works">
+<h2>Make sure your setup works<a class="headerlink" href="#make-sure-your-setup-works" title="Permalink to this headline">¶</a></h2>
+<p>Before loading any data, please make sure that you:</p>
+<blockquote>
+<div><ul class="simple">
+<li>have the most recent CoSMoMVPA code (see <a class="reference internal" href="download.html#download"><span class="std std-ref">Download instructions</span></a>).</li>
+<li>have a recent version of the <a class="reference internal" href="download.html#get-tutorial-data"><span class="std std-ref">tutorial data</span></a>.</li>
+<li>have set paths properly in <code class="docutils literal"><span class="pre">.cosmomvpa.cfg</span></code> (described <a class="reference internal" href="download.html#set-cosmovmpa-cfg"><span class="std std-ref">here</span></a>)</li>
+<li>have <a class="reference internal" href="download.html#test-local-setup"><span class="std std-ref">tested</span></a> that you can load and save data from and to the paths in <code class="docutils literal"><span class="pre">.cosmomvpa.cfg</span></code>.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="very-first-exercise">
+<h2>Very first exercise<a class="headerlink" href="#very-first-exercise" title="Permalink to this headline">¶</a></h2>
+<p>We will start with a more complicated analysis first without explaining too much of the rationale now; that is left for later. Briefly, we will run a <em>searchlight analysis</em> using neural data while a participant viewed images of six different categories. The output is an information map that indicates where in the brain the distributed patterns are consistent yet different for the different categories.</p>
+<p>In this first exercise, you only have to add one line of code. To do this exercise, open the file linked to by Hint - this is a code <em>skeleton</em> because it has code left out. Make a new file in the Matlab / GNU Octave editor, paste the file contents, and the fill in the missing code.
+Run the code and a nifti file will be generated. You can visualize this using <a class="reference external" href="http://www.nitrc.org/projects/mricron">MRIcron</a> or other fMRI data viewers.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_fmri_correlation_searchlight_trivial_skl.html#run-fmri-correlation-searchlight-trivial-skl"><span class="std std-ref">run fmri correlation searchlight trivial skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_fmri_correlation_searchlight_trivial_skl.html#run-fmri-correlation-searchlight-trivial-skl"><span class="std std-ref">run fmri correlation searchlight trivial skl</span></a> / <a class="reference external" href="_static/publish/run_fmri_correlation_searchlight_trivial.html">Matlab output: run_fmri_correlation_searchlight_trivial</a></p>
+</div>
+<div class="section" id="load-and-view-anatomical-dataset">
+<h2>Load and view anatomical dataset<a class="headerlink" href="#load-and-view-anatomical-dataset" title="Permalink to this headline">¶</a></h2>
+<p>Before starting this exercise, please make sure you have read about:</p>
+<ul class="simple">
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-dataset"><span class="std std-ref">Dataset</span></a></li>
+<li><a class="reference internal" href="tips.html#matlab-octave-logical-masking"><span class="std std-ref">Logical masking</span></a></li>
+</ul>
+<p>Using some basic <a class="reference internal" href="matindex.html#matindex"><span class="std std-ref">CoSMoMVPA functions</span></a> we start loading a single NIFTI image of an anatomical scan.
+Use the function <a class="reference internal" href="matlab/cosmo_fmri_dataset.html#cosmo-fmri-dataset"><span class="std std-ref">cosmo fmri dataset</span></a> to load the nifti file of the brain of subject s01 (<code class="docutils literal"><span class="pre">brain.nii</span></code>) and assign the result to a struct &#8216;ds&#8217;. What is contained in this struct?</p>
+<p>Make a histogram of all voxels, and a second histogram of the non-zero voxels of the brain. There are two &#8216;bumps&#8217; - what do they represent?</p>
+<p>Display the dataset in saggital orientation.</p>
+<p>Set anterior voxels to zero, and display the result.</p>
+<p>Advanced exercise: set all voxels around a center voxel at <code class="docutils literal"><span class="pre">i=150,j=100,k=50</span></code> within a 40-voxel radius to zero, and display the result.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_anatomical_dataset_basics_skl.html#run-anatomical-dataset-basics-skl"><span class="std std-ref">run anatomical dataset basics skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_anatomical_dataset_basics.html#run-anatomical-dataset-basics"><span class="std std-ref">run anatomical dataset basics</span></a> / <a class="reference external" href="_static/publish/run_run_anatomical_dataset_basics.html">Matlab output: run_run_anatomical_dataset_basics</a></p>
+<div class="section" id="loading-datasets-with-a-mask">
+<h3>Loading datasets with a mask<a class="headerlink" href="#loading-datasets-with-a-mask" title="Permalink to this headline">¶</a></h3>
+<p>Before starting this exercise, please make sure you have read about:</p>
+<ul class="simple">
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-dataset"><span class="std std-ref">Dataset</span></a></li>
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-targets"><span class="std std-ref">Targets</span></a></li>
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-chunks"><span class="std std-ref">Chunks</span></a></li>
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-dataset-operations"><span class="std std-ref">Dataset operations</span></a></li>
+<li><a class="reference internal" href="tips.html#matlab-octave-logical-masking"><span class="std std-ref">Logical masking</span></a></li>
+</ul>
+<p>Before starting any analysis, it is usually necessary to indicate the targets (conditions) and chunks (indicating independence of data; for fRMI data, typically runs) for each row in a dataset&#8217;s <code class="docutils literal"><span class="pre">.samples</span></code> field.</p>
+<p>Using the function in <a class="reference internal" href="matlab/cosmo_fmri_dataset.html#cosmo-fmri-dataset"><span class="std std-ref">cosmo fmri dataset</span></a> load the dataset for subject s01
+(<code class="docutils literal"><span class="pre">glm_T_stats_perrun.nii</span></code>).</p>
+<ul>
+<li><p class="first">Set the <code class="docutils literal"><span class="pre">.sa.targets</span></code>, <code class="docutils literal"><span class="pre">.sa.chunks</span></code> and <code class="docutils literal"><span class="pre">.sa.labels</span></code>:</p>
+<blockquote>
+<div><ul>
+<li><p class="first">The stimulus labels for each run of the fMRI study were monkey, lemur, mallard, warbler, ladybug, and lunamoth &#8211; in that order. This dataset contains summary statistics (T statistics from the general linear model analysis, GLM) for each stimulus for each of ten runs. The runs are vertically stacked by run. For example, the first row contains the summary voxel-wise responses for monkey in run 1, the second row contains that for lemur in run 1, and the seventh row contains monkey from run 2, etc.</p>
+</li>
+<li><p class="first">Add samples atributes (dataset.sa) as follows.</p>
+<blockquote>
+<div><ul class="simple">
+<li>numeric labels for the targets,aka stimulus labels, in the samples attribute field dataset.sa.targets</li>
+<li>add another sample attribute for the chunks, aka run labels, in the field dataset.sa.chunks.</li>
+<li>optional: add a third sample attribute with labels (string representation) showing human-readable labels of the conditions.</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Load the VT mask, find where there are non-zero values in the mask, and apply it to the dataset using <a class="reference internal" href="matlab/cosmo_slice.html#cosmo-slice"><span class="std std-ref">cosmo slice</span></a>.</p>
+</li>
+<li><p class="first">Now use <a class="reference internal" href="matlab/cosmo_fmri_dataset.html#cosmo-fmri-dataset"><span class="std std-ref">cosmo fmri dataset</span></a>  with the <code class="docutils literal"><span class="pre">mask</span></code>, <code class="docutils literal"><span class="pre">targets</span></code> and <code class="docutils literal"><span class="pre">chunks</span></code> parameters; set <code class="docutils literal"><span class="pre">.sa.labels</span></code> as before, and verify you get the same dataset structure as before.</p>
+</li>
+</ul>
+<p>Advanced exercise: using <a class="reference internal" href="matlab/cosmo_slice.html#cosmo-slice"><span class="std std-ref">cosmo slice</span></a>, can you show the same figure as in the advanved exercise above where all voxels around a center voxels were set to zero?</p>
+<p>Hint: <a class="reference internal" href="matlab/run_dataset_basics_skl.html#run-dataset-basics-skl"><span class="std std-ref">run dataset basics skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_dataset_basics.html#run-dataset-basics"><span class="std std-ref">run dataset basics</span></a> / <a class="reference external" href="_static/publish/run_dataset_basics.html">Matlab output: run_dataset_basics</a></p>
+</div>
+<div class="section" id="operations-on-datasets">
+<h3>Operations on datasets<a class="headerlink" href="#operations-on-datasets" title="Permalink to this headline">¶</a></h3>
+<p>Before starting this exercise, please make sure you have read about:</p>
+<ul class="simple">
+<li><a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-dataset-operations"><span class="std std-ref">Dataset operations</span></a></li>
+</ul>
+<p>Now that you are familiar with the dataset, let&#8217;s play around a little.</p>
+<ul>
+<li><p class="first">Load the <code class="docutils literal"><span class="pre">glm_T_stats_perrun.nii</span></code> data with the VT mask for any subject.</p>
+</li>
+<li><p class="first">Slice samples in various ways (using <a class="reference internal" href="matlab/cosmo_slice.html#cosmo-slice"><span class="std std-ref">cosmo slice</span></a>):</p>
+<blockquote>
+<div><ul class="simple">
+<li>Get dataset with data in chunks 1 and 2</li>
+<li>Get dataset with data in conditions 1 and 3 (monkeys and mallards)</li>
+<li>Get one dataset with data that has all the primate data (monkey and lemur) and another dataset has only the bugs data (ladybug and lunamoth).</li>
+<li>Calculate the average pattern for primates and the average pattern for bugs.</li>
+<li>Subtract bugs from primates.</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Save the result as a dataset.</p>
+</li>
+<li><p class="first">Convert the dataset into a nifti format using the function <a class="reference internal" href="matlab/cosmo_map2fmri.html#cosmo-map2fmri"><span class="std std-ref">cosmo map2fmri</span></a>.</p>
+</li>
+<li><p class="first">Visualize the results using <code class="docutils literal"><span class="pre">imagesc</span></code> or <a class="reference internal" href="matlab/cosmo_plot_slices.html#cosmo-plot-slices"><span class="std std-ref">cosmo plot slices</span></a>, or save the nifti as a file and use some other software like AFNI&#8217;s or FSL&#8217;s viewer.</p>
+</li>
+</ul>
+<p>Optional exercise: use a whole-brain mask.</p>
+<p>Hint: <a class="reference internal" href="matlab/run_operations_on_datasets_skl.html#run-operations-on-datasets-skl"><span class="std std-ref">run operations on datasets skl</span></a></p>
+<p>Solution: <a class="reference internal" href="matlab/run_operations_on_datasets.html#run-operations-on-datasets"><span class="std std-ref">run operations on datasets</span></a> / <a class="reference external" href="_static/publish/run_operations_on_datasets.html">Matlab output: run_operations_on_datasets</a></p>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Dataset basics</a><ul>
+<li><a class="reference internal" href="#reading-material">Reading material</a><ul>
+<li><a class="reference internal" href="#fmri-dataset-basics">fMRI dataset basics</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#make-sure-your-setup-works">Make sure your setup works</a></li>
+<li><a class="reference internal" href="#very-first-exercise">Very first exercise</a></li>
+<li><a class="reference internal" href="#load-and-view-anatomical-dataset">Load and view anatomical dataset</a><ul>
+<li><a class="reference internal" href="#loading-datasets-with-a-mask">Loading datasets with a mask</a></li>
+<li><a class="reference internal" href="#operations-on-datasets">Operations on datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cimec2016_ex_toc.html"
+                        title="previous chapter">Exercises</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="ex_splithalf_correlations.html"
+                        title="next chapter">Split-half correlation-based MVPA with group analysis</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/ex_dataset_basics.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="ex_splithalf_correlations.html" title="Split-half correlation-based MVPA with group analysis"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cimec2016_ex_toc.html" title="Exercises"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="cimec2016_ex_toc.html" >Exercises</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

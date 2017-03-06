@@ -1,0 +1,7 @@
+.. _test_balance_partitions:
+
+test balance partitions
+=======================
+
+.. include :: test_balance_partitions.txt
+

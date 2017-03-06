@@ -1,0 +1,7 @@
+.. _cosmo_align_hdr:
+
+cosmo align hdr
+===============
+
+.. include :: cosmo_align_hdr.txt
+

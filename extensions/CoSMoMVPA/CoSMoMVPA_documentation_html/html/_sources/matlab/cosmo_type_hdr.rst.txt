@@ -1,0 +1,7 @@
+.. _cosmo_type_hdr:
+
+cosmo type hdr
+==============
+
+.. include :: cosmo_type_hdr.txt
+

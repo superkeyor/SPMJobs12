@@ -1,0 +1,394 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test meeg senstype collection &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test meeg source" href="test_meeg_source.html" />
+    <link rel="prev" title="test meeg read layout" href="test_meeg_read_layout.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_meeg_source.html" title="test meeg source"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_meeg_read_layout.html" title="test meeg read layout"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-meeg-senstype-collection">
+<span id="id1"></span><h1>test meeg senstype collection<a class="headerlink" href="#test-meeg-senstype-collection" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span><span class="p">=</span><span class="n">test_meeg_senstype_collection</span>
+<span class="c">% tests for cosmo_meeg_senstype_collection</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+<span class="k">function</span> <span class="nf">test_meeg_senstype_collection_</span>
+    <span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;fieldtrip&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% get senstype properties</span>
+    <span class="c">% order is:</span>
+    <span class="c">% - senstype name</span>
+    <span class="c">% - acquisition system</span>
+    <span class="c">% - sensor type</span>
+    <span class="c">% - number of rows in channels</span>
+    <span class="c">% - number of columns in channels</span>
+    <span class="c">% - first and last channel label</span>
+
+    <span class="n">senstype_props</span><span class="p">=</span><span class="n">get_senstype_properties</span><span class="p">();</span>
+
+    <span class="c">% test each one</span>
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">senstype_props</span><span class="p">);</span>
+
+    <span class="n">clear</span><span class="p">(</span><span class="s">&#39;cosmo_meeg_senstype_collection&#39;</span><span class="p">);</span>
+    <span class="n">stc</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+    <span class="n">stc_cached</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">stc</span><span class="p">,</span><span class="n">stc_cached</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">prop</span><span class="p">=</span><span class="n">senstype_props</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">is_required</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">prop</span><span class="p">)</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">7</span> <span class="o">&amp;&amp;</span> <span class="n">prop</span><span class="p">{</span><span class="mi">7</span><span class="p">};</span>
+
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">stc</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">sens</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">2</span><span class="p">};</span>
+            <span class="n">type</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">3</span><span class="p">};</span>
+            <span class="n">size_</span><span class="p">=[</span><span class="n">prop</span><span class="p">{</span><span class="mi">4</span><span class="p">:</span><span class="mi">5</span><span class="p">}];</span>
+            <span class="n">labels</span><span class="p">=</span><span class="n">prop</span><span class="p">{</span><span class="mi">6</span><span class="p">}(:);</span>
+
+            <span class="n">assert</span><span class="p">(</span><span class="n">isfield</span><span class="p">(</span><span class="n">stc</span><span class="p">,</span><span class="n">key</span><span class="p">));</span>
+            <span class="n">st</span><span class="p">=</span><span class="n">stc</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">sens</span><span class="p">,</span><span class="n">sens</span><span class="p">);</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">type</span><span class="p">,</span><span class="n">type</span><span class="p">);</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">label</span><span class="p">),</span><span class="n">size_</span><span class="p">);</span>
+            <span class="n">assertEqual</span><span class="p">(</span><span class="n">st</span><span class="p">.</span><span class="n">label</span><span class="p">([</span><span class="mi">1</span><span class="p">;</span><span class="k">end</span><span class="p">]),</span><span class="n">labels</span><span class="p">);</span>
+        <span class="k">elseif</span> <span class="n">is_required</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Missing key %s&#39;</span><span class="p">,</span><span class="n">key</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">test_meeg_senstype_collection_ft_regr_2016june</span>
+    <span class="k">if</span> <span class="n">cosmo_skip_test_if_no_external</span><span class="p">(</span><span class="s">&#39;fieldtrip&#39;</span><span class="p">)</span>
+            <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% since the following commit, ft_senstype supports</span>
+    <span class="c">%     ft_senslabel(&#39;neuromag306_combined&#39;)</span>
+    <span class="c">% but its output is different than was expected in</span>
+    <span class="c">% cosmo_meeg_senstype_collection. In particular the recent commit</span>
+    <span class="c">% includes the magnetometers, whereas the meeg_senstype</span>
+    <span class="c">% does not include those. This test is added as check for</span>
+    <span class="c">% such regressions</span>
+
+    <span class="c">% FieldTrip (https://github.com/fieldtrip/fieldtrip.git)</span>
+    <span class="c">% commit 882dba3426db583f7f4f9ac0cdf4eb3c26aaefc1</span>
+    <span class="c">% Author: Robert Oostenveld &lt;r.oostenveld@gmail.com&gt;</span>
+    <span class="c">% Date:   Wed Jun 22 12:47:47 2016 +0200</span>
+    <span class="c">%</span>
+    <span class="c">%     ENH - improve combined planar MEG sensor handling, see</span>
+    <span class="c">%     http://bugzilla.fieldtriptoolbox.org/show_bug.cgi?id=3144</span>
+
+    <span class="n">stc</span><span class="p">=</span><span class="n">cosmo_meeg_senstype_collection</span><span class="p">();</span>
+    <span class="n">label</span><span class="p">=</span><span class="n">stc</span><span class="p">.</span><span class="n">neuromag306_planar_combined</span><span class="p">.</span><span class="n">label</span><span class="p">;</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">label</span><span class="p">),[</span><span class="mi">102</span> <span class="mi">1</span><span class="p">]);</span>
+
+    <span class="n">present_labels</span><span class="p">={</span><span class="s">&#39;MEG 2642+2643&#39;</span><span class="p">,</span><span class="s">&#39;MEG 0112+0113&#39;</span><span class="p">};</span>
+    <span class="n">absent_labels</span><span class="p">={</span><span class="s">&#39;MEG0111&#39;&#39;,MEG0112&#39;</span><span class="p">,</span><span class="s">&#39;MEG0113&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;MEG2641&#39;&#39;,MEG2642&#39;</span><span class="p">,</span><span class="s">&#39;MEG2643&#39;</span><span class="p">};</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">present_labels</span><span class="p">,</span><span class="n">label</span><span class="p">(:))));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="o">~</span><span class="n">any</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">absent_labels</span><span class="p">,</span><span class="n">label</span><span class="p">(:))));</span>
+
+
+
+
+
+<span class="k">function</span><span class="w"> </span>props<span class="p">=</span><span class="nf">get_senstype_properties</span><span class="p">()</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">props</span><span class="p">={{</span> <span class="s">&#39;biosemi64&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;biosemi64&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">64</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;B32&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;biosemi128&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;biosemi128&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">128</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;D32&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;biosemi256&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;biosemi256&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">256</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;H32&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;bti148&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;bti148&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">148</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A148&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;bti148_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;bti148&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">148</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="s">&#39;A148_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;bti148_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;bti148&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">148</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A148&#39;</span><span class="p">},</span><span class="n">false</span><span class="p">},</span><span class="c">...  % not required</span>
+            <span class="p">{</span><span class="s">&#39;bti248&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;bti248&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">248</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A248&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;bti248_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;bti248&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">248</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;A1_dH&#39;</span><span class="p">,</span><span class="s">&#39;A248_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;bti248_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;bti248&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">248</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;A1&#39;</span><span class="p">,</span><span class="s">&#39;A248&#39;</span><span class="p">},</span><span class="n">false</span><span class="p">},</span><span class="c">...  % not required</span>
+            <span class="p">{</span><span class="s">&#39;ctf151&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ctf151&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">151</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MZP02&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ctf151&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">151</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="s">&#39;MZP02_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf151_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ctf151&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">151</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MZP02&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf275&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ctf275&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">275</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MZP01&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf275_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ctf275&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">275</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MLC11_dH&#39;</span><span class="p">,</span><span class="s">&#39;MZP01_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;ctf275_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ctf275&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">275</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MLC11&#39;</span><span class="p">,</span><span class="s">&#39;MZP01&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;eeg1005&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ext1020&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">343</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,</span><span class="s">&#39;T6&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;eeg1010&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ext1020&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">94</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,</span><span class="s">&#39;T6&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;eeg1020&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;ext1020&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">29</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;Fp1&#39;</span><span class="p">,</span><span class="s">&#39;T6&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;egi32&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;egi32&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">34</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;E1&#39;</span><span class="p">,</span><span class="s">&#39;Cz&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;egi64&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;egi64&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">66</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;E1&#39;</span><span class="p">,</span><span class="s">&#39;Cz&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;egi128&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;egi128&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">130</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;E1&#39;</span><span class="p">,</span><span class="s">&#39;Cz&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;egi256&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;egi256&#39;</span><span class="p">,</span><span class="s">&#39;eeg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">258</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;E1&#39;</span><span class="p">,</span><span class="s">&#39;Cz&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag122_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag122&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">61</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MEG 001+002&#39;</span><span class="p">,</span><span class="s">&#39;MEG 121+122&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag306&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">102</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MEG 0112+0113&#39;</span><span class="p">,</span><span class="s">&#39;MEG 2642+2643&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;itab153&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;itab153&#39;</span><span class="p">,</span><span class="s">&#39;meg&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">153</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MAG_000&#39;</span><span class="p">,</span><span class="s">&#39;MAG_152&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;itab153_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;itab153&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">153</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MAG_000_dH&#39;</span><span class="p">,</span><span class="s">&#39;MAG_152_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;itab153_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;itab153&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">153</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MAG_000&#39;</span><span class="p">,</span><span class="s">&#39;MAG_152&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa64&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa64&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">64</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;AG001&#39;</span><span class="p">,</span><span class="s">&#39;AG064&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa64_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa64&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">64</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;AG001_dH&#39;</span><span class="p">,</span><span class="s">&#39;AG064_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa64_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa64&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">64</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;AG001&#39;</span><span class="p">,</span><span class="s">&#39;AG064&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa160&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa160&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">160</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;AG001&#39;</span><span class="p">,</span><span class="s">&#39;AG160&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa160_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa160&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">160</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;AG001_dH&#39;</span><span class="p">,</span><span class="s">&#39;AG160_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa160_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa160&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">160</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;AG001&#39;</span><span class="p">,</span><span class="s">&#39;AG160&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa440&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa440&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">412</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;AG001&#39;</span><span class="p">,</span><span class="s">&#39;RM412&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa440_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa440&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">210</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;AG001_dH&#39;</span><span class="p">,</span><span class="s">&#39;AG392_dV&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;yokogawa440_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;yokogawa440&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">210</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;AG001&#39;</span><span class="p">,</span><span class="s">&#39;AG392&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag122alt_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag122&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">61</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MEG001+002&#39;</span><span class="p">,</span><span class="s">&#39;MEG121+122&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306alt_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag306&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar_combined&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">102</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MEG0112+0113&#39;</span><span class="p">,</span><span class="s">&#39;MEG2642+2643&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag306&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">102</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MEG 0112&#39;</span><span class="p">,</span><span class="s">&#39;MEG 2643&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306_mag&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag306&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">102</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MEG 0111&#39;</span><span class="p">,</span><span class="s">&#39;MEG 2641&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306alt_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag306&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">102</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MEG0112&#39;</span><span class="p">,</span><span class="s">&#39;MEG2643&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag306alt_mag&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag306&#39;</span><span class="p">,</span><span class="s">&#39;meg_axial&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">102</span><span class="p">,</span><span class="mi">1</span><span class="p">,{</span><span class="s">&#39;MEG0111&#39;</span><span class="p">,</span><span class="s">&#39;MEG2641&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag122_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag122&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">61</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MEG 001&#39;</span><span class="p">,</span><span class="s">&#39;MEG 122&#39;</span><span class="p">}},</span><span class="c">...</span>
+            <span class="p">{</span><span class="s">&#39;neuromag122alt_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;neuromag122&#39;</span><span class="p">,</span><span class="s">&#39;meg_planar&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="mi">61</span><span class="p">,</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;MEG001&#39;</span><span class="p">,</span><span class="s">&#39;MEG122&#39;</span><span class="p">}}};</span>
+
+
+    <span class="c">% the data anobe was produced by the code below</span>
+    <span class="c">%</span>
+    <span class="c">% sc=cosmo_meeg_senstype_collection();</span>
+    <span class="c">% names=fieldnames(sc);</span>
+    <span class="c">%</span>
+    <span class="c">% names={&#39;biosemi64&#39;,&#39;biosemi128&#39;,&#39;biosemi256&#39;,...</span>
+    <span class="c">%         &#39;bti148&#39;,&#39;bti148_planar&#39;,&#39;bti148_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;bti248&#39;,&#39;bti248_planar&#39;,&#39;bti248_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;ctf151&#39;,&#39;ctf151_planar&#39;,&#39;ctf151_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;ctf275&#39;,&#39;ctf275_planar&#39;,&#39;ctf275_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;eeg1005&#39;,&#39;eeg1010&#39;,&#39;eeg1020&#39;,...</span>
+    <span class="c">%         &#39;egi32&#39;,&#39;egi64&#39;,&#39;egi128&#39;,&#39;egi256&#39;,...</span>
+    <span class="c">%         &#39;neuromag122_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;neuromag306_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;itab153&#39;,&#39;itab153_planar&#39;,&#39;itab153_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;yokogawa64&#39;,&#39;yokogawa64_planar&#39;,&#39;yokogawa64_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;yokogawa160&#39;,&#39;yokogawa160_planar&#39;,...</span>
+    <span class="c">%                             &#39;yokogawa160_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;yokogawa440&#39;,&#39;yokogawa440_planar&#39;,...</span>
+    <span class="c">%                             &#39;yokogawa440_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;neuromag122alt_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;neuromag306alt_planar_combined&#39;,...</span>
+    <span class="c">%         &#39;neuromag306_planar&#39;,...</span>
+    <span class="c">%         &#39;neuromag306_mag&#39;,...</span>
+    <span class="c">%         &#39;neuromag306alt_planar&#39;,...</span>
+    <span class="c">%         &#39;neuromag306alt_mag&#39;,...</span>
+    <span class="c">%         &#39;neuromag122_planar&#39;,...</span>
+    <span class="c">%         &#39;neuromag122alt_planar&#39;};</span>
+    <span class="c">% for k=1:numel(names)</span>
+    <span class="c">%     name=names{k};</span>
+    <span class="c">%     s=sc.(name);</span>
+    <span class="c">%     fprintf([&#39;{&#39;&#39;%s&#39;&#39;,...\n\t\t&#39;&#39;%s&#39;&#39;,&#39;&#39;%s&#39;&#39;,...\n\t\t&#39;...</span>
+    <span class="c">%                 &#39;%d,%d,{&#39;&#39;%s&#39;&#39;,&#39;&#39;%s&#39;&#39;}},...\n&#39;],...</span>
+    <span class="c">%             name,s.sens,s.type,size(s.label),s.label{1},s.label{end})</span>
+    <span class="c">% end</span>
+    <span class="c">%</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_meeg_read_layout.html"
+                        title="previous chapter">test meeg read layout</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_meeg_source.html"
+                        title="next chapter">test meeg source</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_meeg_senstype_collection.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_meeg_source.html" title="test meeg source"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_meeg_read_layout.html" title="test meeg read layout"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

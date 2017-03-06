@@ -1,0 +1,342 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Spherical searchlight</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_spherical_neighborhood_searchlight.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Spherical searchlight</h1><!--introduction--><p>this example implements a spherical searchlight using cosmo_spherical_neighborhood and performs crossvalidation with a nearest neigh classifier</p><p>Note: for running searchlights it is recommended to use       cosmo_searchlight and cosmo_spherical_neighborhood</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Set up parameters</a></li><li><a href="#2">load data and set sample attributes</a></li><li><a href="#3">define centers of searchlight</a></li><li><a href="#4">use voxel selection function</a></li><li><a href="#5">set up cross validation</a></li><li><a href="#6">Allocate space for output</a></li><li><a href="#7">Run the searchlight</a></li><li><a href="#8">store the output</a></li><li><a href="#9">Plot a few slices</a></li></ul></div><h2>Set up parameters<a name="1"></a></h2><pre class="codeinput">config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+output_path=fullfile(config.output_data_path);
+
+fn=fullfile(data_path,<span class="string">'glm_T_stats_perrun.nii'</span>);
+maskfn=fullfile(data_path,<span class="string">'brain_mask.nii'</span>);
+radius=3;
+targets=repmat(1:6,1,10);
+chunks=floor(((1:60)-1)/6)+1;
+classifier=@cosmo_classify_nn;
+classifier_opt=struct();
+</pre><h2>load data and set sample attributes<a name="2"></a></h2><pre class="codeinput">ds=cosmo_fmri_dataset(fn, <span class="string">'mask'</span>, maskfn, <span class="keyword">...</span>
+                          <span class="string">'targets'</span>, targets, <span class="keyword">...</span>
+                          <span class="string">'chunks'</span>, chunks);
+
+fprintf(<span class="string">'Input dataset:\n'</span>);
+cosmo_disp(ds);
+</pre><pre class="codeoutput">Input dataset:
+.a                                                                        
+  .vol                                                                    
+    .mat                                                                  
+      [ -3         0         0       121                                  
+         0         3         0      -114                                  
+         0         0         3     -11.1                                  
+         0         0         0         1 ]                                
+    .xform                                                                
+      'scanner_anat'                                                      
+    .dim                                                                  
+      [ 80        80        43 ]                                          
+  .fdim                                                                   
+    .labels                                                               
+      { 'i'                                                               
+        'j'                                                               
+        'k' }                                                             
+    .values                                                               
+      { [ 1         2         3  ...  78        79        80 ]@1x80       
+        [ 1         2         3  ...  78        79        80 ]@1x80       
+        [ 1         2         3  ...  41        42        43 ]@1x43 }     
+.sa                                                                       
+  .targets                                                                
+    [ 1                                                                   
+      2                                                                   
+      3                                                                   
+      :                                                                   
+      4                                                                   
+      5                                                                   
+      6 ]@60x1                                                            
+  .chunks                                                                 
+    [  1                                                                  
+       1                                                                  
+       1                                                                  
+       :                                                                  
+      10                                                                  
+      10                                                                  
+      10 ]@60x1                                                           
+.samples                                                                  
+  [  0.933  0.000495       2.1  ...   0.681     0.626     0.421           
+    -0.772     0.117      1.73  ...   0.723     0.892       1.7           
+     0.621      1.52     -0.25  ...  -0.341    -0.832    -0.546           
+       :        :         :             :         :         :             
+     -2.37     -1.92    -0.879  ...   0.784      0.67     0.522           
+    -0.261     0.351   -0.0767  ...    2.81      2.27    -0.947           
+     -1.29    -0.964    -0.966  ...   0.827     0.833     0.991 ]@60x43822
+.fa                                                                       
+  .i                                                                      
+    [ 35        36        44  ...  46        47        47 ]@1x43822       
+  .j                                                                      
+    [ 17        17        17  ...  35        35        36 ]@1x43822       
+  .k                                                                      
+    [ 1         1         1  ...  39        39        39 ]@1x43822        
+</pre><h2>define centers of searchlight<a name="3"></a></h2><pre class="codeinput">nfeatures=size(ds.samples,2);
+center_ids=1:nfeatures;
+</pre><h2>use voxel selection function<a name="4"></a></h2><pre class="codeinput">nbrhood=cosmo_spherical_neighborhood(ds, <span class="string">'radius'</span>,radius);
+center2neighbors=nbrhood.neighbors;
+ncenters=numel(center2neighbors); <span class="comment">% should be equal to 'nfeatures'</span>
+</pre><pre class="codeoutput">+00:00:07 [####################] -00:00:00  mean size 111.5
+</pre><h2>set up cross validation<a name="5"></a></h2><p>(here we use cosmo_oddeven_partitioner; cosmo_nfold_partitioner would be another possiblity, with the advantage of using a larger training set, but the disadvantage that it takes longer to run)</p><pre class="codeinput">partitions=cosmo_oddeven_partitioner(ds.sa.chunks);
+</pre><h2>Allocate space for output<a name="6"></a></h2><pre class="codeinput">ncenters=numel(center_ids);
+accs=zeros(1,ncenters);
+</pre><h2>Run the searchlight<a name="7"></a></h2><p>go over all features: in each iteration, slice the dataset to get the desired features using center2neighbors, then use cosmo_crossvalidate to get classification accuracies (it's its second output argument), and store the classiifcation accuracies.</p><p>Note: it is generally easier (and faster) to use cosmo_searchlight       and cosmo_crossvalidation_measure; this example here is for       illustrative purposes mainly</p><pre class="codeinput"><span class="comment">% use cosmo_show_progress to show a pretty progress bar</span>
+prev_msg=<span class="string">''</span>;
+clock_start=clock();
+show_progress_every=1000;
+<span class="keyword">for</span> k=1:ncenters
+    <span class="comment">% &gt;@@&gt;</span>
+    center_id=center_ids(k);
+    sphere_feature_ids=center2neighbors{center_id};
+
+    sphere_ds=cosmo_slice(ds, sphere_feature_ids, 2);
+
+    <span class="comment">% run cross validation</span>
+    [pred_cv,acc]=cosmo_crossvalidate(sphere_ds, classifier, <span class="keyword">...</span>
+                                        partitions, classifier_opt);
+
+    <span class="comment">% for now, just store the accuracy (not the predictions)</span>
+    accs(center_id)=acc;
+
+    <span class="comment">% &lt;@@&lt;</span>
+
+    <span class="comment">% show progress every 1000 steps, and at the beginning and end.</span>
+    <span class="keyword">if</span> k==1 || mod(k,show_progress_every)==0 || k==nfeatures
+        mean_so_far=mean(accs(1:k));
+        msg=sprintf(<span class="string">'accuracy %.3f (%d features visited)'</span>, mean_so_far, k);
+        prev_msg=cosmo_show_progress(clock_start,k/ncenters,msg,prev_msg);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">+00:07:00 [####################] -00:00:00  accuracy 0.202 (43822 features visited)
+</pre><h2>store the output<a name="8"></a></h2><p>this uses the neighborhood from spherical voxel selection, after removing the fields neighbors and origin</p><pre class="codeinput">res_map=nbrhood;
+res_map=rmfield(res_map,{<span class="string">'neighbors'</span>,<span class="string">'origin'</span>});
+res_map.samples=accs;
+
+<span class="comment">% little sanity check</span>
+cosmo_check_dataset(ds);
+
+fprintf(<span class="string">'Output dataset:\n'</span>);
+cosmo_disp(res_map);
+
+
+output_fn=fullfile(output_path, <span class="string">'spherical_neighborhood_searchlight.nii'</span>);
+cosmo_map2fmri(res_map, output_fn);
+fprintf(<span class="string">'Output written to %s\n'</span>, output_fn);
+</pre><pre class="codeoutput">Output dataset:
+.a                                                                      
+  .vol                                                                  
+    .mat                                                                
+      [ -3         0         0       121                                
+         0         3         0      -114                                
+         0         0         3     -11.1                                
+         0         0         0         1 ]                              
+    .xform                                                              
+      'scanner_anat'                                                    
+    .dim                                                                
+      [ 80        80        43 ]                                        
+  .fdim                                                                 
+    .labels                                                             
+      { 'i'                                                             
+        'j'                                                             
+        'k' }                                                           
+    .values                                                             
+      { [ 1         2         3  ...  78        79        80 ]@1x80     
+        [ 1         2         3  ...  78        79        80 ]@1x80     
+        [ 1         2         3  ...  41        42        43 ]@1x43 }   
+.fa                                                                     
+  .nvoxels                                                              
+    [ 42        46        45  ...  41        41        38 ]@1x43822     
+  .radius                                                               
+    [ 3         3         3  ...  3         3         3 ]@1x43822       
+  .center_ids                                                           
+    [ 1         2         3  ...  4.38e+04  4.38e+04  4.38e+04 ]@1x43822
+  .i                                                                    
+    [ 35        36        44  ...  46        47        47 ]@1x43822     
+  .j                                                                    
+    [ 17        17        17  ...  35        35        36 ]@1x43822     
+  .k                                                                    
+    [ 1         1         1  ...  39        39        39 ]@1x43822      
+.samples                                                                
+  [ 0.2    0.0833      0.35  ...  0.267     0.183     0.117 ]@1x43822   
+Output written to /Users/nick/organized/tmp/cosmo_output/spherical_neighborhood_searchlight.nii
+</pre><h2>Plot a few slices<a name="9"></a></h2><pre class="codeinput">cosmo_plot_slices(res_map);
+</pre><img vspace="5" hspace="5" src="run_spherical_neighborhood_searchlight_01.png" alt=""> <p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Spherical searchlight
+% this example implements a spherical searchlight using
+% cosmo_spherical_neighborhood and performs crossvalidation
+% with a nearest neigh classifier
+%
+% Note: for running searchlights it is recommended to use
+%       cosmo_searchlight and cosmo_spherical_neighborhood
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+
+%% Set up parameters
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+output_path=fullfile(config.output_data_path);
+
+fn=fullfile(data_path,'glm_T_stats_perrun.nii');
+maskfn=fullfile(data_path,'brain_mask.nii');
+radius=3;
+targets=repmat(1:6,1,10);
+chunks=floor(((1:60)-1)/6)+1;
+classifier=@cosmo_classify_nn;
+classifier_opt=struct();
+
+%% load data and set sample attributes
+ds=cosmo_fmri_dataset(fn, 'mask', maskfn, ...
+                          'targets', targets, ...
+                          'chunks', chunks);
+
+fprintf('Input dataset:\n');
+cosmo_disp(ds);
+
+%% define centers of searchlight
+nfeatures=size(ds.samples,2);
+center_ids=1:nfeatures;
+
+%% use voxel selection function
+nbrhood=cosmo_spherical_neighborhood(ds, 'radius',radius);
+center2neighbors=nbrhood.neighbors;
+ncenters=numel(center2neighbors); % should be equal to 'nfeatures'
+
+%% set up cross validation
+% (here we use cosmo_oddeven_partitioner; cosmo_nfold_partitioner would be
+% another possiblity, with the advantage of using a larger training set,
+% but the disadvantage that it takes longer to run)
+partitions=cosmo_oddeven_partitioner(ds.sa.chunks);
+
+%% Allocate space for output
+ncenters=numel(center_ids);
+accs=zeros(1,ncenters);
+
+%% Run the searchlight
+% go over all features: in each iteration, slice the dataset to get the
+% desired features using center2neighbors, then use cosmo_crossvalidate
+% to get classification accuracies (it's its second output argument),
+% and store the classiifcation accuracies.
+%
+% Note: it is generally easier (and faster) to use cosmo_searchlight
+%       and cosmo_crossvalidation_measure; this example here is for
+%       illustrative purposes mainly
+
+% use cosmo_show_progress to show a pretty progress bar
+prev_msg='';
+clock_start=clock();
+show_progress_every=1000;
+for k=1:ncenters
+    % >@@>
+    center_id=center_ids(k);
+    sphere_feature_ids=center2neighbors{center_id};
+
+    sphere_ds=cosmo_slice(ds, sphere_feature_ids, 2);
+
+    % run cross validation
+    [pred_cv,acc]=cosmo_crossvalidate(sphere_ds, classifier, ...
+                                        partitions, classifier_opt);
+
+    % for now, just store the accuracy (not the predictions)
+    accs(center_id)=acc;
+
+    % <@@<
+
+    % show progress every 1000 steps, and at the beginning and end.
+    if k==1 || mod(k,show_progress_every)==0 || k==nfeatures
+        mean_so_far=mean(accs(1:k));
+        msg=sprintf('accuracy %.3f (%d features visited)', mean_so_far, k);
+        prev_msg=cosmo_show_progress(clock_start,k/ncenters,msg,prev_msg);
+    end
+end
+
+%% store the output
+% this uses the neighborhood from spherical voxel selection,
+% after removing the fields neighbors and origin
+res_map=nbrhood;
+res_map=rmfield(res_map,{'neighbors','origin'});
+res_map.samples=accs;
+
+% little sanity check
+cosmo_check_dataset(ds);
+
+fprintf('Output dataset:\n');
+cosmo_disp(res_map);
+
+
+output_fn=fullfile(output_path, 'spherical_neighborhood_searchlight.nii');
+cosmo_map2fmri(res_map, output_fn);
+fprintf('Output written to %s\n', output_fn);
+
+%% Plot a few slices
+cosmo_plot_slices(res_map);
+
+##### SOURCE END #####
+--></body></html>

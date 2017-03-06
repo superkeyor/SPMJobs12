@@ -1,0 +1,230 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo tail &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo target dsm corr measure" href="cosmo_target_dsm_corr_measure.html" />
+    <link rel="prev" title="cosmo synthetic dataset" href="cosmo_synthetic_dataset.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_target_dsm_corr_measure.html" title="cosmo target dsm corr measure"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_synthetic_dataset.html" title="cosmo synthetic dataset"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-tail">
+<span id="id1"></span><h1>cosmo tail<a class="headerlink" href="#cosmo-tail" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>[tail_values, idxs]<span class="p">=</span><span class="nf">cosmo_tail</span><span class="p">(</span>values, to_select<span class="p">)</span><span class="w"></span>
+<span class="c">% find values in left or right tail of a vector or string</span>
+<span class="c">%</span>
+<span class="c">% [tail_values, idxs]=cosmo_tail(values, to_select)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   values             vector or cell with strings</span>
+<span class="c">%   to_select          - if between -1 and 1, then (abs(to_select))*100%</span>
+<span class="c">%                        (rounded up to the nearest integer) values</span>
+<span class="c">%                        are returned</span>
+<span class="c">%                      - otherwise, abs(to_select) values are returned</span>
+<span class="c">%                      Negative values return the smallest values, positive</span>
+<span class="c">%                      values return the largest values</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   tail_values        the largest or smallest values in values</span>
+<span class="c">%   idxs               the indices of the values in tail_values, i.e.</span>
+<span class="c">%                      tail_values=values(idxs)</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % two largest values</span>
+<span class="c">%     [v,i]=cosmo_tail(10:15,2)</span>
+<span class="c">%     &gt; v = 15 14</span>
+<span class="c">%     &gt; i = 6 5</span>
+<span class="c">%</span>
+<span class="c">%     % two smallest values</span>
+<span class="c">%     [v,i]=cosmo_tail(10:15,-2)</span>
+<span class="c">%     &gt; v = 10 11</span>
+<span class="c">%     &gt; i = 1 2</span>
+<span class="c">%</span>
+<span class="c">%     % 40% largest values</span>
+<span class="c">%     [v,i]=cosmo_tail(10:15,.4)</span>
+<span class="c">%     &gt; v = 15 14 13</span>
+<span class="c">%     &gt; i = 6 5 4</span>
+<span class="c">%</span>
+<span class="c">%     % 40% smallest values</span>
+<span class="c">%     [v,i]=cosmo_tail(10:15,-.4)</span>
+<span class="c">%     &gt; v = 10 11 12</span>
+<span class="c">%     &gt; i = 1 2 3</span>
+<span class="c">%</span>
+<span class="c">%     % 40% largest values</span>
+<span class="c">%     [v,i]=cosmo_tail({&#39;a&#39;,&#39;d&#39;,&#39;c&#39;,&#39;b&#39;},.4)</span>
+<span class="c">%     &gt; v = &#39;d&#39; &#39;c&#39;</span>
+<span class="c">%     &gt; i = 2 3</span>
+<span class="c">%</span>
+<span class="c">%     % 70% smallest values</span>
+<span class="c">%     [v,i]=cosmo_tail({&#39;a&#39;,&#39;d&#39;,&#39;c&#39;,&#39;b&#39;},-.7)</span>
+<span class="c">%     &gt; v = &#39;a&#39; &#39;b&#39; &#39;c&#39;</span>
+<span class="c">%     &gt; i = 1 4 3</span>
+<span class="c">%</span>
+<span class="c">%     % matrix input is not supported</span>
+<span class="c">%     [v,i]=cosmo_tail(zeros(3),-.7)</span>
+<span class="c">%     &gt; error(&#39;Only vector or cell with strings input is supported&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % values exceeding the size of the input is not supported</span>
+<span class="c">%     [v,i]=cosmo_tail(10:15,66)</span>
+<span class="c">%     &gt; error(&#39;Cannot select 66 values: input has 6 values&#39;);</span>
+<span class="c">%</span>
+<span class="c">%     % second argument must be scalar</span>
+<span class="c">%     [v,i]=cosmo_tail(10:15,[2,3])</span>
+<span class="c">%     &gt; error(&#39;Second argument must be scalar&#39;);</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">check_input</span><span class="p">(</span><span class="n">values</span><span class="p">,</span> <span class="n">to_select</span><span class="p">);</span>
+
+    <span class="n">right_tail</span><span class="p">=</span><span class="n">to_select</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">;</span>
+    <span class="n">tail_value</span><span class="p">=</span><span class="nb">abs</span><span class="p">(</span><span class="n">to_select</span><span class="p">);</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">values</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">tail_value</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="n">tail_value</span><span class="o">&gt;</span><span class="n">n</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Cannot select %d values: input has %d values&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="n">tail_value</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="n">ntail</span><span class="p">=</span><span class="n">tail_value</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">ntail</span><span class="p">=</span><span class="nb">ceil</span><span class="p">(</span><span class="n">n</span><span class="o">*</span><span class="n">tail_value</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="n">all_idxs</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">values</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">right_tail</span>
+        <span class="n">all_idxs</span><span class="p">=</span><span class="n">all_idxs</span><span class="p">(</span><span class="k">end</span><span class="p">:</span><span class="o">-</span><span class="mi">1</span><span class="p">:</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">idxs</span><span class="p">=</span><span class="n">all_idxs</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">ntail</span><span class="p">);</span>
+    <span class="n">tail_values</span><span class="p">=</span><span class="n">values</span><span class="p">(</span><span class="n">idxs</span><span class="p">);</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span>values, to_select<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="nb">isvector</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">isnumeric</span><span class="p">(</span><span class="n">values</span><span class="p">)</span> <span class="o">||</span> <span class="n">iscellstr</span><span class="p">(</span><span class="n">values</span><span class="p">)))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Only vector or cell with strings input is supported&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="nb">isscalar</span><span class="p">(</span><span class="n">to_select</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">to_select</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Second argument must be scalar&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_synthetic_dataset.html"
+                        title="previous chapter">cosmo synthetic dataset</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_target_dsm_corr_measure.html"
+                        title="next chapter">cosmo target dsm corr measure</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_tail.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_target_dsm_corr_measure.html" title="cosmo target dsm corr measure"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_synthetic_dataset.html" title="cosmo synthetic dataset"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

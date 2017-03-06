@@ -1,0 +1,7 @@
+.. _run_crossvalidation_searchlight_skl:
+
+run crossvalidation searchlight skl
+===================================
+
+.. include :: run_crossvalidation_searchlight_skl.txt
+

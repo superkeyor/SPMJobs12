@@ -1,0 +1,7 @@
+.. _test_normalize:
+
+test normalize
+==============
+
+.. include :: test_normalize.txt
+

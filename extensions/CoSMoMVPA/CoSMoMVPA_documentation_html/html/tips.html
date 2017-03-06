@@ -1,0 +1,253 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Tips and tricks &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="prev" title="Exercises" href="prni2016_ex_toc.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="prni2016_ex_toc.html" title="Exercises"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="tips-and-tricks">
+<span id="tips"></span><h1><a class="toc-backref" href="#id1">Tips and tricks</a><a class="headerlink" href="#tips-and-tricks" title="Permalink to this headline">¶</a></h1>
+<div class="contents topic" id="contents">
+<p class="topic-title first">Contents</p>
+<ul class="simple">
+<li><a class="reference internal" href="#tips-and-tricks" id="id1">Tips and tricks</a><ul>
+<li><a class="reference internal" href="#advanced-matlab-octave-concepts" id="id2">Advanced Matlab / Octave concepts</a></li>
+<li><a class="reference internal" href="#general-tips-and-tricks" id="id3">General tips and tricks</a></li>
+</ul>
+</li>
+</ul>
+</div>
+<div class="section" id="advanced-matlab-octave-concepts">
+<h2><a class="toc-backref" href="#id2">Advanced Matlab / Octave concepts</a><a class="headerlink" href="#advanced-matlab-octave-concepts" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="logical-masking">
+<span id="matlab-octave-logical-masking"></span><h3>Logical masking<a class="headerlink" href="#logical-masking" title="Permalink to this headline">¶</a></h3>
+<p>A logical mask is an array of type <code class="docutils literal"><span class="pre">logical</span></code>, and can only contain values <code class="docutils literal"><span class="pre">true</span></code> and <code class="docutils literal"><span class="pre">false</span></code>.</p>
+<p>For example,</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">my_arr</span><span class="p">=[</span><span class="n">false</span><span class="p">,</span> <span class="n">true</span><span class="p">,</span>  <span class="n">true</span><span class="p">;</span> <span class="c">...</span>
+        <span class="n">true</span><span class="p">,</span>  <span class="n">false</span><span class="p">,</span> <span class="n">false</span><span class="p">];</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>is an <code class="docutils literal"><span class="pre">2x3</span></code> array, and values in this array can be indexed as other (e.g. numeric, cell) arrays. For example,</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">my_arr</span><span class="p">(:,</span><span class="mi">3</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>returns the array in the third colum, that is the <code class="docutils literal"><span class="pre">2x1</span></code> column vector <code class="docutils literal"><span class="pre">[true;</span> <span class="pre">false]</span></code>. Note that when showing a logical array, Matlab / Octave do not show <code class="docutils literal"><span class="pre">false</span></code> or <code class="docutils literal"><span class="pre">true</span></code> values, but <code class="docutils literal"><span class="pre">0</span></code> and <code class="docutils literal"><span class="pre">1</span></code> respectively. To see whether a variable <code class="docutils literal"><span class="pre">a</span></code> is a logical array, run <code class="docutils literal"><span class="pre">whos</span> <span class="pre">a</span></code>.</p>
+<p>A logical array <code class="docutils literal"><span class="pre">a</span></code> can be used to index another array <code class="docutils literal"><span class="pre">b</span></code>, where the result of indexing is an array <code class="docutils literal"><span class="pre">c</span></code> that contains the elements of <code class="docutils literal"><span class="pre">b</span></code> only where <code class="docutils literal"><span class="pre">a</span></code> is equal to <code class="docutils literal"><span class="pre">true</span></code>. Thus, in this example</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">my_mask</span><span class="p">=[</span><span class="n">false</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">false</span><span class="p">,</span><span class="n">true</span><span class="p">,</span><span class="n">false</span><span class="p">];</span>
+<span class="n">my_data</span><span class="p">=</span><span class="mi">11</span><span class="p">:</span><span class="mi">16</span><span class="p">;</span>
+
+<span class="n">my_masked_data</span><span class="p">=</span><span class="n">my_data</span><span class="p">(</span><span class="n">my_mask</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>the contents of <code class="docutils literal"><span class="pre">my_masked_data</span></code> is contains the elements of my_data at positions <code class="docutils literal"><span class="pre">2</span></code>, <code class="docutils literal"><span class="pre">3</span></code> and <code class="docutils literal"><span class="pre">5</span></code>, i.e. <code class="docutils literal"><span class="pre">my_masked_data=[12,13,15]</span></code>. Although it would be equivalent to use (what some may find more intuitive) <code class="docutils literal"><span class="pre">my_mask_data=my_data(find(my_mask))</span></code>, this expression is longer to write and takes a longer time to execute.</p>
+<p>Logical arrays can be constructed with the comparison operators <code class="docutils literal"><span class="pre">&lt;</span></code>, <code class="docutils literal"><span class="pre">&lt;=</span></code>, <code class="docutils literal"><span class="pre">==</span></code>, <code class="docutils literal"><span class="pre">~=</span></code>, <code class="docutils literal"><span class="pre">&gt;</span></code>, and <code class="docutils literal"><span class="pre">&gt;=</span></code>; for example,</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">my_data</span><span class="p">=[</span><span class="mi">11</span><span class="p">:</span><span class="mi">16</span><span class="p">,</span> <span class="mi">13</span><span class="p">:</span><span class="mi">15</span> <span class="mi">9</span><span class="p">]</span>
+<span class="n">mask_at_least_12</span><span class="p">=</span><span class="n">my_data</span><span class="o">&gt;</span><span class="mi">12</span><span class="p">;</span>
+<span class="n">mask_equal_13</span><span class="p">=</span><span class="n">my_data</span><span class="o">==</span><span class="mi">13</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>returns logical masks of the same size as <code class="docutils literal"><span class="pre">my_data</span></code> with values <code class="docutils literal"><span class="pre">true</span></code> where <code class="docutils literal"><span class="pre">my_data</span></code> is at least <code class="docutils literal"><span class="pre">12</span></code> (<code class="docutils literal"><span class="pre">[false,</span> <span class="pre">false,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">false]</span></code>)  and equal to <code class="docutils literal"><span class="pre">13</span></code> (<code class="docutils literal"><span class="pre">[false,</span> <span class="pre">false,</span> <span class="pre">true,</span> <span class="pre">false,</span> <span class="pre">false,</span> <span class="pre">false,</span> <span class="pre">true,</span> <span class="pre">false,</span> <span class="pre">false,</span> <span class="pre">false]</span></code>), respectively.</p>
+<p>Finally, the logical operators <code class="docutils literal"><span class="pre">~</span></code> (negation), <code class="docutils literal"><span class="pre">&amp;</span></code> (element-wise logical-and), and <code class="docutils literal"><span class="pre">|</span></code> (element-wise logical-or) can be used as operators on two logical masks. Thus, in</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">a</span><span class="p">=[</span><span class="n">false</span><span class="p">,</span> <span class="n">true</span><span class="p">,</span> <span class="n">false</span><span class="p">,</span> <span class="n">true</span><span class="p">];</span>
+<span class="n">b</span><span class="p">=[</span><span class="n">false</span><span class="p">,</span> <span class="n">false</span><span class="p">,</span> <span class="n">true</span><span class="p">,</span> <span class="n">true</span><span class="p">];</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>the expressions:</p>
+<blockquote>
+<div><ul class="simple">
+<li><code class="docutils literal"><span class="pre">~a</span></code> has the value <code class="docutils literal"><span class="pre">true</span></code> where-ever the corresponding value in <code class="docutils literal"><span class="pre">a</span></code> is false: <code class="docutils literal"><span class="pre">[true,</span> <span class="pre">false,</span> <span class="pre">true,</span> <span class="pre">false]</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">a</span> <span class="pre">&amp;</span> <span class="pre">b</span></code> has the value <code class="docutils literal"><span class="pre">true</span></code> where-ever the corresponding values in <code class="docutils literal"><span class="pre">a</span></code> and <code class="docutils literal"><span class="pre">b</span></code> are both <code class="docutils literal"><span class="pre">true</span></code>: <code class="docutils literal"><span class="pre">[false,</span> <span class="pre">false,</span> <span class="pre">false,</span> <span class="pre">true]</span></code>.</li>
+<li><code class="docutils literal"><span class="pre">a</span> <span class="pre">|</span> <span class="pre">b</span></code> has the value <code class="docutils literal"><span class="pre">true</span></code> where-ever at least one of the corresponding values in <code class="docutils literal"><span class="pre">a</span></code> and <code class="docutils literal"><span class="pre">b</span></code> is <code class="docutils literal"><span class="pre">true</span></code>: <code class="docutils literal"><span class="pre">[false,</span> <span class="pre">true,</span> <span class="pre">true,</span> <span class="pre">true]</span></code>.</li>
+</ul>
+</div></blockquote>
+<p>When using the logical operators <code class="docutils literal"><span class="pre">a</span> <span class="pre">&amp;</span> <span class="pre">b</span></code> and <code class="docutils literal"><span class="pre">a</span> <span class="pre">|</span> <span class="pre">b</span></code>, it is required that <code class="docutils literal"><span class="pre">a</span></code> and <code class="docutils literal"><span class="pre">b</span></code> are of the same size.</p>
+</div>
+<div class="section" id="function-handles">
+<span id="matlab-octave-function-handles"></span><h3>Function handles<a class="headerlink" href="#function-handles" title="Permalink to this headline">¶</a></h3>
+<p><a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a> uses the <em>function handle</em> construct for improved modularity when using <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-classifier"><span class="std std-ref">classifiers</span></a> and <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-measure"><span class="std std-ref">measures</span></a>. These are references to functions which can be assigned to a variable. The function can be called by calling the name of the variable with parentheses.</p>
+<p>For example,</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">do_magic</span> <span class="p">=</span> <span class="p">@</span><span class="nb">sin</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>means that</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">y</span><span class="p">=</span><span class="n">do_magic</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>is equivalent to</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">y</span><span class="p">=</span><span class="nb">sin</span><span class="p">(</span><span class="n">x</span><span class="p">)</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>When using this for measures,</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>allows using different measures (i.e. functions) by just changing one line of code, for example to</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">measure</span><span class="p">=@</span><span class="n">my_awesome_measure</span><span class="p">;</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>which allows reusing code for future analyses and analysis methods. This concept is key not only for <a class="reference internal" href="cosmomvpa_concepts.html#cosmomvpa-measure"><span class="std std-ref">measures</span></a> but also for <a class="reference internal" href="cosmomvpa_concepts.html#searchlight"><span class="std std-ref">searchlight analyses</span></a>. For example, given a suitable neighborhood <code class="docutils literal"><span class="pre">nbrhood</span></code> and measure options <code class="docutils literal"><span class="pre">opt</span></code>,</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_correlation_measure</span><span class="p">;</span>
+<span class="n">ds_corr</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>computes a split-half correlation searchlight map; changing only the top line (and with suitable measure options in <code class="docutils literal"><span class="pre">opt</span></code>),</p>
+<blockquote>
+<div><div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="n">measure</span><span class="p">=@</span><span class="n">cosmo_crossvalidation_measure</span><span class="p">;</span>
+<span class="n">ds_corr</span><span class="p">=</span><span class="n">cosmo_searchlight</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">nh</span><span class="p">,</span><span class="n">measure</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+</pre></div>
+</div>
+</div></blockquote>
+<p>computes a classification accuracy searchlight map - just by changing the function handle (and the associated measure options in <code class="docutils literal"><span class="pre">opt</span></code>). Importantly, the same neighborhood structure and the same searchlight code is used in both cases.</p>
+<p>For more information about function handles, run in Matlab: <code class="docutils literal"><span class="pre">help</span> <span class="pre">function_handle</span></code></p>
+</div>
+</div>
+<div class="section" id="general-tips-and-tricks">
+<h2><a class="toc-backref" href="#id3">General tips and tricks</a><a class="headerlink" href="#general-tips-and-tricks" title="Permalink to this headline">¶</a></h2>
+<p>Here is a short list of tips and tricks that may make life easier when using <a class="reference external" href="http://cosmomvpa.org">CoSMoMVPA</a>.</p>
+<ul class="simple">
+<li>Use <a class="reference internal" href="matlab/cosmo_disp.html#cosmo-disp"><span class="std std-ref">cosmo disp</span></a> to show the contents of a dataset structure (or any other data structure)</li>
+<li>Use <code class="docutils literal"><span class="pre">help</span> <span class="pre">cosmo_function</span></code> to view the help contents of a function. Most functions have an <code class="docutils literal"><span class="pre">example</span></code> section which shows how the function can be used.</li>
+<li>Use <a class="reference internal" href="matlab/cosmo_check_dataset.html#cosmo-check-dataset"><span class="std std-ref">cosmo check dataset</span></a> when manually changing contents of a dataset structure. It will catch basic errors in dataset</li>
+<li>Use <a class="reference internal" href="matlab/cosmo_check_partitions.html#cosmo-check-partitions"><span class="std std-ref">cosmo check partitions</span></a> when manually creating partitions.</li>
+<li>When slicing datasets, often <a class="reference internal" href="matlab/cosmo_match.html#cosmo-match"><span class="std std-ref">cosmo match</span></a> can be used to get logical masks that match a (array of) numbers of strings.</li>
+<li>For feature selection in MEEG datasets (in particular, selection over time), consider <a class="reference internal" href="matlab/cosmo_dim_match.html#cosmo-dim-match"><span class="std std-ref">cosmo dim match</span></a> and <a class="reference internal" href="matlab/cosmo_dim_prune.html#cosmo-dim-prune"><span class="std std-ref">cosmo dim prune</span></a>.</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Tips and tricks</a><ul>
+<li><a class="reference internal" href="#advanced-matlab-octave-concepts">Advanced Matlab / Octave concepts</a><ul>
+<li><a class="reference internal" href="#logical-masking">Logical masking</a></li>
+<li><a class="reference internal" href="#function-handles">Function handles</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#general-tips-and-tricks">General tips and tricks</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="prni2016_ex_toc.html"
+                        title="previous chapter">Exercises</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/tips.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="prni2016_ex_toc.html" title="Exercises"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

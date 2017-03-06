@@ -1,0 +1,7 @@
+.. _cosmo_isequaln_hdr:
+
+cosmo isequaln hdr
+==================
+
+.. include :: cosmo_isequaln_hdr.txt
+

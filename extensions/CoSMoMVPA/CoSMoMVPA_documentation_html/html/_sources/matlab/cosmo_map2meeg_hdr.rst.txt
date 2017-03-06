@@ -1,0 +1,7 @@
+.. _cosmo_map2meeg_hdr:
+
+cosmo map2meeg hdr
+==================
+
+.. include :: cosmo_map2meeg_hdr.txt
+

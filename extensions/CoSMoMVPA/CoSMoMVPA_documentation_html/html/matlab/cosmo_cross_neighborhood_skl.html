@@ -1,0 +1,434 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo cross neighborhood skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo crossvalidate skl" href="cosmo_crossvalidate_skl.html" />
+    <link rel="prev" title="cosmo correlation measure skl" href="cosmo_correlation_measure_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_crossvalidate_skl.html" title="cosmo crossvalidate skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_correlation_measure_skl.html" title="cosmo correlation measure skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-cross-neighborhood-skl">
+<span id="id1"></span><h1>cosmo cross neighborhood skl<a class="headerlink" href="#cosmo-cross-neighborhood-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>crossed_nbrhood<span class="p">=</span><span class="nf">cosmo_cross_neighborhood</span><span class="p">(</span>ds, nbrhoods, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% cross neighborhoods along dataset dimensions</span>
+<span class="c">%</span>
+<span class="c">% crossed_nbrhood=cosmo_cross_neighborhood(ds,nbrhoods,...)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds            dataset struct</span>
+<span class="c">%   nbrhoods      1xK cell with neighborhood structs. Each element can be</span>
+<span class="c">%                 the output from cosmo_spherical_neighborhood,</span>
+<span class="c">%                 cosmo_meeg_chan_neighborhood,</span>
+<span class="c">%                 cosmo_surficial_neighborhood, or</span>
+<span class="c">%                 cosmo_interval_neighborhood.</span>
+<span class="c">%   &#39;progress&#39;,p  if p is true, then progress is shown</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   crossed_nbrhood neighborhood struct with fields .[f]a and .neighbors,</span>
+<span class="c">%                   constructed by intersecting the neighborhoods from the</span>
+<span class="c">%                   input.</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     % Illustrate neighborhood by crossing freq and time, with freq</span>
+<span class="c">%     % 5 bins wide and time 3 bins wide. Each neighborhood contains all</span>
+<span class="c">%     % the channels, repeated up to 5*3=15 times (fewer at the border)</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;type&#39;,&#39;timefreq&#39;,&#39;size&#39;,&#39;big&#39;);</span>
+<span class="c">%     freq_nbrhood=cosmo_interval_neighborhood(ds,&#39;freq&#39;,&#39;radius&#39;,3);</span>
+<span class="c">%     time_nbrhood=cosmo_interval_neighborhood(ds,&#39;time&#39;,&#39;radius&#39;,5);</span>
+<span class="c">%     nbrhood=cosmo_cross_neighborhood(ds, {freq_nbrhood, time_nbrhood},...</span>
+<span class="c">%                                                    &#39;progress&#39;,false);</span>
+<span class="c">%     cosmo_disp(nbrhood.a.fdim)</span>
+<span class="c">%     &gt; .values</span>
+<span class="c">%     &gt;   { [ 2         4         6  ...  10        12        14 ]@1x7</span>
+<span class="c">%     &gt;     [ -0.2     -0.15      -0.1     -0.05         0 ]           }</span>
+<span class="c">%     &gt; .labels</span>
+<span class="c">%     &gt;   { &#39;freq&#39;</span>
+<span class="c">%     &gt;     &#39;time&#39; }</span>
+<span class="c">%     cosmo_disp(nbrhood.fa)</span>
+<span class="c">%     &gt; .freq</span>
+<span class="c">%     &gt;   [ 1         2         3  ...  5         6         7 ]@1x35</span>
+<span class="c">%     &gt; .time</span>
+<span class="c">%     &gt;   [ 1         1         1  ...  5         5         5 ]@1x35</span>
+<span class="c">%     cosmo_disp(nbrhood.neighbors)</span>
+<span class="c">%     &gt; { [ 1   2   3  ...  9.79e+03  9.79e+03  9.79e+03 ]@1x6120</span>
+<span class="c">%     &gt;   [ 1   2   3  ...  1.01e+04  1.01e+04  1.01e+04 ]@1x7650</span>
+<span class="c">%     &gt;   [ 1   2   3  ...  1.04e+04  1.04e+04  1.04e+04 ]@1x9180</span>
+<span class="c">%     &gt;                                    :</span>
+<span class="c">%     &gt;   [ 307 308 309  ...  1.07e+04  1.07e+04  1.07e+04 ]@1x9180</span>
+<span class="c">%     &gt;   [ 613 614 615  ...  1.07e+04  1.07e+04  1.07e+04 ]@1x7650</span>
+<span class="c">%     &gt;   [ 919 920 921  ...  1.07e+04  1.07e+04  1.07e+04 ]@1x6120 }@35x1</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_spherical_neighborhood, cosmo_meeg_chan_neighborhood,</span>
+<span class="c">%           cosmo_interval_neighborhood</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+    <span class="n">check_nbrhoods</span><span class="p">(</span><span class="n">nbrhoods</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="n">default</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="mi">1000</span><span class="p">;</span>
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">default</span><span class="p">,</span> <span class="n">varargin</span><span class="p">{:});</span>
+
+    <span class="n">ndim</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbrhoods</span><span class="p">);</span>
+
+    <span class="n">dims</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">dims</span><span class="p">.</span><span class="n">nbrs</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ndim</span><span class="p">);</span>
+    <span class="n">dims</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ndim</span><span class="p">);</span>
+    <span class="n">dims</span><span class="p">.</span><span class="n">values</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ndim</span><span class="p">);</span>
+    <span class="n">dims</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">ndim</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ndim</span>
+        <span class="n">nbrhood</span><span class="p">=</span><span class="n">ensure_sorted</span><span class="p">(</span><span class="n">nbrhoods</span><span class="p">{</span><span class="n">k</span><span class="p">});</span>
+
+        <span class="n">dims</span><span class="p">.</span><span class="n">nbrs</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">;</span>
+        <span class="n">dims</span><span class="p">.</span><span class="n">values</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">(:);</span>
+        <span class="n">dims</span><span class="p">.</span><span class="n">labels</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">(:);</span>
+        <span class="n">dims</span><span class="p">.</span><span class="n">fa</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="c">% merge labels and values</span>
+    <span class="n">dim_labels</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">dims</span><span class="p">.</span><span class="n">labels</span><span class="p">{:});</span>
+    <span class="n">dim_values</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">dims</span><span class="p">.</span><span class="n">values</span><span class="p">{:});</span>
+
+    <span class="n">ds_labels</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">;</span>
+
+    <span class="c">% check labels</span>
+    <span class="n">check_labels</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span><span class="n">ds_labels</span><span class="p">);</span>
+
+    <span class="c">% optimization: compute conjunctions differently in Matlab and Octave</span>
+    <span class="n">is_matlab</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">);</span>
+
+    <span class="c">% compute conjunctions of neighborhoods</span>
+    <span class="p">[</span><span class="n">nbr_idxs</span><span class="p">,</span> <span class="n">nbr_map_idxs</span><span class="p">]=</span><span class="n">conj_indices</span><span class="p">(</span><span class="n">dims</span><span class="p">.</span><span class="n">nbrs</span><span class="p">,</span> <span class="c">...</span>
+                                        <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">,</span> <span class="n">is_matlab</span><span class="p">);</span>
+
+    <span class="c">% slice feature attributes</span>
+    <span class="n">fa_nbrs</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">ndim</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ndim</span>
+        <span class="n">fa</span><span class="p">=</span><span class="n">dims</span><span class="p">.</span><span class="n">fa</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">fa_nbrs</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">fa</span><span class="p">,</span><span class="n">nbr_map_idxs</span><span class="p">(</span><span class="n">k</span><span class="p">,:),</span><span class="mi">2</span><span class="p">,</span><span class="s">&#39;struct&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">crossed_nbrhood</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">=</span><span class="n">nbr_idxs</span><span class="p">;</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">fa_nbrs</span><span class="p">);</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">values</span><span class="p">=</span><span class="n">dim_values</span><span class="p">;</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">fdim</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">dim_labels</span><span class="p">;</span>
+
+    <span class="n">origin</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">origin</span><span class="p">.</span><span class="n">a</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">a</span><span class="p">;</span>
+    <span class="n">origin</span><span class="p">.</span><span class="n">fa</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">fa</span><span class="p">;</span>
+    <span class="n">crossed_nbrhood</span><span class="p">.</span><span class="n">origin</span><span class="p">=</span><span class="n">origin</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_nbrhoods</span><span class="p">(</span>nbrhoods,ds<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">iscell</span><span class="p">(</span><span class="n">nbrhoods</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;second argument must a be cell of the form &#39;</span><span class="c">...</span>
+                <span class="s">&#39;{nbrhood1, nbrhood2, ...}, where each nbrhood* &#39;</span><span class="c">...</span>
+                <span class="s">&#39;is a neighborhood structure&#39;</span><span class="p">]);</span>
+    <span class="k">end</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbrhoods</span><span class="p">)</span>
+        <span class="n">nbrhood</span><span class="p">=</span><span class="n">nbrhoods</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="n">cosmo_check_neighborhood</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">,</span><span class="n">ds</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span>nbrhood<span class="p">=</span><span class="nf">ensure_sorted</span><span class="p">(</span>nbrhood<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% ensure everything is sorted, as the helper function</span>
+    <span class="c">% &#39;conj_indices&#39; requires that</span>
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">)</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">issorted</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="nb">j</span><span class="p">})</span>
+            <span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="nb">j</span><span class="p">}=</span><span class="n">sort</span><span class="p">(</span><span class="n">nbrhood</span><span class="p">.</span><span class="n">neighbors</span><span class="p">{</span><span class="nb">j</span><span class="p">});</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_labels</span><span class="p">(</span>dim_labels,ds_labels<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% ensure no duplicate or missing labels</span>
+    <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">sort</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">),</span> <span class="n">unique</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                    <span class="o">~</span><span class="p">(</span><span class="nb">isempty</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">))</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Duplicate dimension labels in %s&#39;</span><span class="p">,</span> <span class="c">...</span>
+                    <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span><span class="s">&#39;,&#39;</span><span class="p">));</span>
+    <span class="k">elseif</span> <span class="o">~</span><span class="n">all</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span> <span class="n">ds_labels</span><span class="p">))</span>
+        <span class="n">delta</span><span class="p">=</span><span class="n">setdiff</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,</span> <span class="n">ds_labels</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;dimension label unknown in dataset: %s&#39;</span><span class="p">,</span> <span class="n">delta</span><span class="p">{</span><span class="mi">1</span><span class="p">});</span>
+    <span class="k">end</span>
+
+    <span class="n">show_warning_if_weird_dim_label_order</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">show_warning_if_weird_dim_label_order</span><span class="p">(</span>dim_labels<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">expected_order</span><span class="p">={</span><span class="s">&#39;chan&#39;</span><span class="p">,</span><span class="s">&#39;freq&#39;</span><span class="p">,</span><span class="s">&#39;time&#39;</span><span class="p">};</span>
+
+    <span class="n">norder</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">expected_order</span><span class="p">);</span>
+
+    <span class="n">pos_in_ds</span><span class="p">=@(</span><span class="n">needle</span><span class="p">)</span><span class="nb">find</span><span class="p">(</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">dim_labels</span><span class="p">,{</span><span class="n">needle</span><span class="p">}));</span>
+
+    <span class="k">for</span> <span class="nb">i</span><span class="p">=</span><span class="mi">1</span><span class="p">:(</span><span class="n">norder</span><span class="o">-</span><span class="mi">1</span><span class="p">)</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=(</span><span class="nb">i</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="n">norder</span>
+            <span class="n">pre_label</span><span class="p">=</span><span class="n">expected_order</span><span class="p">{</span><span class="nb">i</span><span class="p">};</span>
+            <span class="n">pre</span><span class="p">=</span><span class="n">pos_in_ds</span><span class="p">(</span><span class="n">pre_label</span><span class="p">);</span>
+
+            <span class="n">post_label</span><span class="p">=</span><span class="n">expected_order</span><span class="p">{</span><span class="nb">j</span><span class="p">};</span>
+            <span class="n">post</span><span class="p">=</span><span class="n">pos_in_ds</span><span class="p">(</span><span class="n">post_label</span><span class="p">);</span>
+
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">pre</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                    <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">post</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                    <span class="n">pre</span><span class="o">&gt;</span><span class="n">post</span>
+                <span class="n">cosmo_warning</span><span class="p">([</span><span class="s">&#39;dimension labels &#39;&#39;%s&#39;&#39; and &#39;&#39;%s&#39;&#39; are &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;in an uncommon order, which may cause &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;issues when exporting data to FieldTrip &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;or EEGLAB. It is strongly adviced &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;to change the order of the input &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;neighborhoods so that dimension &#39;&#39;%s&#39;&#39;&#39;</span><span class="c">...</span>
+                        <span class="s">&#39;preceeds dimension &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">],</span><span class="c">...</span>
+                         <span class="n">pre_label</span><span class="p">,</span><span class="n">post_label</span><span class="p">,</span><span class="n">post_label</span><span class="p">,</span><span class="n">pre_label</span><span class="p">);</span>
+
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+
+
+
+
+<span class="k">function</span><span class="w"> </span>[flat_idxs, map_idxs]<span class="p">=</span><span class="nf">conj_indices</span><span class="p">(</span>dim_idxs, show_progress, use_fast<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% computes conjunction indices</span>
+    <span class="c">%</span>
+    <span class="c">% Input:</span>
+    <span class="c">%   dim_idxs     A NDIMx1 cell, each with X_v cells with indices</span>
+    <span class="c">%                As used in this function, dim_idxs{dim}{j} are the</span>
+    <span class="c">%                sorted indices with feature attribute for the</span>
+    <span class="c">%                dim-th value equal to j.</span>
+    <span class="c">%</span>
+    <span class="c">% Outputs:</span>
+    <span class="c">%   flat_idxs    Nx1 cell values where N=prod(X_*), each of which</span>
+    <span class="c">%                has the linear indices of the neighbors of an output</span>
+    <span class="c">%                feature.</span>
+    <span class="c">%   map_idxs     N*ndim matrix with values in the dim-th column</span>
+    <span class="c">%                in the range 1..X_dim. This can be used to index the</span>
+    <span class="c">%                values in flat_idxs through sub-indices.</span>
+
+    <span class="n">ndim</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">dim_idxs</span><span class="p">);</span>
+
+    <span class="c">% consider first dimension (&#39;head&#39;)</span>
+    <span class="n">head</span><span class="p">=</span><span class="n">dim_idxs</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+    <span class="n">nhead</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">head</span><span class="p">);</span>
+    <span class="n">head_map</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nhead</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">ndim</span><span class="o">==</span><span class="mi">1</span>
+        <span class="c">% done</span>
+        <span class="n">flat_idxs</span><span class="p">=</span><span class="n">head</span><span class="p">;</span>
+        <span class="n">map_idxs</span><span class="p">=</span><span class="n">head_map</span><span class="p">;</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="c">% compute indices for remaining dimensions (&#39;tail&#39;), using recursion</span>
+    <span class="p">[</span><span class="n">tail</span><span class="p">,</span> <span class="n">tail_map</span><span class="p">]=</span><span class="n">conj_indices</span><span class="p">(</span><span class="n">dim_idxs</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">),</span> <span class="n">false</span><span class="p">,</span> <span class="n">use_fast</span><span class="p">);</span>
+    <span class="n">ntail</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">tail</span><span class="p">);</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">n</span><span class="p">=</span><span class="n">nhead</span><span class="o">*</span><span class="n">ntail</span><span class="p">;</span>
+    <span class="n">flat_idxs</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">map_idxs</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">ndim</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">show_progress</span>
+        <span class="n">prev_msg</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+        <span class="n">clock_start</span><span class="p">=</span><span class="n">clock</span><span class="p">();</span>
+    <span class="k">end</span>
+
+    <span class="c">% combine the dimensions</span>
+    <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">ntail</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nhead</span>
+            <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">headk</span><span class="p">=</span><span class="n">head</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+            <span class="k">if</span> <span class="n">use_fast</span>
+                <span class="n">flat_idxs</span><span class="p">{</span><span class="n">pos</span><span class="p">}=</span><span class="n">fast_intersect</span><span class="p">(</span><span class="n">headk</span><span class="p">,</span> <span class="n">tail</span><span class="p">{</span><span class="nb">j</span><span class="p">});</span>
+            <span class="k">else</span>
+                <span class="n">flat_idxs</span><span class="p">{</span><span class="n">pos</span><span class="p">}=</span><span class="n">intersect</span><span class="p">(</span><span class="n">headk</span><span class="p">,</span> <span class="n">tail</span><span class="p">{</span><span class="nb">j</span><span class="p">});</span>
+            <span class="k">end</span>
+
+            <span class="n">map_idxs</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">pos</span><span class="p">)=</span><span class="n">head_map</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+            <span class="n">map_idxs</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">,</span><span class="n">pos</span><span class="p">)=</span><span class="n">tail_map</span><span class="p">(:,</span><span class="nb">j</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="n">show_progress</span>
+            <span class="n">msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;crossing neighborhoods&#39;</span><span class="p">);</span>
+            <span class="n">prev_msg</span><span class="p">=</span><span class="n">cosmo_show_progress</span><span class="p">(</span><span class="n">clock_start</span><span class="p">,</span><span class="nb">j</span><span class="o">/</span><span class="n">ntail</span><span class="p">,</span><span class="n">msg</span><span class="p">,</span><span class="n">prev_msg</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>xy<span class="p">=</span><span class="nf">fast_intersect</span><span class="p">(</span>x,y<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% finds the intersection between two vectors</span>
+    <span class="c">%</span>
+    <span class="c">% xy=fast_intersect(x,y)</span>
+    <span class="c">%</span>
+    <span class="c">% Inputs:</span>
+    <span class="c">%   x     numeric vector with elements sorted.</span>
+    <span class="c">%   y     &quot;                                  &quot;</span>
+    <span class="c">%</span>
+    <span class="c">% Returns:</span>
+    <span class="c">%   xy    numeric vector containing elements present in both x and y,</span>
+    <span class="c">%         without duplicates and with elements sorted.</span>
+    <span class="c">%</span>
+    <span class="c">% Notes:</span>
+    <span class="c">%  - this function runs in O(n) compared to O(n*log(n)) with</span>
+    <span class="c">%    n=max(numel(x),numel(y)) for the built-in function &#39;intersect&#39;,</span>
+    <span class="c">%    as that function sorts the input data first.</span>
+    <span class="c">%  - in matlab it runs a factor 2 or 3 faster</span>
+    <span class="c">%  - in Octave it is very very slow for large inputs</span>
+
+    <span class="n">nx</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+    <span class="n">ny</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+    <span class="n">n</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">nx</span><span class="p">,</span><span class="n">ny</span><span class="p">);</span> <span class="c">% maximum size possible for output</span>
+
+    <span class="n">xy</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">n</span><span class="p">);</span> <span class="c">% allocate space for output</span>
+
+    <span class="n">pos</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span> <span class="c">% last position where a value was stored in xy</span>
+    <span class="n">xi</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>  <span class="c">% position in x</span>
+    <span class="n">yi</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>  <span class="c">% position in y</span>
+
+    <span class="k">while</span> <span class="n">xi</span><span class="o">&lt;</span><span class="p">=</span><span class="n">nx</span> <span class="o">&amp;&amp;</span> <span class="n">yi</span><span class="o">&lt;</span><span class="p">=</span><span class="n">ny</span>
+        <span class="k">if</span> <span class="n">x</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">&lt;</span><span class="n">y</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span>
+            <span class="n">xi</span><span class="p">=</span><span class="n">xi</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">elseif</span> <span class="n">x</span><span class="p">(</span><span class="n">xi</span><span class="p">)</span><span class="o">&gt;</span><span class="n">y</span><span class="p">(</span><span class="n">yi</span><span class="p">)</span>
+            <span class="n">yi</span><span class="p">=</span><span class="n">yi</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">else</span> <span class="c">% x(xi)==y(yi); keep the value</span>
+            <span class="n">pos</span><span class="p">=</span><span class="n">pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">xy</span><span class="p">(</span><span class="n">pos</span><span class="p">)=</span><span class="n">x</span><span class="p">(</span><span class="n">xi</span><span class="p">);</span>
+
+            <span class="n">xi</span><span class="p">=</span><span class="n">xi</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">yi</span><span class="p">=</span><span class="n">yi</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">xy</span><span class="p">=</span><span class="n">xy</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">pos</span><span class="p">);</span> <span class="c">% only keep stored elements</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_correlation_measure_skl.html"
+                        title="previous chapter">cosmo correlation measure skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_crossvalidate_skl.html"
+                        title="next chapter">cosmo crossvalidate skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_cross_neighborhood_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_crossvalidate_skl.html" title="cosmo crossvalidate skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_correlation_measure_skl.html" title="cosmo correlation measure skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

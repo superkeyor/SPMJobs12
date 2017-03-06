@@ -1,0 +1,866 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Documentation &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Demonstrations - full listings" href="contents_demo.html" />
+    <link rel="prev" title="CoSMoMVPA concepts" href="cosmomvpa_concepts.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="contents_demo.html" title="Demonstrations - full listings"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmomvpa_concepts.html" title="CoSMoMVPA concepts"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="documentation">
+<span id="id1"></span><h1>Documentation<a class="headerlink" href="#documentation" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="overview">
+<h2>Overview<a class="headerlink" href="#overview" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contents_demo.html">Demonstrations - full listings</a></li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Get Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download instructions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2016.html">CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2016.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked/Anticipated Questions</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Information for contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html#information-for-contributing-programmers">Information for contributing <em>programmers</em></a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#contributors">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#citations">Citations</a></li>
+<li class="toctree-l1"><a class="reference internal" href="copyright.html">Copyright information</a></li>
+<li class="toctree-l1"><a class="reference internal" href="changelog.html">Changelog</a></li>
+<li class="toctree-l1"><a class="reference internal" href="references.html">References</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="detailed">
+<h2>Detailed<a class="headerlink" href="#detailed" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contents_demo.html">Demonstrations - full listings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-correlation-searchlight">demo_fmri_correlation_searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-distatis">demo_fmri_distatis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-rois">demo_fmri_rois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-searchlight-lda">demo_fmri_searchlight_lda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-searchlight-naive-bayes">demo_fmri_searchlight_naive_bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-searchlight-rsm">demo_fmri_searchlight_rsm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-dataset-operations">demo_meeg_dataset_operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timefreq-searchlight">demo_meeg_timefreq_searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timelock-searchlight">demo_meeg_timelock_searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timeseries-classification">demo_meeg_timeseries_classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timeseries-generalization">demo_meeg_timeseries_generalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-surface-searchlight-lda">demo_surface_searchlight_lda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-surface-tfce">demo_surface_tfce</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Get Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="download.html">Download instructions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_experience.html">Matlab experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cogneuro_experience.html">Cognitive neuroscience experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mvpa_concepts.html">Multivariate pattern analysis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cosmomvpa_concepts.html">CoSMoMVPA concepts</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started.html#get-your-environment-ready">Get your environment ready</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started.html#next-steps">Next steps</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="download.html#get-the-code-and-example-data">Get the code and example data</a></li>
+<li class="toctree-l2"><a class="reference internal" href="download.html#keep-your-code-up-to-date">Keep your code up to date</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2016.html">CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cimec2016.html#contents">Contents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="cimec2016.html#miscellaneous">Miscellaneous</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2016.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked/Anticipated Questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i">How do I ...</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contact.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html#bugs-and-other-issues">Bugs and other issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Information for contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#directory-locations-and-naming-conventions">Directory locations and naming conventions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html#information-for-contributing-programmers">Information for contributing <em>programmers</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#code-development">Code development</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#build-system">Build system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#matlab-code-guidelines">Matlab code guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#cosmomvpa-specific-guidelines">CoSMoMVPA-specific guidelines</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#test-suite">Test suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#good-tests">Good tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#contributors">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#citations">Citations</a></li>
+</ul>
+</div>
+</div>
+<div class="section" id="full-documentation">
+<h2>Full documentation<a class="headerlink" href="#full-documentation" title="Permalink to this headline">¶</a></h2>
+<div class="toctree-wrapper compound">
+<ul>
+<li class="toctree-l1"><a class="reference internal" href="contents_demo.html">Demonstrations - full listings</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-correlation-searchlight">demo_fmri_correlation_searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-distatis">demo_fmri_distatis</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-rois">demo_fmri_rois</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-searchlight-lda">demo_fmri_searchlight_lda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-searchlight-naive-bayes">demo_fmri_searchlight_naive_bayes</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-fmri-searchlight-rsm">demo_fmri_searchlight_rsm</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-dataset-operations">demo_meeg_dataset_operations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timefreq-searchlight">demo_meeg_timefreq_searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timelock-searchlight">demo_meeg_timelock_searchlight</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timeseries-classification">demo_meeg_timeseries_classification</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-meeg-timeseries-generalization">demo_meeg_timeseries_generalization</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-surface-searchlight-lda">demo_surface_searchlight_lda</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contents_demo.html#demo-surface-tfce">demo_surface_tfce</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="get_started.html">Get Started</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="download.html">Download instructions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="download.html#get-the-code-and-example-data">Get the code and example data</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="download.html#for-the-impatient">For the impatient</a></li>
+<li class="toctree-l4"><a class="reference internal" href="download.html#for-the-patient">For the patient</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="download.html#keep-your-code-up-to-date">Keep your code up to date</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="download.html#external-dependencies">External dependencies</a></li>
+<li class="toctree-l4"><a class="reference internal" href="download.html#developers">Developers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="matlab_experience.html">Matlab experience</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matlab_experience.html#advanced-beginner">Advanced beginner</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matlab_experience.html#competent-user">Competent user</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matlab_experience.html#proficient-user">Proficient user</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cogneuro_experience.html">Cognitive neuroscience experience</a></li>
+<li class="toctree-l2"><a class="reference internal" href="mvpa_concepts.html">Multivariate pattern analysis</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="mvpa_concepts.html#multivariate-pattern-analysis-mvpa">Multivariate pattern analysis (MVPA)</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="mvpa_concepts.html#starting-simple-the-univariate-case">Starting simple: the univariate case</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mvpa_concepts.html#more-measurements-the-multivariate-case">More measurements: the multivariate case</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mvpa_concepts.html#patterns">Patterns</a></li>
+<li class="toctree-l4"><a class="reference internal" href="mvpa_concepts.html#further-reading">Further reading</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cosmomvpa_concepts.html">CoSMoMVPA concepts</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cosmomvpa_concepts.html#dataset">Dataset</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cosmomvpa_concepts.html#attributes">Attributes</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cosmomvpa_concepts.html#sample-attributes">Sample attributes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cosmomvpa_concepts.html#feature-attributes">Feature attributes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cosmomvpa_concepts.html#dataset-attributes">Dataset attributes</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="cosmomvpa_concepts.html#targets">Targets</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmomvpa_concepts.html#chunks">Chunks</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmomvpa_concepts.html#samples-sample-attributes-feature-attributes-dataset-attributes-dataset">Samples + sample attributes + feature attributes + dataset attributes = dataset</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cosmomvpa_concepts.html#dataset-operations">Dataset operations</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cosmomvpa_concepts.html#slicing">Slicing</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmomvpa_concepts.html#slicing-related-functions">Slicing-related functions</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cosmomvpa_concepts.html#classifier">Classifier</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cosmomvpa_concepts.html#measure">Measure</a></li>
+<li class="toctree-l3"><a class="reference internal" href="cosmomvpa_concepts.html#neighborhood">Neighborhood</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="get_started.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started.html#get-your-environment-ready">Get your environment ready</a></li>
+<li class="toctree-l2"><a class="reference internal" href="get_started.html#next-steps">Next steps</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="get_started.html#analysis-gallery">Analysis gallery</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="download.html">Download instructions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="download.html#get-the-code-and-example-data">Get the code and example data</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="download.html#for-the-impatient">For the impatient</a></li>
+<li class="toctree-l3"><a class="reference internal" href="download.html#for-the-patient">For the patient</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="download.html#keep-your-code-up-to-date">Keep your code up to date</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="download.html#external-dependencies">External dependencies</a></li>
+<li class="toctree-l3"><a class="reference internal" href="download.html#developers">Developers</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cosmo2013.html">CoSMo 2013 Multivariate Pattern Analysis Workshop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013.html#contents">Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cosmo2013_intro.html">Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cosmo2013_intro.html#goals-of-the-workshop">Goals of the workshop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmo2013_intro.html#mvpa-dataset">MVPA Dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmo2013_intro.html#code-for-the-workshop">Code for the workshop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmo2013_intro.html#sample-dataset">Sample Dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cosmo2013_intro.html#plan-for-the-day">Plan for the day</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cosmo2013_ex_toc.html">Exercises</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ex_dataset_basics.html">Dataset basics</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#fmri-dataset-basics">fMRI dataset basics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#make-sure-your-setup-works">Make sure your setup works</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#very-first-exercise">Very first exercise</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#load-and-view-anatomical-dataset">Load and view anatomical dataset</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#loading-datasets-with-a-mask">Loading datasets with a mask</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#operations-on-datasets">Operations on datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_splithalf_correlations.html">Split-half correlation-based MVPA with group analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#background">Background</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#exercise">Exercise</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-1-single-subject-analysis">Part 1 (single subject analysis)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-2-group-study">Part 2 (group study)</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_classify_naive_bayes.html">Classification with Naive Bayes classifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ex_write_classify_nn.html">Write your own Nearest-neighbor classifier</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ex_classify_svm.html">Build wrapper for Matlab&#8217;s SVM classifier</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_svm.html#wrapper-for-two-classes">Wrapper for two classes</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_svm.html#wrapper-for-multiple-classes">Wrapper for multiple classes</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_nfold_partitioner.html">Cross-validation part 1: N-Fold Partitioner</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ex_crossvalidate.html">Cross-validation part 2: using multiple classifiers</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ex_crossvalidation_measure.html">Cross-validation part 3: using a dataset measure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ex_rsa_visualization.html">Visualization of DSMs</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_visualization.html#visualizing-dissimilarity-matrices">Visualizing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_visualization.html#centering-the-data">Centering the data</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_rsa_tutorial.html">Representational similarity analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#visualizing-dissimilarity-matrices">Visualizing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#comparing-dissimilarity-matrices">Comparing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#target-dissimilarity-matrix-searchlight">Target dissimilarity matrix searchlight</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_sphere_offsets.html">Define voxel selection for a searchlight</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_sphere_offsets.html#compute-voxel-offsets-in-a-sphere">Compute voxel offsets in a sphere</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_sphere_offsets.html#using-the-sphere-offsets-for-voxel-selection">Using the sphere offsets for voxel selection</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_searchlight.html">Write a searchlight function that computes a generic dataset measure</a></li>
+<li class="toctree-l4"><a class="reference internal" href="ex_searchlight_measure.html">Use the searchlight with a neighborhood and a measure</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#i-love-it-when-a-plan-comes-together">&#8216;I love it when a plan comes together&#8217;</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-1">Part 1</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-2">Part 2</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matindex.html">CoSMoMVPA functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_hdr.html">CoSMoMVPA functions - header signature files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl.html">CoSMoMVPA functions - skeleton files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_run.html">Runnable examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl_run.html">Runnable examples - skeleton files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cosmo2013.html#miscellaneous">Miscellaneous</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matindex_test.html">CoSMoMVPA unit tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_demo.html">Demonstrations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cosmo2013.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2014.html">CIMeC 2014 Advanced Neural Decoding</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cimec2014.html#contents">Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cimec2014_intro.html">Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cimec2014_intro.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2014_intro.html#goals-of-this-course">Goals of this course</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cimec2014_intro.html#not-covered-in-this-course">Not covered in this course</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2014_intro.html#code-and-data-needed-for-this-workshop">Code and data needed for this workshop</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2014_intro.html#sample-dataset">Sample Dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2014_intro.html#to-cover-in-this-course">To cover in this course</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cimec2014_ex_toc.html">Exercises</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ex_dataset_basics.html">Dataset basics</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#fmri-dataset-basics">fMRI dataset basics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#make-sure-your-setup-works">Make sure your setup works</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#very-first-exercise">Very first exercise</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#load-and-view-anatomical-dataset">Load and view anatomical dataset</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#loading-datasets-with-a-mask">Loading datasets with a mask</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#operations-on-datasets">Operations on datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_splithalf_correlations.html">Split-half correlation-based MVPA with group analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#background">Background</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#exercise">Exercise</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-1-single-subject-analysis">Part 1 (single subject analysis)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-2-group-study">Part 2 (group study)</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_classify_lda.html">Classification analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#reading-material">Reading material</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#background">Background</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#single-subject-single-fold-split-half-classification">Single subject, single fold split-half classification</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_nfold_crossvalidation.html">Classification analysis with cross-validation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_nfold_crossvalidation.html#background">Background</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_nfold_crossvalidation.html#single-subject-n-fold-cross-validation-classification">Single subject, n-fold cross-validation classification</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_nfold_crossvalidation.html#part-1-implement-n-fold-crossvalidation">Part 1: implement n-fold crossvalidation</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_nfold_crossvalidation.html#part-2-use-a-partitioner">Part 2: use a partitioner</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_measures.html">Using CoSMoMVPA <em>measures</em></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#the-measure-concept">The measure concept</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#split-half-correlations-using-a-measure">Split-half correlations using a measure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#classifier-with-cross-validation-using-a-measure">Classifier with cross-validation using a measure</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_neighborhood.html">Using CoSMoMVPA <em>neighborhoods</em> for regions of interest</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_neighborhood.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_neighborhood.html#exercises">Exercises</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-1">Part 1</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-2">Part 2</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-3">Part 3</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-4-advanced">Part 4 (advanced)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_searchlight_measure.html">Use the searchlight with a neighborhood and a measure</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#i-love-it-when-a-plan-comes-together">&#8216;I love it when a plan comes together&#8217;</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-1">Part 1</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-2">Part 2</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_rsa_tutorial.html">Representational similarity analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#visualizing-dissimilarity-matrices">Visualizing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#comparing-dissimilarity-matrices">Comparing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#target-dissimilarity-matrix-searchlight">Target dissimilarity matrix searchlight</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matindex.html">CoSMoMVPA functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_hdr.html">CoSMoMVPA functions - header signature files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl.html">CoSMoMVPA functions - skeleton files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_run.html">Runnable examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl_run.html">Runnable examples - skeleton files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cimec2014.html#miscellaneous">Miscellaneous</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matindex_test.html">CoSMoMVPA unit tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_demo.html">Demonstrations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2014.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="rhul2016.html">Royal Holloway University of London CoSMoMVPA workshop</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="rhul2016.html#contents">Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="rhul2016_intro.html">Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="rhul2016_intro.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rhul2016_intro.html#goals-of-this-course">Goals of this course</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="rhul2016_intro.html#not-covered-in-this-course">Not covered in this course</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="rhul2016_intro.html#sample-dataset">Sample Dataset</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rhul2016_intro.html#to-cover-in-this-workshop">To cover in this workshop</a></li>
+<li class="toctree-l4"><a class="reference internal" href="rhul2016_intro.html#tentative-schedule">Tentative schedule</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="rhul2016_ex_toc.html">Exercises</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ex_dataset_basics.html">Dataset basics</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#fmri-dataset-basics">fMRI dataset basics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#make-sure-your-setup-works">Make sure your setup works</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#very-first-exercise">Very first exercise</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#load-and-view-anatomical-dataset">Load and view anatomical dataset</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#loading-datasets-with-a-mask">Loading datasets with a mask</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#operations-on-datasets">Operations on datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_splithalf_correlations.html">Split-half correlation-based MVPA with group analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#background">Background</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#exercise">Exercise</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-1-single-subject-analysis">Part 1 (single subject analysis)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-2-group-study">Part 2 (group study)</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_classify_lda.html">Classification analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#reading-material">Reading material</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#background">Background</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#single-subject-single-fold-split-half-classification">Single subject, single fold split-half classification</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_nfold_crossvalidation.html">Classification analysis with cross-validation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_nfold_crossvalidation.html#background">Background</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_nfold_crossvalidation.html#single-subject-n-fold-cross-validation-classification">Single subject, n-fold cross-validation classification</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_nfold_crossvalidation.html#part-1-implement-n-fold-crossvalidation">Part 1: implement n-fold crossvalidation</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_nfold_crossvalidation.html#part-2-use-a-partitioner">Part 2: use a partitioner</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_measures.html">Using CoSMoMVPA <em>measures</em></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#the-measure-concept">The measure concept</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#split-half-correlations-using-a-measure">Split-half correlations using a measure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#classifier-with-cross-validation-using-a-measure">Classifier with cross-validation using a measure</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_neighborhood.html">Using CoSMoMVPA <em>neighborhoods</em> for regions of interest</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_neighborhood.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_neighborhood.html#exercises">Exercises</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-1">Part 1</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-2">Part 2</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-3">Part 3</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-4-advanced">Part 4 (advanced)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_searchlight_measure.html">Use the searchlight with a neighborhood and a measure</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#i-love-it-when-a-plan-comes-together">&#8216;I love it when a plan comes together&#8217;</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-1">Part 1</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-2">Part 2</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_rsa_tutorial.html">Representational similarity analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#visualizing-dissimilarity-matrices">Visualizing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#comparing-dissimilarity-matrices">Comparing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#target-dissimilarity-matrix-searchlight">Target dissimilarity matrix searchlight</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_multiple_comparisons.html">Using CoSMoMVPA multiple-comparison correction</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_multiple_comparisons.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_multiple_comparisons.html#exercises">Exercises</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matindex.html">CoSMoMVPA functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_hdr.html">CoSMoMVPA functions - header signature files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl.html">CoSMoMVPA functions - skeleton files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_run.html">Runnable examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl_run.html">Runnable examples - skeleton files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="rhul2016.html#miscellaneous">Miscellaneous</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matindex_test.html">CoSMoMVPA unit tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_demo.html">Demonstrations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="rhul2016.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2016.html">CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="cimec2016.html#contents">Contents</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="cimec2016_intro.html">Introduction</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#parts">Parts</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#prerequisites">Prerequisites</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#goals-of-the-fmri-mvpa-part-of-the-course">Goals of the fMRI / MVPA part of the course</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#not-covered-in-this-course">Not covered in this course</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#sample-datasets">Sample Datasets</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#ak6-dataset">AK6 dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#haxby2001-dataset">Haxby2001 dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#meg-obj6-dataset">MEG obj6 dataset</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#meg-tac-dataset-with-anatomical-scan">MEG TAC dataset with anatomical scan</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#links">Links</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#assignments">Assignments</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#preparation">Preparation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#format">Format</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#assignments-must-be-your-own-work">Assignments must be your own work</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#exercise-1-deadline-23-59-19-april-2016">Exercise 1 - deadline 23:59, 19 April 2016</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#exercise-2-deadline-23-59-26-april-2016">Exercise 2 - deadline 23:59, 26 April 2016</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#exercise-3-deadline-23-59-03-may-2016">Exercise 3 - deadline 23:59, 03 May 2016</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#exercise-4-deadline-23-59-17-may-2016">Exercise 4 - deadline 23:59, 17 May 2016</a></li>
+<li class="toctree-l5"><a class="reference internal" href="cimec2016_intro.html#meg-exercises-deadline-23-59-15-june-2016">MEG Exercises - deadline 23:59, 15 June 2016</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#faq">FAQ</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#schedule">Schedule</a></li>
+<li class="toctree-l4"><a class="reference internal" href="cimec2016_intro.html#contact">Contact</a></li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="cimec2016_ex_toc.html">Exercises</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="ex_dataset_basics.html">Dataset basics</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#fmri-dataset-basics">fMRI dataset basics</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#make-sure-your-setup-works">Make sure your setup works</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#very-first-exercise">Very first exercise</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_dataset_basics.html#load-and-view-anatomical-dataset">Load and view anatomical dataset</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#loading-datasets-with-a-mask">Loading datasets with a mask</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_dataset_basics.html#operations-on-datasets">Operations on datasets</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_splithalf_correlations.html">Split-half correlation-based MVPA with group analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#reading-material">Reading material</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#background">Background</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_splithalf_correlations.html#exercise">Exercise</a></li>
+</ul>
+</li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-1-single-subject-analysis">Part 1 (single subject analysis)</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_splithalf_correlations.html#part-2-group-study">Part 2 (group study)</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_classify_lda.html">Classification analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#reading-material">Reading material</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#background">Background</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_classify_lda.html#single-subject-single-fold-split-half-classification">Single subject, single fold split-half classification</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_nfold_crossvalidation.html">Classification analysis with cross-validation</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_nfold_crossvalidation.html#background">Background</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_nfold_crossvalidation.html#single-subject-n-fold-cross-validation-classification">Single subject, n-fold cross-validation classification</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_nfold_crossvalidation.html#part-1-implement-n-fold-crossvalidation">Part 1: implement n-fold crossvalidation</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_nfold_crossvalidation.html#part-2-use-a-partitioner">Part 2: use a partitioner</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_measures.html">Using CoSMoMVPA <em>measures</em></a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#the-measure-concept">The measure concept</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#split-half-correlations-using-a-measure">Split-half correlations using a measure</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_measures.html#classifier-with-cross-validation-using-a-measure">Classifier with cross-validation using a measure</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_neighborhood.html">Using CoSMoMVPA <em>neighborhoods</em> for regions of interest</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_neighborhood.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_neighborhood.html#exercises">Exercises</a><ul>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-1">Part 1</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-2">Part 2</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-3">Part 3</a></li>
+<li class="toctree-l6"><a class="reference internal" href="ex_neighborhood.html#part-4-advanced">Part 4 (advanced)</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_searchlight_measure.html">Use the searchlight with a neighborhood and a measure</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#i-love-it-when-a-plan-comes-together">&#8216;I love it when a plan comes together&#8217;</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-1">Part 1</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_searchlight_measure.html#part-2">Part 2</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_rsa_tutorial.html">Representational similarity analysis</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#visualizing-dissimilarity-matrices">Visualizing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#comparing-dissimilarity-matrices">Comparing dissimilarity matrices</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_rsa_tutorial.html#target-dissimilarity-matrix-searchlight">Target dissimilarity matrix searchlight</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_meeg_searchlight.html">MEEG Searchlights</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_meeg_searchlight.html#part-1-meeg-univariate-contrast">Part 1: MEEG univariate contrast</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_meeg_searchlight.html#part-2-meeg-time-course-searchlight-with-classifier-and-cross-validation">Part 2: MEEG time-course searchlight with classifier and cross-validation</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_meeg_searchlight.html#part-3-meeg-time-course-searchlight-with-split-half-correlation-measure">Part 3: MEEG time-course searchlight with split-half correlation measure</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_meeg_time_generalization.html">MEEG time generalization</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_meeg_time_generalization.html#requirements">Requirements</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_meeg_time_generalization.html#reading-material">Reading material</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_meeg_time_generalization.html#the-time-generalization-method">The time generalization method</a></li>
+</ul>
+</li>
+<li class="toctree-l4"><a class="reference internal" href="ex_multiple_comparisons.html">Using CoSMoMVPA multiple-comparison correction</a><ul>
+<li class="toctree-l5"><a class="reference internal" href="ex_multiple_comparisons.html#rationale">Rationale</a></li>
+<li class="toctree-l5"><a class="reference internal" href="ex_multiple_comparisons.html#exercises">Exercises</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l3"><a class="reference internal" href="matindex.html">CoSMoMVPA functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_hdr.html">CoSMoMVPA functions - header signature files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl.html">CoSMoMVPA functions - skeleton files</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_run.html">Runnable examples</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_skl_run.html">Runnable examples - skeleton files</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="cimec2016.html#miscellaneous">Miscellaneous</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="matindex_test.html">CoSMoMVPA unit tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="matindex_demo.html">Demonstrations</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="cimec2016.html#indices-and-tables">Indices and tables</a></li>
+<li class="toctree-l1"><a class="reference internal" href="faq.html">Frequently Asked/Anticipated Questions</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#general">General</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#how-should-i-cite-cosmomvpa">How should I cite CoSMoMVPA?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#what-is-the-history-of-cosmomvpa">What is the history of CoSMoMVPA?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#what-are-the-main-features">What are the main features?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#what-does-cosmomvpa-not-provide">What does CoSMoMVPA <em>not</em> provide?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#does-it-integrate-with-pymvpa">Does it integrate with PyMVPA?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#does-it-run-on-gnu-octave">Does it run on GNU Octave?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#how-fast-does-it-run">How fast does it run?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#what-should-i-use-as-input-for-mvpa">What should I use as input for MVPA?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#who-are-the-developers-of-cosmomvpa">Who are the developers of CoSMoMVPA?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#which-classifiers-are-available">Which classifiers are available?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#which-platforms-does-it-support">Which platforms does it support?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#what-future-features-can-be-expected">What future features can be expected?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#how-can-i-contact-the-developers-directly">How can I contact the developers directly?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#is-there-a-mailinglist">Is there a mailinglist?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#why-do-you-encourage-balanced-partitions">Why do you encourage balanced partitions?</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="faq.html#how-do-i">How do I ...</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#find-the-correspondence-between-voxel-indices-in-afni-and-feature-indices-in-cosmomvpa">Find the correspondence between voxel indices in AFNI and feature indices in CoSMoMVPA</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#get-ecog-data-in-a-cosmomvpa-struct">Get ECoG data in a CoSMoMVPA struct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#get-temporal-data-in-a-cosmomvpa-struct">Get temporal data in a CoSMoMVPA struct</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#run-group-analysis">Run group analysis</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#make-an-intersection-mask-across-participants">Make an intersection mask across participants</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#run-group-analysis-on-time-by-time-generalization-measures">Run group analysis on time-by-time generalization measures</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#use-libsvm">Use LIBSVM</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#use-surface-based-mapping-with-a-low-resolution-output-surface">Use surface-based mapping with a low-resolution output surface</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#correct-for-multiple-comparisons">Correct for multiple comparisons</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#do-cross-modal-decoding-across-three-modalities">Do cross-modal decoding across three modalities</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#compute-classification-accuracies-manually">Compute classification accuracies manually</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#merge-surface-data-from-two-hemispheres">Merge surface data from two hemispheres</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#visualize-and-store-multiple-fmri-volumes">Visualize and store multiple fMRI volumes</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#average-along-features-in-a-neighborhood">Average along features in a neighborhood</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#select-a-time-interval-in-an-meeg-dataset">Select a time interval in an MEEG dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#select-a-particular-channel-type-in-an-meeg-dataset">Select a particular channel type in an MEEG dataset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#use-only-a-subset-of-channels-for-my-analysis">Use only a subset of channels for my analysis?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#should-i-fisher-transform-correlation-values">Should I Fisher-transform correlation values?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#average-samples-in-a-deterministic-manner">Average samples in a deterministic manner?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#select-only-a-subset-of-features-in-a-neighborhood">Select only a subset of features in a neighborhood?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#use-multiple-comparison-correction-for-a-time-course">Use multiple-comparison correction for a time course?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#classify-different-groups-of-participants-such-as-patients-versus-controls">Classify different groups of participants (such as patients versus controls)?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#when-running-an-meeg-searchlight-have-the-same-channels-in-the-output-dataset-as-in-the-input-dataset">When running an MEEG searchlight, have the same channels in the output dataset as in the input dataset?</a></li>
+<li class="toctree-l3"><a class="reference internal" href="faq.html#save-meeg-data-when-i-get-the-error-value-for-fdim-channel-label-is-not-supported">Save MEEG data when I get the error &#8220;value for fdim channel label is not supported&#8221;?</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contact.html">Contact information</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contact.html#general">General</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html#bugs-and-other-issues">Bugs and other issues</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contact.html#contributions">Contributions</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html">Information for contributors</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#directory-locations-and-naming-conventions">Directory locations and naming conventions</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#meta-naming-conventions-in-the-documentation">Meta - naming conventions in the documentation</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#setting-the-matlab-path">Setting the Matlab path</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#organization-of-files-and-directories">Organization of files and directories</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#setting-up-the-documentation-build-system">Setting up the documentation build system</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="contribute.html#information-for-contributing-programmers">Information for contributing <em>programmers</em></a><ul>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#code-development">Code development</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#contributing-using-git">Contributing using git</a><ul>
+<li class="toctree-l4"><a class="reference internal" href="contribute.html#initial-git-github-setup">Initial git / github setup</a></li>
+<li class="toctree-l4"><a class="reference internal" href="contribute.html#proposing-a-change-in-the-code-a-k-a-submitting-a-pull-request-pr">Proposing a change in the code (a.k.a. submitting a Pull Request (PR)</a></li>
+<li class="toctree-l4"><a class="reference internal" href="contribute.html#notes-on-committing">Notes on committing</a></li>
+</ul>
+</li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#build-system">Build system</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#matlab-code-guidelines">Matlab code guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#maximum-line-length-is-75-characters">Maximum line length is 75 characters</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#indentation-is-4-spaces-no-tabs">Indentation is 4 spaces (no tabs)</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#use-lower-case-letters-for-variable-names">Use lower-case letters for variable names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#throw-an-informative-error-early">Throw an (informative) error early</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#do-not-repeat-yourself">Do not repeat yourself</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#write-in-normal-understandable-english">Write in normal, understandable english</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#document-functions">Document functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#pre-allocate-space-for-data">Pre-allocate space for data</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#use-vectorization">Use vectorization</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#use-clear-variable-names">Use clear variable names</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#avoid-side-effects">Avoid side effects</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#use-oncleanup-if-an-earlier-state-needs-to-be-reset">Use onCleanup if an earlier state needs to be reset</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#tests-should-not-require-user-interaction">Tests should not require user interaction</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#do-not-use-global-variables">Do not use global variables</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#avoid-long-and-complicated-expressions">Avoid long and complicated expressions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#use-sprintf-or-fprint-when-formatting-strings">Use <code class="docutils literal"><span class="pre">sprintf</span></code> or <code class="docutils literal"><span class="pre">fprint</span></code> when formatting strings</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#avoid-using-eval">Avoid using <code class="docutils literal"><span class="pre">eval</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#minimize-using-try-and-catch">Minimize using <code class="docutils literal"><span class="pre">try</span></code> and <code class="docutils literal"><span class="pre">catch</span></code></a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#no-private-functions">No private functions</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#no-file-duplication">No file duplication</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#check-input-arguments">Check input arguments</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#cosmomvpa-specific-guidelines">CoSMoMVPA-specific guidelines</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#writing-exercises">Writing exercises</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#documentation-tests">Documentation tests</a></li>
+<li class="toctree-l3"><a class="reference internal" href="contribute.html#compatibility-notes">Compatibility notes</a></li>
+</ul>
+</li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#test-suite">Test suite</a></li>
+<li class="toctree-l2"><a class="reference internal" href="contribute.html#good-tests">Good tests</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html">Authors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#contributors">Contributors</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#acknowledgements">Acknowledgements</a></li>
+<li class="toctree-l1"><a class="reference internal" href="thanks.html#citations">Citations</a></li>
+</ul>
+</div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Documentation</a><ul>
+<li><a class="reference internal" href="#overview">Overview</a></li>
+<li><a class="reference internal" href="#detailed">Detailed</a></li>
+<li><a class="reference internal" href="#full-documentation">Full documentation</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmomvpa_concepts.html"
+                        title="previous chapter">CoSMoMVPA concepts</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="contents_demo.html"
+                        title="next chapter">Demonstrations - full listings</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/documentation.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="contents_demo.html" title="Demonstrations - full listings"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmomvpa_concepts.html" title="CoSMoMVPA concepts"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

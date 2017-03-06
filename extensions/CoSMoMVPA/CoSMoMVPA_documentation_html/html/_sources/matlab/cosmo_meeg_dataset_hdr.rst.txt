@@ -1,0 +1,7 @@
+.. _cosmo_meeg_dataset_hdr:
+
+cosmo meeg dataset hdr
+======================
+
+.. include :: cosmo_meeg_dataset_hdr.txt
+

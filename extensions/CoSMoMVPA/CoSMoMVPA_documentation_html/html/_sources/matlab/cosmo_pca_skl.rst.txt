@@ -1,0 +1,7 @@
+.. _cosmo_pca_skl:
+
+cosmo pca skl
+=============
+
+.. include :: cosmo_pca_skl.txt
+

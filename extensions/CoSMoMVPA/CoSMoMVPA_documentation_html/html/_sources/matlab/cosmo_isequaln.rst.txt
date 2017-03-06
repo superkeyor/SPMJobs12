@@ -1,0 +1,7 @@
+.. _cosmo_isequaln:
+
+cosmo isequaln
+==============
+
+.. include :: cosmo_isequaln.txt
+

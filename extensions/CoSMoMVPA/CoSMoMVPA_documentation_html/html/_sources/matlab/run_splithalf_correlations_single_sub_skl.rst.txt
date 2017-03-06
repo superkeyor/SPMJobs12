@@ -1,0 +1,7 @@
+.. _run_splithalf_correlations_single_sub_skl:
+
+run splithalf correlations single sub skl
+=========================================
+
+.. include :: run_splithalf_correlations_single_sub_skl.txt
+

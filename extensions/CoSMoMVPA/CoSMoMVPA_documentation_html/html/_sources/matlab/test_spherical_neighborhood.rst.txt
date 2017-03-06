@@ -1,0 +1,7 @@
+.. _test_spherical_neighborhood:
+
+test spherical neighborhood
+===========================
+
+.. include :: test_spherical_neighborhood.txt
+

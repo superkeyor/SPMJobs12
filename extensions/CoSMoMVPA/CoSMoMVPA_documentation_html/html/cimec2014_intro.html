@@ -1,0 +1,250 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>Introduction &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    './',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="_static/jquery.js"></script>
+    <script type="text/javascript" src="_static/underscore.js"></script>
+    <script type="text/javascript" src="_static/doctools.js"></script>
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="copyright" title="Copyright" href="copyright.html" />
+    <link rel="next" title="Exercises" href="cimec2014_ex_toc.html" />
+    <link rel="prev" title="CIMeC 2014 Advanced Neural Decoding" href="cimec2014.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cimec2014_ex_toc.html" title="Exercises"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cimec2014.html" title="CIMeC 2014 Advanced Neural Decoding"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2014.html" accesskey="U">CIMeC 2014 Advanced Neural Decoding</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="introduction">
+<h1>Introduction<a class="headerlink" href="#introduction" title="Permalink to this headline">¶</a></h1>
+<div class="section" id="prerequisites">
+<h2>Prerequisites<a class="headerlink" href="#prerequisites" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul class="simple">
+<li>Matlab / Octave <a class="reference internal" href="matlab_experience.html#matlab-experience"><span class="std std-ref">Advanced beginner level</span></a>.</li>
+<li>fMRI analysis <cite>:ref:`advanced beginner level &lt;cogneuro_experience&gt;</cite>.</li>
+<li>Working <a class="reference external" href="http://www.mathworks.com/products/matlab/">Matlab</a> or <a class="reference external" href="https://www.gnu.org/software/octave/">Octave</a> installation.</li>
+<li><a class="reference internal" href="download.html#get-code-and-example-data"><span class="std std-ref">the source code and the example data</span></a>.</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="goals-of-this-course">
+<h2>Goals of this course<a class="headerlink" href="#goals-of-this-course" title="Permalink to this headline">¶</a></h2>
+<blockquote>
+<div><ul>
+<li><p class="first">Describe the typical MVPA approaches (correlation analysis, classification analysis, representational similarity analysis applied to both regions of interest and across the whole brain in a <em>searchlight</em> approach) described in the literature.</p>
+</li>
+<li><dl class="first docutils">
+<dt>Learn how to use CoSMoMVPA to perform these analyses:</dt>
+<dd><ul class="first last simple">
+<li>Understand the dataset structure to represent both the data itself (e.g. raw measurements or summary statistics) and its attributes (e.g. labels of conditions (<em>targets</em>), data acquisition run (<em>chunks</em>).</li>
+<li>See how parts of the data can be selected using <em>slicing</em> and <em>splitting</em>, and combined using <em>stacking</em></li>
+<li>Introduce <em>measures</em> that compute summaries of the data (such as correlation differences, classification accuracies, similarity to an <em>a prior</em> defined representational simillarity matrix) that can be applied to both a single ROI or in a searchlight.</li>
+</ul>
+</dd>
+</dl>
+</li>
+<li><p class="first">Make yourself an independent user, so that you can apply the techniques learnt here to your own datasets.</p>
+</li>
+</ul>
+</div></blockquote>
+<div class="section" id="not-covered-in-this-course">
+<h3>Not covered in this course<a class="headerlink" href="#not-covered-in-this-course" title="Permalink to this headline">¶</a></h3>
+<blockquote>
+<div><ul class="simple">
+<li>Preprocessing of fMRI data</li>
+<li>Learning to use Matlab / Octave</li>
+<li>Other dataset types than volumetric fMRI data (MEEG, surface-based fMRI)</li>
+<li>How to become a CoSMoMVPA developer</li>
+</ul>
+</div></blockquote>
+</div>
+<div class="section" id="code-and-data-needed-for-this-workshop">
+<h3>Code and data needed for this workshop<a class="headerlink" href="#code-and-data-needed-for-this-workshop" title="Permalink to this headline">¶</a></h3>
+</div>
+</div>
+<div class="section" id="sample-dataset">
+<h2>Sample Dataset<a class="headerlink" href="#sample-dataset" title="Permalink to this headline">¶</a></h2>
+<p>The dataset used here contains preprocessed data for 8 subjects from <a class="reference internal" href="references.html#cgg-12" id="id1">[CGG+12]</a>. In this experiment, participants were presented with categories of six animals: 2 primates: monkeys and lemurs; 2 birds: mallard ducks and yellow-throated warblers; and 2 bugs: ladybugs and luna moths.</p>
+<a class="reference internal image-reference" href="_images/fmri_design.png"><img alt="_images/fmri_design.png" src="_images/fmri_design.png" style="width: 400px;" /></a>
+<p>For each participant, the following data is present in the <code class="docutils literal"><span class="pre">ak6</span></code> (for Animal Kingdom, 6 species) directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">s0</span><span class="p">[</span><span class="mi">1</span><span class="o">-</span><span class="mi">8</span><span class="p">]</span><span class="o">/</span>                  <span class="n">This</span> <span class="n">directory</span> <span class="n">contains</span> <span class="n">fMRI</span> <span class="n">data</span> <span class="kn">from</span> <span class="mi">8</span> <span class="n">of</span> <span class="n">the</span> <span class="mi">12</span>
+                            <span class="n">participants</span> <span class="n">studied</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">experiment</span> <span class="n">reported</span> <span class="ow">in</span>
+                            <span class="n">Connolly</span> <span class="n">et</span> <span class="n">al</span><span class="o">.</span> <span class="mi">2012</span> <span class="p">(</span><span class="n">Code</span><span class="o">-</span><span class="n">named</span> <span class="s1">&#39;AK6&#39;</span> <span class="k">for</span> <span class="n">animal</span>
+                            <span class="n">kingdom</span><span class="p">,</span> <span class="mi">6</span><span class="o">-</span><span class="n">species</span><span class="p">)</span><span class="o">.</span> <span class="n">Each</span> <span class="n">subject</span><span class="s1">&#39;s subdirectory</span>
+                            <span class="n">contains</span> <span class="n">the</span> <span class="n">following</span> <span class="n">data</span><span class="p">:</span>
+   <span class="o">-</span> <span class="n">glm_T_stats_perrun</span><span class="o">.</span><span class="n">nii</span> <span class="n">A</span> <span class="mi">60</span><span class="o">-</span><span class="n">volume</span> <span class="n">file</span> <span class="n">of</span> <span class="n">EPI</span><span class="o">-</span><span class="n">data</span> <span class="n">preprocessed</span> <span class="n">using</span>
+                            <span class="n">AFNI</span> <span class="n">up</span> <span class="n">to</span> <span class="ow">and</span> <span class="n">including</span> <span class="n">fitting</span> <span class="n">a</span> <span class="n">general</span> <span class="n">linear</span>
+                            <span class="n">model</span> <span class="n">using</span> <span class="mi">3</span><span class="n">dDeconvolve</span><span class="o">.</span> <span class="n">Each</span> <span class="n">volume</span> <span class="n">contains</span> <span class="n">the</span>
+                            <span class="n">t</span><span class="o">-</span><span class="n">statistics</span> <span class="k">for</span> <span class="n">the</span> <span class="n">estimated</span> <span class="n">response</span> <span class="n">to</span> <span class="n">a</span> <span class="n">one</span>
+                            <span class="n">of</span> <span class="n">the</span> <span class="mi">6</span> <span class="n">stimulus</span> <span class="n">categories</span><span class="o">.</span> <span class="n">These</span> <span class="n">estimates</span> <span class="n">were</span>
+                            <span class="n">calculated</span> <span class="n">independently</span> <span class="k">for</span> <span class="n">each</span> <span class="n">of</span> <span class="n">the</span> <span class="mi">10</span> <span class="n">runs</span>
+                            <span class="ow">in</span> <span class="n">the</span> <span class="n">experiment</span><span class="o">.</span>
+   <span class="o">-</span> <span class="n">glm_T_stats_even</span><span class="o">.</span><span class="n">nii</span>   <span class="n">Data</span> <span class="n">derived</span> <span class="kn">from</span> <span class="nn">glm_T_stats_perrun.nii.</span>
+   <span class="o">-</span> <span class="n">glm_T_stats_odd</span><span class="o">.</span><span class="n">nii</span>    <span class="n">Each</span> <span class="ow">is</span> <span class="n">a</span> <span class="mi">6</span><span class="o">-</span><span class="n">volume</span> <span class="n">file</span> <span class="k">with</span> <span class="n">the</span> <span class="n">T</span><span class="o">-</span><span class="n">values</span> <span class="n">averaged</span>
+                            <span class="n">across</span> <span class="n">even</span> <span class="ow">and</span> <span class="n">odd</span> <span class="n">runs</span> <span class="k">for</span> <span class="n">each</span> <span class="n">category</span><span class="o">.</span>
+   <span class="o">-</span> <span class="n">brain</span><span class="o">.</span><span class="n">nii</span>              <span class="n">Skull</span><span class="o">-</span><span class="n">stripped</span> <span class="n">T1</span><span class="o">-</span><span class="n">weighted</span> <span class="n">anatomical</span> <span class="n">brain</span> <span class="n">image</span><span class="o">.</span>
+   <span class="o">-</span> <span class="n">brain_mask</span><span class="o">.</span><span class="n">nii</span>         <span class="n">Whole</span><span class="o">-</span><span class="n">brain</span> <span class="n">mask</span> <span class="ow">in</span> <span class="n">EPI</span><span class="o">-</span><span class="n">space</span><span class="o">/</span><span class="n">resolution</span><span class="o">.</span>
+   <span class="o">-</span> <span class="n">vt_mask</span><span class="o">.</span><span class="n">nii</span>            <span class="n">Bilateral</span> <span class="n">ventral</span> <span class="n">temporal</span> <span class="n">cortex</span> <span class="n">mask</span> <span class="n">similar</span> <span class="n">to</span>
+                            <span class="n">that</span> <span class="n">used</span> <span class="ow">in</span> <span class="n">Connolly</span> <span class="n">et</span> <span class="n">al</span><span class="o">.</span> <span class="mf">2012.</span>
+   <span class="o">-</span> <span class="n">ev_mask</span><span class="o">.</span><span class="n">nii</span>            <span class="n">Bilateral</span> <span class="n">early</span> <span class="n">visual</span> <span class="n">cortex</span> <span class="n">mask</span><span class="o">.</span>
+</pre></div>
+</div>
+<p>Also present are model similarity structures, which you can see here:</p>
+<a class="reference internal image-reference" href="_images/sim_sl.png"><img alt="_images/sim_sl.png" src="_images/sim_sl.png" style="width: 600px;" /></a>
+<p>This data is stored in the <code class="docutils literal"><span class="pre">models</span></code> directory:</p>
+<div class="highlight-default"><div class="highlight"><pre><span></span><span class="o">-</span> <span class="n">models</span>
+   <span class="o">-</span> <span class="n">behav_sim</span><span class="o">.</span><span class="n">mat</span>          <span class="n">Matlab</span> <span class="n">file</span> <span class="k">with</span> <span class="n">behavioural</span> <span class="n">similarity</span> <span class="n">ratings</span><span class="o">.</span>
+   <span class="o">-</span> <span class="n">v1_model</span><span class="o">.</span><span class="n">mat</span>           <span class="n">Matlab</span> <span class="n">file</span> <span class="k">with</span> <span class="n">similarity</span> <span class="n">values</span> <span class="n">based</span> <span class="n">on</span>
+                            <span class="n">low</span><span class="o">-</span><span class="n">level</span> <span class="n">visual</span> <span class="n">properties</span> <span class="n">of</span> <span class="n">the</span> <span class="n">stimuli</span><span class="o">.</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="to-cover-in-this-course">
+<h2>To cover in this course<a class="headerlink" href="#to-cover-in-this-course" title="Permalink to this headline">¶</a></h2>
+<ul>
+<li><p class="first">CoSMoMVPA concepts and dataset structure.</p>
+</li>
+<li><p class="first">Basic operations on datasets.</p>
+</li>
+<li><p class="first">Introduction to common MVPA measures:</p>
+<blockquote>
+<div><ul class="simple">
+<li>correlation difference</li>
+<li>classification accuracy</li>
+<li>representational similarity matching</li>
+</ul>
+</div></blockquote>
+</li>
+<li><p class="first">Common MVPA techniques:</p>
+<blockquote>
+<div><ul class="simple">
+<li>ROI analysis</li>
+<li>Searchlight analysis</li>
+</ul>
+</div></blockquote>
+</li>
+</ul>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="index.html">
+              <img class="logo" src="_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h3><a href="index.html">Table Of Contents</a></h3>
+  <ul>
+<li><a class="reference internal" href="#">Introduction</a><ul>
+<li><a class="reference internal" href="#prerequisites">Prerequisites</a></li>
+<li><a class="reference internal" href="#goals-of-this-course">Goals of this course</a><ul>
+<li><a class="reference internal" href="#not-covered-in-this-course">Not covered in this course</a></li>
+<li><a class="reference internal" href="#code-and-data-needed-for-this-workshop">Code and data needed for this workshop</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#sample-dataset">Sample Dataset</a></li>
+<li><a class="reference internal" href="#to-cover-in-this-course">To cover in this course</a></li>
+</ul>
+</li>
+</ul>
+
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cimec2014.html"
+                        title="previous chapter">CIMeC 2014 Advanced Neural Decoding</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cimec2014_ex_toc.html"
+                        title="next chapter">Exercises</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="_sources/cimec2014_intro.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cimec2014_ex_toc.html" title="Exercises"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cimec2014.html" title="CIMeC 2014 Advanced Neural Decoding"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="cimec2014.html" >CIMeC 2014 Advanced Neural Decoding</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

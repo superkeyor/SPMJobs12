@@ -1,0 +1,188 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo anova feature selector skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo average samples skl" href="cosmo_average_samples_skl.html" />
+    <link rel="prev" title="cosmo align skl" href="cosmo_align_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_average_samples_skl.html" title="cosmo average samples skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_align_skl.html" title="cosmo align skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-anova-feature-selector-skl">
+<span id="id1"></span><h1>cosmo anova feature selector skl<a class="headerlink" href="#cosmo-anova-feature-selector-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>selected_indices<span class="p">=</span><span class="nf">cosmo_anova_feature_selector</span><span class="p">(</span>dataset, how_many<span class="p">)</span><span class="w"></span>
+<span class="c">% find the features that show the most variance between classes</span>
+<span class="c">%</span>
+<span class="c">% selected_indices=cosmo_anova_feature_selector(dataset, how_many)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%  dataset          struct with .samples and .sa.targets</span>
+<span class="c">%  how_many         value between 0 and 1 keeps how_many*100% features;</span>
+<span class="c">%                   values &gt;=1 keeps how_many features</span>
+<span class="c">%</span>
+<span class="c">% Output:</span>
+<span class="c">%  selected_indices   feature ids in dataset with most variance between</span>
+<span class="c">%                     classes.</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     ds=cosmo_synthetic_dataset();</span>
+<span class="c">%     disp(size(ds.samples))</span>
+<span class="c">%     &gt; [ 6 6 ]</span>
+<span class="c">%     cosmo_anova_feature_selector(ds,.45) % find best ~45% of features</span>
+<span class="c">%     &gt; [ 2 4 5 ]</span>
+<span class="c">%     cosmo_anova_feature_selector(ds,4) % find best 4 features</span>
+<span class="c">%     &gt; [ 2 4 5 3 ]</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">fstat</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">dataset</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">);</span>
+    <span class="n">fvalues</span><span class="p">=</span><span class="n">fstat</span><span class="p">.</span><span class="n">samples</span><span class="p">;</span>
+
+    <span class="c">% ensure that nan values are not selected by setting them to</span>
+    <span class="c">% an impossible low F value</span>
+    <span class="n">fvalues</span><span class="p">(</span><span class="nb">isnan</span><span class="p">(</span><span class="n">fvalues</span><span class="p">))=</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="c">% sort by F values, largest first</span>
+    <span class="p">[</span><span class="n">unused</span><span class="p">,</span> <span class="n">idxs</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">fvalues</span><span class="p">,</span><span class="s">&#39;descend&#39;</span><span class="p">);</span>
+
+    <span class="c">% determine features to select</span>
+    <span class="n">nfeatures</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">dataset</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">how_many</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">1</span>
+        <span class="k">if</span> <span class="nb">round</span><span class="p">(</span><span class="n">how_many</span><span class="p">)</span><span class="o">~=</span><span class="n">how_many</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;how_many&gt;=1 is not an integer&#39;</span><span class="p">);</span>
+        <span class="k">elseif</span> <span class="n">how_many</span><span class="o">&gt;</span><span class="n">nfeatures</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;dataset has %d features, cannot return %d&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">nfeatures</span><span class="p">,</span><span class="n">how_many</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="n">nkeep</span><span class="p">=</span><span class="n">how_many</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">nkeep</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="n">how_many</span><span class="o">*</span><span class="n">nfeatures</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">selected_indices</span><span class="p">=</span><span class="n">idxs</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nkeep</span><span class="p">);</span>
+
+    <span class="c">% throw an error if any indices with NaN F values</span>
+    <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">fvalues</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">idx</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">fvalues</span><span class="p">(</span><span class="n">selected_indices</span><span class="p">)</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Feature %d has NaN Fscore&#39;</span><span class="p">,</span> <span class="n">selected_indices</span><span class="p">(</span><span class="n">idx</span><span class="p">));</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_align_skl.html"
+                        title="previous chapter">cosmo align skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_average_samples_skl.html"
+                        title="next chapter">cosmo average samples skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_anova_feature_selector_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_average_samples_skl.html" title="cosmo average samples skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_align_skl.html" title="cosmo align skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

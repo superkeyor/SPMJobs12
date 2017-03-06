@@ -1,0 +1,7 @@
+.. _run_splithalf_correlations_skl:
+
+run splithalf correlations skl
+==============================
+
+.. include :: run_splithalf_correlations_skl.txt
+

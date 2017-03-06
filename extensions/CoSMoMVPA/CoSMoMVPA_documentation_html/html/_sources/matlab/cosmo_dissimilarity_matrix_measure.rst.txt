@@ -1,0 +1,7 @@
+.. _cosmo_dissimilarity_matrix_measure:
+
+cosmo dissimilarity matrix measure
+==================================
+
+.. include :: cosmo_dissimilarity_matrix_measure.txt
+

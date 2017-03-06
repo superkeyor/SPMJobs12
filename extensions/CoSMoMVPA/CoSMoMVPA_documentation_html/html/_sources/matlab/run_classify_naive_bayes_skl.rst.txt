@@ -1,0 +1,7 @@
+.. _run_classify_naive_bayes_skl:
+
+run classify naive bayes skl
+============================
+
+.. include :: run_classify_naive_bayes_skl.txt
+

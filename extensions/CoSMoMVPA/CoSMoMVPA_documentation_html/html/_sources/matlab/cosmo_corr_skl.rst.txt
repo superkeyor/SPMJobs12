@@ -1,0 +1,7 @@
+.. _cosmo_corr_skl:
+
+cosmo corr skl
+==============
+
+.. include :: cosmo_corr_skl.txt
+

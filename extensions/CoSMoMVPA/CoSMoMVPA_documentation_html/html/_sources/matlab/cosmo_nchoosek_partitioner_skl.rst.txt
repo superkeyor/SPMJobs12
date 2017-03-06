@@ -1,0 +1,7 @@
+.. _cosmo_nchoosek_partitioner_skl:
+
+cosmo nchoosek partitioner skl
+==============================
+
+.. include :: cosmo_nchoosek_partitioner_skl.txt
+

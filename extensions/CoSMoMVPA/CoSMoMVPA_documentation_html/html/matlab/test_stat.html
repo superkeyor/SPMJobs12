@@ -1,0 +1,494 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>test stat &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="test statcode" href="test_statcode.html" />
+    <link rel="prev" title="test stack" href="test_stack.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="test_statcode.html" title="test statcode"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="test_stack.html" title="test stack"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" accesskey="U">CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="test-stat">
+<span id="id1"></span><h1>test stat<a class="headerlink" href="#test-stat" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span> <span class="nf">test_suite</span> <span class="p">=</span> <span class="n">test_stat</span>
+<span class="c">% tests for cosmo_stat</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+    <span class="k">try</span> <span class="c">% assignment of &#39;localfunctions&#39; is necessary in Matlab &gt;= 2016</span>
+        <span class="n">test_functions</span><span class="p">=</span><span class="n">localfunctions</span><span class="p">();</span>
+    <span class="k">catch</span> <span class="c">% no problem; early Matlab versions can use initTestSuite fine</span>
+    <span class="k">end</span>
+    <span class="n">initTestSuite</span><span class="p">;</span>
+
+
+<span class="k">function</span> <span class="nf">test_stat_correspondence</span>
+    <span class="n">is_matlab</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="s">&#39;ttest&#39;</span><span class="p">))</span>
+        <span class="n">cosmo_notify_test_skipped</span><span class="p">(</span><span class="s">&#39;ttest is not available&#39;</span><span class="p">);</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="c">% test conformity with matlab&#39;s stat functions</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">5</span><span class="p">,</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&#39;sigma&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">2</span> <span class="mi">5</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">);</span>
+    <span class="p">[</span><span class="n">ns</span><span class="p">,</span><span class="n">nf</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+
+    <span class="n">f</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nf</span><span class="p">);</span>
+    <span class="n">p</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nf</span><span class="p">);</span>
+
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nf</span>
+        <span class="k">if</span> <span class="n">is_matlab</span>
+            <span class="p">[</span><span class="n">p</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">tab</span><span class="p">]=</span><span class="n">anova1</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(:,</span><span class="n">k</span><span class="p">),</span> <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span> <span class="s">&#39;off&#39;</span><span class="p">);</span>
+            <span class="n">f</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">tab</span><span class="p">{</span><span class="mi">2</span><span class="p">,</span><span class="mi">5</span><span class="p">};</span>
+            <span class="n">df</span><span class="p">=[</span><span class="n">tab</span><span class="p">{</span><span class="mi">2</span><span class="p">:</span><span class="mi">3</span><span class="p">,</span><span class="mi">3</span><span class="p">}];</span>
+        <span class="k">else</span>
+            <span class="p">[</span><span class="n">p</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">f</span><span class="p">(</span><span class="n">k</span><span class="p">),</span><span class="n">df_b</span><span class="p">,</span><span class="n">df_w</span><span class="p">]=</span><span class="n">anova</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">(:,</span><span class="n">k</span><span class="p">),</span> <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">);</span>
+            <span class="n">df</span><span class="p">=[</span><span class="n">df_b</span> <span class="n">df_w</span><span class="p">];</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+    <span class="c">% f stat</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=(</span><span class="mi">1</span><span class="p">:</span><span class="n">ns</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">ff</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">);</span>
+    <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">f</span><span class="p">,</span><span class="n">ff</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+    <span class="n">assertEqual</span><span class="p">(</span><span class="n">ff</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">,{</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;Ftest(%d,%d)&#39;</span><span class="p">,</span><span class="n">df</span><span class="p">)});</span>
+
+    <span class="n">pp</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">);</span>
+    <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">pp</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(:)=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="c">% t stat</span>
+    <span class="n">tails</span><span class="p">={</span><span class="s">&#39;p&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">};</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">tails</span><span class="p">)</span>
+        <span class="c">% one-sample ttest</span>
+        <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+        <span class="n">ds1</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+        <span class="n">ds1</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">(:)=</span><span class="mi">10</span><span class="p">;</span>
+        <span class="n">ds1</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=(</span><span class="mi">1</span><span class="p">:</span><span class="n">ns</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+
+        <span class="n">tail</span><span class="p">=</span><span class="n">tails</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+
+        <span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">tail</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">)</span>
+            <span class="n">ttest_arg</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">ttest_arg</span><span class="p">={</span><span class="s">&#39;tail&#39;</span><span class="p">,</span><span class="n">tail</span><span class="p">};</span>
+        <span class="k">end</span>
+
+        <span class="c">% test t-statistic</span>
+        <span class="p">[</span><span class="n">h</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">ci</span><span class="p">,</span><span class="n">stats</span><span class="p">]=</span><span class="n">ttest_wrapper</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="mi">0</span><span class="p">,</span><span class="n">ttest_arg</span><span class="p">{:});</span>
+
+        <span class="n">tt</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">);</span>
+        <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">stats</span><span class="p">.</span><span class="n">tstat</span><span class="p">,</span><span class="n">tt</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">tt</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">,{</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;Ttest(%d)&#39;</span><span class="p">,</span><span class="n">stats</span><span class="p">.</span><span class="n">df</span><span class="p">(</span><span class="mi">1</span><span class="p">))});</span>
+
+        <span class="n">pp</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="n">tail</span><span class="p">);</span>
+        <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">pp</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+
+        <span class="n">ds1</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(:)=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+        <span class="c">% two-sample (unpaired) ttest</span>
+        <span class="n">ds2</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+        <span class="nb">i</span><span class="p">=</span><span class="n">randperm</span><span class="p">(</span><span class="n">ns</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+        <span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">=</span><span class="nb">mod</span><span class="p">(</span><span class="nb">i</span><span class="p">,</span><span class="mi">2</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="nb">i</span><span class="p">;</span>
+        <span class="n">ds_sp</span><span class="p">=</span><span class="n">cosmo_split</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;targets&#39;</span><span class="p">);</span>
+        <span class="n">x</span><span class="p">=</span><span class="n">ds_sp</span><span class="p">{</span><span class="mi">1</span><span class="p">}.</span><span class="n">samples</span><span class="p">;</span>
+        <span class="n">y</span><span class="p">=</span><span class="n">ds_sp</span><span class="p">{</span><span class="mi">2</span><span class="p">}.</span><span class="n">samples</span><span class="p">;</span>
+
+        <span class="p">[</span><span class="n">h</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">ci</span><span class="p">,</span><span class="n">stats</span><span class="p">]=</span><span class="n">ttest2_wrapper</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">y</span><span class="p">,</span><span class="n">ttest_arg</span><span class="p">{:});</span>
+        <span class="n">tt</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">);</span>
+
+        <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">stats</span><span class="p">.</span><span class="n">tstat</span><span class="p">,</span><span class="n">tt</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">tt</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">stats</span><span class="p">,{</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;Ttest(%d)&#39;</span><span class="p">,</span><span class="n">stats</span><span class="p">.</span><span class="n">df</span><span class="p">(</span><span class="mi">1</span><span class="p">))});</span>
+
+
+        <span class="n">pp</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="n">tail</span><span class="p">);</span>
+        <span class="n">assertVectorsAlmostEqual</span><span class="p">(</span><span class="n">p</span><span class="p">,</span><span class="n">pp</span><span class="p">.</span><span class="n">samples</span><span class="p">);</span>
+
+        <span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+        <span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+        <span class="n">ds2</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">(:)=</span><span class="mi">1</span><span class="p">;</span>
+        <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds1</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="k">end</span>
+
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_stat_contrast</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&#39;sigma&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">contrast</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">));</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">contrast</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="mi">2</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">contrast</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="mi">4</span><span class="p">)=</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">chunks</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">;</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="n">chunks</span><span class="o">*</span><span class="mi">6</span><span class="o">+</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">;</span>
+
+    <span class="n">res</span><span class="p">=</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">);</span>
+    <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">res</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="c">...</span>
+                    <span class="p">[</span><span class="mf">0.2695</span> <span class="mf">0.9675</span> <span class="o">-</span><span class="mf">0.8770</span> <span class="o">-</span><span class="mf">1.0542</span> <span class="mf">0.9173</span> <span class="mf">1.2814</span><span class="p">],</span><span class="c">...</span>
+                    <span class="s">&#39;absolute&#39;</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">);</span>
+
+    <span class="c">% test exceptions</span>
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                            <span class="n">cosmo_stat</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+
+    <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">contrast</span><span class="o">~=</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">contrast</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">);</span>
+
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">contrast</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="mi">1</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">);</span>
+
+    <span class="c">% within subject F</span>
+    <span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="n">chunks</span><span class="p">;</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>[h,p,ci,stats]<span class="p">=</span><span class="nf">ttest_wrapper</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">h</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">ci</span><span class="p">,</span><span class="n">stats</span><span class="p">]=</span><span class="n">general_ttestX_wrapper</span><span class="p">(@</span><span class="n">ttest</span><span class="p">,</span><span class="n">varargin</span><span class="p">{:});</span>
+
+<span class="k">function</span><span class="w"> </span>[h,p,ci,stats]<span class="p">=</span><span class="nf">ttest2_wrapper</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">h</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">ci</span><span class="p">,</span><span class="n">stats</span><span class="p">]=</span><span class="n">general_ttestX_wrapper</span><span class="p">(@</span><span class="n">ttest2</span><span class="p">,</span><span class="n">varargin</span><span class="p">{:});</span>
+
+<span class="k">function</span><span class="w"> </span>[h,p,ci,stats]<span class="p">=</span><span class="nf">general_ttestX_wrapper</span><span class="p">(</span>func,varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">args</span><span class="p">=</span><span class="n">varargin</span><span class="p">;</span>
+    <span class="k">switch</span> <span class="n">nargin</span><span class="p">(</span><span class="n">func</span><span class="p">)</span>
+        <span class="k">case</span> <span class="p">{</span><span class="mi">5</span><span class="p">,</span><span class="mi">6</span><span class="p">}</span>
+            <span class="c">% old Matlab</span>
+            <span class="n">args</span><span class="p">=</span><span class="n">remove_keys_from_arguments</span><span class="p">(</span><span class="mi">2</span><span class="p">,{</span><span class="s">&#39;alpha&#39;</span><span class="p">,</span><span class="s">&#39;tail&#39;</span><span class="p">,</span><span class="s">&#39;dim&#39;</span><span class="p">},</span><span class="n">args</span><span class="p">);</span>
+        <span class="k">case</span> <span class="o">-</span><span class="mi">3</span>
+            <span class="c">% GNU Octave and recent Matlab</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">assert</span><span class="p">(</span><span class="n">false</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="p">[</span><span class="n">h</span><span class="p">,</span><span class="n">p</span><span class="p">,</span><span class="n">ci</span><span class="p">,</span><span class="n">stats</span><span class="p">]=</span><span class="n">func</span><span class="p">(</span><span class="n">args</span><span class="p">{:});</span>
+
+<span class="k">function</span><span class="w"> </span>short_args<span class="p">=</span><span class="nf">remove_keys_from_arguments</span><span class="p">(</span>skip_count,keys,args<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">);</span>
+    <span class="n">short_args</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">skip_count</span><span class="o">+</span><span class="n">n</span><span class="p">);</span>
+    <span class="n">short_args</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">skip_count</span><span class="p">)=</span><span class="n">args</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">skip_count</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="nb">i</span><span class="p">=</span><span class="n">strmatch</span><span class="p">(</span><span class="n">key</span><span class="p">,</span><span class="n">args</span><span class="p">((</span><span class="n">skip_count</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">));</span>
+        <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span>
+            <span class="n">short_arg</span><span class="p">=[];</span>
+        <span class="k">else</span>
+            <span class="n">short_arg</span><span class="p">=</span><span class="n">args</span><span class="p">{</span><span class="n">skip_count</span><span class="o">+</span><span class="nb">i</span><span class="o">*</span><span class="mi">2</span><span class="p">};</span>
+        <span class="k">end</span>
+        <span class="n">short_args</span><span class="p">{</span><span class="n">skip_count</span><span class="o">+</span><span class="n">k</span><span class="p">}=</span><span class="n">short_arg</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_stat_exceptions</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">=@(</span><span class="n">varargin</span><span class="p">)</span><span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="c">...</span>
+                            <span class="n">cosmo_stat</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;foo&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="s">&#39;t&#39;</span><span class="p">);</span>
+
+    <span class="n">ds2</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="o">==</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;F&#39;</span><span class="p">);</span>
+    <span class="n">aet</span><span class="p">(</span><span class="n">ds2</span><span class="p">,</span><span class="s">&#39;t2&#39;</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">test_stat_regression</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">ds</span><span class="p">=</span><span class="n">cosmo_synthetic_dataset</span><span class="p">(</span><span class="s">&#39;nchunks&#39;</span><span class="p">,</span><span class="mi">6</span><span class="p">,</span><span class="s">&#39;ntargets&#39;</span><span class="p">,</span><span class="mi">4</span><span class="p">,</span><span class="s">&#39;sigma&#39;</span><span class="p">,</span><span class="mi">0</span><span class="p">);</span>
+    <span class="n">ds</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,[</span><span class="mi">2</span> <span class="mi">6</span><span class="p">],</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="n">params</span><span class="p">=</span><span class="n">get_stat_regression_params</span><span class="p">();</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">params</span><span class="p">)</span>
+        <span class="n">param</span><span class="p">=</span><span class="n">params</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="n">args</span><span class="p">=</span><span class="n">param</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">targets</span><span class="p">=</span><span class="n">param</span><span class="p">{</span><span class="mi">2</span><span class="p">}{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">is_between</span><span class="p">=</span><span class="n">param</span><span class="p">{</span><span class="mi">2</span><span class="p">}{</span><span class="mi">2</span><span class="p">};</span>
+        <span class="n">should_raise_error</span><span class="p">=</span><span class="n">param</span><span class="p">{</span><span class="mi">2</span><span class="p">}{</span><span class="mi">3</span><span class="p">};</span>
+
+        <span class="n">ds_sel</span><span class="p">=</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">cosmo_match</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">,</span><span class="n">targets</span><span class="p">));</span>
+
+        <span class="k">if</span> <span class="n">is_between</span>
+            <span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">=</span><span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="o">+</span><span class="mi">6</span><span class="o">*</span><span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">stat_func</span><span class="p">=@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">args</span><span class="p">{:});</span>
+        <span class="k">if</span> <span class="n">should_raise_error</span>
+            <span class="n">assertExceptionThrown</span><span class="p">(</span><span class="n">stat_func</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">result</span><span class="p">=</span><span class="n">stat_func</span><span class="p">();</span>
+
+        <span class="n">samples</span><span class="p">=</span><span class="n">param</span><span class="p">{</span><span class="mi">3</span><span class="p">}{</span><span class="mi">1</span><span class="p">};</span>
+        <span class="n">assertElementsAlmostEqual</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">samples</span><span class="p">,</span><span class="n">samples</span><span class="p">,</span><span class="s">&#39;absolute&#39;</span><span class="p">,</span><span class="mf">1e-4</span><span class="p">);</span>
+        <span class="n">stat_sa</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+        <span class="n">stat_sa</span><span class="p">.</span><span class="n">stats</span><span class="p">=</span><span class="n">param</span><span class="p">{</span><span class="mi">3</span><span class="p">}(</span><span class="mi">2</span><span class="p">);</span>
+        <span class="n">assertEqual</span><span class="p">(</span><span class="n">result</span><span class="p">.</span><span class="n">sa</span><span class="p">,</span><span class="n">stat_sa</span><span class="p">);</span>
+
+        <span class="c">% test errors for wrong assignment of chunks and targets</span>
+        <span class="k">if</span> <span class="n">is_between</span>
+            <span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">1</span><span class="p">)=</span><span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="mi">2</span><span class="p">);</span>
+            <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">args</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="o">==</span><span class="mi">2</span><span class="p">)=</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">assertExceptionThrown</span><span class="p">(@()</span><span class="n">cosmo_stat</span><span class="p">(</span><span class="n">ds_sel</span><span class="p">,</span><span class="n">args</span><span class="p">{:}),</span><span class="s">&#39;&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>params<span class="p">=</span><span class="nf">get_stat_regression_params</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="c">% parameters to test regressions in stat test; format:</span>
+    <span class="c">% {{stat_name, output_stat_name},...</span>
+    <span class="c">%   {targets,is_between_test,should_raise_error},...</span>
+    <span class="c">%   {samples,.sa.stats{}}}</span>
+    <span class="c">%</span>
+    <span class="c">% based on input dataset generated by:</span>
+    <span class="c">% ds=cosmo_synthetic_dataset(&#39;nchunks&#39;,6,&#39;ntargets&#39;,4,&#39;sigma&#39;,0);</span>
+    <span class="c">% ds=cosmo_slice(ds,[2 6],2);</span>
+    <span class="n">params</span><span class="p">={{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">1.63475</span> <span class="mf">2.00315</span><span class="p">],</span><span class="s">&#39;Ftest(3,15)&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.76051</span> <span class="mf">1.00751</span><span class="p">],</span><span class="s">&#39;Zscore()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.22348</span> <span class="mf">0.15684</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.77652</span> <span class="mf">0.84316</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.22348</span> <span class="mf">0.15684</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.44695</span> <span class="mf">0.31369</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span><span class="c">...</span>
+    <span class="s">&#39;&lt;should raise error&gt;&#39;</span><span class="p">}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span><span class="c">...</span>
+    <span class="s">&#39;&lt;should raise error&gt;&#39;</span><span class="p">}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span><span class="c">...</span>
+    <span class="s">&#39;&lt;should raise error&gt;&#39;</span><span class="p">}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span><span class="c">...</span>
+    <span class="s">&#39;&lt;should raise error&gt;&#39;</span><span class="p">}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span><span class="c">...</span>
+    <span class="s">&#39;&lt;should raise error&gt;&#39;</span><span class="p">}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">1</span><span class="p">}</span><span class="c">...</span>
+    <span class="s">&#39;&lt;should raise error&gt;&#39;</span><span class="p">}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="o">-</span><span class="mf">0.47494</span> <span class="o">-</span><span class="mf">0.73292</span><span class="p">],</span><span class="s">&#39;Ttest(5)&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="o">-</span><span class="mf">0.44704</span> <span class="o">-</span><span class="mf">0.68000</span><span class="p">],</span><span class="s">&#39;Zscore()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.65485</span> <span class="mf">0.49650</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.32742</span> <span class="mf">0.24825</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.67258</span> <span class="mf">0.75175</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">0</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.65485</span> <span class="mf">0.49650</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">1.84801</span> <span class="mf">1.07461</span><span class="p">],</span><span class="s">&#39;Ftest(3,20)&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.95018</span> <span class="mf">0.29948</span><span class="p">],</span><span class="s">&#39;Zscore()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.17101</span> <span class="mf">0.38229</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.82899</span> <span class="mf">0.61771</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.17101</span> <span class="mf">0.38229</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;F&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">1</span> <span class="mi">2</span> <span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.34202</span> <span class="mf">0.76457</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="o">-</span><span class="mf">0.51279</span> <span class="o">-</span><span class="mf">0.50269</span><span class="p">],</span><span class="s">&#39;Ttest(10)&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="o">-</span><span class="mf">0.49693</span> <span class="o">-</span><span class="mf">0.48727</span><span class="p">],</span><span class="s">&#39;Zscore()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.61924</span> <span class="mf">0.62607</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.30962</span> <span class="mf">0.31303</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.69038</span> <span class="mf">0.68697</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t2&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">3</span> <span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.61924</span> <span class="mf">0.62607</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="o">-</span><span class="mf">0.65552</span> <span class="mf">0.32687</span><span class="p">],</span><span class="s">&#39;Ttest(5)&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;z&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="o">-</span><span class="mf">0.61117</span> <span class="mf">0.30942</span><span class="p">],</span><span class="s">&#39;Zscore()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;p&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.54109</span> <span class="mf">0.75700</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;left&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.27055</span> <span class="mf">0.62150</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;right&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.72945</span> <span class="mf">0.37850</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}</span>
+<span class="p">{{</span><span class="s">&#39;t&#39;</span><span class="p">,</span><span class="s">&#39;both&#39;</span><span class="p">},</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mi">4</span> <span class="p">],</span><span class="mi">1</span><span class="p">,</span><span class="mi">0</span><span class="p">}</span><span class="c">...</span>
+    <span class="p">{[</span><span class="mf">0.54109</span> <span class="mf">0.75700</span><span class="p">],</span><span class="s">&#39;Pval()&#39;</span><span class="p">}}};</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="test_stack.html"
+                        title="previous chapter">test stack</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="test_statcode.html"
+                        title="next chapter">test statcode</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/test_stat.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="test_statcode.html" title="test statcode"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="test_stack.html" title="test stack"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_test.html" >CoSMoMVPA unit tests</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

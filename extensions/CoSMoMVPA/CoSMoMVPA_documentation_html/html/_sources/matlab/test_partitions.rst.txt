@@ -1,0 +1,7 @@
+.. _test_partitions:
+
+test partitions
+===============
+
+.. include :: test_partitions.txt
+

@@ -1,0 +1,7 @@
+.. _cosmo_set_path:
+
+cosmo set path
+==============
+
+.. include :: cosmo_set_path.txt
+

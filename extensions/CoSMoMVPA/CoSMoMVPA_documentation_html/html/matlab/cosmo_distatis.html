@@ -1,0 +1,636 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo distatis &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo find local extrema" href="cosmo_find_local_extrema.html" />
+    <link rel="prev" title="cosmo dissimilarity matrix measure" href="cosmo_dissimilarity_matrix_measure.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_find_local_extrema.html" title="cosmo find local extrema"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dissimilarity_matrix_measure.html" title="cosmo dissimilarity matrix measure"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-distatis">
+<span id="id1"></span><h1>cosmo distatis<a class="headerlink" href="#cosmo-distatis" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>res<span class="p">=</span><span class="nf">cosmo_distatis</span><span class="p">(</span>ds, varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% apply DISTATIS measure to each feature</span>
+<span class="c">%</span>
+<span class="c">% res=cosmo_statis_measure(ds, opt)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%    ds               dataset struct with dissimilarity values; usually</span>
+<span class="c">%                     the output from @cosmo_dissimilarity_matrix_measure</span>
+<span class="c">%                     applied to each subject followed by cosmo_stack. It</span>
+<span class="c">%                     can also be a cell with datasets (one per subject).</span>
+<span class="c">%    &#39;return&#39;, d      d can be &#39;distance&#39; (default) or &#39;crossproduct&#39;.</span>
+<span class="c">%                     &#39;distance&#39; returns a distance matrix, whereas</span>
+<span class="c">%                     &#39;crossproduct&#39; returns a crossproduct matrix</span>
+<span class="c">%    &#39;split_by&#39;, s    sample attribute that discriminates chunks</span>
+<span class="c">%                     (participants) (default: &#39;chunks&#39;)</span>
+<span class="c">%    &#39;shape&#39;, sh      shape of output if it were unflattened using</span>
+<span class="c">%                     cosmo_unflatten, either &#39;square&#39; (default) or</span>
+<span class="c">%                     &#39;triangle&#39; (which gives the lower diagonal of the</span>
+<span class="c">%                     distance matrix)</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%    res              result dataset struct with feature-wise optimal</span>
+<span class="c">%                     compromise distance matrix across subjects</span>
+<span class="c">%      .samples</span>
+<span class="c">%</span>
+<span class="c">%</span>
+<span class="c">% Example:</span>
+<span class="c">%     ds=cosmo_synthetic_dataset(&#39;nsubjects&#39;,5,&#39;nchunks&#39;,1,&#39;ntargets&#39;,4);</span>
+<span class="c">%     %</span>
+<span class="c">%     % define neighborhood (here a searchlight with radius of 1 voxel)</span>
+<span class="c">%     nbrhood=cosmo_spherical_neighborhood(ds,&#39;radius&#39;,1,&#39;progress&#39;,false);</span>
+<span class="c">%     %</span>
+<span class="c">%     % define measure</span>
+<span class="c">%     measure=@cosmo_dissimilarity_matrix_measure;</span>
+<span class="c">%     % each subject is a chunk</span>
+<span class="c">%     ds.sa.chunks=ds.sa.subject;</span>
+<span class="c">%     % compute DSM for each subject</span>
+<span class="c">%     sp=cosmo_split(ds,&#39;chunks&#39;);</span>
+<span class="c">%     for k=1:numel(sp)</span>
+<span class="c">%         sp{k}=cosmo_searchlight(sp{k},nbrhood,measure,&#39;progress&#39;,false);</span>
+<span class="c">%         sp{k}.sa.chunks=ones(6,1)*k;</span>
+<span class="c">%     end</span>
+<span class="c">%     % merge results</span>
+<span class="c">%     dsms=cosmo_stack(sp);</span>
+<span class="c">%     %</span>
+<span class="c">%     r=cosmo_distatis(dsms,&#39;return&#39;,&#39;distance&#39;,&#39;progress&#39;,false);</span>
+<span class="c">%     cosmo_disp(r);</span>
+<span class="c">%     &gt; .samples</span>
+<span class="c">%     &gt;   [     0         0         0         0         0         0</span>
+<span class="c">%     &gt;     0.818      1.09      0.77     0.653      1.03     0.421</span>
+<span class="c">%     &gt;     0.869       1.3      1.06      1.04     0.932      1.07</span>
+<span class="c">%     &gt;       :         :         :         :         :         :</span>
+<span class="c">%     &gt;      1.16     0.889      0.99     0.631      1.48     0.621</span>
+<span class="c">%     &gt;     0.268     0.952     0.965     0.462     0.943      1.04</span>
+<span class="c">%     &gt;         0         0         0         0         0         0 ]@16x6</span>
+<span class="c">%     &gt; .fa</span>
+<span class="c">%     &gt;   .center_ids</span>
+<span class="c">%     &gt;     [ 1         2         3         4         5         6 ]</span>
+<span class="c">%     &gt;   .i</span>
+<span class="c">%     &gt;     [ 1         2         3         1         2         3 ]</span>
+<span class="c">%     &gt;   .j</span>
+<span class="c">%     &gt;     [ 1         1         1         2         2         2 ]</span>
+<span class="c">%     &gt;   .k</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt;   .nvoxels</span>
+<span class="c">%     &gt;     [ 3         4         3         3         4         3 ]</span>
+<span class="c">%     &gt;   .radius</span>
+<span class="c">%     &gt;     [ 1         1         1         1         1         1 ]</span>
+<span class="c">%     &gt;   .quality</span>
+<span class="c">%     &gt;     [ 0.685     0.742     0.617     0.648     0.757     0.591 ]</span>
+<span class="c">%     &gt;   .nchunks</span>
+<span class="c">%     &gt;     [ 5         5         5         5         5         5 ]</span>
+<span class="c">%     &gt; .a</span>
+<span class="c">%     &gt;   .fdim</span>
+<span class="c">%     &gt;     .labels</span>
+<span class="c">%     &gt;       { &#39;i&#39;  &#39;j&#39;  &#39;k&#39; }</span>
+<span class="c">%     &gt;     .values</span>
+<span class="c">%     &gt;       { [ 1         2         3 ]  [ 1         2 ]  [ 1 ] }</span>
+<span class="c">%     &gt;   .sdim</span>
+<span class="c">%     &gt;     .labels</span>
+<span class="c">%     &gt;       { &#39;targets1&#39;  &#39;targets2&#39; }</span>
+<span class="c">%     &gt;     .values</span>
+<span class="c">%     &gt;       { [ 1    [ 1</span>
+<span class="c">%     &gt;           2      2</span>
+<span class="c">%     &gt;           3      3</span>
+<span class="c">%     &gt;           4 ]    4 ] }</span>
+<span class="c">%     &gt;   .vol</span>
+<span class="c">%     &gt;     .mat</span>
+<span class="c">%     &gt;       [ 2         0         0        -3</span>
+<span class="c">%     &gt;         0         2         0        -3</span>
+<span class="c">%     &gt;         0         0         2        -3</span>
+<span class="c">%     &gt;         0         0         0         1 ]</span>
+<span class="c">%     &gt;     .dim</span>
+<span class="c">%     &gt;       [ 3         2         1 ]</span>
+<span class="c">%     &gt;     .xform</span>
+<span class="c">%     &gt;       &#39;scanner_anat&#39;</span>
+<span class="c">%     &gt; .sa</span>
+<span class="c">%     &gt;   .targets1</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       3</span>
+<span class="c">%     &gt;       :</span>
+<span class="c">%     &gt;       2</span>
+<span class="c">%     &gt;       3</span>
+<span class="c">%     &gt;       4 ]@16x1</span>
+<span class="c">%     &gt;   .targets2</span>
+<span class="c">%     &gt;     [ 1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       1</span>
+<span class="c">%     &gt;       :</span>
+<span class="c">%     &gt;       4</span>
+<span class="c">%     &gt;       4</span>
+<span class="c">%     &gt;       4 ]@16x1</span>
+<span class="c">%</span>
+<span class="c">% Reference:</span>
+<span class="c">%   - Abdi, H., Valentin, D., O?Toole, A. J., &amp; Edelman, B. (2005).</span>
+<span class="c">%     DISTATIS: The analysis of multiple distance matrices. In</span>
+<span class="c">%     Proceedings of the IEEE Computer Society: International conference</span>
+<span class="c">%     on computer vision and pattern recognition, San Diego, CA, USA</span>
+<span class="c">%     (pp. 42?47).</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%   - DISTATIS tries to find an optimal compromise distance matrix across</span>
+<span class="c">%     the different samples (participants)</span>
+<span class="c">%   - Output can be reshape to matrix or array form using</span>
+<span class="c">%     cosmo_unflatten(res,1)</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="n">cosmo_check_external</span><span class="p">(</span><span class="s">&#39;distatis&#39;</span><span class="p">);</span>
+
+    <span class="n">defaults</span><span class="p">.</span><span class="k">return</span><span class="p">=</span><span class="s">&#39;distance&#39;</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">split_by</span><span class="p">=</span><span class="s">&#39;chunks&#39;</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">shape</span><span class="p">=</span><span class="s">&#39;square&#39;</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">mask_output</span><span class="p">=[];</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">progress</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">feature_ids</span><span class="p">=[];</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">autoscale</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">abs_correlation</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">weights</span><span class="p">=</span><span class="s">&#39;eig&#39;</span><span class="p">;</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+
+    <span class="n">subject_cell</span><span class="p">=</span><span class="n">get_subject_data</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">nsubj</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">subject_cell</span><span class="p">);</span>
+
+
+    <span class="p">[</span><span class="n">dsms</span><span class="p">,</span><span class="n">nclasses</span><span class="p">,</span><span class="n">dim_labels</span><span class="p">,</span><span class="n">dim_values</span><span class="p">]=</span><span class="n">get_dsms</span><span class="p">(</span><span class="n">subject_cell</span><span class="p">);</span>
+
+    <span class="n">feature_ids</span><span class="p">=</span><span class="n">get_feature_ids</span><span class="p">(</span><span class="nb">size</span><span class="p">(</span><span class="n">dsms</span><span class="p">{</span><span class="mi">1</span><span class="p">},</span><span class="mi">3</span><span class="p">),</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">nfeatures</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">feature_ids</span><span class="p">);</span>
+
+    <span class="n">quality</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">);</span>
+    <span class="n">nobservations</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">);</span>
+
+    <span class="n">prev_msg</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="n">clock_start</span><span class="p">=</span><span class="n">clock</span><span class="p">();</span>
+    <span class="n">show_progress</span><span class="p">=</span><span class="n">nfeatures</span><span class="o">&gt;</span><span class="mi">1</span> <span class="o">&amp;&amp;</span> <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">;</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nfeatures</span>
+        <span class="n">feature_id</span><span class="p">=</span><span class="n">feature_ids</span><span class="p">(</span><span class="n">k</span><span class="p">);</span>
+        <span class="n">x</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nclasses</span><span class="o">*</span><span class="n">nclasses</span><span class="p">,</span><span class="n">nsubj</span><span class="p">);</span>
+
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nsubj</span>
+            <span class="n">dsm</span><span class="p">=</span><span class="n">dsms</span><span class="p">{</span><span class="nb">j</span><span class="p">}(:,:,</span><span class="n">feature_id</span><span class="p">);</span>
+            <span class="n">x</span><span class="p">(:,</span><span class="nb">j</span><span class="p">)=</span><span class="n">distance2crossproduct</span><span class="p">(</span><span class="n">dsm</span><span class="p">,</span> <span class="n">opt</span><span class="p">.</span><span class="n">autoscale</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="p">[</span><span class="n">x</span><span class="p">,</span><span class="n">subj_msk</span><span class="p">]=</span><span class="n">cosmo_remove_useless_data</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+        <span class="n">nkeep</span><span class="p">=</span><span class="n">sum</span><span class="p">(</span><span class="n">subj_msk</span><span class="p">);</span>
+
+        <span class="c">% equivalent, but slower:</span>
+        <span class="c">% [e,v]=eigs(c,1);</span>
+
+        <span class="p">[</span><span class="n">ew</span><span class="p">,</span><span class="n">v</span><span class="p">]=</span><span class="n">get_weights</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">,</span> <span class="n">nkeep</span><span class="p">,</span> <span class="n">opt</span><span class="p">);</span>
+
+        <span class="c">% compute compromise</span>
+        <span class="n">compromise</span><span class="p">=</span><span class="n">x</span><span class="o">*</span><span class="n">ew</span><span class="p">;</span>
+
+        <span class="n">result</span><span class="p">=</span><span class="n">convert_compromise</span><span class="p">(</span><span class="n">compromise</span><span class="p">,</span> <span class="n">opt</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="n">feature_id</span><span class="o">==</span><span class="mi">1</span>
+            <span class="c">% allocate space</span>
+            <span class="n">samples</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">result</span><span class="p">),</span><span class="n">nfeatures</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">samples</span><span class="p">(:,</span><span class="n">k</span><span class="p">)=</span><span class="n">result</span><span class="p">;</span>
+
+        <span class="n">quality</span><span class="p">(:,</span><span class="n">k</span><span class="p">)=</span><span class="n">v</span><span class="o">/</span><span class="n">nkeep</span><span class="p">;</span>
+        <span class="n">nobservations</span><span class="p">(:,</span><span class="n">k</span><span class="p">)=</span><span class="n">nkeep</span><span class="p">;</span>
+
+
+        <span class="k">if</span> <span class="n">show_progress</span> <span class="o">&amp;&amp;</span> <span class="p">(</span><span class="n">k</span><span class="o">&lt;</span><span class="mi">10</span> <span class="o">||</span> <span class="c">...</span>
+                                <span class="nb">mod</span><span class="p">(</span><span class="n">k</span><span class="p">,</span> <span class="n">opt</span><span class="p">.</span><span class="n">progress</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span> <span class="o">||</span> <span class="c">...</span>
+                                <span class="n">k</span><span class="o">==</span><span class="n">nfeatures</span><span class="p">)</span>
+            <span class="n">status</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;quality=%.3f%% (avg)&#39;</span><span class="p">,</span><span class="n">mean</span><span class="p">(</span><span class="n">quality</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">k</span><span class="p">)));</span>
+            <span class="n">prev_msg</span><span class="p">=</span><span class="n">cosmo_show_progress</span><span class="p">(</span><span class="n">clock_start</span><span class="p">,</span><span class="n">k</span><span class="o">/</span><span class="n">nfeatures</span><span class="p">,</span><span class="c">...</span>
+                                                        <span class="n">status</span><span class="p">,</span><span class="n">prev_msg</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c">% set output in either triangular or square shape</span>
+    <span class="p">[</span><span class="n">res</span><span class="p">,</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="n">get_samples_in_shape</span><span class="p">(</span><span class="n">samples</span><span class="p">,</span><span class="n">nclasses</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">shape</span><span class="p">);</span>
+    <span class="n">res</span><span class="p">=</span><span class="n">copy_fields</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">res</span><span class="p">,{</span><span class="s">&#39;fa&#39;</span><span class="p">,</span><span class="s">&#39;a&#39;</span><span class="p">});</span>
+
+    <span class="c">% add attributes</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">quality</span><span class="p">=</span><span class="n">quality</span><span class="p">;</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">fa</span><span class="p">.</span><span class="n">nchunks</span><span class="p">=</span><span class="n">nobservations</span><span class="p">;</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">labels</span><span class="p">=</span><span class="n">dim_labels</span><span class="p">;</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">a</span><span class="p">.</span><span class="n">sdim</span><span class="p">.</span><span class="n">values</span><span class="p">=</span><span class="n">dim_values</span><span class="p">;</span>
+
+    <span class="n">res</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">dim_labels</span><span class="p">{</span><span class="mi">1</span><span class="p">})=</span><span class="nb">i</span><span class="p">(:);</span>
+    <span class="n">res</span><span class="p">.</span><span class="n">sa</span><span class="p">.(</span><span class="n">dim_labels</span><span class="p">{</span><span class="mi">2</span><span class="p">})=</span><span class="nb">j</span><span class="p">(:);</span>
+
+    <span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">res</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>[res,i,j]<span class="p">=</span><span class="nf">get_samples_in_shape</span><span class="p">(</span>samples,nclasses,shape<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">res</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="k">switch</span> <span class="n">shape</span>
+        <span class="k">case</span> <span class="s">&#39;triangle&#39;</span>
+            <span class="p">[</span><span class="n">msk</span><span class="p">,</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="n">distance_matrix_mask</span><span class="p">(</span><span class="n">nclasses</span><span class="p">);</span>
+            <span class="n">res</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">samples</span><span class="p">(</span><span class="n">msk</span><span class="p">(:),:);</span>
+        <span class="k">case</span> <span class="s">&#39;square&#39;</span>
+            <span class="n">res</span><span class="p">.</span><span class="n">samples</span><span class="p">=</span><span class="n">samples</span><span class="p">;</span>
+            <span class="p">[</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="nb">find</span><span class="p">(</span><span class="nb">ones</span><span class="p">(</span><span class="n">nclasses</span><span class="p">));</span>
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;unsupported direction %s&#39;</span><span class="p">,</span> <span class="n">shape</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>dst<span class="p">=</span><span class="nf">copy_fields</span><span class="p">(</span>src,dst,keys<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">src</span><span class="p">,</span><span class="n">key</span><span class="p">)</span>
+            <span class="n">dst</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">src</span><span class="p">.(</span><span class="n">key</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>feature_ids<span class="p">=</span><span class="nf">get_feature_ids</span><span class="p">(</span>nfeatures, opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">feature_ids</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">feature_ids</span><span class="p">;</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">feature_ids</span><span class="p">);</span>
+        <span class="n">feature_ids</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nfeatures</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>[ew,v]<span class="p">=</span><span class="nf">get_weights</span><span class="p">(</span>x, feature_id, nkeep, opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">switch</span> <span class="n">opt</span><span class="p">.</span><span class="n">weights</span>
+        <span class="k">case</span> <span class="s">&#39;eig&#39;</span>
+            <span class="p">[</span><span class="n">ew</span><span class="p">,</span><span class="n">v</span><span class="p">]=</span><span class="n">eigen_weights</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">feature_id</span><span class="p">);</span>
+
+        <span class="k">case</span> <span class="s">&#39;uniform&#39;</span>
+            <span class="c">% all the same (allowing for comparison with &#39;eig&#39;)</span>
+            <span class="n">ew</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="n">nkeep</span><span class="p">,</span><span class="mi">1</span><span class="p">)</span><span class="o">/</span><span class="n">nkeep</span><span class="p">;</span>
+            <span class="n">v</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal weight %s&#39;</span><span class="p">,</span> <span class="n">opt</span><span class="p">.</span><span class="n">weights</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>subject_cell<span class="p">=</span><span class="nf">get_subject_data</span><span class="p">(</span>ds,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">isstruct</span><span class="p">(</span><span class="n">ds</span><span class="p">)</span>
+        <span class="n">subject_cell</span><span class="p">=</span><span class="n">cosmo_split</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">split_by</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">subject_cell</span><span class="p">=</span><span class="n">ds</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">subject_cell</span><span class="p">)</span><span class="o">==</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;empty input&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>[ew,v]<span class="p">=</span><span class="nf">eigen_weights</span><span class="p">(</span>x, feature_id<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">c</span><span class="p">=</span><span class="n">cosmo_corr</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+
+    <span class="n">negative_c</span><span class="p">=</span><span class="n">c</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">negative_c</span><span class="p">(:))</span>
+
+        <span class="p">[</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="nb">find</span><span class="p">(</span><span class="n">negative_c</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;feature %d has negative correlation between &#39;</span><span class="c">...</span>
+                <span class="s">&#39;sample %d and %d, which is not supported by &#39;</span><span class="c">...</span>
+                <span class="s">&#39;distatis. DISTATIS assumes that the similarity &#39;</span><span class="c">...</span>
+                <span class="s">&#39;data from all samples (typically: participants) &#39;</span><span class="c">...</span>
+                <span class="s">&#39;correlate positively. Because that is not the &#39;</span><span class="c">...</span>
+                <span class="s">&#39;case, you cannot use DISTATIS analysis on this &#39;</span><span class="c">...</span>
+                <span class="s">&#39;data. &#39;</span><span class="p">],</span><span class="c">...</span>
+                <span class="n">feature_id</span><span class="p">,</span><span class="nb">i</span><span class="p">(</span><span class="mi">1</span><span class="p">),</span><span class="nb">j</span><span class="p">(</span><span class="mi">1</span><span class="p">));</span>
+    <span class="k">end</span>
+
+    <span class="p">[</span><span class="n">v</span><span class="p">,</span><span class="n">e</span><span class="p">]=</span><span class="n">fast_eig1</span><span class="p">(</span><span class="n">c</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">all</span><span class="p">(</span><span class="n">e</span><span class="o">&lt;</span><span class="mi">0</span><span class="p">)</span>
+        <span class="n">e</span><span class="p">=</span><span class="o">-</span><span class="n">e</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">e</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">));</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">v</span><span class="o">&gt;</span><span class="mi">0</span><span class="p">);</span>
+
+    <span class="c">% normalize first eigenvector</span>
+    <span class="n">ew</span><span class="p">=</span><span class="n">e</span><span class="o">/</span><span class="n">sum</span><span class="p">(</span><span class="n">e</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>result<span class="p">=</span><span class="nf">convert_compromise</span><span class="p">(</span>compromise, opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">switch</span> <span class="n">opt</span><span class="p">.</span><span class="k">return</span>
+        <span class="k">case</span> <span class="s">&#39;crossproduct&#39;</span>
+            <span class="n">result</span><span class="p">=</span><span class="n">compromise</span><span class="p">;</span>
+        <span class="k">case</span> <span class="s">&#39;distance&#39;</span>
+            <span class="n">result</span><span class="p">=</span><span class="n">crossproduct2distance</span><span class="p">(</span><span class="n">compromise</span><span class="p">);</span>
+        <span class="k">otherwise</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal opt.return&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>z<span class="p">=</span><span class="nf">crossproduct2distance</span><span class="p">(</span>x<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">e</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">d</span><span class="p">=</span><span class="n">x</span><span class="p">(</span><span class="mi">1</span><span class="p">:(</span><span class="n">n</span><span class="o">+</span><span class="mi">1</span><span class="p">):</span><span class="k">end</span><span class="p">);</span>
+    <span class="n">dd</span><span class="p">=</span><span class="n">d</span><span class="o">*</span><span class="n">e</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">ddt</span><span class="p">=</span><span class="n">dd</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">y</span><span class="p">=</span><span class="n">dd</span><span class="p">(:)</span><span class="o">+</span><span class="n">ddt</span><span class="p">(:)</span><span class="o">-</span><span class="mi">2</span><span class="o">*</span><span class="n">x</span><span class="p">;</span>
+    <span class="n">z</span><span class="p">=</span><span class="n">ensure_distance_vector</span><span class="p">(</span><span class="n">y</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span><span class="nf">assert_symmetric</span><span class="p">(</span>x, tolerance<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span><span class="p">,</span> <span class="n">tolerance</span><span class="p">=</span><span class="mf">1e-8</span><span class="p">;</span> <span class="k">end</span>
+
+    <span class="c">% assert x is a square matrix</span>
+    <span class="n">sz</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">sz</span><span class="p">,</span><span class="n">sz</span><span class="p">([</span><span class="mi">2</span> <span class="mi">1</span><span class="p">])));</span>
+
+
+    <span class="n">xx</span><span class="p">=</span><span class="n">x</span><span class="o">&#39;-</span><span class="n">x</span><span class="p">;</span>
+
+    <span class="n">msk</span><span class="p">=</span><span class="n">xx</span><span class="o">&gt;</span><span class="n">tolerance</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">any</span><span class="p">(</span><span class="n">msk</span><span class="p">)</span>
+        <span class="p">[</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="nb">find</span><span class="p">(</span><span class="n">msk</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;not symmetric: x(%d,%d)=%d ~= %d=x(%d,%d)&#39;</span><span class="p">,</span><span class="c">...</span>
+                <span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">,</span><span class="n">x</span><span class="p">(</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">),</span><span class="n">x</span><span class="p">(</span><span class="nb">j</span><span class="p">,</span><span class="nb">i</span><span class="p">),</span><span class="nb">j</span><span class="p">,</span><span class="nb">i</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>z_vec<span class="p">=</span><span class="nf">distance2crossproduct</span><span class="p">(</span>x, autoscale<span class="p">)</span><span class="w"></span>
+
+<span class="w">    </span><span class="n">n</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">e</span><span class="p">=</span><span class="nb">ones</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">m</span><span class="p">=</span><span class="n">e</span><span class="o">*</span><span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="n">n</span><span class="p">);</span>
+    <span class="n">ee</span><span class="p">=</span><span class="nb">eye</span><span class="p">(</span><span class="n">n</span><span class="p">)</span><span class="o">-</span><span class="n">e</span><span class="o">*</span><span class="n">m</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">y</span><span class="p">=</span><span class="o">-</span><span class="p">.</span><span class="mi">5</span><span class="o">*</span><span class="n">ee</span><span class="o">*</span><span class="p">(</span><span class="n">x</span><span class="o">+</span><span class="n">x</span><span class="o">&#39;</span><span class="p">)</span><span class="o">*</span><span class="n">ee</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="k">if</span> <span class="n">autoscale</span>
+        <span class="n">z</span><span class="p">=(</span><span class="mi">1</span><span class="o">/</span><span class="n">fast_eig1</span><span class="p">(</span><span class="n">y</span><span class="p">))</span><span class="o">*</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">z</span><span class="p">=</span><span class="n">y</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="n">assert_symmetric</span><span class="p">(</span><span class="n">z</span><span class="p">);</span>
+    <span class="c">% equivalent, but slower:</span>
+    <span class="c">% z=(1/eigs(y,1))*y(:);</span>
+
+    <span class="n">z_vec</span><span class="p">=</span><span class="n">z</span><span class="p">(:);</span>
+
+<span class="k">function</span><span class="w"> </span>[lambda,pivot]<span class="p">=</span><span class="nf">fast_eig1</span><span class="p">(</span>x<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% returns the first eigenvalue in lambda, and the corresponding</span>
+    <span class="c">% eigenvector in pivot</span>
+    <span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">)</span>
+        <span class="p">[</span><span class="n">pivot</span><span class="p">,</span><span class="n">lambda</span><span class="p">]=</span><span class="n">eigs</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="c">% There seems a bug in Octave for &#39;eigs&#39;,</span>
+        <span class="c">% so use &#39;eig&#39; instead.</span>
+        <span class="c">% http://savannah.gnu.org/bugs/?44004</span>
+        <span class="p">[</span><span class="n">e</span><span class="p">,</span><span class="n">v</span><span class="p">]=</span><span class="n">eig</span><span class="p">(</span><span class="n">x</span><span class="p">);</span>
+        <span class="n">diag_v</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">v</span><span class="p">);</span>
+
+        <span class="c">% find largest eigenvalue and eigenvector</span>
+        <span class="p">[</span><span class="n">lambda</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">max</span><span class="p">(</span><span class="n">diag_v</span><span class="p">);</span>
+        <span class="n">pivot</span><span class="p">=</span><span class="n">e</span><span class="p">(:,</span><span class="nb">i</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% The code below is disabled because under certain circumstances</span>
+    <span class="c">% it would return a near-zero eigenvalue if indeed one eigenvalue (but</span>
+    <span class="c">% not the largest one) is zero.</span>
+    <span class="c">% % compute first (largest) eigenvalue and corresponding eigenvector</span>
+    <span class="c">% % using power iteration method; benchmarking suggests this can be up to</span>
+    <span class="c">% % five times as fast as using eigs(x,1)</span>
+    <span class="c">% n=size(x,1);</span>
+    <span class="c">% pivot=ones(n,1);</span>
+    <span class="c">% tolerance=1e-8;</span>
+    <span class="c">% max_iter=1000;</span>
+    <span class="c">%</span>
+    <span class="c">% old_lambda=NaN;</span>
+    <span class="c">% for k=1:max_iter</span>
+    <span class="c">%     z=x*pivot;</span>
+    <span class="c">%     pivot=z / norm(z);</span>
+    <span class="c">%</span>
+    <span class="c">%     lambda=pivot&#39;*z;</span>
+    <span class="c">%     if abs(lambda-old_lambda)/lambda&lt;tolerance</span>
+    <span class="c">%         z=x*pivot;</span>
+    <span class="c">%         pivot=z / sqrt(sum(z.^2));</span>
+    <span class="c">%</span>
+    <span class="c">%         lambda=pivot&#39;*z;</span>
+    <span class="c">%         return</span>
+    <span class="c">%     end</span>
+    <span class="c">%     old_lambda=lambda;</span>
+    <span class="c">% end</span>
+    <span class="c">%</span>
+    <span class="c">% % matlab fallback</span>
+    <span class="c">% [pivot,lambda]=eigs(x,1);</span>
+
+<span class="k">function</span><span class="w"> </span>y<span class="p">=</span><span class="nf">ensure_distance_vector</span><span class="p">(</span>x<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tolerance</span><span class="p">=</span><span class="mf">1e-8</span><span class="p">;</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">sqrt</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">xsq</span><span class="p">=</span><span class="nb">reshape</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">n</span><span class="p">,</span><span class="n">n</span><span class="p">);</span>
+
+    <span class="n">dx</span><span class="p">=</span><span class="nb">diag</span><span class="p">(</span><span class="n">xsq</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">dx</span><span class="o">&lt;</span><span class="n">tolerance</span><span class="p">));</span>
+
+    <span class="n">xsq</span><span class="p">=</span><span class="n">xsq</span><span class="o">-</span><span class="nb">diag</span><span class="p">(</span><span class="n">dx</span><span class="p">);</span>
+
+    <span class="n">delta</span><span class="p">=</span><span class="n">xsq</span><span class="o">-</span><span class="n">xsq</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">delta</span><span class="p">(:)</span><span class="o">&lt;</span><span class="n">tolerance</span><span class="p">));</span>
+
+    <span class="n">xsq</span><span class="p">=.</span><span class="mi">5</span><span class="o">*</span><span class="p">(</span><span class="n">xsq</span><span class="o">+</span><span class="n">xsq</span><span class="o">&#39;</span><span class="p">);</span>
+    <span class="n">y</span><span class="p">=</span><span class="n">xsq</span><span class="p">(:);</span>
+
+
+<span class="k">function</span><span class="w"> </span>[dsms,nclasses,dim_labels,dim_values]<span class="p">=</span><span class="nf">get_dsms</span><span class="p">(</span>data_cell<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">nsubj</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">data_cell</span><span class="p">);</span>
+
+    <span class="c">% allocate</span>
+    <span class="n">dsms</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nsubj</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">data_cell</span><span class="p">)</span>
+        <span class="n">data</span><span class="p">=</span><span class="n">data_cell</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="c">% get data</span>
+        <span class="p">[</span><span class="n">dsm</span><span class="p">,</span><span class="n">dim_labels</span><span class="p">,</span><span class="n">dim_values</span><span class="p">,</span><span class="n">is_ds</span><span class="p">]=</span><span class="n">get_dsm</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+
+        <span class="c">% store data</span>
+        <span class="n">dsms</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">dsm</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="n">k</span><span class="o">==</span><span class="mi">1</span>
+            <span class="n">nclasses</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">dsm</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+            <span class="n">first_dim_labels</span><span class="p">=</span><span class="n">dim_labels</span><span class="p">;</span>
+            <span class="n">first_dim_values</span><span class="p">=</span><span class="n">dim_values</span><span class="p">;</span>
+
+            <span class="n">data_first</span><span class="p">=</span><span class="n">data</span><span class="p">;</span>
+        <span class="k">else</span>
+
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">first_dim_labels</span><span class="p">,</span><span class="n">dim_labels</span><span class="p">)</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;dim label mismatch between subject 1 and %d&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+            <span class="k">end</span>
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">first_dim_values</span><span class="p">,</span><span class="n">dim_values</span><span class="p">)</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;dim label mismatch between subject 1 and %d&#39;</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="c">% check for compatibility over subjects, raises an error if not</span>
+            <span class="c">% kosher</span>
+            <span class="k">if</span> <span class="n">is_ds</span>
+                <span class="n">cosmo_stack</span><span class="p">({</span><span class="n">cosmo_slice</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="c">...</span>
+                                <span class="n">cosmo_slice</span><span class="p">(</span><span class="n">data_first</span><span class="p">,</span><span class="mi">1</span><span class="p">)},</span><span class="mi">1</span><span class="p">,</span><span class="s">&#39;unique&#39;</span><span class="p">);</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>[msk,i,j]<span class="p">=</span><span class="nf">distance_matrix_mask</span><span class="p">(</span>nclasses<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">msk</span><span class="p">=</span><span class="nb">triu</span><span class="p">(</span><span class="nb">repmat</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span><span class="p">,</span><span class="n">nclasses</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="mi">1</span><span class="p">)</span><span class="o">&#39;&gt;</span><span class="mi">0</span><span class="p">;</span>
+    <span class="p">[</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="nb">find</span><span class="p">(</span><span class="n">msk</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>[dsm, dim_labels, dim_values, is_ds]<span class="p">=</span><span class="nf">get_dsm</span><span class="p">(</span>data<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">is_ds</span><span class="p">=</span><span class="n">isstruct</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">is_ds</span>
+        <span class="p">[</span><span class="n">dsm</span><span class="p">,</span><span class="n">dim_labels</span><span class="p">,</span><span class="n">dim_values</span><span class="p">]=</span><span class="n">cosmo_unflatten</span><span class="p">(</span><span class="n">data</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">elseif</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">data</span><span class="p">)</span>
+        <span class="n">sz</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+        <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">sz</span><span class="p">)</span><span class="o">~=</span><span class="mi">2</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;only vectorized distance matrices are supported&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="p">[</span><span class="n">n</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">data</span><span class="p">);</span>
+
+        <span class="n">side</span><span class="p">=(</span><span class="mi">1</span><span class="o">+</span><span class="nb">sqrt</span><span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="mi">8</span><span class="o">*</span><span class="n">n</span><span class="p">))</span><span class="o">/</span><span class="mi">2</span><span class="p">;</span> <span class="c">% so that side*(side-1)/2==n</span>
+        <span class="k">if</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="n">side</span><span class="p">,</span> <span class="nb">round</span><span class="p">(</span><span class="n">side</span><span class="p">))</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;size %d of input vector is not correct for &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;the number of elements below the diagonal of a &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;square (distance) matrix&#39;</span><span class="p">],</span> <span class="n">n</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="p">[</span><span class="n">msk</span><span class="p">,</span><span class="nb">i</span><span class="p">,</span><span class="nb">j</span><span class="p">]=</span><span class="n">distance_matrix_mask</span><span class="p">(</span><span class="n">side</span><span class="p">);</span>
+        <span class="n">dsm</span><span class="p">=</span><span class="nb">zeros</span><span class="p">([</span><span class="n">side</span><span class="p">,</span><span class="n">side</span><span class="p">,</span><span class="n">nfeatures</span><span class="p">]);</span>
+
+        <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="o">==</span><span class="n">n</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">pos</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+            <span class="n">dsm</span><span class="p">(</span><span class="nb">i</span><span class="p">(</span><span class="n">pos</span><span class="p">),</span><span class="nb">j</span><span class="p">(</span><span class="n">pos</span><span class="p">),:)=</span><span class="n">data</span><span class="p">(</span><span class="n">pos</span><span class="p">,:);</span>
+        <span class="k">end</span>
+
+        <span class="n">sq1</span><span class="p">=</span><span class="n">cosmo_squareform</span><span class="p">(</span><span class="n">data</span><span class="p">(:,</span><span class="mi">1</span><span class="p">));</span>
+        <span class="n">dsm1</span><span class="p">=</span><span class="n">dsm</span><span class="p">(:,:,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">assert</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">sq1</span><span class="p">,</span><span class="n">dsm1</span><span class="o">+</span><span class="n">dsm1</span><span class="o">&#39;</span><span class="p">));</span>
+
+
+        <span class="n">dim_labels</span><span class="p">={</span><span class="s">&#39;targets1&#39;</span><span class="p">,</span><span class="s">&#39;targets2&#39;</span><span class="p">};</span>
+        <span class="n">dim_values</span><span class="p">={(</span><span class="mi">1</span><span class="p">:</span><span class="n">side</span><span class="p">)</span><span class="o">&#39;</span><span class="p">,(</span><span class="mi">1</span><span class="p">:</span><span class="n">side</span><span class="p">)</span><span class="o">&#39;</span><span class="p">};</span>
+    <span class="k">else</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal input: expect dataset struct, or cell with arrays&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_dissimilarity_matrix_measure.html"
+                        title="previous chapter">cosmo dissimilarity matrix measure</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_find_local_extrema.html"
+                        title="next chapter">cosmo find local extrema</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_distatis.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_find_local_extrema.html" title="cosmo find local extrema"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_dissimilarity_matrix_measure.html" title="cosmo dissimilarity matrix measure"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

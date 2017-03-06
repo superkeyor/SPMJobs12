@@ -1,0 +1,7 @@
+.. _cosmo_fmri_orientation_hdr:
+
+cosmo fmri orientation hdr
+==========================
+
+.. include :: cosmo_fmri_orientation_hdr.txt
+

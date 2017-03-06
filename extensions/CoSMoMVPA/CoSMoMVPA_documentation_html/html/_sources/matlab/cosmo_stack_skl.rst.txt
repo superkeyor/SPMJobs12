@@ -1,0 +1,7 @@
+.. _cosmo_stack_skl:
+
+cosmo stack skl
+===============
+
+.. include :: cosmo_stack_skl.txt
+

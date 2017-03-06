@@ -1,0 +1,811 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo check external &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo check neighborhood" href="cosmo_check_neighborhood.html" />
+    <link rel="prev" title="cosmo check dataset" href="cosmo_check_dataset.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_check_neighborhood.html" title="cosmo check neighborhood"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_check_dataset.html" title="cosmo check dataset"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" accesskey="U">CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-check-external">
+<span id="id1"></span><h1>cosmo check external<a class="headerlink" href="#cosmo-check-external" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">cosmo_check_external</span><span class="p">(</span>external, raise_<span class="p">)</span><span class="w"></span>
+<span class="c">% Checks whether a certain external toolbox exists, or list citation info</span>
+<span class="c">%</span>
+<span class="c">% is_ok=cosmo_check_external(external[, raise_])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   external               string or cell of strings. Currently supports:</span>
+<span class="c">%                          &#39;afni&#39;      AFNI matlab toolbox</span>
+<span class="c">%                          &#39;afni_bin&#39;  AFNI binaries present (unix-only)</span>
+<span class="c">%                          &#39;neuroelf&#39;  Neuroelf toolbox</span>
+<span class="c">%                          &#39;nifti&#39;     NIFTI toolbox</span>
+<span class="c">%                          &#39;fieldtrip&#39; Fieldtrip</span>
+<span class="c">%                          &#39;libsvm&#39;    libSVM toolbox</span>
+<span class="c">%                          &#39;surfing&#39;   surfing toolbox</span>
+<span class="c">%                          &#39;gifti&#39;     GIfTI library for matlab</span>
+<span class="c">%                          &#39;xunit&#39;     xUnit unit test framework</span>
+<span class="c">%                          &#39;moxunit&#39;   MOxUnit unit test framework</span>
+<span class="c">%                          &#39;matlabsvm&#39; SVM classifier in matlab stats</span>
+<span class="c">%                                      toolbox</span>
+<span class="c">%                          &#39;svm&#39;       Either matlabsvm or libsvm</span>
+<span class="c">%                          &#39;@{name}&#39;   Matlab toolbox {name}</span>
+<span class="c">%                          It can also be &#39;-list&#39;, &#39;-tic&#39;, &#39;-toc&#39;,&#39; or</span>
+<span class="c">%                          &#39;-cite&#39;; see below for their meaning.</span>
+<span class="c">%   raise_                 if true (the default), an error is raised if the</span>
+<span class="c">%                          external is not present.</span>
+<span class="c">%</span>
+<span class="c">% Returns:</span>
+<span class="c">%   is_ok                  boolean indicating whether the external is</span>
+<span class="c">%                          present. A matlab toolbox must be prefixed</span>
+<span class="c">%                          by a &#39;@&#39;. If external is a cell if P elements,</span>
+<span class="c">%                          then the output is a Px1 boolean vector.</span>
+<span class="c">%                          Special switches allowed are:</span>
+<span class="c">%                            &#39;-list&#39;:   returns a cell of strings with</span>
+<span class="c">%                                       the available externals</span>
+<span class="c">%                            &#39;-tic&#39;:    reset list of cached externals</span>
+<span class="c">%                                       (see note below)</span>
+<span class="c">%                            &#39;-toc&#39;:    returns a cell of string of</span>
+<span class="c">%                                       all externals queried so far</span>
+<span class="c">%                            &#39;-cite&#39;:   prints a list of publications to</span>
+<span class="c">%                                       cite based on the output from</span>
+<span class="c">%                                       &#39;-toc&#39;</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%   % see if the AFNI matlab toolbox is available, if not raise an error</span>
+<span class="c">%   cosmo_check_external(&#39;afni&#39;)</span>
+<span class="c">%</span>
+<span class="c">%   % see if libsvm and neuroelf are available, if not raise an error</span>
+<span class="c">%   cosmo_check_external({&#39;libsvm&#39;,&#39;neuroelf&#39;});</span>
+<span class="c">%</span>
+<span class="c">%   % see if libsvm and neuroelf and store the result in</span>
+<span class="c">%   % the 2x1 boolean array is_ok. An error is not raised if</span>
+<span class="c">%   % either is not present.</span>
+<span class="c">%   is_ok=cosmo_check_external({&#39;libsvm&#39;,&#39;neuroelf&#39;},false);</span>
+<span class="c">%</span>
+<span class="c">%   % see if the matlab &#39;stats&#39; toolbox is available</span>
+<span class="c">%   cosmo_check_external(&#39;@stats&#39;);</span>
+<span class="c">%</span>
+<span class="c">%   % list the available externals</span>
+<span class="c">%   cosmo_check_external(&#39;-list&#39;)</span>
+<span class="c">%</span>
+<span class="c">%   % reset the list of cached externals, so that using &#39;-cite&#39; below</span>
+<span class="c">%   % will only show externals checked since this reset</span>
+<span class="c">%   cosmo_check_external(&#39;-tic&#39;)</span>
+<span class="c">%</span>
+<span class="c">%   % check two externals</span>
+<span class="c">%   cosmo_check_external({&#39;afni&#39;,&#39;neuroelf&#39;});</span>
+<span class="c">%</span>
+<span class="c">%   % list the externals checked for since the last &#39;-tic&#39;</span>
+<span class="c">%   cosmo_check_external(&#39;-toc&#39;)</span>
+<span class="c">%</span>
+<span class="c">%   % list the publications associated with the externals</span>
+<span class="c">%   cosmo_check_external(&#39;-cite&#39;);</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="k">persistent</span> <span class="n">cached_present_names</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">isnumeric</span><span class="p">(</span><span class="n">cached_present_names</span><span class="p">)</span>
+        <span class="n">cached_present_names</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">nargin</span><span class="o">&lt;</span><span class="mi">2</span>
+        <span class="n">raise_</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+    <span class="k">if</span> <span class="n">iscell</span><span class="p">(</span><span class="n">external</span><span class="p">)</span>
+        <span class="c">% cell input - check for each of them using recursion</span>
+        <span class="n">nexternals</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">external</span><span class="p">);</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">nexternals</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span> <span class="c">% space for output</span>
+        <span class="n">me</span><span class="p">=</span><span class="n">str2func</span><span class="p">(</span><span class="n">mfilename</span><span class="p">());</span> <span class="c">% the present function</span>
+        <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nexternals</span>
+            <span class="n">is_ok</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">me</span><span class="p">(</span><span class="n">external</span><span class="p">{</span><span class="n">k</span><span class="p">},</span> <span class="n">raise_</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">external</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="s">&#39;-&#39;</span>
+        <span class="c">% process special user switch</span>
+        <span class="k">switch</span> <span class="n">external</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)</span>
+            <span class="k">case</span> <span class="s">&#39;list&#39;</span>
+                <span class="c">% return a list of externals</span>
+                <span class="n">supported_externals</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">get_externals</span><span class="p">());</span>
+                <span class="n">me</span><span class="p">=</span><span class="n">str2func</span><span class="p">(</span><span class="n">mfilename</span><span class="p">());</span> <span class="c">% the present function</span>
+
+                <span class="n">cached_present_names_copy</span><span class="p">=</span><span class="n">cached_present_names</span><span class="p">;</span>
+                <span class="n">msk</span><span class="p">=</span><span class="n">me</span><span class="p">(</span><span class="n">supported_externals</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+                <span class="n">cached_present_names</span><span class="p">=</span><span class="n">cached_present_names_copy</span><span class="p">;</span>
+
+                <span class="n">is_ok</span><span class="p">=</span><span class="n">supported_externals</span><span class="p">(</span><span class="n">msk</span><span class="p">);</span>
+
+            <span class="k">case</span> <span class="s">&#39;tic&#39;</span>
+                <span class="n">cached_present_names</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">0</span><span class="p">);</span>
+
+            <span class="k">case</span> <span class="s">&#39;toc&#39;</span>
+                <span class="n">is_ok</span><span class="p">=</span><span class="n">cached_present_names</span><span class="p">;</span>
+
+            <span class="k">case</span> <span class="s">&#39;cite&#39;</span>
+                <span class="n">citation_str</span><span class="p">=</span><span class="n">get_citation_str</span><span class="p">(</span><span class="n">cached_present_names</span><span class="p">);</span>
+                <span class="n">s</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;If you use CoSMoMVPA and/or some &#39;</span><span class="c">...</span>
+                         <span class="s">&#39;other toolboxes for a publication, &#39;</span><span class="c">...</span>
+                        <span class="s">&#39;please cite:\n\n%s\n&#39;</span><span class="p">],</span> <span class="n">citation_str</span><span class="p">);</span>
+                <span class="k">if</span> <span class="n">nargout</span><span class="o">==</span><span class="mi">0</span>
+                    <span class="nb">disp</span><span class="p">(</span><span class="n">s</span><span class="p">);</span>
+                    <span class="n">is_ok</span><span class="p">=[];</span>
+                <span class="k">else</span>
+                    <span class="n">is_ok</span><span class="p">=</span><span class="n">s</span><span class="p">;</span>
+                <span class="k">end</span>
+
+            <span class="k">otherwise</span>
+                <span class="n">error</span><span class="p">(</span><span class="s">&#39;illegal switch %s&#39;</span><span class="p">,</span> <span class="n">external</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+
+    <span class="k">if</span> <span class="n">external</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="s">&#39;@&#39;</span>
+        <span class="n">toolbox_name</span><span class="p">=</span><span class="n">external</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">);</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">check_matlab_toolbox</span><span class="p">(</span><span class="n">toolbox_name</span><span class="p">,</span><span class="n">raise_</span><span class="p">);</span>
+    <span class="k">elseif</span> <span class="n">external</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="s">&#39;!&#39;</span>
+        <span class="n">command_name</span><span class="p">=</span><span class="n">external</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">);</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">check_which</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span><span class="n">raise_</span><span class="p">);</span>
+        <span class="n">external</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">check_external_toolbox</span><span class="p">(</span><span class="n">external</span><span class="p">,</span><span class="n">raise_</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">is_ok</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">external</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="o">~</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">external</span><span class="p">},</span><span class="n">cached_present_names</span><span class="p">)</span>
+        <span class="n">cached_present_names</span><span class="p">{</span><span class="k">end</span><span class="o">+</span><span class="mi">1</span><span class="p">}=</span><span class="n">external</span><span class="p">;</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">check_which</span><span class="p">(</span>command_name,raise_<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">is_ok</span><span class="p">=</span><span class="n">exist</span><span class="p">(</span><span class="n">command_name</span><span class="p">,</span><span class="s">&#39;builtin&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="c">...</span>
+                <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="n">command_name</span><span class="p">));</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">is_ok</span> <span class="o">&amp;&amp;</span> <span class="n">raise_</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Function &#39;&#39;%s&#39;&#39; is not available&#39;</span><span class="p">,</span> <span class="n">command_name</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">check_external_toolbox</span><span class="p">(</span>external_name,raise_<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">externals</span><span class="p">=</span><span class="n">get_externals</span><span class="p">();</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">externals</span><span class="p">,</span> <span class="n">external_name</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unknown external &#39;&#39;%s&#39;&#39;&#39;</span><span class="p">,</span> <span class="n">external_name</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">ext</span><span class="p">=</span><span class="n">externals</span><span class="p">.(</span><span class="n">external_name</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">iscell</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+        <span class="c">% at least one of them must be ok</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+        <span class="k">for</span> <span class="nb">j</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">ext</span><span class="p">)</span>
+            <span class="n">is_ok</span><span class="p">=</span><span class="n">is_ok</span> <span class="o">||</span> <span class="n">check_external_toolbox</span><span class="p">(</span><span class="n">ext</span><span class="p">{</span><span class="nb">j</span><span class="p">},</span><span class="n">false</span><span class="p">);</span>
+        <span class="k">end</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">is_ok</span> <span class="o">&amp;&amp;</span> <span class="n">raise_</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;None of the following externals was found: %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                        <span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span><span class="s">&#39;, &#39;</span><span class="p">));</span>
+        <span class="k">end</span>
+        <span class="k">return</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">external_name</span><span class="p">,</span><span class="s">&#39;_bin&#39;</span><span class="p">,</span><span class="o">-</span><span class="mi">1</span><span class="p">))</span>
+        <span class="c">% binary package</span>
+        <span class="n">env</span><span class="p">=</span><span class="s">&#39;system&#39;</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">env</span><span class="p">=</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;environment&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+    <span class="n">error_msg</span><span class="p">=[];</span>
+
+    <span class="c">% simulate goto statement</span>
+    <span class="k">while</span> <span class="n">true</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">ext</span><span class="p">.</span><span class="n">is_present</span><span class="p">()</span>
+            <span class="n">suffix</span><span class="p">=</span><span class="n">ext_get_what_to_do_message</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span><span class="n">env</span><span class="p">);</span>
+            <span class="n">error_msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;%s is required, but it was not &#39;</span><span class="c">...</span>
+                <span class="s">&#39;found in the %s path. If it is not present on your &#39;</span><span class="c">...</span>
+                <span class="s">&#39;system, obtain it from:\n\n    %s\n\nthen, %s.&#39;</span><span class="p">],</span> <span class="c">...</span>
+                <span class="n">ext</span><span class="p">.</span><span class="n">label</span><span class="p">(),</span> <span class="n">env</span><span class="p">,</span> <span class="n">url2str</span><span class="p">(</span><span class="n">ext</span><span class="p">.</span><span class="n">url</span><span class="p">),</span> <span class="n">suffix</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="n">ext</span><span class="p">.</span><span class="n">is_recent</span><span class="p">()</span>
+            <span class="n">suffix</span><span class="p">=</span><span class="n">ext_get_what_to_do_message</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span><span class="n">env</span><span class="p">);</span>
+            <span class="n">error_msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;%s was found on your %s path, but &#39;</span><span class="c">...</span>
+                <span class="s">&#39;seems out of date. Please download the latest &#39;</span><span class="c">...</span>
+                <span class="s">&#39;version from:\n\n %s\n\nthen, %s.&#39;</span><span class="p">],</span> <span class="c">...</span>
+                <span class="n">ext</span><span class="p">.</span><span class="n">label</span><span class="p">(),</span> <span class="n">env</span><span class="p">,</span> <span class="n">url2str</span><span class="p">(</span><span class="n">ext</span><span class="p">.</span><span class="n">url</span><span class="p">),</span> <span class="n">suffix</span><span class="p">);</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span><span class="s">&#39;conflicts&#39;</span><span class="p">)</span>
+            <span class="n">conflicts</span><span class="p">=</span><span class="n">ext</span><span class="p">.</span><span class="n">conflicts</span><span class="p">;</span>
+            <span class="n">names</span><span class="p">=</span><span class="n">fieldnames</span><span class="p">(</span><span class="n">conflicts</span><span class="p">);</span>
+            <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">names</span><span class="p">)</span>
+                <span class="n">name</span><span class="p">=</span><span class="n">names</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+                <span class="k">if</span> <span class="o">~</span><span class="n">externals</span><span class="p">.(</span><span class="n">name</span><span class="p">).</span><span class="n">is_present</span><span class="p">()</span>
+                    <span class="k">continue</span><span class="p">;</span>
+                <span class="k">end</span>
+
+                <span class="n">conflict</span><span class="p">=</span><span class="n">conflicts</span><span class="p">.(</span><span class="n">name</span><span class="p">);</span>
+                <span class="k">if</span> <span class="n">conflict</span><span class="p">()</span>
+                    <span class="n">trouble_maker</span><span class="p">=</span><span class="n">externals</span><span class="p">.(</span><span class="n">name</span><span class="p">).</span><span class="n">label</span><span class="p">();</span>
+                    <span class="n">me</span><span class="p">=</span><span class="n">ext</span><span class="p">.</span><span class="n">label</span><span class="p">();</span>
+
+                    <span class="n">error_msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;The %s conflicts with the %s, &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;making the %s unusable. You may &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;have to change the %s path so &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;that the location of the %s comes &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;below (after) that of the %s.&#39;</span><span class="p">],</span><span class="c">...</span>
+                                    <span class="n">trouble_maker</span><span class="p">,</span><span class="n">me</span><span class="p">,</span><span class="n">me</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="n">env</span><span class="p">,</span><span class="n">trouble_maker</span><span class="p">,</span><span class="n">me</span><span class="p">);</span>
+                    <span class="k">break</span><span class="p">;</span>
+                <span class="k">end</span>
+            <span class="k">end</span>
+            <span class="k">if</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">error_msg</span><span class="p">)</span>
+                <span class="k">break</span><span class="p">;</span>
+            <span class="k">end</span>
+        <span class="k">end</span>
+
+        <span class="k">break</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">is_ok</span><span class="p">=</span><span class="nb">isempty</span><span class="p">(</span><span class="n">error_msg</span><span class="p">);</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">is_ok</span> <span class="o">&amp;&amp;</span> <span class="n">raise_</span>
+        <span class="n">error</span><span class="p">(</span><span class="n">error_msg</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>msg<span class="p">=</span><span class="nf">ext_get_what_to_do_message</span><span class="p">(</span>ext,env<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">ext</span><span class="p">,</span> <span class="s">&#39;what_to_do&#39;</span><span class="p">)</span>
+        <span class="n">msg</span><span class="p">=</span><span class="n">ext</span><span class="p">.</span><span class="n">what_to_do</span><span class="p">();</span>
+    <span class="k">else</span>
+        <span class="n">msg</span><span class="p">=</span><span class="n">sprintf</span><span class="p">([</span><span class="s">&#39;if applicable, add the necessary directories &#39;</span><span class="c">...</span>
+                <span class="s">&#39;to the %s path&#39;</span><span class="p">],</span> <span class="n">env</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">check_matlab_toolbox</span><span class="p">(</span>toolbox_name,raise_<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">)</span>
+        <span class="n">toolbox_dir</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">toolboxdir</span><span class="p">(</span><span class="s">&#39;&#39;</span><span class="p">),</span><span class="n">toolbox_name</span><span class="p">);</span>
+        <span class="c">% directory must exist and be in the path</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">isdir</span><span class="p">(</span><span class="n">toolbox_dir</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">toolbox_in_matlab_path</span><span class="p">(</span><span class="n">toolbox_dir</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">is_ok</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="k">end</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">is_ok</span> <span class="o">&amp;&amp;</span> <span class="n">raise_</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;The matlab toolbox &#39;&#39;%s&#39;&#39; seems absent&#39;</span><span class="p">,</span><span class="c">...</span>
+                            <span class="n">toolbox_name</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">toolbox_in_matlab_path</span><span class="p">(</span>toolbox_dir<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">cached_toolbox_dir</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_tf</span><span class="p">;</span>
+    <span class="k">persistent</span> <span class="n">cached_path</span><span class="p">;</span>
+
+    <span class="n">cur_path</span><span class="p">=</span><span class="n">path</span><span class="p">();</span>
+    <span class="k">if</span> <span class="o">~</span><span class="p">(</span><span class="nb">isequal</span><span class="p">(</span><span class="n">cur_path</span><span class="p">,</span> <span class="n">cached_path</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                <span class="nb">isequal</span><span class="p">(</span><span class="n">toolbox_dir</span><span class="p">,</span> <span class="n">cached_toolbox_dir</span><span class="p">))</span>
+
+        <span class="n">toolbox_dir_esc</span><span class="p">=</span><span class="n">toolbox_dir</span><span class="p">;</span>
+        <span class="k">if</span> <span class="nb">isequal</span><span class="p">(</span><span class="n">filesep</span><span class="p">,</span><span class="s">&#39;\&#39;</span><span class="p">)</span>
+            <span class="n">toolbox_dir_esc</span><span class="p">=</span><span class="n">strrep</span><span class="p">(</span><span class="n">toolbox_dir_esc</span><span class="p">,</span><span class="s">&#39;\&#39;</span><span class="p">,</span><span class="s">&#39;\\&#39;</span><span class="p">);</span>
+        <span class="k">end</span>
+
+
+        <span class="n">paths</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">path</span><span class="p">(),</span><span class="n">pathsep</span><span class="p">());</span>
+        <span class="n">starts_with_toolbox_dir</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="nb">isempty</span><span class="p">(</span><span class="c">...</span>
+                                    <span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">toolbox_dir_esc</span><span class="p">,</span><span class="mi">1</span><span class="p">));</span>
+        <span class="n">cached_tf</span><span class="p">=</span><span class="n">any</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(</span><span class="n">starts_with_toolbox_dir</span><span class="p">,</span><span class="n">paths</span><span class="p">));</span>
+        <span class="n">cached_path</span><span class="p">=</span><span class="n">cur_path</span><span class="p">;</span>
+        <span class="n">cached_toolbox_dir</span><span class="p">=</span><span class="n">toolbox_dir</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">tf</span><span class="p">=</span><span class="n">cached_tf</span><span class="p">;</span>
+
+    <span class="c">%paths=cosmo_strsplit(path(),pathsep());</span>
+    <span class="c">%starts_with_toolbox_dir=@(x)isempty(cosmo_strsplit(x,toolbox_dir,1));</span>
+    <span class="c">%f=any(cellfun(starts_with_toolbox_dir,paths));</span>
+
+
+<span class="k">function</span><span class="w"> </span>s<span class="p">=</span><span class="nf">url2str</span><span class="p">(</span>url<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="n">strcmp</span><span class="p">(</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;environment&#39;</span><span class="p">),</span><span class="s">&#39;matlab&#39;</span><span class="p">)</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;&lt;a href=&quot;%s&quot;&gt;%s&lt;/a&gt;&#39;</span><span class="p">,</span><span class="n">url</span><span class="p">,</span><span class="n">url</span><span class="p">);</span>
+    <span class="k">else</span>
+        <span class="n">s</span><span class="p">=</span><span class="n">url</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>w<span class="p">=</span><span class="nf">noerror_which</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% Octave raises an expection when &#39;which&#39; is called and a mex-file of</span>
+    <span class="c">% incompatible architecture is found</span>
+    <span class="n">w</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+    <span class="k">try</span>
+        <span class="n">w</span><span class="p">=</span><span class="n">which</span><span class="p">(</span><span class="n">varargin</span><span class="p">{:});</span>
+    <span class="k">catch</span>
+        <span class="c">% do nothing</span>
+    <span class="k">end</span>
+
+<span class="k">function</span><span class="w"> </span>externals<span class="p">=</span><span class="nf">get_externals</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="k">persistent</span> <span class="n">cached_externals</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">isstruct</span><span class="p">(</span><span class="n">cached_externals</span><span class="p">)</span>
+        <span class="n">cached_externals</span><span class="p">=</span><span class="n">get_externals_helper</span><span class="p">();</span>
+    <span class="k">end</span>
+
+    <span class="n">externals</span><span class="p">=</span><span class="n">cached_externals</span><span class="p">;</span>
+
+
+<span class="k">function</span><span class="w"> </span>externals<span class="p">=</span><span class="nf">get_externals_helper</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="c">% helper function that defines the externals.</span>
+    <span class="n">externals</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">yes</span><span class="p">=@()</span> <span class="n">true</span><span class="p">;</span>
+    <span class="n">has</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span> <span class="o">~</span><span class="nb">isempty</span><span class="p">(</span><span class="n">noerror_which</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">has_toolbox</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="n">check_matlab_toolbox</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">path_of</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span> <span class="n">fileparts</span><span class="p">(</span><span class="n">noerror_which</span><span class="p">(</span><span class="n">x</span><span class="p">));</span>
+    <span class="n">is_in_path</span><span class="p">=@(</span><span class="n">x</span><span class="p">)</span><span class="n">has</span><span class="p">(</span><span class="n">x</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="n">cosmo_match</span><span class="p">({</span><span class="n">path_of</span><span class="p">(</span><span class="n">x</span><span class="p">)},</span><span class="c">...</span>
+                    <span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">path</span><span class="p">(),</span><span class="n">pathsep</span><span class="p">()));</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span><span class="n">is_in_path</span><span class="p">(</span><span class="n">mfilename</span><span class="p">());</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;CoSMoMVPA toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://cosmomvpa.org&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;N. N. Oosterhof&#39;</span><span class="p">,</span><span class="s">&#39;A. C. Connolly&#39;</span><span class="p">,</span> <span class="c">...</span>
+                                <span class="s">&#39;J. V. Haxby&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">year</span><span class="p">=</span><span class="s">&#39;2016&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;CoSMoMVPA: multi-modal multivariate pattern &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;analysis of neuroimaging data in &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;Matlab / GNU Octave. &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;Frontiers in Neuroinformatics, &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;doi:10.3389/fninf.2016.00027.&#39;</span><span class="p">];</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">isunix</span><span class="p">()</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                          <span class="o">~</span><span class="n">unix</span><span class="p">([</span><span class="s">&#39;which afni &gt; /dev/null &amp;&amp; &#39;</span><span class="c">...</span>
+                                 <span class="s">&#39;which 3dresample &gt; /dev/null &amp;&amp; &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;afni --version &gt;/dev/null&#39;</span><span class="p">]);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;AFNI binaries&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://afni.nimh.nih.gov/afni&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;R. W. Cox&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;AFNI: Software for analysis and &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;visualization of functional magnetic &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;resonance neuroimages.  Computers and &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;Biomedical Research, 29: 162-173, 1996&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni_bin</span><span class="p">.</span><span class="n">what_to_do</span><span class="p">=[</span><span class="s">&#39;consider the environment you are &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;running Matlab from. It may &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;be required to start matlab &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;from the shell&#39;</span><span class="p">];</span>
+
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;BrikLoad&#39;</span><span class="p">);</span>
+    <span class="c">% Octave requires a more recent version of AFNI, whereas there is</span>
+    <span class="c">% currently no need for Matlab users to upgrade</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;afni_swapbytes&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;AFNI Matlab library&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;https://github.com/afni/AFNI&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">afni</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;Z. Saad&#39;</span><span class="p">,</span><span class="s">&#39;G. Chen&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;xff&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;NeuroElf toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://neuroelf.net&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;J. Weber&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">nifti</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;load_nii&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">nifti</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">nifti</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;NIFTI toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">nifti</span><span class="p">.</span><span class="n">url</span><span class="p">=[</span><span class="s">&#39;http://www.mathworks.com/matlabcentral/&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="s">&#39;fileexchange/8797-tools-for-nifti-and-analyze-image&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">nifti</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;J. Shen&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;ft_defaults&#39;</span><span class="p">);</span>
+    <span class="c">% in the future, may require from 2014 onwards</span>
+    <span class="c">%externals.fieldtrip.is_recent=getfield(dir(which(&#39;ft_databrowser&#39;)),...</span>
+    <span class="c">%                                        &#39;datenum&#39;)&gt;datenum(2014,1,1);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;FieldTrip toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://fieldtrip.fcdonders.nl&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;R. Oostenveld&#39;</span><span class="p">,</span><span class="s">&#39;P. Fries&#39;</span><span class="p">,</span><span class="s">&#39;E. Maris&#39;</span><span class="p">,</span><span class="c">...</span>
+                                 <span class="s">&#39;J.-M. Schoffelen&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">year</span><span class="p">=</span><span class="s">&#39;2011&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fieldtrip</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;FieldTrip: Open Source Software for &#39;</span><span class="c">...</span>
+                              <span class="s">&#39;Advanced Analysis of MEG, EEG, and &#39;</span><span class="c">...</span>
+                              <span class="s">&#39;Invasive Electrophysiological Data, &#39;</span><span class="c">...</span>
+                              <span class="s">&#39;Computational Intelligence and &#39;</span><span class="c">...</span>
+                              <span class="s">&#39;Neuroscience, vol. 2011, &#39;</span><span class="p">,</span><span class="c">...</span>
+                              <span class="s">&#39;Article ID 156869, 9 pages.&#39;</span><span class="p">,</span><span class="c">...</span>
+                              <span class="s">&#39;doi:10.1155/2011/156869&#39;</span><span class="p">];</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;svmpredict&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                        <span class="n">has</span><span class="p">(</span><span class="s">&#39;svmtrain&#39;</span><span class="p">);</span>
+    <span class="c">% require version 3.18 or later, because it has a &#39;quiet&#39; option</span>
+    <span class="c">% for svmpredict</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=@()</span> <span class="n">get_libsvm_version</span><span class="p">()</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">318</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;LIBSVM toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;https://github.com/cjlin1/libsvm&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;C.-C. Chang&#39;</span><span class="p">,</span> <span class="s">&#39;C.-J. Lin&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">year</span><span class="p">=</span><span class="s">&#39;2011&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;LIBSVM: &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;a library for support vector machines. &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;ACM Transactions on Intelligent Systems &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;and Technology, 2:27:1--27:27, 2011&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">conflicts</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">=@()</span> <span class="nb">isequal</span><span class="p">(</span><span class="c">...</span>
+                                                <span class="n">path_of</span><span class="p">(</span><span class="s">&#39;svmtrain&#39;</span><span class="p">),</span><span class="c">...</span>
+                                                <span class="n">fileparts</span><span class="p">(</span><span class="n">path_of</span><span class="p">(</span><span class="s">&#39;xff&#39;</span><span class="p">)));</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">libsvm</span><span class="p">.</span><span class="n">conflicts</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">=@()</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="c">...</span>
+                                                <span class="n">path_of</span><span class="p">(</span><span class="s">&#39;svmpredict&#39;</span><span class="p">),</span><span class="c">...</span>
+                                                <span class="n">path_of</span><span class="p">(</span><span class="s">&#39;svmtrain&#39;</span><span class="p">));</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;surfing_voxelselection&#39;</span><span class="p">);</span>
+    <span class="c">% require recent version with surfing_write</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;surfing_write&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                    <span class="n">has</span><span class="p">(</span><span class="s">&#39;surfing_nodeselection&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                    <span class="n">get_surfing_version</span><span class="p">()</span> <span class="o">&gt;</span><span class="p">=</span> <span class="p">.</span><span class="mi">5</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;Surfing toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://github.com/nno/surfing&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;N. N. Oosterhof&#39;</span><span class="p">,</span><span class="s">&#39;T. Wiestler&#39;</span><span class="p">,</span><span class="c">...</span>
+                                <span class="s">&#39;J. Diedrichsen&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">year</span><span class="p">=</span><span class="s">&#39;2011&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;A comparison of volume-based and &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;surface-based multi-voxel pattern &#39;</span><span class="c">...</span>
+                            <span class="s">&#39;analysis. Neuroimage 56 (2), 593-600&#39;</span><span class="p">];</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">gifti</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;gifti&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">gifti</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">gifti</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;GIfTI library for matlab&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">gifti</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;www.artefact.tk/software/matlab/gifti&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">gifti</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;G. Flandin&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">xunit</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;runtests&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                    <span class="n">has</span><span class="p">(</span><span class="s">&#39;VerboseTestRunDisplay&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">xunit</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">xunit</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;MATLAB xUnit Test Framework&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">xunit</span><span class="p">.</span><span class="n">url</span><span class="p">=[</span><span class="s">&#39;http://www.mathworks.it/matlabcentral/&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;fileexchange/22846-matlab-xunit-test-framework&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">xunit</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;S. Eddins&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlab</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlab</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlab</span><span class="p">.</span><span class="n">label</span><span class="p">=@()</span> <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;Matlab %s&#39;</span><span class="p">,</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;version&#39;</span><span class="p">));</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlab</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://www.mathworks.com&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlab</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;The Mathworks, Natick, MA, United States&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave</span><span class="p">.</span><span class="n">label</span><span class="p">=@()</span> <span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;GNU Octave %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                                    <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;version&#39;</span><span class="p">));</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://www.gnu.org/software/octave/&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;Octave community&#39;</span><span class="p">};</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="p">(</span><span class="n">has_toolbox</span><span class="p">(</span><span class="s">&#39;stats&#39;</span><span class="p">)</span> <span class="o">||</span> <span class="c">...</span>
+                                            <span class="n">has_toolbox</span><span class="p">(</span><span class="s">&#39;bioinfo&#39;</span><span class="p">))</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                        <span class="n">has</span><span class="p">(</span><span class="s">&#39;svmtrain&#39;</span><span class="p">)</span> <span class="o">&amp;&amp;</span> <span class="c">...</span>
+                                        <span class="n">has</span><span class="p">(</span><span class="s">&#39;svmclassify&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">.</span><span class="n">conflicts</span><span class="p">.</span><span class="n">neuroelf</span><span class="p">=@()</span> <span class="nb">isequal</span><span class="p">(</span><span class="c">...</span>
+                                                <span class="n">path_of</span><span class="p">(</span><span class="s">&#39;svmtrain&#39;</span><span class="p">),</span><span class="c">...</span>
+                                                <span class="n">fileparts</span><span class="p">(</span><span class="n">path_of</span><span class="p">(</span><span class="s">&#39;xff&#39;</span><span class="p">)));</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">.</span><span class="n">conflicts</span><span class="p">.</span><span class="n">libsvm</span><span class="p">=@()</span> <span class="o">~</span><span class="nb">isequal</span><span class="p">(</span><span class="c">...</span>
+                                                <span class="n">path_of</span><span class="p">(</span><span class="s">&#39;svmtrain&#39;</span><span class="p">),</span><span class="c">...</span>
+                                                <span class="n">path_of</span><span class="p">(</span><span class="s">&#39;svmclassify&#39;</span><span class="p">));</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;Matlab stats or bioinfo toolbox&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">matlabsvm</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;http://www.mathworks.com&#39;</span><span class="p">;</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">svm</span><span class="p">={</span><span class="s">&#39;libsvm&#39;</span><span class="p">,</span> <span class="s">&#39;matlabsvm&#39;</span><span class="p">};</span> <span class="c">% need either</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">is_present</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">label</span><span class="p">=</span><span class="s">&#39;DISTATIS CoSMoMVPA implementation&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="n">externals</span><span class="p">.</span><span class="n">cosmo</span><span class="p">.</span><span class="n">url</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;Abdi, H.&#39;</span><span class="p">,</span><span class="s">&#39;Valentin, D.&#39;</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="s">&#39;O&#39;&#39;Toole, A. J.&#39;</span><span class="p">,</span><span class="s">&#39;Edelman, B.&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">year</span><span class="p">=</span><span class="s">&#39;2005&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">distatis</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;DISTATIS: The analysis of multiple &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;distance matrices. In Proceedings of the &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;IEEE Computer Society: International &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;conference on computer vision and &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;pattern recognition, San Diego, CA, USA &#39;</span><span class="c">...</span>
+                             <span class="s">&#39;(pp. 42-47)&#39;</span><span class="p">];</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">fast_marching</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="c">...</span>
+                                        <span class="s">&#39;perform_front_propagation_mesh&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fast_marching</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fast_marching</span><span class="p">.</span><span class="n">label</span><span class="p">=[</span><span class="s">&#39;toolbox fast marching [included &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;in surfing]&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fast_marching</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;Gabriel Peyre&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fast_marching</span><span class="p">.</span><span class="n">ref</span><span class="p">=[</span><span class="s">&#39;Toolbox Fast Marching - A toolbox &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;Fast Marching and level &#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;sets computations [https://www.&#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;ceremade.dauphine.fr/&#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;~peyre/matlab/fast-marching/&#39;</span><span class="c">...</span>
+                                    <span class="s">&#39;content.html]&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">fast_marching</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="n">externals</span><span class="p">.</span><span class="n">surfing</span><span class="p">.</span><span class="n">url</span><span class="p">;</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">moxunit</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;moxunit_runtests&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">moxunit</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">moxunit</span><span class="p">.</span><span class="n">label</span><span class="p">=[</span><span class="s">&#39;Matlab/Octave MOxUnit &#39;</span><span class="c">...</span>
+                                        <span class="s">&#39;Test Framework&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">moxunit</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;N. N. Oosterhof&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">moxunit</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;https://github.com/MOxUnit/MOxUnit&#39;</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">moxunit</span><span class="p">.</span><span class="n">conflicts</span><span class="p">.</span><span class="n">xunit</span><span class="p">=@()</span> <span class="n">same_path</span><span class="p">({</span><span class="s">&#39;runtests&#39;</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="s">&#39;initTestSuite&#39;</span><span class="p">});</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_parallel</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has_octave_package</span><span class="p">(</span><span class="c">...</span>
+                                                    <span class="s">&#39;parallel&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_parallel</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_parallel</span><span class="p">.</span><span class="n">label</span><span class="p">=[</span><span class="s">&#39;GNU Octave parallel package&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_parallel</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;Hayato Fujiwara&#39;</span><span class="p">,</span><span class="c">...</span>
+                                            <span class="s">&#39;Jaroslav Hajek, Olaf Till&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_parallel</span><span class="p">.</span><span class="n">url</span><span class="p">=[</span><span class="s">&#39;http://http://octave.&#39;</span><span class="c">...</span>
+                                        <span class="s">&#39;sourceforge.net/parallel/&#39;</span><span class="p">];</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_statistics</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has_octave_package</span><span class="p">(</span><span class="c">...</span>
+                                                    <span class="s">&#39;statistics&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_statistics</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_statistics</span><span class="p">.</span><span class="n">label</span><span class="p">=[</span><span class="s">&#39;GNU Octave statistics &#39;</span><span class="c">...</span>
+                                                <span class="s">&#39;package&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_statistics</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;Arno Onken&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">octave_pkg_statistics</span><span class="p">.</span><span class="n">url</span><span class="p">=[</span><span class="s">&#39;http://http://octave.&#39;</span><span class="c">...</span>
+                                        <span class="s">&#39;sourceforge.net/statistics/&#39;</span><span class="p">];</span>
+
+    <span class="n">externals</span><span class="p">.</span><span class="n">mocov</span><span class="p">.</span><span class="n">is_present</span><span class="p">=@()</span> <span class="n">has</span><span class="p">(</span><span class="s">&#39;mocov&#39;</span><span class="p">);</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">mocov</span><span class="p">.</span><span class="n">is_recent</span><span class="p">=</span><span class="n">yes</span><span class="p">;</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">mocov</span><span class="p">.</span><span class="n">label</span><span class="p">=[</span><span class="s">&#39;Matlab/Octave MOcov &#39;</span><span class="c">...</span>
+                                        <span class="s">&#39;Coverage report generator&#39;</span><span class="p">];</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">mocov</span><span class="p">.</span><span class="n">authors</span><span class="p">={</span><span class="s">&#39;N. N. Oosterhof&#39;</span><span class="p">};</span>
+    <span class="n">externals</span><span class="p">.</span><span class="n">mocov</span><span class="p">.</span><span class="n">url</span><span class="p">=</span><span class="s">&#39;https://github.com/MOcov/MOcov&#39;</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">has_octave_package</span><span class="p">(</span>label<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">tf</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="k">if</span> <span class="o">~</span><span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">result</span><span class="p">=</span><span class="n">pkg</span><span class="p">(</span><span class="s">&#39;list&#39;</span><span class="p">,</span><span class="n">label</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">isempty</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+        <span class="k">return</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="n">result</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">tf</span><span class="p">=</span><span class="n">result</span><span class="p">{</span><span class="mi">1</span><span class="p">}.</span><span class="n">loaded</span><span class="p">;</span>
+
+<span class="k">function</span><span class="w"> </span>tf<span class="p">=</span><span class="nf">same_path</span><span class="p">(</span>args<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">pths</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="n">fileparts</span><span class="p">(</span><span class="n">which</span><span class="p">(</span><span class="n">x</span><span class="p">)),</span><span class="n">args</span><span class="p">,</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">tf</span><span class="p">=</span><span class="n">all</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="nb">isequal</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="n">pths</span><span class="p">{</span><span class="mi">1</span><span class="p">}),</span><span class="n">pths</span><span class="p">(</span><span class="mi">2</span><span class="p">:</span><span class="k">end</span><span class="p">)));</span>
+
+
+<span class="k">function</span><span class="w"> </span>version<span class="p">=</span><span class="nf">get_libsvm_version</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">svm_root</span><span class="p">=</span><span class="n">fileparts</span><span class="p">(</span><span class="n">fileparts</span><span class="p">(</span><span class="n">noerror_which</span><span class="p">(</span><span class="s">&#39;svmpredict&#39;</span><span class="p">)));</span>
+    <span class="n">svm_h_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">svm_root</span><span class="p">,</span><span class="s">&#39;svm.h&#39;</span><span class="p">);</span>
+
+    <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">svm_h_fn</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">fid</span><span class="o">&lt;</span><span class="mi">0</span>
+        <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unable to open %s; cannot determine libsvm version&#39;</span><span class="p">,</span><span class="c">...</span>
+                                                            <span class="n">svm_h_fn</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">c</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">));</span>
+
+    <span class="n">chars</span><span class="p">=</span><span class="n">fread</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="n">Inf</span><span class="p">,</span><span class="s">&#39;char=&gt;char&#39;</span><span class="p">);</span>
+    <span class="n">lines</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">chars</span><span class="o">&#39;</span><span class="p">,</span><span class="s">&#39;\n&#39;</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">lines</span><span class="p">)</span>
+        <span class="n">sp</span><span class="p">=</span><span class="n">cosmo_strsplit</span><span class="p">(</span><span class="n">lines</span><span class="p">{</span><span class="n">k</span><span class="p">},</span><span class="s">&#39;LIBSVM_VERSION&#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">sp</span><span class="p">)</span><span class="o">&gt;</span><span class="mi">1</span>
+            <span class="n">version</span><span class="p">=</span><span class="n">str2double</span><span class="p">(</span><span class="n">sp</span><span class="p">{</span><span class="k">end</span><span class="p">});</span>
+            <span class="k">return</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">error</span><span class="p">(</span><span class="s">&#39;Could not find LIBSVM version in %s&#39;</span><span class="p">,</span> <span class="n">svm_h_fn</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>version<span class="p">=</span><span class="nf">get_surfing_version</span><span class="p">()</span><span class="w"></span>
+<span class="w">    </span><span class="n">surfing_root</span><span class="p">=</span><span class="n">fileparts</span><span class="p">(</span><span class="n">fileparts</span><span class="p">(</span><span class="n">noerror_which</span><span class="p">(</span><span class="c">...</span>
+                                    <span class="s">&#39;surfing_voxelselection&#39;</span><span class="p">)));</span>
+    <span class="n">surfing_version_fn</span><span class="p">=</span><span class="n">fullfile</span><span class="p">(</span><span class="n">surfing_root</span><span class="p">,</span><span class="s">&#39;VERSION&#39;</span><span class="p">);</span>
+
+    <span class="n">fid</span><span class="p">=</span><span class="n">fopen</span><span class="p">(</span><span class="n">surfing_version_fn</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">fid</span><span class="o">&lt;</span><span class="mi">0</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">exist</span><span class="p">(</span><span class="n">surfing_version_fn</span><span class="p">,</span><span class="s">&#39;file&#39;</span><span class="p">)</span>
+            <span class="n">version</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+            <span class="k">return</span><span class="p">;</span>
+        <span class="k">else</span>
+            <span class="n">error</span><span class="p">(</span><span class="s">&#39;Unable to open %s, cannot determine surfing version&#39;</span><span class="p">,</span><span class="c">...</span>
+                    <span class="n">surfing_version_fn</span><span class="p">);</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="n">c</span><span class="p">=</span><span class="n">onCleanup</span><span class="p">(@()</span><span class="n">fclose</span><span class="p">(</span><span class="n">fid</span><span class="p">));</span>
+
+    <span class="n">chars</span><span class="p">=</span><span class="n">fread</span><span class="p">(</span><span class="n">fid</span><span class="p">,</span><span class="n">Inf</span><span class="p">,</span><span class="s">&#39;char=&gt;char&#39;</span><span class="p">)</span><span class="o">&#39;</span><span class="p">;</span>
+    <span class="n">v_str</span><span class="p">=</span><span class="n">regexp</span><span class="p">(</span><span class="n">chars</span><span class="p">,</span><span class="s">&#39;version\s+([\d\.]*)&#39;</span><span class="p">,</span><span class="s">&#39;tokens&#39;</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">iscell</span><span class="p">(</span><span class="n">v_str</span><span class="p">)</span>
+        <span class="n">v_str</span><span class="p">=</span><span class="n">v_str</span><span class="p">{</span><span class="mi">1</span><span class="p">};</span>
+    <span class="k">end</span>
+
+    <span class="n">version</span><span class="p">=</span><span class="n">str2double</span><span class="p">(</span><span class="n">v_str</span><span class="p">);</span>
+
+
+<span class="k">function</span><span class="w"> </span>c<span class="p">=</span><span class="nf">add_to_cell</span><span class="p">(</span>c, v<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">cosmo_match</span><span class="p">({</span><span class="n">v</span><span class="p">},</span><span class="n">c</span><span class="p">)</span>
+        <span class="n">c</span><span class="p">{</span><span class="k">end</span><span class="o">+</span><span class="mi">1</span><span class="p">}=</span><span class="n">v</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>citation_str<span class="p">=</span><span class="nf">get_citation_str</span><span class="p">(</span>cached_present_names<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% always cite CoSMoMVPA</span>
+    <span class="n">present_names</span><span class="p">=</span><span class="n">cached_present_names</span><span class="p">;</span>
+
+    <span class="n">present_names</span><span class="p">=</span><span class="n">add_to_cell</span><span class="p">(</span><span class="n">present_names</span><span class="p">,</span><span class="s">&#39;cosmo&#39;</span><span class="p">);</span>
+    <span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_matlab&#39;</span><span class="p">)</span>
+        <span class="n">present_names</span><span class="p">=</span><span class="n">add_to_cell</span><span class="p">(</span><span class="n">present_names</span><span class="p">,</span><span class="s">&#39;matlab&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">cosmo_wtf</span><span class="p">(</span><span class="s">&#39;is_octave&#39;</span><span class="p">)</span>
+        <span class="n">present_names</span><span class="p">=</span><span class="n">add_to_cell</span><span class="p">(</span><span class="n">present_names</span><span class="p">,</span><span class="s">&#39;octave&#39;</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">externals</span><span class="p">=</span><span class="n">get_externals</span><span class="p">();</span>
+
+    <span class="n">n</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">present_names</span><span class="p">);</span>
+    <span class="n">cites</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="n">cites_msk</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">n</span>
+        <span class="n">external_name</span><span class="p">=</span><span class="n">present_names</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+        <span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">externals</span><span class="p">,</span><span class="n">external_name</span><span class="p">)</span>
+            <span class="c">% built-in</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">external</span><span class="p">=</span><span class="n">externals</span><span class="p">.(</span><span class="n">external_name</span><span class="p">);</span>
+
+        <span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">external</span><span class="p">,</span><span class="s">&#39;authors&#39;</span><span class="p">)</span>
+            <span class="k">continue</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">external</span><span class="p">,</span><span class="s">&#39;ref&#39;</span><span class="p">)</span>
+            <span class="c">% reference provided, use label to prefix URL</span>
+            <span class="n">title_str</span><span class="p">=</span><span class="n">external</span><span class="p">.</span><span class="n">ref</span><span class="p">;</span>
+            <span class="n">url_prefix_str</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s &#39;</span><span class="p">,</span> <span class="n">external</span><span class="p">.</span><span class="n">label</span><span class="p">);</span>
+        <span class="k">else</span>
+            <span class="c">% no reference, use label as title and no prefix for URL</span>
+            <span class="n">title_str</span><span class="p">=</span><span class="n">external</span><span class="p">.</span><span class="n">label</span><span class="p">();</span>
+            <span class="n">url_prefix_str</span><span class="p">=</span><span class="s">&#39;&#39;</span><span class="p">;</span>
+        <span class="k">end</span>
+
+        <span class="n">author_str</span><span class="p">=</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">external</span><span class="p">.</span><span class="n">authors</span><span class="p">,</span><span class="s">&#39;, &#39;</span><span class="p">);</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">external</span><span class="p">,</span><span class="s">&#39;year&#39;</span><span class="p">)</span>
+            <span class="n">author_str</span><span class="p">=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s (%s)&#39;</span><span class="p">,</span> <span class="n">author_str</span><span class="p">,</span> <span class="n">external</span><span class="p">.</span><span class="n">year</span><span class="p">);</span>
+        <span class="k">end</span>
+
+        <span class="n">cites</span><span class="p">{</span><span class="n">k</span><span class="p">}=</span><span class="n">sprintf</span><span class="p">(</span><span class="s">&#39;%s. %s. %savailable online from %s&#39;</span><span class="p">,</span><span class="c">...</span>
+                             <span class="n">author_str</span><span class="p">,</span><span class="c">...</span>
+                             <span class="n">title_str</span><span class="p">,</span> <span class="n">url_prefix_str</span><span class="p">,</span> <span class="n">external</span><span class="p">.</span><span class="n">url</span><span class="p">);</span>
+        <span class="n">cites_msk</span><span class="p">(</span><span class="n">k</span><span class="p">)=</span><span class="n">true</span><span class="p">;</span>
+
+    <span class="k">end</span>
+
+    <span class="n">citation_str</span><span class="p">=</span><span class="n">cosmo_strjoin</span><span class="p">(</span><span class="n">cites</span><span class="p">(</span><span class="n">cites_msk</span><span class="p">),</span><span class="s">&#39;\n\n&#39;</span><span class="p">);</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_check_dataset.html"
+                        title="previous chapter">cosmo check dataset</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_check_neighborhood.html"
+                        title="next chapter">cosmo check neighborhood</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_check_external.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_check_neighborhood.html" title="cosmo check neighborhood"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_check_dataset.html" title="cosmo check dataset"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex.html" >CoSMoMVPA functions</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

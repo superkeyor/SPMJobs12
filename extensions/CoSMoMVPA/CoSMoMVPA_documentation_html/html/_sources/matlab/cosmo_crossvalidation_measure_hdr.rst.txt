@@ -1,0 +1,7 @@
+.. _cosmo_crossvalidation_measure_hdr:
+
+cosmo crossvalidation measure hdr
+=================================
+
+.. include :: cosmo_crossvalidation_measure_hdr.txt
+

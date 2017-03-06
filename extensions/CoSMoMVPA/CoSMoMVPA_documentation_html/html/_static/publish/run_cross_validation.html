@@ -1,0 +1,255 @@
+
+<!DOCTYPE html
+  PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+<html><head>
+      <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+   <!--
+This HTML was auto-generated from MATLAB code.
+To make changes, update the MATLAB code and republish this document.
+      --><title>Cross validation example with multiple classifiers</title><meta name="generator" content="MATLAB 8.5"><link rel="schema.DC" href="http://purl.org/dc/elements/1.1/"><meta name="DC.date" content="2016-12-01"><meta name="DC.source" content="run_cross_validation.m"><style type="text/css">
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,a,abbr,acronym,address,big,cite,code,del,dfn,em,font,img,ins,kbd,q,s,samp,small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td{margin:0;padding:0;border:0;outline:0;font-size:100%;vertical-align:baseline;background:transparent}body{line-height:1}ol,ul{list-style:none}blockquote,q{quotes:none}blockquote:before,blockquote:after,q:before,q:after{content:'';content:none}:focus{outine:0}ins{text-decoration:none}del{text-decoration:line-through}table{border-collapse:collapse;border-spacing:0}
+
+html { min-height:100%; margin-bottom:1px; }
+html body { height:100%; margin:0px; font-family:Arial, Helvetica, sans-serif; font-size:10px; color:#000; line-height:140%; background:#fff none; overflow-y:scroll; }
+html body td { vertical-align:top; text-align:left; }
+
+h1 { padding:0px; margin:0px 0px 25px; font-family:Arial, Helvetica, sans-serif; font-size:1.5em; color:#d55000; line-height:100%; font-weight:normal; }
+h2 { padding:0px; margin:0px 0px 8px; font-family:Arial, Helvetica, sans-serif; font-size:1.2em; color:#000; font-weight:bold; line-height:140%; border-bottom:1px solid #d6d4d4; display:block; }
+h3 { padding:0px; margin:0px 0px 5px; font-family:Arial, Helvetica, sans-serif; font-size:1.1em; color:#000; font-weight:bold; line-height:140%; }
+
+a { color:#005fce; text-decoration:none; }
+a:hover { color:#005fce; text-decoration:underline; }
+a:visited { color:#004aa0; text-decoration:none; }
+
+p { padding:0px; margin:0px 0px 20px; }
+img { padding:0px; margin:0px 0px 20px; border:none; }
+p img, pre img, tt img, li img, h1 img, h2 img { margin-bottom:0px; } 
+
+ul { padding:0px; margin:0px 0px 20px 23px; list-style:square; }
+ul li { padding:0px; margin:0px 0px 7px 0px; }
+ul li ul { padding:5px 0px 0px; margin:0px 0px 7px 23px; }
+ul li ol li { list-style:decimal; }
+ol { padding:0px; margin:0px 0px 20px 0px; list-style:decimal; }
+ol li { padding:0px; margin:0px 0px 7px 23px; list-style-type:decimal; }
+ol li ol { padding:5px 0px 0px; margin:0px 0px 7px 0px; }
+ol li ol li { list-style-type:lower-alpha; }
+ol li ul { padding-top:7px; }
+ol li ul li { list-style:square; }
+
+.content { font-size:1.2em; line-height:140%; padding: 20px; }
+
+pre, code { font-size:12px; }
+tt { font-size: 1.2em; }
+pre { margin:0px 0px 20px; }
+pre.codeinput { padding:10px; border:1px solid #d3d3d3; background:#f7f7f7; }
+pre.codeoutput { padding:10px 11px; margin:0px 0px 20px; color:#4c4c4c; }
+pre.error { color:red; }
+
+@media print { pre.codeinput, pre.codeoutput { word-wrap:break-word; width:100%; } }
+
+span.keyword { color:#0000FF }
+span.comment { color:#228B22 }
+span.string { color:#A020F0 }
+span.untermstring { color:#B20000 }
+span.syscmd { color:#B28C00 }
+
+.footer { width:auto; padding:10px 0px; margin:25px 0px 0px; border-top:1px dotted #878787; font-size:0.8em; line-height:140%; font-style:italic; color:#878787; text-align:left; float:none; }
+.footer p { margin:0px; }
+.footer a { color:#878787; }
+.footer a:hover { color:#878787; text-decoration:underline; }
+.footer a:visited { color:#878787; }
+
+table th { padding:7px 5px; text-align:left; vertical-align:middle; border: 1px solid #d6d4d4; font-weight:bold; }
+table td { padding:7px 5px; text-align:left; vertical-align:top; border:1px solid #d6d4d4; }
+
+
+
+
+
+  </style></head><body><div class="content"><h1>Cross validation example with multiple classifiers</h1><!--introduction--><p>This example runs cross validation and shows confusion matrix using multiple classifiers</p><div><ol><li>For CoSMoMVPA's copyright information and license terms,   #</li><li>see the COPYING file distributed with CoSMoMVPA.           #</li></ol></div><!--/introduction--><h2>Contents</h2><div><ul><li><a href="#1">Define data</a></li><li><a href="#2">Define classifiers in a cell</a></li><li><a href="#3">Define partitions</a></li><li><a href="#4">Run classifications</a></li><li><a href="#5">Consider effect or normalization</a></li></ul></div><h2>Define data<a name="1"></a></h2><pre class="codeinput">config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,<span class="string">'ak6'</span>,<span class="string">'s01'</span>);
+
+data_fn=fullfile(data_path,<span class="string">'glm_T_stats_perrun.nii'</span>);
+mask_fn=fullfile(data_path,<span class="string">'vt_mask.nii'</span>);
+ds=cosmo_fmri_dataset(data_fn,<span class="string">'mask'</span>,mask_fn,<span class="keyword">...</span>
+                        <span class="string">'targets'</span>,repmat(1:6,1,10),<span class="keyword">...</span>
+                        <span class="string">'chunks'</span>,floor(((1:60)-1)/6)+1);
+
+<span class="comment">% remove constant features</span>
+ds=cosmo_remove_useless_data(ds);
+</pre><h2>Define classifiers in a cell<a name="2"></a></h2><p>&gt;@@&gt;</p><pre class="codeinput">classifiers={@cosmo_classify_nn,<span class="keyword">...</span>
+             @cosmo_classify_naive_bayes,<span class="keyword">...</span>
+             @cosmo_classify_lda};
+
+<span class="comment">% if svm classifier is present (either libsvm or matlab's svm), use that</span>
+<span class="comment">% too</span>
+<span class="keyword">if</span> cosmo_check_external(<span class="string">'svm'</span>,false)
+    classifiers{end+1}=@cosmo_classify_svm;
+<span class="keyword">end</span>
+<span class="comment">% &lt;@@&lt;</span>
+nclassifiers=numel(classifiers);
+</pre><h2>Define partitions<a name="3"></a></h2><pre class="codeinput">partitions=cosmo_nfold_partitioner(ds);
+</pre><h2>Run classifications<a name="4"></a></h2><p>Compute the accuracy and predictions for each classifier, and plot the confusion matrix</p><pre class="codeinput"><span class="keyword">for</span> k=1:nclassifiers
+    classifier=classifiers{k};
+
+    <span class="comment">% get predictions for each fold, and store the result in</span>
+    <span class="comment">% a variable 'pred'.</span>
+    <span class="comment">% This output is in a 60 x 10 matrix, corresponding to predictions</span>
+    <span class="comment">% for all 60 samples and 10 folds</span>
+    <span class="comment">% &gt;@@&gt;</span>
+    pred=cosmo_crossvalidate(ds, classifier, partitions);
+    <span class="comment">% &lt;@@&lt;</span>
+
+    <span class="comment">% use cosmo_confusion_matrix to compute the confusion matrix for each</span>
+    <span class="comment">% fold, and store the results in a variable 'confusion_matrix_folds'.</span>
+    <span class="comment">% The output is 6 x 6 x 10, consisting of 10 confusion matrices each</span>
+    <span class="comment">% of size 6 x 6</span>
+    <span class="comment">% &gt;@@&gt;</span>
+    confusion_matrix_folds=cosmo_confusion_matrix(ds.sa.targets,pred);
+    <span class="comment">% &lt;@@&lt;</span>
+
+    <span class="comment">% sum the confusion matrix_folds alnog the third dimension to</span>
+    <span class="comment">% obtain a single 6 x 6 confusion matirx. Store the result</span>
+    <span class="comment">% in a variable named confusion_matrix</span>
+    <span class="comment">% &gt;@@&gt;</span>
+    confusion_matrix=sum(confusion_matrix_folds,3);
+    <span class="comment">% &lt;@@&lt;</span>
+    <span class="comment">% show the confusion matrix</span>
+    figure();
+    imagesc(confusion_matrix,[0 10])
+    title(sprintf(<span class="string">'%s: %.3f'</span>, strrep(func2str(classifier),<span class="string">'_'</span>,<span class="string">' '</span>), accuracy))
+
+<span class="keyword">end</span>
+</pre><img vspace="5" hspace="5" src="run_cross_validation_01.png" alt=""> <img vspace="5" hspace="5" src="run_cross_validation_02.png" alt=""> <img vspace="5" hspace="5" src="run_cross_validation_03.png" alt=""> <img vspace="5" hspace="5" src="run_cross_validation_04.png" alt=""> <h2>Consider effect or normalization<a name="5"></a></h2><pre class="codeinput">normalizations={<span class="string">'zscore'</span>,<span class="keyword">...</span>
+                <span class="string">'demean'</span>,<span class="keyword">...</span>
+                <span class="string">'scale_unit'</span>,<span class="keyword">...</span>
+                <span class="string">'none'</span>};
+
+<span class="keyword">for</span> k=1:nclassifiers
+    classifier=classifiers{k};
+    classifier_name=strrep(func2str(classifier),<span class="string">'_'</span>,<span class="string">' '</span>);
+    <span class="keyword">for</span> j=1:numel(normalizations)
+        opt=struct();
+        opt.normalization=normalizations{j};
+        [pred,accuracy]=cosmo_crossvalidate(ds,classifier,partitions,opt);
+
+        fprintf(<span class="string">'%s with %s-normalization: %.3f\n'</span>, classifier_name,<span class="keyword">...</span>
+                opt.normalization, accuracy);
+    <span class="keyword">end</span>
+<span class="keyword">end</span>
+</pre><pre class="codeoutput">cosmo classify nn with zscore-normalization: 0.417
+cosmo classify nn with demean-normalization: 0.450
+cosmo classify nn with scale_unit-normalization: 0.450
+cosmo classify nn with none-normalization: 0.450
+cosmo classify naive bayes with zscore-normalization: 0.600
+cosmo classify naive bayes with demean-normalization: 0.600
+cosmo classify naive bayes with scale_unit-normalization: 0.600
+cosmo classify naive bayes with none-normalization: 0.600
+cosmo classify lda with zscore-normalization: 0.850
+cosmo classify lda with demean-normalization: 0.833
+cosmo classify lda with scale_unit-normalization: 0.817
+cosmo classify lda with none-normalization: 0.833
+cosmo classify svm with zscore-normalization: 0.733
+cosmo classify svm with demean-normalization: 0.717
+cosmo classify svm with scale_unit-normalization: 0.717
+cosmo classify svm with none-normalization: 0.717
+</pre><p class="footer"><br><a href="http://www.mathworks.com/products/matlab/">Published with MATLAB&reg; R2015a</a><br></p></div><!--
+##### SOURCE BEGIN #####
+%% Cross validation example with multiple classifiers
+% This example runs cross validation and shows confusion matrix using
+% multiple classifiers
+%
+% #   For CoSMoMVPA's copyright information and license terms,   #
+% #   see the COPYING file distributed with CoSMoMVPA.           #
+
+%% Define data
+config=cosmo_config();
+data_path=fullfile(config.tutorial_data_path,'ak6','s01');
+
+data_fn=fullfile(data_path,'glm_T_stats_perrun.nii');
+mask_fn=fullfile(data_path,'vt_mask.nii');
+ds=cosmo_fmri_dataset(data_fn,'mask',mask_fn,...
+                        'targets',repmat(1:6,1,10),...
+                        'chunks',floor(((1:60)-1)/6)+1);
+
+% remove constant features
+ds=cosmo_remove_useless_data(ds);
+
+%% Define classifiers in a cell
+% >@@>
+classifiers={@cosmo_classify_nn,...
+             @cosmo_classify_naive_bayes,...
+             @cosmo_classify_lda};
+
+% if svm classifier is present (either libsvm or matlab's svm), use that
+% too
+if cosmo_check_external('svm',false)
+    classifiers{end+1}=@cosmo_classify_svm;
+end
+% <@@<
+nclassifiers=numel(classifiers);
+
+%% Define partitions
+partitions=cosmo_nfold_partitioner(ds);
+
+%% Run classifications
+% Compute the accuracy and predictions for each classifier, and plot the
+% confusion matrix
+for k=1:nclassifiers
+    classifier=classifiers{k};
+    
+    % get predictions for each fold, and store the result in 
+    % a variable 'pred'. 
+    % This output is in a 60 x 10 matrix, corresponding to predictions 
+    % for all 60 samples and 10 folds
+    % >@@>
+    pred=cosmo_crossvalidate(ds, classifier, partitions);
+    % <@@<
+    
+    % use cosmo_confusion_matrix to compute the confusion matrix for each 
+    % fold, and store the results in a variable 'confusion_matrix_folds'.
+    % The output is 6 x 6 x 10, consisting of 10 confusion matrices each 
+    % of size 6 x 6
+    % >@@>    
+    confusion_matrix_folds=cosmo_confusion_matrix(ds.sa.targets,pred);
+    % <@@<
+    
+    % sum the confusion matrix_folds alnog the third dimension to 
+    % obtain a single 6 x 6 confusion matirx. Store the result
+    % in a variable named confusion_matrix
+    % >@@>    
+    confusion_matrix=sum(confusion_matrix_folds,3);
+    % <@@<
+    % show the confusion matrix
+    figure();
+    imagesc(confusion_matrix,[0 10])
+    title(sprintf('%s: %.3f', strrep(func2str(classifier),'_',' '), accuracy))
+
+end
+
+%% Consider effect or normalization
+normalizations={'zscore',...
+                'demean',...
+                'scale_unit',...
+                'none'};
+
+for k=1:nclassifiers
+    classifier=classifiers{k};
+    classifier_name=strrep(func2str(classifier),'_',' ');
+    for j=1:numel(normalizations)
+        opt=struct();
+        opt.normalization=normalizations{j};
+        [pred,accuracy]=cosmo_crossvalidate(ds,classifier,partitions,opt);
+
+        fprintf('%s with %s-normalization: %.3f\n', classifier_name,...
+                opt.normalization, accuracy);
+    end
+end
+
+
+
+
+
+
+##### SOURCE END #####
+--></body></html>

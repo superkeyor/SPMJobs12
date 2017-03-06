@@ -1,0 +1,631 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo independent samples partitioner skl &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo index unique skl" href="cosmo_index_unique_skl.html" />
+    <link rel="prev" title="cosmo fx skl" href="cosmo_fx_skl.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_index_unique_skl.html" title="cosmo index unique skl"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_fx_skl.html" title="cosmo fx skl"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" accesskey="U">CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-independent-samples-partitioner-skl">
+<span id="id1"></span><h1>cosmo independent samples partitioner skl<a class="headerlink" href="#cosmo-independent-samples-partitioner-skl" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>partitions<span class="p">=</span><span class="nf">cosmo_independent_samples_partitioner</span><span class="p">(</span>ds,varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% Compute partitioning scheme based on dataset with independent samples</span>
+<span class="c">%</span>
+<span class="c">% partitions=cosmo_independent_chunk_partitioner(ds,...)</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   ds                          dataset structure with fields .samples,</span>
+<span class="c">%                               .sa.targets and .sa.chunks. Since this</span>
+<span class="c">%                               function is intended for the case that all</span>
+<span class="c">%                               rows (patterns) in .samples are</span>
+<span class="c">%                               independent, it is required that all values</span>
+<span class="c">%                               in .sa.chunks are unique.</span>
+<span class="c">%   &#39;fold_count&#39;,c              Return partitions with c folds.</span>
+<span class="c">%   &#39;test_count&#39;, tc            } Return partitions so that in each test</span>
+<span class="c">%   &#39;test_ratio&#39;, tr            } set there are tc samples (or (tr*100%)</span>
+<span class="c">%                               } per unique target. These two options are</span>
+<span class="c">%                               } mutually exclusive</span>
+<span class="c">%   &#39;seed&#39;,s                    (optional) use seed s for pseudo-random</span>
+<span class="c">%                               number generator (default: s=1). If</span>
+<span class="c">%                               provided, then this function behaves</span>
+<span class="c">%                               pseudo-ranomly but deterministically, and</span>
+<span class="c">%                               different calls return the same output.</span>
+<span class="c">%                               If s=0, then different calls to this</span>
+<span class="c">%                               function gives different outputs.</span>
+<span class="c">%   &#39;max_fold_count&#39;            Safety limit to the maximum number of folds</span>
+<span class="c">%                               that can be returned (default: 10000). When</span>
+<span class="c">%                               this number is set to a larger value, this</span>
+<span class="c">%                               may result in too much memory being</span>
+<span class="c">%                               required and slowing down or crashing the</span>
+<span class="c">%                               machine.</span>
+<span class="c">% Output:</span>
+<span class="c">%   partitions                  Cell with fields .train_indices and</span>
+<span class="c">%                               .test_indices, both of size c x 1.</span>
+<span class="c">%                               Each element in .test_indices has tc (when</span>
+<span class="c">%                               using &#39;test_count&#39;) or tr * min_count</span>
+<span class="c">%                               (when using &#39;test_ratio&#39;; min_count is the</span>
+<span class="c">%                               minimum number of samples over classes)</span>
+<span class="c">%                               elements; each element in .train_indices</span>
+<span class="c">%                               has min_count-tc elements.</span>
+<span class="c">%                               In other words, the resulting partitions</span>
+<span class="c">%                               are balanced for both training and test</span>
+<span class="c">%                               set.</span>
+<span class="c">%</span>
+<span class="c">% Examples:</span>
+<span class="c">%     % make simple dataset with 9 samples, 3 features</span>
+<span class="c">%     ds=struct();</span>
+<span class="c">%     ds.samples=randn(9,3);</span>
+<span class="c">%     ds.sa.targets=[1 1 1 1 1 2 2 2 2]&#39;;</span>
+<span class="c">%     ds.sa.chunks=(1:9)&#39;;</span>
+<span class="c">%     %</span>
+<span class="c">%     % Partition scheme with 5 folds, each in which 1 target in each chunk</span>
+<span class="c">%     % is used for testing</span>
+<span class="c">%     partitions=cosmo_independent_samples_partitioner(ds,...</span>
+<span class="c">%                                             &#39;test_count&#39;,1,...</span>
+<span class="c">%                                             &#39;fold_count&#39;,5);</span>
+<span class="c">%     cosmo_disp(partitions)</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 2    [ 4    [ 2    [ 5    [ 1</span>
+<span class="c">%     &gt;       6 ]    8 ]    7 ]    8 ]    7 ] }</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 1    [ 1    [ 1    [ 3</span>
+<span class="c">%     &gt;       3      3      3      2      4</span>
+<span class="c">%     &gt;       5      5      5      4      5</span>
+<span class="c">%     &gt;       7      6      6      6      6</span>
+<span class="c">%     &gt;       8      7      8      7      8</span>
+<span class="c">%     &gt;       9 ]    9 ]    9 ]    9 ]    9 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % As above, but now with 2 targets in each chunk used for testing</span>
+<span class="c">%     partitions=cosmo_independent_samples_partitioner(ds,...</span>
+<span class="c">%                                             &#39;test_count&#39;,2,...</span>
+<span class="c">%                                             &#39;fold_count&#39;,5);</span>
+<span class="c">%     cosmo_disp(partitions)</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 4    [ 2    [ 1    [ 1</span>
+<span class="c">%     &gt;       2      5      3      5      5</span>
+<span class="c">%     &gt;       6      7      6      6      6</span>
+<span class="c">%     &gt;       7 ]    8 ]    7 ]    8 ]    7 ] }</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 1    [ 1    [ 2    [ 3</span>
+<span class="c">%     &gt;       5      3      5      4      4</span>
+<span class="c">%     &gt;       8      6      8      7      8</span>
+<span class="c">%     &gt;       9 ]    9 ]    9 ]    9 ]    9 ] }</span>
+<span class="c">%     %</span>
+<span class="c">%     % Now use 30% of the targets in each chunk for testing,</span>
+<span class="c">%     % and return 20 chunks.</span>
+<span class="c">%     partitions=cosmo_independent_samples_partitioner(ds,...</span>
+<span class="c">%                                             &#39;test_ratio&#39;,0.3,...</span>
+<span class="c">%                                             &#39;fold_count&#39;,20);</span>
+<span class="c">%     cosmo_disp(partitions)</span>
+<span class="c">%     &gt; .test_indices</span>
+<span class="c">%     &gt;   { [ 3    [ 4    [ 1   ... [ 5    [ 1    [ 4</span>
+<span class="c">%     &gt;       6 ]    7 ]    8 ]       6 ]    9 ]    7 ]   }@1x20</span>
+<span class="c">%     &gt; .train_indices</span>
+<span class="c">%     &gt;   { [ 1    [ 2    [ 2   ... [ 1    [ 3    [ 1</span>
+<span class="c">%     &gt;       2      3      4         2      4      2</span>
+<span class="c">%     &gt;       4      5      5         3      5      5</span>
+<span class="c">%     &gt;       7      6      6         7      6      6</span>
+<span class="c">%     &gt;       8      8      7         8      7      8</span>
+<span class="c">%     &gt;       9 ]    9 ]    9 ]       9 ]    8 ]    9 ]   }@1x20</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">% - In almost all cases, the number of partitions returned by this function</span>
+<span class="c">%   (=c) is less than the total number of possible partitions. In these</span>
+<span class="c">%   cases, a random subset of possible partitions is chosen, with the</span>
+<span class="c">%   contstraint that no combination of train and test indices is repeated in</span>
+<span class="c">%   partitions. No attempt is made to balance the number of times each</span>
+<span class="c">%   samples is used for training and/or testing.</span>
+<span class="c">% - This function behaves, by default, pseudo-randomly and</span>
+<span class="c">%   deterministically; different class to this function, with the same</span>
+<span class="c">%   inputs, result in the same output. To get different outputs for</span>
+<span class="c">%   different calls, set the &#39;seed&#39; option to 0.</span>
+<span class="c">%</span>
+<span class="c">% See also: cosmo_nfold_partitions, cosmo_nchoosek_partitioner</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+
+    <span class="c">% process input</span>
+    <span class="n">defaults</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">max_fold_count</span><span class="p">=</span><span class="mi">10000</span><span class="p">;</span>
+    <span class="n">defaults</span><span class="p">.</span><span class="n">seed</span><span class="p">=</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="n">opt</span><span class="p">=</span><span class="n">cosmo_structjoin</span><span class="p">(</span><span class="n">defaults</span><span class="p">,</span><span class="n">varargin</span><span class="p">);</span>
+    <span class="n">check_input</span><span class="p">(</span><span class="n">ds</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% see which classes there are</span>
+    <span class="p">[</span><span class="n">class_idx</span><span class="p">,</span><span class="n">classes</span><span class="p">]=</span><span class="n">cosmo_index_unique</span><span class="p">(</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">targets</span><span class="p">);</span>
+    <span class="n">class_counts</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">class_idx</span><span class="p">);</span>
+
+    <span class="c">% see how many possible unique folds there are</span>
+    <span class="n">test_count</span><span class="p">=</span><span class="n">get_test_count</span><span class="p">(</span><span class="n">class_counts</span><span class="p">,</span><span class="n">classes</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+    <span class="n">train_count</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">class_counts</span><span class="p">)</span><span class="o">-</span><span class="n">test_count</span><span class="p">;</span>
+
+    <span class="n">test_combi_count</span><span class="p">=</span><span class="n">get_unique_fold_count</span><span class="p">(</span><span class="n">class_counts</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">test_count</span><span class="p">);</span>
+    <span class="n">train_combi_count</span><span class="p">=</span><span class="n">get_unique_fold_count</span><span class="p">(</span><span class="n">class_counts</span><span class="o">-</span><span class="n">test_count</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">train_count</span><span class="p">);</span>
+
+    <span class="n">unique_fold_count</span><span class="p">=</span><span class="n">test_combi_count</span><span class="o">*</span><span class="n">train_combi_count</span><span class="p">;</span>
+
+    <span class="n">fold_count</span><span class="p">=</span><span class="n">get_fold_count</span><span class="p">(</span><span class="n">unique_fold_count</span><span class="p">,</span><span class="n">opt</span><span class="p">);</span>
+
+    <span class="c">% Use case 1: single-subject analysis with single trial MEEG data,</span>
+    <span class="c">% hundreds of trials; require crossvalidation scheme with 10 or so</span>
+    <span class="c">% folds.</span>
+    <span class="c">% The total number of possible folds is &#39;large&#39;, generating all</span>
+    <span class="c">% possible folds would require too much memory. Instead we generate</span>
+    <span class="c">% folds randomly. Since it is almost always the case that there are</span>
+    <span class="c">% some duplicates, these have to be removed. We keep on generating new</span>
+    <span class="c">% random folds - and remove duplicates - until we have generated</span>
+    <span class="c">% the target count, opt.fold_count.</span>
+    <span class="c">%</span>
+    <span class="c">% Use case 2: between-subject analysis, trying to discriminate between</span>
+    <span class="c">% participants groups (such as patients versus healthy controls).</span>
+    <span class="c">% In this case, use a crossvalidation scheme with</span>
+    <span class="c">% take-one-participant-per-group-for-testing (i.e. test_count=1), and</span>
+    <span class="c">% the total number of folds may not be so large. For example, with 2</span>
+    <span class="c">% groups, N=20 in each group, there are F=N*(N-1)/2=190 possible folds.</span>
+    <span class="c">% If the target fold count is near this number F, then randomly</span>
+    <span class="c">% generating folds until enough folds are generated will take a long</span>
+    <span class="c">% time, because many folds will be duplicates of existing ones. In such</span>
+    <span class="c">% a scenerio it is more efficient to generate all possible folds first,</span>
+    <span class="c">% then select the required number of folds randomly</span>
+
+    <span class="n">fold_enumerate_ratio</span><span class="p">=.</span><span class="mi">1</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">fold_count</span><span class="o">&gt;</span><span class="n">fold_enumerate_ratio</span><span class="o">*</span><span class="n">unique_fold_count</span><span class="p">;</span>
+        <span class="n">func</span><span class="p">=@</span><span class="n">enumerated_partitions</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">func</span><span class="p">=@</span><span class="n">sampled_partitions</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">)</span>
+        <span class="n">seed</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">seed</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">seed</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">end</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">func</span><span class="p">(</span><span class="n">class_idx</span><span class="p">,</span><span class="n">test_count</span><span class="p">,</span><span class="n">fold_count</span><span class="p">,</span><span class="n">seed</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>fold_count<span class="p">=</span><span class="nf">get_fold_count</span><span class="p">(</span>unique_fold_count,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="k">if</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;fold_count&#39;</span><span class="p">)</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;the option &#39;&#39;fold_count&#39;&#39;, indicating how many &#39;</span><span class="c">...</span>
+                <span class="s">&#39;cross-validation folds this function should &#39;</span><span class="c">...</span>
+                <span class="s">&#39;generate, is required. It should have a value &#39;</span><span class="c">...</span>
+                <span class="s">&#39;between 1 and %d.\n&#39;</span><span class="c">...</span>
+                <span class="s">&#39;If in doubt, a value between 10 &#39;</span><span class="c">...</span>
+                <span class="s">&#39;and 1000 may be quite adequate for most use cases; &#39;</span><span class="c">...</span>
+                <span class="s">&#39;with the lower value more appropriate for cases of &#39;</span><span class="c">...</span>
+                <span class="s">&#39;within-subject analysis with many trials in &#39;</span><span class="c">...</span>
+                <span class="s">&#39;different conditions of interest (e.g. different &#39;</span><span class="c">...</span>
+                <span class="s">&#39;stimuli, or seen versus unseen stimulus), and the &#39;</span><span class="c">...</span>
+                <span class="s">&#39;upper value more appropriate for classification &#39;</span> <span class="c">...</span>
+                <span class="s">&#39;of participants in different groups (such as &#39;</span><span class="c">...</span>
+                <span class="s">&#39;patient versus control).&#39;</span><span class="p">],</span><span class="c">...</span>
+                <span class="n">min</span><span class="p">(</span><span class="n">unique_fold_count</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">max_fold_count</span><span class="p">));</span>
+    <span class="k">end</span>
+
+
+    <span class="n">fold_count</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">fold_count</span><span class="p">;</span>
+
+    <span class="k">if</span> <span class="n">fold_count</span><span class="o">&gt;</span><span class="n">opt</span><span class="p">.</span><span class="n">max_fold_count</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;The number of requested folds, fold_count=%d, &#39;</span><span class="c">...</span>
+                <span class="s">&#39;exceeds the safety limit max_fold_count=%d. &#39;</span><span class="c">...</span>
+                <span class="s">&#39;You can either reduce fold_count, or &#39;</span><span class="c">...</span>
+                <span class="s">&#39;increase max_fold_count. In the latter case, note &#39;</span><span class="c">...</span>
+                <span class="s">&#39;that higher values of max_fold_count may result in &#39;</span><span class="c">...</span>
+                <span class="s">&#39;significant processor and memory usage; for very &#39;</span><span class="c">...</span>
+                <span class="s">&#39;large values, it may result in the computer becoming &#39;</span><span class="c">...</span>
+                <span class="s">&#39;unresponsive or crashing&#39;</span><span class="p">],</span><span class="c">...</span>
+                <span class="n">fold_count</span><span class="p">,</span><span class="n">opt</span><span class="p">.</span><span class="n">max_fold_count</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">fold_count</span><span class="o">&gt;</span><span class="n">unique_fold_count</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;Cannot generate fold_count=%d folds as there are only &#39;</span><span class="c">...</span>
+                <span class="s">&#39;%d possible folds&#39;</span><span class="p">],</span><span class="c">...</span>
+                <span class="n">fold_count</span><span class="p">,</span><span class="n">unique_fold_count</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>count<span class="p">=</span><span class="nf">get_unique_fold_count</span><span class="p">(</span>test_class_counts,test_count<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% see how often each class occurs</span>
+    <span class="n">class_counts</span><span class="p">=</span><span class="n">arrayfun</span><span class="p">(@(</span><span class="n">c</span><span class="p">)</span><span class="n">nchoosek_lower_limit</span><span class="p">(</span><span class="n">c</span><span class="p">,</span><span class="n">test_count</span><span class="p">),</span><span class="c">...</span>
+                                    <span class="n">test_class_counts</span><span class="p">);</span>
+    <span class="n">count</span><span class="p">=</span><span class="n">prod</span><span class="p">(</span><span class="n">class_counts</span><span class="p">);</span>
+
+<span class="k">function</span><span class="w"> </span>c<span class="p">=</span><span class="nf">nchoosek_lower_limit</span><span class="p">(</span>n,k<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% for many combinations return a lower limit of nchoosek. This avoids a</span>
+    <span class="c">% warning by nchoosek if n and k are large, and still properly</span>
+    <span class="c">% deals with cases of small n and k.</span>
+    <span class="k">if</span> <span class="n">n</span><span class="o">-</span><span class="n">k</span><span class="o">&gt;</span><span class="mi">10</span> <span class="o">&amp;&amp;</span> <span class="n">k</span><span class="o">&gt;</span><span class="mi">10</span>
+        <span class="c">% it holds that nchoosek(n,k)&lt;1e5 if n-k&gt;10 and k&gt;10</span>
+        <span class="n">c</span><span class="p">=</span><span class="mf">1e5</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">c</span><span class="p">=</span><span class="nb">nchoosek</span><span class="p">(</span><span class="n">n</span><span class="p">,</span><span class="n">k</span><span class="p">);</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span>test_count<span class="p">=</span><span class="nf">get_test_count</span><span class="p">(</span>class_counts,classes,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% get number of samples in each class for testing.</span>
+
+    <span class="p">[</span><span class="n">min_class_count</span><span class="p">,</span><span class="n">min_idx</span><span class="p">]=</span><span class="n">min</span><span class="p">(</span><span class="n">class_counts</span><span class="p">);</span>
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;test_count&#39;</span><span class="p">)</span>
+        <span class="n">test_count</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">test_count</span><span class="p">;</span>
+    <span class="k">else</span>
+        <span class="n">assert</span><span class="p">(</span><span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;test_ratio&#39;</span><span class="p">))</span>
+        <span class="n">test_ratio</span><span class="p">=</span><span class="n">opt</span><span class="p">.</span><span class="n">test_ratio</span><span class="p">;</span>
+        <span class="n">test_count</span><span class="p">=</span><span class="nb">round</span><span class="p">(</span><span class="n">test_ratio</span><span class="o">*</span><span class="n">min_class_count</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">test_count</span><span class="o">&lt;</span><span class="mi">1</span> <span class="o">||</span> <span class="n">test_count</span><span class="o">&gt;</span><span class="p">=</span><span class="n">min_class_count</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;here are not enough &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;samples in class %d to have at least %d &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;samples in the train and test set&#39;</span><span class="p">],</span><span class="c">...</span>
+                    <span class="n">classes</span><span class="p">(</span><span class="n">min_idx</span><span class="p">),</span><span class="n">test_count</span><span class="p">);</span>
+    <span class="k">end</span>
+
+<span class="k">function</span> <span class="nf">partitions</span><span class="p">=</span><span class="n">sampled_partitions</span><span class="p">(</span><span class="n">class_idx</span><span class="p">,</span><span class="n">test_count</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">fold_count</span><span class="p">,</span><span class="n">seed</span><span class="p">)</span>
+
+
+    <span class="n">class_counts</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">class_idx</span><span class="p">);</span>
+    <span class="n">safety_max_repeats_limit</span><span class="p">=</span><span class="mi">100</span><span class="p">;</span>
+
+    <span class="n">folds_cell</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">safety_max_repeats_limit</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="n">iter_seeds</span><span class="p">=</span><span class="nb">ceil</span><span class="p">(</span><span class="n">cosmo_rand</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">safety_max_repeats_limit</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="n">seed</span><span class="p">)</span><span class="o">*</span><span class="mf">1e8</span><span class="p">);</span>
+    <span class="n">has_enough_folds</span><span class="p">=</span><span class="n">false</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">i_gen</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">safety_max_repeats_limit</span>
+        <span class="n">iter_seed</span><span class="p">=</span><span class="n">iter_seeds</span><span class="p">(</span><span class="n">i_gen</span><span class="p">);</span>
+        <span class="n">folds_cell</span><span class="p">{</span><span class="n">i_gen</span><span class="p">}=</span><span class="n">generate_random_folds</span><span class="p">(</span><span class="n">fold_count</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="n">class_counts</span><span class="p">,</span><span class="n">test_count</span><span class="p">,</span><span class="n">iter_seed</span><span class="p">);</span>
+        <span class="n">folds_so_far</span><span class="p">=</span><span class="nb">cat</span><span class="p">(</span><span class="mi">3</span><span class="p">,</span><span class="n">folds_cell</span><span class="p">{</span><span class="mi">1</span><span class="p">:</span><span class="n">i_gen</span><span class="p">});</span>
+        <span class="n">folds_no_dupl</span><span class="p">=</span><span class="n">remove_duplicate_fold_indices</span><span class="p">(</span><span class="n">folds_so_far</span><span class="p">);</span>
+        <span class="n">n_folds</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">folds_no_dupl</span><span class="p">,</span><span class="mi">3</span><span class="p">);</span>
+        <span class="n">has_enough_folds</span><span class="p">=</span><span class="n">n_folds</span><span class="o">&gt;</span><span class="p">=</span><span class="n">fold_count</span><span class="p">;</span>
+
+        <span class="k">if</span> <span class="n">has_enough_folds</span>
+            <span class="k">break</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="o">~</span><span class="n">has_enough_folds</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;Unable to generate %d folds. This may be a bug. &#39;</span><span class="c">...</span>
+                <span class="s">&#39;Consider contacting the CoSMoMVPA developers&#39;</span><span class="p">],</span><span class="c">...</span>
+                <span class="n">nfolds</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">fold_indices2partitions</span><span class="p">(</span><span class="n">folds_no_dupl</span><span class="p">,</span><span class="n">class_idx</span><span class="p">);</span>
+
+
+<span class="k">function</span> <span class="nf">fold_indices</span><span class="p">=</span><span class="n">generate_random_folds</span><span class="p">(</span><span class="n">fold_count</span><span class="p">,</span><span class="c">...</span>
+                                        <span class="n">class_counts</span><span class="p">,</span><span class="n">test_count</span><span class="p">,</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">nclasses</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">class_counts</span><span class="p">);</span>
+    <span class="n">min_class_count</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">class_counts</span><span class="p">);</span>
+    <span class="n">train_count</span><span class="p">=</span><span class="n">min_class_count</span><span class="o">-</span><span class="n">test_count</span><span class="p">;</span>
+
+    <span class="c">% do just a single call to cosmo_rand, so that different calls to this</span>
+    <span class="c">% function with different seeds will almost certainly result in</span>
+    <span class="c">% different folds</span>
+    <span class="n">rand_arr</span><span class="p">=</span><span class="n">cosmo_rand</span><span class="p">(</span><span class="n">nclasses</span><span class="p">,</span><span class="n">max</span><span class="p">(</span><span class="n">class_counts</span><span class="p">),</span><span class="n">fold_count</span><span class="p">,</span><span class="s">&#39;seed&#39;</span><span class="p">,</span><span class="n">seed</span><span class="p">);</span>
+
+    <span class="c">% allocate space for output</span>
+    <span class="n">fold_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nclasses</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">fold_count</span><span class="p">);</span>
+
+
+    <span class="k">for</span> <span class="n">i_fold</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">fold_count</span>
+        <span class="k">for</span> <span class="n">i_class</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span>
+            <span class="n">r</span><span class="p">=</span><span class="n">rand_arr</span><span class="p">(</span><span class="n">i_class</span><span class="p">,</span><span class="mi">1</span><span class="p">:</span><span class="n">class_counts</span><span class="p">(</span><span class="n">i_class</span><span class="p">),</span><span class="n">i_fold</span><span class="p">);</span>
+            <span class="p">[</span><span class="n">unused</span><span class="p">,</span><span class="n">idx</span><span class="p">]=</span><span class="n">sort</span><span class="p">(</span><span class="n">r</span><span class="p">);</span>
+            <span class="n">te_idx</span><span class="p">=</span><span class="n">idx</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">test_count</span><span class="p">);</span>
+            <span class="n">tr_idx</span><span class="p">=</span><span class="n">idx</span><span class="p">(</span><span class="n">test_count</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">train_count</span><span class="p">));</span>
+
+            <span class="n">fold_indices</span><span class="p">{</span><span class="n">i_class</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">i_fold</span><span class="p">}=</span><span class="n">te_idx</span><span class="p">;</span>
+            <span class="n">fold_indices</span><span class="p">{</span><span class="n">i_class</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">i_fold</span><span class="p">}=</span><span class="n">tr_idx</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+
+
+
+
+<span class="k">function</span><span class="w"> </span>fold_indices<span class="p">=</span><span class="nf">remove_duplicate_fold_indices</span><span class="p">(</span>fold_indices<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="p">[</span><span class="n">nclasses</span><span class="p">,</span><span class="n">two</span><span class="p">,</span><span class="n">nfolds</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">fold_indices</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">two</span><span class="o">==</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">test_train_idx</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="mi">2</span>
+        <span class="c">% assuming training and test sets same size, everywhere</span>
+        <span class="n">counts</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">fold_indices</span><span class="p">(:,</span><span class="n">test_train_idx</span><span class="p">,:));</span>
+        <span class="n">assert</span><span class="p">(</span><span class="n">all</span><span class="p">(</span><span class="n">counts</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span><span class="o">==</span><span class="n">counts</span><span class="p">(:)));</span>
+    <span class="k">end</span>
+
+    <span class="n">test_count</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">fold_indices</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="mi">1</span><span class="p">});</span>
+    <span class="n">train_count</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">fold_indices</span><span class="p">{</span><span class="mi">1</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">});</span>
+    <span class="n">total_count</span><span class="p">=</span><span class="n">train_count</span><span class="o">+</span><span class="n">test_count</span><span class="p">;</span>
+
+    <span class="n">max_index</span><span class="p">=</span><span class="n">max</span><span class="p">(</span><span class="n">cellfun</span><span class="p">(@</span><span class="n">max</span><span class="p">,</span><span class="n">fold_indices</span><span class="p">(:)));</span>
+
+    <span class="n">fold_mat</span><span class="p">=</span><span class="nb">zeros</span><span class="p">(</span><span class="n">nfolds</span><span class="p">,</span><span class="n">total_count</span><span class="o">*</span><span class="n">nclasses</span><span class="p">);</span>
+    <span class="n">first_row</span><span class="p">=</span><span class="mi">0</span><span class="p">;</span>
+    <span class="k">for</span> <span class="n">f_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nfolds</span>
+        <span class="k">for</span> <span class="n">c_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span>
+            <span class="n">te</span><span class="p">=</span><span class="n">fold_indices</span><span class="p">{</span><span class="n">c_i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">f_i</span><span class="p">};</span>
+            <span class="n">fold_mat</span><span class="p">(</span><span class="n">f_i</span><span class="p">,</span><span class="n">first_row</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">test_count</span><span class="p">))=</span><span class="n">te</span><span class="p">;</span>
+            <span class="n">first_row</span><span class="p">=</span><span class="n">first_row</span><span class="o">+</span><span class="n">test_count</span><span class="p">;</span>
+
+            <span class="n">tr</span><span class="p">=</span><span class="n">fold_indices</span><span class="p">{</span><span class="n">c_i</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">f_i</span><span class="p">};</span>
+            <span class="c">% discriminate test and train indices by ensuring:</span>
+            <span class="c">% test_indices  &lt;= max_index</span>
+            <span class="c">% train_indices &gt;  max_index;</span>
+            <span class="n">tr_offset</span><span class="p">=</span><span class="n">tr</span><span class="o">+</span><span class="n">max_index</span><span class="p">;</span>
+            <span class="n">fold_mat</span><span class="p">(</span><span class="n">f_i</span><span class="p">,</span><span class="n">first_row</span><span class="o">+</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">train_count</span><span class="p">))=</span><span class="n">tr_offset</span><span class="p">;</span>
+            <span class="n">first_row</span><span class="p">=</span><span class="n">first_row</span><span class="o">+</span><span class="n">train_count</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="c">% find and remove duplicates</span>
+    <span class="p">[</span><span class="n">s</span><span class="p">,</span><span class="nb">i</span><span class="p">]=</span><span class="n">sortrows</span><span class="p">(</span><span class="n">fold_mat</span><span class="p">);</span>
+
+    <span class="n">is_dupl</span><span class="p">=</span><span class="n">false</span><span class="p">(</span><span class="n">nfolds</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+    <span class="k">for</span> <span class="n">row</span><span class="p">=</span><span class="mi">2</span><span class="p">:</span><span class="n">nfolds</span>
+        <span class="n">is_dupl</span><span class="p">(</span><span class="nb">i</span><span class="p">(</span><span class="n">row</span><span class="p">))=</span><span class="nb">isequal</span><span class="p">(</span><span class="n">s</span><span class="p">(</span><span class="n">row</span><span class="o">-</span><span class="mi">1</span><span class="p">,:),</span><span class="n">s</span><span class="p">(</span><span class="n">row</span><span class="p">,:));</span>
+    <span class="k">end</span>
+
+    <span class="n">fold_indices</span><span class="p">=</span><span class="n">fold_indices</span><span class="p">(:,:,</span><span class="o">~</span><span class="n">is_dupl</span><span class="p">);</span>
+
+
+<span class="k">function</span> <span class="nf">partitions</span><span class="p">=</span><span class="n">enumerated_partitions</span><span class="p">(</span><span class="n">class_idx</span><span class="p">,</span><span class="n">test_count</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">fold_count</span><span class="p">,</span><span class="n">seed</span><span class="p">)</span>
+    <span class="n">nclasses</span><span class="p">=</span><span class="nb">numel</span><span class="p">(</span><span class="n">class_idx</span><span class="p">);</span>
+    <span class="n">class_counts</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@</span><span class="nb">numel</span><span class="p">,</span><span class="n">class_idx</span><span class="p">);</span>
+
+    <span class="n">train_count</span><span class="p">=</span><span class="n">min</span><span class="p">(</span><span class="n">class_counts</span><span class="p">)</span><span class="o">-</span><span class="n">test_count</span><span class="p">;</span>
+
+    <span class="n">test_idx</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nclasses</span><span class="p">);</span>
+    <span class="n">rem_train_idx</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nclasses</span><span class="p">);</span>
+
+    <span class="k">for</span> <span class="n">c_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span>
+        <span class="n">test_idx</span><span class="p">{</span><span class="n">c_i</span><span class="p">}=</span><span class="nb">nchoosek</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">class_counts</span><span class="p">(</span><span class="n">c_i</span><span class="p">),</span><span class="n">test_count</span><span class="p">);</span>
+        <span class="n">rem_train_idx</span><span class="p">{</span><span class="n">c_i</span><span class="p">}=</span><span class="nb">nchoosek</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">class_counts</span><span class="p">(</span><span class="n">c_i</span><span class="p">)</span><span class="o">-</span><span class="n">test_count</span><span class="p">,</span><span class="c">...</span>
+                                                <span class="n">train_count</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="c">% take all combinations, with first (nclasses*test_count) columns</span>
+    <span class="c">% for the test index positions, and the remaining</span>
+    <span class="c">% (nclasses*train_count) columns for indices of remaining test sets</span>
+    <span class="c">% Thus, possible test indices for class c are in all_idx{c,1},</span>
+    <span class="c">% and indices for remaining train indices are in all_idx{c,2}.</span>
+
+    <span class="n">all_idx</span><span class="p">=[</span><span class="n">test_idx</span><span class="p">;</span> <span class="n">rem_train_idx</span><span class="p">];</span>
+
+    <span class="n">ref_all_idx</span><span class="p">=</span><span class="n">cellfun</span><span class="p">(@(</span><span class="n">x</span><span class="p">)</span><span class="mi">1</span><span class="p">:</span><span class="nb">size</span><span class="p">(</span><span class="n">x</span><span class="p">,</span><span class="mi">1</span><span class="p">),</span><span class="n">all_idx</span><span class="p">,</span><span class="s">&#39;UniformOutput&#39;</span><span class="p">,</span><span class="n">false</span><span class="p">);</span>
+    <span class="n">combis</span><span class="p">=</span><span class="n">cosmo_cartprod</span><span class="p">(</span><span class="n">ref_all_idx</span><span class="p">);</span>
+
+    <span class="n">nfolds</span><span class="p">=</span><span class="nb">size</span><span class="p">(</span><span class="n">combis</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+
+    <span class="c">% allocate space for fold indices.</span>
+    <span class="c">%</span>
+    <span class="c">%   fold_indices{c,i,f}=[x1,...xN]</span>
+    <span class="c">%</span>
+    <span class="c">% for fold f means that the x1-th, ... xN-th sample</span>
+    <span class="c">% in class c are used for testing (i=1) or training (i=2).</span>
+    <span class="c">%</span>
+    <span class="n">fold_indices</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="n">nclasses</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">nfolds</span><span class="p">);</span> <span class="c">% test and train</span>
+
+    <span class="k">for</span> <span class="n">f_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nfolds</span>
+        <span class="k">for</span> <span class="n">c_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span>
+            <span class="c">% use linear indexing in all_idx</span>
+            <span class="n">te_pos</span><span class="p">=</span><span class="n">c_i</span><span class="o">*</span><span class="mi">2</span><span class="o">-</span><span class="mi">1</span><span class="p">;</span>
+            <span class="n">rem_tr_pos</span><span class="p">=</span><span class="n">te_pos</span><span class="o">+</span><span class="mi">1</span><span class="p">;</span>
+
+            <span class="n">ref_te</span><span class="p">=</span><span class="n">combis</span><span class="p">(</span><span class="n">f_i</span><span class="p">,</span><span class="n">te_pos</span><span class="p">);</span>
+            <span class="n">ref_rem_tr</span><span class="p">=</span><span class="n">combis</span><span class="p">(</span><span class="n">f_i</span><span class="p">,</span><span class="n">rem_tr_pos</span><span class="p">);</span>
+
+            <span class="n">te</span><span class="p">=</span><span class="n">all_idx</span><span class="p">{</span><span class="n">te_pos</span><span class="p">}(</span><span class="n">ref_te</span><span class="p">,:);</span>
+
+            <span class="n">tr_rem</span><span class="p">=</span><span class="n">setdiff</span><span class="p">(</span><span class="mi">1</span><span class="p">:</span><span class="n">class_counts</span><span class="p">(</span><span class="n">c_i</span><span class="p">),</span><span class="n">te</span><span class="p">);</span>
+            <span class="n">tr_rem_ref</span><span class="p">=</span><span class="n">all_idx</span><span class="p">{</span><span class="n">rem_tr_pos</span><span class="p">}(</span><span class="n">ref_rem_tr</span><span class="p">,:);</span>
+            <span class="n">tr</span><span class="p">=</span><span class="n">tr_rem</span><span class="p">(</span><span class="n">tr_rem_ref</span><span class="p">);</span>
+
+            <span class="n">fold_indices</span><span class="p">{</span><span class="n">c_i</span><span class="p">,</span><span class="mi">1</span><span class="p">,</span><span class="n">f_i</span><span class="p">}=</span><span class="n">te</span><span class="p">;</span>
+            <span class="n">fold_indices</span><span class="p">{</span><span class="n">c_i</span><span class="p">,</span><span class="mi">2</span><span class="p">,</span><span class="n">f_i</span><span class="p">}=</span><span class="n">tr</span><span class="p">;</span>
+        <span class="k">end</span>
+    <span class="k">end</span>
+
+    <span class="k">if</span> <span class="n">fold_count</span><span class="o">&lt;</span><span class="n">nfolds</span>
+        <span class="n">rp</span><span class="p">=</span><span class="n">cosmo_randperm</span><span class="p">(</span><span class="n">nfolds</span><span class="p">,</span> <span class="n">fold_count</span><span class="p">,</span> <span class="s">&#39;seed&#39;</span><span class="p">,</span> <span class="n">seed</span><span class="p">);</span>
+        <span class="n">fold_indices</span><span class="p">=</span><span class="n">fold_indices</span><span class="p">(:,:,</span><span class="n">rp</span><span class="p">);</span>
+    <span class="k">end</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">fold_indices2partitions</span><span class="p">(</span><span class="n">fold_indices</span><span class="p">,</span><span class="n">class_idx</span><span class="p">);</span>
+
+
+
+<span class="k">function</span><span class="w"> </span>partitions<span class="p">=</span><span class="nf">fold_indices2partitions</span><span class="p">(</span>fold_indices,class_idx<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="c">% For the inputs,</span>
+    <span class="c">%</span>
+    <span class="c">%   fold_indices{c,i,f}=[x1,...xN]</span>
+    <span class="c">%</span>
+    <span class="c">% for fold f means that the x1-th, ... xN-th sample</span>
+    <span class="c">% in class c are used for testing (i=1) or training (i=2).</span>
+    <span class="c">%</span>
+    <span class="c">%   class_idx{c_i}=p1,...,pN</span>
+    <span class="c">%</span>
+    <span class="c">% means that the p1-th,...,pN-th row in .samples are in class c_i.</span>
+
+    <span class="n">partitions</span><span class="p">=</span><span class="n">struct</span><span class="p">();</span>
+    <span class="p">[</span><span class="n">nclasses</span><span class="p">,</span><span class="n">two</span><span class="p">,</span><span class="n">nfolds</span><span class="p">]=</span><span class="nb">size</span><span class="p">(</span><span class="n">fold_indices</span><span class="p">);</span>
+    <span class="n">assert</span><span class="p">(</span><span class="n">two</span><span class="o">==</span><span class="mi">2</span><span class="p">);</span>
+
+    <span class="n">keys</span><span class="p">={</span><span class="s">&#39;test_indices&#39;</span><span class="p">,</span><span class="s">&#39;train_indices&#39;</span><span class="p">};</span>
+    <span class="k">for</span> <span class="n">k</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="nb">numel</span><span class="p">(</span><span class="n">keys</span><span class="p">)</span>
+        <span class="n">key</span><span class="p">=</span><span class="n">keys</span><span class="p">{</span><span class="n">k</span><span class="p">};</span>
+
+        <span class="n">all_idx</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nfolds</span><span class="p">);</span>
+        <span class="k">for</span> <span class="n">f_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nfolds</span>
+
+            <span class="n">fold_idx</span><span class="p">=</span><span class="n">cell</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">nclasses</span><span class="p">);</span>
+
+            <span class="k">for</span> <span class="n">c_i</span><span class="p">=</span><span class="mi">1</span><span class="p">:</span><span class="n">nclasses</span>
+                <span class="n">ref</span><span class="p">=</span><span class="n">fold_indices</span><span class="p">{</span><span class="n">c_i</span><span class="p">,</span><span class="n">k</span><span class="p">,</span><span class="n">f_i</span><span class="p">}(:);</span>
+                <span class="n">fold_idx</span><span class="p">{</span><span class="n">c_i</span><span class="p">}=</span><span class="n">class_idx</span><span class="p">{</span><span class="n">c_i</span><span class="p">}(</span><span class="n">ref</span><span class="p">);</span>
+            <span class="k">end</span>
+
+            <span class="n">all_idx</span><span class="p">{</span><span class="n">f_i</span><span class="p">}=</span><span class="n">sort</span><span class="p">(</span><span class="nb">cat</span><span class="p">(</span><span class="mi">1</span><span class="p">,</span><span class="n">fold_idx</span><span class="p">{:}));</span>
+        <span class="k">end</span>
+
+        <span class="n">partitions</span><span class="p">.(</span><span class="n">key</span><span class="p">)=</span><span class="n">all_idx</span><span class="p">;</span>
+    <span class="k">end</span>
+
+
+<span class="k">function</span><span class="w"> </span><span class="nf">check_input</span><span class="p">(</span>ds,opt<span class="p">)</span><span class="w"></span>
+<span class="w">    </span><span class="n">cosmo_check_dataset</span><span class="p">(</span><span class="n">ds</span><span class="p">);</span>
+
+    <span class="n">raise</span><span class="p">=</span><span class="n">true</span><span class="p">;</span>
+    <span class="n">cosmo_isfield</span><span class="p">(</span><span class="n">ds</span><span class="p">,{</span><span class="s">&#39;sa.targets&#39;</span><span class="p">,</span><span class="s">&#39;sa.chunks&#39;</span><span class="p">},</span><span class="n">raise</span><span class="p">);</span>
+
+    <span class="n">chunks</span><span class="p">=</span><span class="n">ds</span><span class="p">.</span><span class="n">sa</span><span class="p">.</span><span class="n">chunks</span><span class="p">;</span>
+    <span class="n">unq_chunks</span><span class="p">=</span><span class="n">unique</span><span class="p">(</span><span class="n">chunks</span><span class="p">);</span>
+    <span class="k">if</span> <span class="nb">numel</span><span class="p">(</span><span class="n">unq_chunks</span><span class="p">)</span><span class="o">~=</span><span class="nb">numel</span><span class="p">(</span><span class="n">chunks</span><span class="p">);</span>
+        <span class="n">h</span><span class="p">=</span><span class="n">histc</span><span class="p">(</span><span class="n">chunks</span><span class="p">,</span><span class="n">unq_chunks</span><span class="p">);</span>
+        <span class="nb">i</span><span class="p">=</span><span class="nb">find</span><span class="p">(</span><span class="n">h</span><span class="o">&gt;</span><span class="p">=</span><span class="mi">2</span><span class="p">,</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">assert</span><span class="p">(</span><span class="nb">numel</span><span class="p">(</span><span class="nb">i</span><span class="p">)</span><span class="o">==</span><span class="mi">1</span><span class="p">);</span>
+        <span class="n">error</span><span class="p">([</span><span class="s">&#39;.sa.chunks==%d occurs %d times, whereas all values &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;must be unique&#39;</span><span class="p">],</span><span class="c">...</span>
+                    <span class="n">unq_chunks</span><span class="p">(</span><span class="nb">i</span><span class="p">),</span><span class="n">h</span><span class="p">(</span><span class="nb">i</span><span class="p">));</span>
+    <span class="k">end</span>
+
+
+    <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;test_count&#39;</span><span class="p">)</span>
+        <span class="k">if</span> <span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;test_ratio&#39;</span><span class="p">)</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;the options &#39;&#39;test_count&#39;&#39; and &#39;&#39;test_ratio&#39;&#39;&#39;</span><span class="c">...</span>
+                    <span class="s">&#39;are mutually exclusive&#39;</span><span class="p">]);</span>
+        <span class="k">end</span>
+    <span class="k">elseif</span> <span class="o">~</span><span class="n">isfield</span><span class="p">(</span><span class="n">opt</span><span class="p">,</span><span class="s">&#39;test_ratio&#39;</span><span class="p">)</span>
+            <span class="n">error</span><span class="p">([</span><span class="s">&#39;one of the options &#39;&#39;test_count&#39;&#39; and &#39;</span><span class="c">...</span>
+                    <span class="s">&#39;&#39;&#39;test_ratio&#39;&#39; is required&#39;</span><span class="p">]);</span>
+    <span class="k">end</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_fx_skl.html"
+                        title="previous chapter">cosmo fx skl</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_index_unique_skl.html"
+                        title="next chapter">cosmo index unique skl</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_independent_samples_partitioner_skl.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_index_unique_skl.html" title="cosmo index unique skl"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_fx_skl.html" title="cosmo fx skl"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_skl.html" >CoSMoMVPA functions - skeleton files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>

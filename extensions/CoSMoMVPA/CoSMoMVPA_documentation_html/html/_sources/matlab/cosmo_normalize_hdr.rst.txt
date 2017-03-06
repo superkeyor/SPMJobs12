@@ -1,0 +1,7 @@
+.. _cosmo_normalize_hdr:
+
+cosmo normalize hdr
+===================
+
+.. include :: cosmo_normalize_hdr.txt
+

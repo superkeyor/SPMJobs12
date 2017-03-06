@@ -1,0 +1,161 @@
+    <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN"
+  "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    
+    <title>cosmo publish run scripts hdr &#8212; CoSMo Multivariate Pattern Analysis toolbox 1.0rc1 documentation</title>
+    
+    <link rel="stylesheet" href="../_static/nature.css" type="text/css" />
+    <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
+    
+    <script type="text/javascript">
+      var DOCUMENTATION_OPTIONS = {
+        URL_ROOT:    '../',
+        VERSION:     '1.0rc1',
+        COLLAPSE_INDEX: false,
+        FILE_SUFFIX: '.html',
+        HAS_SOURCE:  true,
+        SOURCELINK_SUFFIX: '.txt'
+      };
+    </script>
+    <script type="text/javascript" src="../_static/jquery.js"></script>
+    <script type="text/javascript" src="../_static/underscore.js"></script>
+    <script type="text/javascript" src="../_static/doctools.js"></script>
+    <link rel="index" title="Index" href="../genindex.html" />
+    <link rel="search" title="Search" href="../search.html" />
+    <link rel="copyright" title="Copyright" href="../copyright.html" />
+    <link rel="next" title="cosmo rand hdr" href="cosmo_rand_hdr.html" />
+    <link rel="prev" title="cosmo plot slices hdr" href="cosmo_plot_slices_hdr.html" /> 
+  </head>
+  <body role="document">
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="cosmo_rand_hdr.html" title="cosmo rand hdr"
+             accesskey="N">next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_plot_slices_hdr.html" title="cosmo plot slices hdr"
+             accesskey="P">previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" accesskey="U">CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>  
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <div class="section" id="cosmo-publish-run-scripts-hdr">
+<span id="id1"></span><h1>cosmo publish run scripts hdr<a class="headerlink" href="#cosmo-publish-run-scripts-hdr" title="Permalink to this headline">¶</a></h1>
+<div class="highlight-matlab"><div class="highlight"><pre><span></span><span class="k">function</span><span class="w"> </span>is_ok<span class="p">=</span><span class="nf">cosmo_publish_run_scripts</span><span class="p">(</span>varargin<span class="p">)</span><span class="w"></span>
+<span class="c">% helper function to publish example scripts (for developers)</span>
+<span class="c">%</span>
+<span class="c">% cosmo_publish_build_html([force|fn])</span>
+<span class="c">%</span>
+<span class="c">% Inputs:</span>
+<span class="c">%   fn           filename of matlab file to publish (in the examples</span>
+<span class="c">%                directory)</span>
+<span class="c">%   &#39;-force&#39;     force rebuild, even if an output file is newer than the</span>
+<span class="c">%                corresponding output file</span>
+<span class="c">%   &#39;-dry&#39;       dry run: do not build any files, but show the output that</span>
+<span class="c">%                would be shown.</span>
+<span class="c">%   &#39;-o&#39;, d      write output in directory d. By default d is</span>
+<span class="c">%                &#39;doc/source/_static/publish/&#39; relative to the CoSMoMVPA</span>
+<span class="c">%                root directory.</span>
+<span class="c">%</span>
+<span class="c">% Notes:</span>
+<span class="c">%  - if no filename is given, then all files are rebuilt if necessary</span>
+<span class="c">%  - this function is intended for developers (to build the website)</span>
+<span class="c">%  - whether an output file is out of date is first determined using</span>
+<span class="c">%    git: if git shows no changes to the last commit of the input file</span>
+<span class="c">%    then it is assumed it is not out of date. If the input file has</span>
+<span class="c">%    been changed since the last commit (or never been comitted), then</span>
+<span class="c">%    the modification date is used to determine whether it is out of date.</span>
+<span class="c">%  - requirements</span>
+<span class="c">%    * a Unix-like system</span>
+<span class="c">%    * a working installation of git</span>
+<span class="c">%    * CoSMoMVPA code present in a git repository</span>
+<span class="c">%</span>
+<span class="c">% #   For CoSMoMVPA&#39;s copyright information and license terms,   #</span>
+<span class="c">% #   see the COPYING file distributed with CoSMoMVPA.           #</span>
+</pre></div>
+</div>
+</div>
+
+
+          </div>
+        </div>
+      </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+            <p class="logo"><a href="../index.html">
+              <img class="logo" src="../_static/cosmomvpa_logo.png" alt="Logo"/>
+            </a></p>
+  <h4>Previous topic</h4>
+  <p class="topless"><a href="cosmo_plot_slices_hdr.html"
+                        title="previous chapter">cosmo plot slices hdr</a></p>
+  <h4>Next topic</h4>
+  <p class="topless"><a href="cosmo_rand_hdr.html"
+                        title="next chapter">cosmo rand hdr</a></p>
+  <div role="note" aria-label="source link">
+    <h3>This Page</h3>
+    <ul class="this-page-menu">
+      <li><a href="../_sources/matlab/cosmo_publish_run_scripts_hdr.rst.txt"
+            rel="nofollow">Show Source</a></li>
+    </ul>
+   </div>
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <form class="search" action="../search.html" method="get">
+      <div><input type="text" name="q" /></div>
+      <div><input type="submit" value="Go" /></div>
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="cosmo_rand_hdr.html" title="cosmo rand hdr"
+             >next</a> |</li>
+        <li class="right" >
+          <a href="cosmo_plot_slices_hdr.html" title="cosmo plot slices hdr"
+             >previous</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">CoSMoMVPA</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../documentation.html" >Documentation</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="../cimec2016.html" >CIMeC hands-on methods course, part 1 (6 April-2 May 2016)</a> &#187;</li>
+          <li class="nav-item nav-item-3"><a href="../matindex_hdr.html" >CoSMoMVPA functions - header signature files</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="footer">
+       <span class="creativecommons">
+          <a href="http://opensource.org/licenses/MIT" >
+          <img src="../_static/mit-license_logo.png"
+               border="0" alt="Creative Commons License"/>
+         </a> 
+         
+        <a href="copyright.html">Copyright 2013-2016 Nikolaas N. Oosterhof, Andrew C. Connolly, CoSMoMVPA contributors</a>.
+        CoSMoMVPA is licensed under a <a href="http://opensource.org/licenses/MIT">Expat (MIT) License</a>.
+       </span>
+      </div>
+  </body>
+</html>
