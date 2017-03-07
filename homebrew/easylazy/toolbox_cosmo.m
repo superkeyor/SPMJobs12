@@ -14,6 +14,6 @@ function varargout = main(varargin)
     ez.print('CoSMoMVPA path successfully added.');
     cfg = ez.joinpath(ez.parentdir(ez.whichdir('cosmo_set_path')),'examples','cosmo_wizard_set_config.m');
     ez.print('Run the following command (either one) to config input/output directory for tutorial data if needed:');
-    ez.print(cfg);
+    ez.print(['run ' cfg]);
     ez.print('edit ~/.cosmomvpa.cfg');
 end % end function
