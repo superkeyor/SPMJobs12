@@ -25,11 +25,24 @@ function varargout = main(arg)
     filenames = reshape(cellstr(SPM.xY.P),size(SPM.xY.VY));
     spm_DesRep('DesMtx',SPM.xX,filenames,SPM.xsDes);
 
+    ez.print(sprintf('Regressors:'));
     nregr = length(SPM.xX.name);
     for iregr = 1:nregr
         name = SPM.xX.name{iregr};
         ez.print(sprintf('%d\t{%s}',iregr,name));
     end
+
+    ez.print(sprintf('\nContrasts:'));
+    ncon = length(SPM.xCon);
+    for icon = 1:ncon
+        name = SPM.xCon(icon).name;
+        stat = SPM.xCon(icon).STAT;
+        con = mat2str(SPM.xCon(icon).c);
+        ez.print(sprintf('%d\t{%s}\t%s\t\t\t\t\t%s',icon,stat,name,con));
+    end
+
+    ez.print(sprintf('\nImages#:'));
+    ez.print(sprintf('%d',SPM.nscan));
 end
 
 
