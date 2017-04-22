@@ -82,7 +82,7 @@ cosmo_disp(corr_results);
 
 
 % Plot the output
-cosmo_plot_slices(corr_results);
+figure;cosmo_plot_slices(corr_results);
 
 % Define output location
 output_fn=fullfile(output_path,'corr_searchlight.nii');
