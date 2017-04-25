@@ -85,7 +85,7 @@ fprintf('Dataset output:\n');
 cosmo_disp(lda_results);
 
 % Plot the output
-cosmo_plot_slices(lda_results);
+figure;cosmo_plot_slices(lda_results);
 
 % Define output location
 output_fn=fullfile(output_path,'lda_searchlight+orig');
