@@ -89,6 +89,7 @@ figure;cosmo_plot_slices(lda_results);
 
 % Define output location
 output_fn=fullfile(output_path,'lda_searchlight+orig');
+output_fn=fullfile(output_path,'lda_searchlight.nii');
 
 % Store results to disc
 cosmo_map2fmri(lda_results, output_fn);
