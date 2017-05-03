@@ -70,6 +70,8 @@ for i = 1:length(clusterPath)
 
 end % end for
 result = [header;num2cell(result)];
+load(SPMPath); P = SPM.xY.P; P = strrep(P,',','_');
+result = [['SUBJID';P] result];
 ez.cell2csv(fullfile(folder,'betas_extracted.csv'),result);
 
 end % end function
