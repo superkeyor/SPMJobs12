@@ -1,5 +1,5 @@
 function xjview(varargin)
-% xjview, version 8.14
+% xjview, version 9.5
 %
 % usage 1: xjview (no argument)
 %           for displaying a result img file, or multiple image files,
@@ -30,6 +30,11 @@ function xjview(varargin)
 % http://www.alivelearn.net/xjview
 % Xu Cui's personal blog: http://www.alivelearn.net
 %
+
+% last modified 06/2017, v9.5, add FWE, automatically select SPM.mat
+% last modified: 11/14/2016 v9.0 (more render view options)
+% last modified: 12/3/2015 v9.0 (add warning when user click volume but
+% 'all' intensity is selected
 % last modified: 11/15/2015 v8.14 (fix stat bug and render view (old style) bug)
 % last modified: 11/12/2015 at 16:30PM (fix stat bug)
 % last modified: 11/09/2015 at 11:09AM (allow to change the minimum of color bar range, allow to resize window)
@@ -60,7 +65,7 @@ function xjview(varargin)
 %
 
 global VERSION_;
-VERSION_ = '8.14';
+VERSION_ = '9.5';
 
 warnstate = warning;
 warning off;
@@ -85,12 +90,12 @@ DIM = [41 48 35]';
       0     0     2   -74
       0     0     0     1];
  DIM = [91   109    91]';
-M = ...
-    [-4     0     0    82;...
-     0     4     0  -116;...
-     0     0     4   -54;...
-     0     0     0     1];
-DIM = [40 48 34]';
+% M = ...
+%     [-4     0     0    82;...
+%      0     4     0  -116;...
+%      0     0     4   -54;...
+%      0     0     0     1];
+% DIM = [40 48 34]';
 
 TR = 2; % you don't need to set TR is you only use the viewing part of xjview
 XJVIEWURL = 'http://www.alivelearn.net/xjview';
@@ -174,14 +179,16 @@ heightUnit  =                       0.055;
 
 sliderPosition =                    stretchMatrix*[0.000,   0*heightUnit-0.01,    1.000,           editBoxHeight]' + controlPanelOffset;
 pValueTextPosition =                stretchMatrix*[0.000,   0.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
-pValueEditPosition =                stretchMatrix*[0.100,   1*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
-fdrTextPosition =                   stretchMatrix*[0.350,   0.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
-fdrEditPosition =                   stretchMatrix*[0.450,   1*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
-fdrPushPosition     =               stretchMatrix*[0.300,   1*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
-intensityThresholdTextPosition =    stretchMatrix*[0.55,   0.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
-intensityThresholdEditPosition =    stretchMatrix*[0.65,   1*heightUnit,    editBoxWidth*3/4,    editBoxHeight]' + controlPanelOffset;
-dfTextPosition =                    stretchMatrix*[0.840,   0.8*heightUnit,    0.8-0.74,    editBoxHeight]' + controlPanelOffset;
-dfEditPosition =                    stretchMatrix*[0.900,   1*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
+pValueEditPosition =                stretchMatrix*[0.100,   1*heightUnit,    3*editBoxWidth/4,    editBoxHeight]' + controlPanelOffset;
+fdrTextPosition =                   stretchMatrix*[0.26,   0.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
+fdrEditPosition =                   stretchMatrix*[0.36,   1*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
+fdrPushPosition     =               stretchMatrix*[0.200,   1*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
+fweTextPosition =                   stretchMatrix*[0.46,   0.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
+fweEditPosition =                   stretchMatrix*[0.56,   1*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
+intensityThresholdTextPosition =    stretchMatrix*[0.66,   0.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
+intensityThresholdEditPosition =    stretchMatrix*[0.77,   1*heightUnit,    2*editBoxWidth/5,    editBoxHeight]' + controlPanelOffset;
+dfTextPosition =                    stretchMatrix*[0.850,   0.8*heightUnit,    0.8-0.74,    editBoxHeight]' + controlPanelOffset;
+dfEditPosition =                    stretchMatrix*[0.900,   1*heightUnit,    2*editBoxWidth/5,    editBoxHeight]' + controlPanelOffset;
 clusterSizeThresholdTextPosition =  stretchMatrix*[0.000,   1.8*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
 clusterSizeThresholdEditPosition =  stretchMatrix*[0.150,   2*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
 pickThisClusterPushPosition =       stretchMatrix*[0.400,   2*heightUnit,    editBoxWidth*1,    editBoxHeight]' + controlPanelOffset;
@@ -199,7 +206,7 @@ displayIntensityTextPosition =      stretchMatrix*[0.000,   3*heightUnit,    edi
 allIntensityRadioPosition =         stretchMatrix*[0.250,   3*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
 positiveIntensityRadioPosition =    stretchMatrix*[0.400,   3*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
 negativeIntensityRadioPosition =    stretchMatrix*[0.550,   3*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
-renderViewCheckPosition =           stretchMatrix*[0.730,   3*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
+renderViewCheckPosition =           stretchMatrix*[0.700,   3*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
 renderStylePopPosition =           stretchMatrix*[0.90,   3*heightUnit,    editBoxWidth/2,    editBoxHeight]' + controlPanelOffset;
 hideControlPushPosition =           stretchMatrix*[0.200,   4*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
 reportPushPosition =                stretchMatrix*[0.000,   4*heightUnit,    editBoxWidth,    editBoxHeight]' + controlPanelOffset;
@@ -284,7 +291,16 @@ handles.fdrEdit = uicontrol(handles.figure,'style','edit',...
         'horizontal','left',...
         'String', '',...
         'BackgroundColor', 'w',...
-        'callback',@CallBack_fdrEdit);    
+        'callback',@CallBack_fdrEdit);
+handles.fweTextPosition = uicontrol(handles.figure,'style','text',...
+        'unit','normalized','position',fweTextPosition,...
+        'string','FWE p=','horizontal','left');    
+handles.fweEdit = uicontrol(handles.figure,'style','edit',...
+        'unit','normalized','position',fweEditPosition,...
+        'horizontal','left',...
+        'String', '',...
+        'BackgroundColor', 'w',...
+        'callback',@CallBack_fweEdit);  
 handles.intensityThresholdText = uicontrol(handles.figure,'style','text',...
         'unit','normalized','position',intensityThresholdTextPosition,...
         'string',' intensity=','horizontal','left');        
@@ -395,12 +411,18 @@ handles.negativeIntensityRadio = uicontrol(handles.figure,'style','radio',...
         'string','Only -',...
         'position',negativeIntensityRadioPosition,...
         'callback',{@CallBack_allIntensityRadio,'-'});
-handles.renderViewCheck = uicontrol(handles.figure,'style','checkbox',... 
+% handles.renderViewCheck = uicontrol(handles.figure,'style','checkbox',... 
+%         'unit','normalized',...
+%         'string','Render View' ,...
+%         'horizontal', 'right',...
+%         'position',renderViewCheckPosition,...
+%         'callback', @CallBack_renderViewCheck);   
+handles.renderViewCheck = uicontrol(handles.figure,'style','push',... 
         'unit','normalized',...
         'string','Render View' ,...
         'horizontal', 'right',...
         'position',renderViewCheckPosition,...
-        'callback', @CallBack_renderViewCheck);   
+        'callback', @CallBack_renderViewCheck);     
 handles.renderStylePop = uicontrol(...
 		'Units','normalized', ...
 		'ListboxTop',0, ...
@@ -535,12 +557,13 @@ handles.getCurrentPosition = uicontrol(handles.figure, 'style','push',...
 handles.getCurrentPosition = uicontrol(handles.figure, 'style','push',...
         'unit','normalized','position',smallVolumePosition,...
         'String', 'Small volume','callback',@CallBack_smallVolume,...
-        'horizontal','left');     
+        'horizontal','left', 'visible','off');     
     
 
     
 try
-    latestVersion = urlread([XJVIEWURL '/stat.php?action=launch&v=' VERSION_ '&' systemInfo_]);    
+    tmp = urlread([XJVIEWURL '/stat.php?action=launch&v=' VERSION_ '&' systemInfo_]);    
+    [latestVersion, s] = strtok(tmp);
     if ~strcmp(latestVersion,VERSION_)
         %h=warndlg(['You are using an older version of xjView (' VERSION_ '). The new version is ' latestVersion '. Please download xjView at ' XJVIEWURL], 'Update xjView');
         %uiwait(h);
@@ -555,7 +578,7 @@ try
          pause(0.1);
        end % switch
     end
-	s = urlread([XJVIEWURL '/toUser.txt']);
+	%s = urlread([XJVIEWURL '/toUser.txt']);
     set(handles.infoTextBox, 'String', s);
 end
 
@@ -624,7 +647,7 @@ end
 set(hMenuFile,'ForegroundColor',[0 0 1]);
 set(findobj(hMenuFile,'Position',1),'Separator','on');
 uimenu('Parent',hMenuFile,'Position',1,'ForegroundColor',[0 0 1],...
-	'Label','Open Images (*.img) ...',...
+	'Label','Open Images (*.img/nii) ...',...
 	'CallBack',@CallBack_loadImagePush, 'Accelerator', 'o');
 uimenu('Parent',hMenuFile,'Position',2,'ForegroundColor',[0 0 1],...
 	'Label','Save Current Image (*.img) ...',...
@@ -716,6 +739,15 @@ global LEFTRIGHTFLIP_;
 global TMAX_; % colorbar max to display in section view
 global TMIN_; % colorbar min to display in section view
 global XJVIEWURL_;
+
+%Edited by Zheng Ma to add "memory" of SPM.mat in FWER
+%We should try to make SPM a global variable so that any part needs to
+%select SPM.mat, as long as the figure is not changed, will keep using the
+%same one. We should be careful when multiple images are open
+global CurrentImageName_;%remember the current figure name
+global CurrentSPM_;%remember the current opened SPM
+CurrentImageName_='';%set default to an empty file
+CurrentSPM_=[];%set default to empty
 
 M_ = M;
 DIM_ = DIM;
@@ -876,9 +908,10 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FDR edit
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%06/2017 Zheng Ma added F contrast
 function CallBack_fdrEdit(hObject, eventdata)
 handles = guidata(hObject);
-set(handles.infoTextBox, 'string', {'Right now FDR only works for T-test image.'});
+%set(handles.infoTextBox, 'string', {'Right now FDR only works for T-test image.'});
 if length(handles.imageFileName) > 1
     set(handles.infoTextBox, 'string', {'FDR can only work for a single image file. You opened multiple files.'});
     return
@@ -903,11 +936,19 @@ Ts = positive*Ts;
 Ts = sort(Ts(:));
 if handles.TF{1} ~= 'P', Ts = flipud(Ts); end
 
-ps = t2p(Ts, handles.df{1}, handles.TF{1});
+%Zheng Ma 06/2017 add F contrast
+if handles.TF{1} == 'T'
+    ps = t2p(Ts, handles.df{1}, handles.TF{1});
+    intensity  = spm_uc_FDR(q, [1 handles.df{1}],handles.TF{1},1,ps,0);
+    pvalue = t2p(intensity, handles.df{1}, handles.TF{1});
+end
+if handles.TF{1} == 'F'
+    ps = t2p(Ts, [handles.df{1}(1), handles.df{1}(2)], handles.TF{1});
+    intensity  = spm_uc_FDR(q, [handles.df{1}(1), handles.df{1}(2)],handles.TF{1},1,ps,0);
+    pvalue = t2p(intensity, [handles.df{1}(1), handles.df{1}(2)], handles.TF{1});
+end
 
-intensity  = spm_uc_FDR(q, [1 handles.df{1}],handles.TF{1},1,ps,0);
 
-pvalue = t2p(intensity, handles.df{1}, handles.TF{1});
 set(handles.pValueEdit,'string',pvalue);
 CallBack_pValueEdit(handles.pValueEdit, eventdata);
 %pause(1)
@@ -917,6 +958,142 @@ CallBack_pValueEdit(handles.pValueEdit, eventdata);
 % pause(2)
 % CallBack_intensityThresholdEdit(handles.intensityThresholdEdit,
 % eventdata);
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%FWE Edit%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%ZM modified based on the FDR one 06/2017
+function CallBack_fweEdit(hObject, eventdata)
+global CurrentImageName_;%remember the current figure name
+global CurrentSPM_;%remember the current opened SPM
+handles = guidata(hObject);
+set(handles.infoTextBox, 'string', {'Right now FWE only works for single image with positive or negative direction.'});
+if length(handles.imageFileName) > 1
+    set(handles.infoTextBox, 'string', {'FWE can only work for a single image file. You opened multiple files.'});
+    return
+end
+
+q = get(handles.fweEdit,'String');
+q = str2num(q);
+if get(handles.allIntensityRadio, 'Value')
+    set(handles.infoTextBox, 'string', {'FWE only works on positive or negative direction, not both.'});
+    return;
+elseif get(handles.positiveIntensityRadio, 'Value')
+    positive = 1;
+elseif get(handles.negativeIntensityRadio, 'Value')
+    positive = -1;
+end
+
+VspmSv = spm_vol(handles.imageFileName{1});
+Ts = spm_read_vols(VspmSv);
+Ts(Ts==0) = [];
+Ts(isnan(Ts)) = [];
+Ts = positive*Ts;
+Ts = sort(Ts(:));
+if handles.TF{1} ~= 'P', Ts = flipud(Ts); end
+
+ps = t2p(Ts, handles.df{1}, handles.TF{1});
+
+%Don't support conjunction (multiple contrasts) for now
+%Load the original SPM.mat corresponding to this picture
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%This part will firt automaticall find the SPM.mat file in the image's folder
+%If not, ask the user to select
+%We get this from the Volume part. This part will allow the users to select
+%the corresponding SPM.mat file
+if strcmp(handles.imageFileName, CurrentImageName_)==1
+    %the user didn't change the figure, so we can continue to use the
+    %previously loaded SPM.mat
+    S    = CurrentSPM_.xVol.S;                  %-search Volume {voxels}
+    R    = CurrentSPM_.xVol.R;                  %-search Volume {resels}
+else
+    
+    swd_name=handles.imageFileName;%get the directory of the current picture, normally
+    %its corresponding SPM.mat file should also be there
+    CurrentImageName_=swd_name;
+    [PATHSTR,NAME,EXT]=fileparts(CurrentImageName_{1});
+    swd=strcat(PATHSTR, filesep, 'SPM.mat');    
+%ZM: this is the old version when I don't know the fileparts function  
+%     [trash, lenswd]=size(swd_name{1});
+%     for cc=lenswd:-1:1
+%         %get the position of the last '/', replace everything after it with 'SPM.mat'
+%         if swd_name{1}(cc)==filesep%this is the last '/'
+%             swd=strcat(swd_name{1}(1:cc), 'SPM.mat');
+%             break;
+%         end
+%     end
+    
+    try
+        load(swd);
+        CurrentSPM_=SPM;
+        S    = CurrentSPM_.xVol.S;                  %-search Volume {voxels}
+        R    = CurrentSPM_.xVol.R;                  %-search Volume {resels}
+    catch
+        %if can not load SPM.mat, then there is no such file, we will ask the
+        %user to select by him/herself
+        if findstr('SPM2',spm('ver'))
+            P = spm_get([0 1],'SPM.mat','locate the corresponding SPM.mat');
+        else%if findstr('SPM5',spm('ver'))
+            P = spm_select([0:1],'SPM.mat','locate the corresponding SPM.mat');
+        end
+        
+        if ~isempty(P)
+            load(P);
+            CurrentSPM_=SPM;
+            %     xSPM.FWHM = SPM.xVol.FWHM;
+            %     xSPM.R =  SPM.xVol.R;
+            %     xSPM.S =  SPM.xVol.S;
+            
+            S    = CurrentSPM_.xVol.S;                  %-search Volume {voxels}
+            R    = CurrentSPM_.xVol.R;                  %-search Volume {resels}
+        else
+            %warndlg(['You did not input SPM.mat. The listed result may not be correct.'], 'SPM.mat missing');
+            %reset to blank
+            CurrentImageName_='';%set default to an empty file
+            CurrentSPM_=[];%set default to empty
+            warndlg('You must input SPM.mat.', 'SPM.mat missing');
+            return;
+        end
+    end
+end
+
+% if findstr('SPM2',spm('ver'))
+%     warndlg('Small volume correction does not work in spm 2', 'spm 2');
+%     return;
+% elseif findstr('SPM5',spm('ver'))
+%     spm_VOI(SPM,xSPM,handles.hReg);
+% elseif findstr('SPM8',spm('ver'))
+%     spm_VOI8(SPM,xSPM,handles.hReg);        
+% end
+
+if handles.TF{1} == 'T'
+    intensity = spm_uc(q,[1, handles.df{1}],handles.TF{1},R,1,S);
+    pvalue = t2p(intensity, handles.df{1}, handles.TF{1});
+end
+if handles.TF{1} == 'F'
+    intensity = spm_uc(q,[handles.df{1}(1), handles.df{1}(2)],handles.TF{1},R,1,S);
+    pvalue = t2p(intensity, [handles.df{1}(1), handles.df{1}(2)], handles.TF{1});
+end
+%original format [u] = spm_uc(a,df,STAT,R,n,S)
+%spm_uc will call spm_uc_RF, which does the random field theory family wise
+%correction, compare with the Bonferroni correction, and get the looser
+%criteria
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+set(handles.pValueEdit,'string',pvalue);
+CallBack_pValueEdit(handles.pValueEdit, eventdata);
+%pause(1)
+%CallBack_pValueEdit(handles.pValueEdit, eventdata);
+
+% set(handles.intensityThresholdEdit,'string',intensity);
+% pause(2)
+% CallBack_intensityThresholdEdit(handles.intensityThresholdEdit,
+% eventdata);
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% FDR push button
@@ -953,6 +1130,7 @@ ps = t2p(Ts, handles.df{1}, handles.TF{1});
 intensity  = spm_uc_FDR(q, [1 handles.df{1}],handles.TF{1},1,ps,0);
 
 pvalue = t2p(intensity, handles.df{1}, handles.TF{1});
+
 set(handles.pValueEdit,'string',pvalue);
 %CallBack_pValueEdit(handles.pValueEdit, eventdata);
 pause(1)
@@ -3822,24 +4000,62 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function CallBack_renderViewCheck(hObject, eventdata)
 handles = guidata(hObject);
-check = get(hObject, 'Value');
-%if check
-    CallBack_allIntensityRadio(hObject, eventdata, 'c');
-%end
 
-try
-if check; % if display render, will make feed invisible
-    set(handles.feed,'visible','off');
-    set(handles.feedclick,'visible','off');
-    set(handles.postfeedclick,'visible','off');
-    set(handles.refreshclick,'visible','off');
-else
-    set(handles.feed,'visible','on');
-    set(handles.feedclick,'visible','on');
-    set(handles.postfeedclick,'visible','on');
-    set(handles.refreshclick,'visible','on');
+rendStyle = get(handles.renderStylePop,'value');
+if(rendStyle == 1)
+    rendStyle = 'new';
+else    
+    rendStyle = 'old';
 end
+
+if ~isfield(handles,'currentDisplayMNI')
+    warndlg('Please open an image first.', 'No image is displayed');
+    return;
 end
+
+mniCoord = handles.currentDisplayMNI;
+intensity = handles.currentDisplayIntensity;
+
+if ~iscell(mniCoord) | (iscell(mniCoord) & length(mniCoord)==1)% multiple input? no
+    if (iscell(mniCoord) & length(mniCoord)==1)
+        mniCoord = mniCoord{1};
+        intensity = intensity{1};
+        handles.M = handles.M{1};
+        handles.DIM = handles.DIM{1};
+    end
+
+	
+	if size(mniCoord,1)>1
+        pos1 = find(intensity>=0);
+        pos2 = find(intensity<0);
+        if ~isempty(pos1) & ~isempty(pos2)
+            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord(pos1,:),intensity(pos1,:),mniCoord(pos2,:),-intensity(pos2,:)  ); end
+        else
+            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord, abs(intensity)); end        
+        end
+	end   
+else % multiple input? yes
+    mniCoordtmp=[];
+    intensitytmp=[];
+    for ii=1:length(mniCoord)
+        mniCoordtmp = [mniCoordtmp; mniCoord{ii}];
+        intensitytmp = [intensitytmp; intensity{ii}];
+    end
+    mniCoord = mniCoordtmp;
+    intensity = intensitytmp;
+	if size(mniCoord,1)>1
+        pos1 = find(intensity>=0);
+        pos2 = find(intensity<0);
+        if ~isempty(pos1) & ~isempty(pos2)
+            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord(pos1,:),intensity(pos1,:),mniCoord(pos2,:),-intensity(pos2,:)); end
+        else
+            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord, abs(intensity)); end        
+        end
+	end    
+    
+end
+
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% change rend style
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -5673,7 +5889,9 @@ guidata(hObject, handles);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% small volume push
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function CallBack_smallVolume(hObject, eventdata) 
+function CallBack_smallVolume(hObject, eventdata)
+global CurrentImageName_;%remember the current figure name
+global CurrentSPM_;%remember the current opened SPM
 handles = guidata(hObject);
 
 mni = cell2mat(handles.currentDisplayMNI');
@@ -5691,7 +5909,7 @@ if xSPM.STAT == 'T'
     xSPM.df = [1 handles.df{1}];
 elseif xSPM.STAT == 'F'
     xSPM.STATstr = [xSPM.STAT '_{' num2str(handles.df{1}(1)) ',' num2str(handles.df{1}(2)) '}'];
-    xSPM.df = [handles.df{1}];
+    xSPM.df = [handles.df{1}(1), handles.df{1}(2)];
 else
     xSPM.STAT = 'T';
     xSPM.STATstr = [xSPM.STAT '_{' num2str(handles.df{1}) '}'];
@@ -5728,21 +5946,68 @@ if get(handles.allIntensityRadio, 'Value');
     if xSPM.STAT == 'F';     xSPM.Ps = (1-spm_Fcdf((handles.intensity{1}), xSPM.df)); end  
 end
 
-if findstr('SPM2',spm('ver'))
-    P = spm_get([0 1],'SPM.mat','locate the corresponding SPM.mat');
-else%if findstr('SPM5',spm('ver'))
-    P = spm_select([0:1],'SPM.mat','locate the corresponding SPM.mat');
-end
+%Zheng Ma 06/2017
+%We added to things: 1 try to locate the SPM automatically in the folder
+%2 try to remember the previously selected SPM when the image was not
+%changed
 
-if ~isempty(P)
-    load(P);
-    xSPM.FWHM = SPM.xVol.FWHM;
-    xSPM.R =  SPM.xVol.R;
-    xSPM.S =  SPM.xVol.S; 
+if strcmp(handles.imageFileName, CurrentImageName_)==1
+    %the user didn't change the figure, so we can continue to use the
+    %previously loaded SPM.mat
+    xSPM.FWHM = CurrentSPM_.xVol.FWHM;
+    xSPM.R =  CurrentSPM_.xVol.R;
+    xSPM.S =  CurrentSPM_.xVol.S; 
 else
-    %warndlg(['You did not input SPM.mat. The listed result may not be correct.'], 'SPM.mat missing');
-    warndlg('You must input SPM.mat.', 'SPM.mat missing');
-    return;
+    
+    swd_name=handles.imageFileName;%get the directory of the current picture, normally
+    %its corresponding SPM.mat file should also be there
+    CurrentImageName_=swd_name;
+    [PATHSTR,NAME,EXT]=fileparts(CurrentImageName_{1});
+    swd=strcat(PATHSTR, filesep, 'SPM.mat');
+    
+%ZM: this is the old version when we don't know the fileparts function    
+%     [trash, lenswd]=size(swd_name{1});
+%     for cc=lenswd:-1:1
+%         %get the position of the last '/', replace everything after it with 'SPM.mat'
+%         if swd_name{1}(cc)=='/'%this is the last '/'
+%             swd=strcat(swd_name{1}(1:cc), 'SPM.mat');
+%             break;
+%         end
+%     end
+    try
+        load(swd);
+        CurrentSPM_=SPM;
+        xSPM.FWHM = CurrentSPM_.xVol.FWHM;
+        xSPM.R =  CurrentSPM_.xVol.R;
+        xSPM.S =  CurrentSPM_.xVol.S; 
+    catch
+        %if can not load SPM.mat, then there is no such file, we will ask the
+        %user to select by him/herself
+        if findstr('SPM2',spm('ver'))
+            P = spm_get([0 1],'SPM.mat','locate the corresponding SPM.mat');
+        else%if findstr('SPM5',spm('ver'))
+            P = spm_select([0:1],'SPM.mat','locate the corresponding SPM.mat');
+        end
+        
+        if ~isempty(P)
+            load(P);
+            CurrentSPM_=SPM;
+            %     xSPM.FWHM = SPM.xVol.FWHM;
+            %     xSPM.R =  SPM.xVol.R;
+            %     xSPM.S =  SPM.xVol.S;
+            
+            xSPM.FWHM = CurrentSPM_.xVol.FWHM;
+            xSPM.R =  CurrentSPM_.xVol.R;
+            xSPM.S =  CurrentSPM_.xVol.S; 
+        else
+            %reset to blank
+            CurrentImageName_='';%set default to an empty file
+            CurrentSPM_=[];%set default to empty
+            %warndlg(['You did not input SPM.mat. The listed result may not be correct.'], 'SPM.mat missing');
+            warndlg('You must input SPM.mat.', 'SPM.mat missing');
+            return;
+        end
+    end
 end
 
 if findstr('SPM2',spm('ver'))
@@ -6084,7 +6349,9 @@ spm('FigName',['SPM{',xSPM.STAT,'}: Results']);
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% volume push
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-function CallBack_volumePush(hObject, eventdata) 
+function CallBack_volumePush(hObject, eventdata)
+global CurrentImageName_;
+global CurrentSPM_;
 handles = guidata(hObject);
 mni = cell2mat(handles.currentDisplayMNI');
 intensity = cell2mat(handles.currentDisplayIntensity');
@@ -6101,7 +6368,7 @@ if xSPM.STAT == 'T'
     xSPM.df = [1 handles.df{1}];
 elseif xSPM.STAT == 'F'
     xSPM.STATstr = [xSPM.STAT '_{' num2str(handles.df{1}(1)) ',' num2str(handles.df{1}(2)) '}'];
-    xSPM.df = [handles.df{1}];
+    xSPM.df = [handles.df{1}(1), handles.df{1}(2)];
 else
     xSPM.STAT = 'T';
     xSPM.STATstr = [xSPM.STAT '_{' num2str(handles.df{1}) '}'];
@@ -6144,7 +6411,7 @@ if get(handles.positiveIntensityRadio, 'Value')
     if xSPM.STAT == 'T';     xSPM.Ps = (1-spm_Tcdf(handles.intensity{1}, xSPM.df(2))); end
     if xSPM.STAT == 'F';     xSPM.Ps = (1-spm_Fcdf(handles.intensity{1}, xSPM.df)); end  
 end
-    
+
 if get(handles.negativeIntensityRadio, 'Value');
     xSPM.Z = abs(xSPM.Z);    
     if xSPM.STAT == 'T';     xSPM.Ps = (1-spm_Tcdf(-handles.intensity{1}, xSPM.df(2))); end
@@ -6153,22 +6420,78 @@ end
    
 if get(handles.allIntensityRadio, 'Value');
     if xSPM.STAT == 'T';     xSPM.Ps = (1-spm_Tcdf((handles.intensity{1}), xSPM.df(2))); end
-    if xSPM.STAT == 'F';     xSPM.Ps = (1-spm_Fcdf((handles.intensity{1}), xSPM.df)); end  
+    if xSPM.STAT == 'F';     xSPM.Ps = (1-spm_Fcdf((handles.intensity{1}), xSPM.df)); end      
 end
 
-if findstr('SPM2',spm('ver'))
-    P = spm_get([0 1],'SPM.mat','locate the corresponding SPM.mat');
-else%if findstr('SPM5',spm('ver'))
-    P = spm_select([0:1],'SPM.mat','locate the corresponding SPM.mat');
-end
+%Zheng Ma 06/2017
+%We added two things: 1 try to locate the SPM automatically in the folder
+%2 try to remember the previously selected SPM when the image was not
+%changed
 
-if ~isempty(P)
-    load(P);
-    xSPM.FWHM = SPM.xVol.FWHM;
-    xSPM.R =  SPM.xVol.R;
-    xSPM.S =  SPM.xVol.S; 
+if strcmp(handles.imageFileName, CurrentImageName_)==1
+    %the user didn't change the figure, so we can continue to use the
+    %previously loaded SPM.mat
+    xSPM.FWHM = CurrentSPM_.xVol.FWHM;
+    xSPM.R =  CurrentSPM_.xVol.R;
+    xSPM.S =  CurrentSPM_.xVol.S; 
 else
-    warndlg(['You did not input SPM.mat. The listed result may not be correct.'], 'SPM.mat missing');
+    swd_name=handles.imageFileName;%get the directory of the current picture, normally
+    %its corresponding SPM.mat file should also be there
+    CurrentImageName_=swd_name;
+    [PATHSTR,NAME,EXT]=fileparts(CurrentImageName_{1});
+    swd=strcat(PATHSTR, filesep, 'SPM.mat');
+%     swd_name=handles.imageFileName;%get the directory of the current picture, normally
+%     %its corresponding SPM.mat file should also be there
+%     CurrentImageName_=swd_name;
+%     [trash, lenswd]=size(swd_name{1});
+%     for cc=lenswd:-1:1
+%         %get the position of the last '/', replace everything after it with 'SPM.mat'
+%         if swd_name{1}(cc)=='/'%this is the last '/'
+%             swd=strcat(swd_name{1}(1:cc), 'SPM.mat');
+%             break;
+%         end
+%     end
+    try
+        load(swd);
+        CurrentSPM_=SPM;
+        xSPM.FWHM = CurrentSPM_.xVol.FWHM;
+        xSPM.R =  CurrentSPM_.xVol.R;
+        xSPM.S =  CurrentSPM_.xVol.S;
+        if get(handles.allIntensityRadio, 'Value')
+            warndlg(['The volume feature works for positive only or negative only. Since you select "All", the listed p values may not be correct.'], 'p values might not be accurate');
+        end
+    catch
+        %if can not load SPM.mat, then there is no such file, we will ask the
+        %user to select by him/herself
+        if findstr('SPM2',spm('ver'))
+            P = spm_get([0 1],'SPM.mat','locate the corresponding SPM.mat');
+        else%if findstr('SPM5',spm('ver'))
+            P = spm_select([0:1],'SPM.mat','locate the corresponding SPM.mat');
+        end
+        
+        if ~isempty(P)
+            load(P);
+            CurrentSPM_=SPM;
+            %     xSPM.FWHM = SPM.xVol.FWHM;
+            %     xSPM.R =  SPM.xVol.R;
+            %     xSPM.S =  SPM.xVol.S;
+            
+            xSPM.FWHM = CurrentSPM_.xVol.FWHM;
+            xSPM.R =  CurrentSPM_.xVol.R;
+            xSPM.S =  CurrentSPM_.xVol.S;
+            
+            if get(handles.allIntensityRadio, 'Value')
+                warndlg(['The volume feature works for positive only or negative only. Since you select "All", the listed p values may not be correct.'], 'p values might not be accurate');
+            end
+            
+        else
+            %warndlg(['You did not input SPM.mat. The listed result may not be correct.'], 'SPM.mat missing');
+            %reset to blank
+            CurrentImageName_='';%set default to an empty file
+            CurrentSPM_=[];%set default to empty
+            warndlg(['You did not input SPM.mat. The listed result (p values) may not be correct.'], 'SPM.mat missing');
+        end
+    end
 end
 
 if findstr('SPM8',spm('ver'))
@@ -6526,6 +6849,8 @@ else
         p{ii} = t2p(t{ii},df{ii},TF{ii});
     end    
 end
+
+
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%% t2s, s is defined as -log10(p)
@@ -6975,13 +7300,6 @@ try
 end
 
 sectionViewTargetFile = handles.sectionViewTargetFile;
-rendStyle = get(handles.renderStylePop,'value');
-if(rendStyle == 1)
-    rendStyle = 'new';
-else    
-    rendStyle = 'old';
-end
-
 
 if ~iscell(mniCoord) | (iscell(mniCoord) & length(mniCoord)==1)% multiple input? no
     if (iscell(mniCoord) & length(mniCoord)==1)
@@ -6996,35 +7314,11 @@ if ~iscell(mniCoord) | (iscell(mniCoord) & length(mniCoord)==1)% multiple input?
         [hReg, hSection, hcolorbar] = cuixuSectionView(mniCoord,abs(intensity),sectionViewTargetFile,hObject,handles); 
 	end
 	
-	if size(mniCoord,1)>1
-        pos1 = find(intensity>=0);
-        pos2 = find(intensity<0);
-        if ~isempty(pos1) & ~isempty(pos2)
-            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord(pos1,:),intensity(pos1,:),mniCoord(pos2,:),-intensity(pos2,:)  ); end
-        else
-            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord, abs(intensity)); end        
-        end
-	end   
+   
 else % multiple input? yes
     [hReg, hSection, hcolorbar] = cuixuSectionView(mniCoord,intensity,sectionViewTargetFile,hObject,handles);    
 
-    mniCoordtmp=[];
-    intensitytmp=[];
-    for ii=1:length(mniCoord)
-        mniCoordtmp = [mniCoordtmp; mniCoord{ii}];
-        intensitytmp = [intensitytmp; intensity{ii}];
-    end
-    mniCoord = mniCoordtmp;
-    intensity = intensitytmp;
-	if size(mniCoord,1)>1
-        pos1 = find(intensity>=0);
-        pos2 = find(intensity<0);
-        if ~isempty(pos1) & ~isempty(pos2)
-            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord(pos1,:),intensity(pos1,:),mniCoord(pos2,:),-intensity(pos2,:)); end
-        else
-            if get(handles.renderViewCheck, 'Value'); cuixuRenderView(rendStyle, mniCoord, abs(intensity)); end        
-        end
-	end    
+  
     
 end
     
@@ -7259,7 +7553,8 @@ if strcmp(style, 'old')
 else
     brt = 1;
 end
-h = spm_render(dat,brt,fullfile(spm('dir'), 'rend', 'render_single_subj.mat'));
+%h = spm_render(dat,brt,fullfile(spm('dir'), 'rend', 'render_single_subj.mat'));
+h = spm_render(dat,brt,fullfile(fileparts(which('xjview')), 'xjview_render.mat'));
 
 function Fgraph = spm_render(dat,brt,rendfile)
 % Render blobs on surface of a 'standard' brain
@@ -7449,11 +7744,15 @@ if showbar, spm_progress_bar('Clear'); end;
 Fgraph = gcf;%spm_figure('GetWin','Graphics');
 %spm_results_ui('Clear',Fgraph);
 
-nrow = ceil(length(rend)/2);
-hght = 0.25;
-width = 0.25;
-x0 = 0.5;
+ncol = 8;
+nrow = 7.5;%ceil(length(rend)/ncol);
+hght = 1/(nrow);
+width = 1/(ncol);
+x0 = 0.01;
 y0 = 0.01;
+renderViewFig = figure('color','k', 'unit','normalized','position',[0.05 0.05 0.9 .9],'toolbar','none', 'name', 'xjView render view', 'NumberTitle','off');
+%Maximize(renderViewFig);
+Fgraph = renderViewFig;
 % subplot('Position',[0, 0, 1, hght]);
 ax=axes('Parent',Fgraph,'units','normalized','Position',[0, 0, 0.5, hght],'Visible','off');
 %ax=axes;
@@ -7471,9 +7770,9 @@ if ~isfinite(brt),
 		msk = find(X);
 		ren(msk) = X(msk)+(1+1.51/64);
 		ax=axes('Parent',Fgraph,'units','normalized',...
-			'Position',[x0+rem(i-1,2)*width, y0+floor((i-1)/2)*hght/nrow*2, width, hght/nrow*2],...
+			'Position',[x0+rem(i-1,ncol)*width, y0+floor((i-1)/ncol)*hght/nrow*ncol, width, hght/nrow*ncol],...
 			'Visible','off');
-		image(ren*64,'Parent',ax);
+		image(ren*64,'Parent',ax,'ButtonDownFcn',@onClickARender);
 		set(ax,'DataAspectRatio',[1 1 1], ...
 			'PlotBoxAspectRatioMode','auto',...
 			'YTick',[],'XTick',[],'XDir','normal','YDir','normal');
@@ -7498,10 +7797,13 @@ else,
 		rgb(:,:,2) = tmp + X{2};
 		rgb(:,:,3) = tmp + X{3};
 
-		ax=axes('Parent',Fgraph,'units','normalized',...
-			'Position',[x0+rem(i-1,2)*width, y0+floor((i-1)/2)*hght/nrow*2, width, hght/nrow*2],...
+		%ax=axes('Parent',Fgraph,'units','normalized',...
+		%	'Position',[x0+rem(i-1,2)*width, y0+floor((i-1)/2)*hght/nrow*2, width, hght/nrow*2],...
+		%	'Visible','off');
+        ax=axes('Parent',Fgraph,'units','normalized',...
+			'Position',[x0+rem(i-1,ncol)*width, y0+floor((i-1)/ncol)*hght/nrow*ncol, width, hght/nrow*ncol],...
 			'Visible','off');
-		image(rgb,'Parent',ax);
+		image(rgb,'Parent',ax,'ButtonDownFcn',@onClickARender);
 		set(ax,'DataAspectRatio',[1 1 1], ...
 			'PlotBoxAspectRatioMode','auto',...
 			'YTick',[],'XTick',[],...
@@ -7512,6 +7814,20 @@ end;
 spm('Pointer')
 return;
 
+function onClickARender(hObject, eventdata, thisfilename, isMask) 
+f=figure('color','k');
+%Maximize(f);
+split = [gray(64); hot(64)];
+	colormap(split);
+ax=axes('Parent',f,'units','normalized',...
+    'Position',[0,0,1,1],...
+    'Visible','off');
+image(get(hObject,'cdata'),'Parent',ax);
+set(ax,'DataAspectRatio',[1 1 1], ...
+    'PlotBoxAspectRatioMode','auto',...
+    'YTick',[],'XTick',[],...
+    'XDir','normal','YDir','normal');
+return;
 function [P,p,Em,En,EN] = spm_P(c,k,Z,df,STAT,R,n,S)
 % Returns the [un]corrected P value using unifed EC theory
 % FORMAT [P p Em En EN] = spm_P(c,k,Z,df,STAT,R,n,S)
@@ -7680,7 +7996,12 @@ P       = 1 - spm_Pcdf(c - 1,(Em + eps)*p);
 if k > 0 && n > 1
     P    = []; p = [];
 end
-if k > 0 && (STAT == 'X' || STAT == 'F')
+%Zheng Ma 06/21/2017 fixed the no Ps in F image volume table problem
+%Original Code
+% if k > 0 && (STAT == 'X' || STAT == 'F')
+%     P    = []; p = [];
+% end
+if k > 0 && (STAT == 'X')
     P    = []; p = [];
 end
 %+++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
@@ -7760,9 +8081,9 @@ elseif  STAT == 'F'
             .*((v-1)*(v-2)*(k*t/v).^2-(2*v*k-v-k-1)*(k*t/v)+(k-1)*(k-2));
 end
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%% spm_list (copied from spm 5)
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% %%% spm_list (copied from spm 5)
+% %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 function varargout = spm_list(varargin)
 % Display and analysis of SPM{.}
 % FORMAT TabDat = spm_list('List',SPM,hReg,[Num,Dis,Str])
@@ -7985,7 +8306,7 @@ h  = text(0.02,y-9*dy/8,	'\itp ');			Hc = [Hc,h];
 								Hp = [Hp,h];
 text(0.22,y,		'cluster-level','FontSize',FS(9));
 line([0.15,0.41],[1,1]*(y-dy/4),'LineWidth',0.5,'Color','r');
-h  = text(0.16,y-9*dy/8,	'\itp \rm_{corrected}');	Hp = [Hp,h];
+h  = text(0.16,y-9*dy/8,	'\itp \rm_{FWE-corr}');	Hp = [Hp,h];%
 h  = text(0.33,y-9*dy/8,	'\itp \rm_{uncorrected}');	Hp = [Hp,h];
 h  = text(0.26,y-9*dy/8,	'\itk \rm_E');
 
@@ -8545,7 +8866,6 @@ end
 otherwise                                        %-Unknown action string
 %=======================================================================
 error('Unknown action string')
-
 
 %=======================================================================
 end

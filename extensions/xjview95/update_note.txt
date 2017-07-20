@@ -1,4 +1,4 @@
 http://www.alivelearn.net/xjview8/blog/download/
+http://www.alivelearn.net/xjview/download-link/
 
 After unzip, put aal.img/hdr, brodman.img/hdr, ch2.img/hdr and ch2bet.img/hdr to SPM’s canonical folder.
-
