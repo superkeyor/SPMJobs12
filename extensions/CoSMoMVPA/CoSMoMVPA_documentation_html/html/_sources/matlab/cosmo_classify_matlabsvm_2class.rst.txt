@@ -1,7 +1,0 @@
-.. _cosmo_classify_matlabsvm_2class:
-
-cosmo classify matlabsvm 2class
-===============================
-
-.. include :: cosmo_classify_matlabsvm_2class.txt
-

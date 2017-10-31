@@ -1,7 +1,0 @@
-.. _run_demean_skl:
-
-run demean skl
-==============
-
-.. include :: run_demean_skl.txt
-

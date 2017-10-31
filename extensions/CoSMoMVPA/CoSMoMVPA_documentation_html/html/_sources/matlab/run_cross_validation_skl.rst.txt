@@ -1,7 +1,0 @@
-.. _run_cross_validation_skl:
-
-run cross validation skl
-========================
-
-.. include :: run_cross_validation_skl.txt
-

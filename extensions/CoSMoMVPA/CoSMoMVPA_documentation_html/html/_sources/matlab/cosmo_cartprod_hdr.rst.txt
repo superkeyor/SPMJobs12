@@ -1,7 +1,0 @@
-.. _cosmo_cartprod_hdr:
-
-cosmo cartprod hdr
-==================
-
-.. include :: cosmo_cartprod_hdr.txt
-

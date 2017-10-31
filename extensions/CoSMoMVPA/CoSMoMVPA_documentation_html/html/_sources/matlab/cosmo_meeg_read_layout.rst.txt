@@ -1,7 +1,0 @@
-.. _cosmo_meeg_read_layout:
-
-cosmo meeg read layout
-======================
-
-.. include :: cosmo_meeg_read_layout.txt
-

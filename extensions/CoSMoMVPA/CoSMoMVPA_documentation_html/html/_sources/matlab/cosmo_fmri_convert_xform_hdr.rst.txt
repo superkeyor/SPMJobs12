@@ -1,7 +1,0 @@
-.. _cosmo_fmri_convert_xform_hdr:
-
-cosmo fmri convert xform hdr
-============================
-
-.. include :: cosmo_fmri_convert_xform_hdr.txt
-

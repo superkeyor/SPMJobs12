@@ -1,7 +1,0 @@
-.. _cosmo_skip_test_if_no_external:
-
-cosmo skip test if no external
-==============================
-
-.. include :: cosmo_skip_test_if_no_external.txt
-

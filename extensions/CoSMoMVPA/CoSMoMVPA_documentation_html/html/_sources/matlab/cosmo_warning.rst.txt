@@ -1,7 +1,0 @@
-.. _cosmo_warning:
-
-cosmo warning
-=============
-
-.. include :: cosmo_warning.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_dissimilarity_matrix_measure_skl:
-
-cosmo dissimilarity matrix measure skl
-======================================
-
-.. include :: cosmo_dissimilarity_matrix_measure_skl.txt
-

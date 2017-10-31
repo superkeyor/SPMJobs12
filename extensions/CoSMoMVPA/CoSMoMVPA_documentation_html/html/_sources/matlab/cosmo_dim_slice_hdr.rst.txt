@@ -1,7 +1,0 @@
-.. _cosmo_dim_slice_hdr:
-
-cosmo dim slice hdr
-===================
-
-.. include :: cosmo_dim_slice_hdr.txt
-

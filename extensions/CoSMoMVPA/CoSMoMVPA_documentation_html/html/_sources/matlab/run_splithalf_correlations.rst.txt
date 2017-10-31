@@ -1,9 +1,0 @@
-.. _run_splithalf_correlations:
-
-run splithalf correlations
-==========================
-
-:run_up:`run_splithalf_correlations`
-
-.. include :: run_splithalf_correlations.txt
-

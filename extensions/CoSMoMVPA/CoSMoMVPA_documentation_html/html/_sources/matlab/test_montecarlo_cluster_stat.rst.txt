@@ -1,7 +1,0 @@
-.. _test_montecarlo_cluster_stat:
-
-test montecarlo cluster stat
-============================
-
-.. include :: test_montecarlo_cluster_stat.txt
-

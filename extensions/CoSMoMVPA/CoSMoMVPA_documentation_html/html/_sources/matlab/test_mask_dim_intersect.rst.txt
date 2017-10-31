@@ -1,7 +1,0 @@
-.. _test_mask_dim_intersect:
-
-test mask dim intersect
-=======================
-
-.. include :: test_mask_dim_intersect.txt
-

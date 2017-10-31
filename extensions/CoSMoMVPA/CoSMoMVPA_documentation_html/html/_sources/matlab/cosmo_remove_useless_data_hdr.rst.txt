@@ -1,7 +1,0 @@
-.. _cosmo_remove_useless_data_hdr:
-
-cosmo remove useless data hdr
-=============================
-
-.. include :: cosmo_remove_useless_data_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_dim_rename:
-
-cosmo dim rename
-================
-
-.. include :: cosmo_dim_rename.txt
-

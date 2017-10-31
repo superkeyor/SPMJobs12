@@ -1,7 +1,0 @@
-.. _test_tail:
-
-test tail
-=========
-
-.. include :: test_tail.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_spherical_neighborhood_skl:
-
-cosmo spherical neighborhood skl
-================================
-
-.. include :: cosmo_spherical_neighborhood_skl.txt
-

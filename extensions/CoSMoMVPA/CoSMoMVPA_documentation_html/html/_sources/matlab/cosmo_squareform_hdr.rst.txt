@@ -1,7 +1,0 @@
-.. _cosmo_squareform_hdr:
-
-cosmo squareform hdr
-====================
-
-.. include :: cosmo_squareform_hdr.txt
-

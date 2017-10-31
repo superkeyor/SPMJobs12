@@ -1,7 +1,0 @@
-.. _test_squareform:
-
-test squareform
-===============
-
-.. include :: test_squareform.txt
-

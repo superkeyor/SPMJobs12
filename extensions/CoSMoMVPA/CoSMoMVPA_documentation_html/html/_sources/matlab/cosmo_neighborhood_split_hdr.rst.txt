@@ -1,7 +1,0 @@
-.. _cosmo_neighborhood_split_hdr:
-
-cosmo neighborhood split hdr
-============================
-
-.. include :: cosmo_neighborhood_split_hdr.txt
-

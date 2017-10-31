@@ -1,7 +1,0 @@
-.. _cosmo_wizard_set_config_skl:
-
-cosmo wizard set config skl
-===========================
-
-.. include :: cosmo_wizard_set_config_skl.txt
-

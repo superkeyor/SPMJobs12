@@ -1,7 +1,0 @@
-.. _cosmo_rand:
-
-cosmo rand
-==========
-
-.. include :: cosmo_rand.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_pca:
-
-cosmo pca
-=========
-
-.. include :: cosmo_pca.txt
-

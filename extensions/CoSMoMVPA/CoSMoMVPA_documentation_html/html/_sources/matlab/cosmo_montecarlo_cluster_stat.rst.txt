@@ -1,7 +1,0 @@
-.. _cosmo_montecarlo_cluster_stat:
-
-cosmo montecarlo cluster stat
-=============================
-
-.. include :: cosmo_montecarlo_cluster_stat.txt
-

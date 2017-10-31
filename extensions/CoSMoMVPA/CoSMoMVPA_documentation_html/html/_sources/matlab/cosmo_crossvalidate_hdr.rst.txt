@@ -1,7 +1,0 @@
-.. _cosmo_crossvalidate_hdr:
-
-cosmo crossvalidate hdr
-=======================
-
-.. include :: cosmo_crossvalidate_hdr.txt
-

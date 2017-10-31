@@ -1,7 +1,0 @@
-.. _cosmo_naive_bayes_classifier_searchlight_skl:
-
-cosmo naive bayes classifier searchlight skl
-============================================
-
-.. include :: cosmo_naive_bayes_classifier_searchlight_skl.txt
-

@@ -1,7 +1,0 @@
-.. _test_cross_neighborhood:
-
-test cross neighborhood
-=======================
-
-.. include :: test_cross_neighborhood.txt
-

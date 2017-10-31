@@ -1,7 +1,0 @@
-.. _cosmo_vol_grid_convert_skl:
-
-cosmo vol grid convert skl
-==========================
-
-.. include :: cosmo_vol_grid_convert_skl.txt
-

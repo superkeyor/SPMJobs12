@@ -1,7 +1,0 @@
-.. _cosmo_pdist:
-
-cosmo pdist
-===========
-
-.. include :: cosmo_pdist.txt
-

@@ -1,7 +1,0 @@
-.. _test_dim_transpose:
-
-test dim transpose
-==================
-
-.. include :: test_dim_transpose.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_classify_lda_skl:
-
-cosmo classify lda skl
-======================
-
-.. include :: cosmo_classify_lda_skl.txt
-

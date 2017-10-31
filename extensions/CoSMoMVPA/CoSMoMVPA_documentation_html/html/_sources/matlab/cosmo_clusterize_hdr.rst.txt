@@ -1,7 +1,0 @@
-.. _cosmo_clusterize_hdr:
-
-cosmo clusterize hdr
-====================
-
-.. include :: cosmo_clusterize_hdr.txt
-

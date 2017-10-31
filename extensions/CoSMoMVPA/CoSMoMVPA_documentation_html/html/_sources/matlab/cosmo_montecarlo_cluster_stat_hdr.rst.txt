@@ -1,7 +1,0 @@
-.. _cosmo_montecarlo_cluster_stat_hdr:
-
-cosmo montecarlo cluster stat hdr
-=================================
-
-.. include :: cosmo_montecarlo_cluster_stat_hdr.txt
-

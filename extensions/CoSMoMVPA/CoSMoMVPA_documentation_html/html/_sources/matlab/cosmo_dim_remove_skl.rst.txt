@@ -1,7 +1,0 @@
-.. _cosmo_dim_remove_skl:
-
-cosmo dim remove skl
-====================
-
-.. include :: cosmo_dim_remove_skl.txt
-

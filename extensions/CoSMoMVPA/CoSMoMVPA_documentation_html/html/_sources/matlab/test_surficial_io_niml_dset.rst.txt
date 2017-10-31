@@ -1,7 +1,0 @@
-.. _test_surficial_io_niml_dset:
-
-test surficial io niml dset
-===========================
-
-.. include :: test_surficial_io_niml_dset.txt
-

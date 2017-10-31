@@ -1,7 +1,0 @@
-.. _cosmo_check_neighborhood:
-
-cosmo check neighborhood
-========================
-
-.. include :: cosmo_check_neighborhood.txt
-

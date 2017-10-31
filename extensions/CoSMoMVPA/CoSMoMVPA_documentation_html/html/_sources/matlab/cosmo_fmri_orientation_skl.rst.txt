@@ -1,7 +1,0 @@
-.. _cosmo_fmri_orientation_skl:
-
-cosmo fmri orientation skl
-==========================
-
-.. include :: cosmo_fmri_orientation_skl.txt
-

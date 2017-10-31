@@ -1,7 +1,0 @@
-.. _test_check_partitions:
-
-test check partitions
-=====================
-
-.. include :: test_check_partitions.txt
-

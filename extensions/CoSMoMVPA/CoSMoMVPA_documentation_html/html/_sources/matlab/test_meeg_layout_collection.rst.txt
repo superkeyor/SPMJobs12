@@ -1,7 +1,0 @@
-.. _test_meeg_layout_collection:
-
-test meeg layout collection
-===========================
-
-.. include :: test_meeg_layout_collection.txt
-

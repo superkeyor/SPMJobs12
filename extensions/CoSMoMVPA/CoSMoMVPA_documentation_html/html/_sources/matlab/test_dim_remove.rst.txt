@@ -1,7 +1,0 @@
-.. _test_dim_remove:
-
-test dim remove
-===============
-
-.. include :: test_dim_remove.txt
-

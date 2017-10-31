@@ -1,7 +1,0 @@
-.. _cosmo_map2fmri:
-
-cosmo map2fmri
-==============
-
-.. include :: cosmo_map2fmri.txt
-

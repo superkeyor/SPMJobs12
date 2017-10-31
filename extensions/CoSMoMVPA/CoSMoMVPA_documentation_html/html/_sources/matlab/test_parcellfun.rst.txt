@@ -1,7 +1,0 @@
-.. _test_parcellfun:
-
-test parcellfun
-===============
-
-.. include :: test_parcellfun.txt
-

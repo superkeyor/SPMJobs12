@@ -1,7 +1,0 @@
-.. _cosmo_meeg_find_layout_skl:
-
-cosmo meeg find layout skl
-==========================
-
-.. include :: cosmo_meeg_find_layout_skl.txt
-

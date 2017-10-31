@@ -1,7 +1,0 @@
-.. _cosmo_neighborhood_split:
-
-cosmo neighborhood split
-========================
-
-.. include :: cosmo_neighborhood_split.txt
-

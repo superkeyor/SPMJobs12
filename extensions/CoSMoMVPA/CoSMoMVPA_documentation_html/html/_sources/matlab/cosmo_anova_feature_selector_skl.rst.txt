@@ -1,7 +1,0 @@
-.. _cosmo_anova_feature_selector_skl:
-
-cosmo anova feature selector skl
-================================
-
-.. include :: cosmo_anova_feature_selector_skl.txt
-

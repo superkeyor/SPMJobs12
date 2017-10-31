@@ -1,7 +1,0 @@
-.. _cosmo_structjoin:
-
-cosmo structjoin
-================
-
-.. include :: cosmo_structjoin.txt
-

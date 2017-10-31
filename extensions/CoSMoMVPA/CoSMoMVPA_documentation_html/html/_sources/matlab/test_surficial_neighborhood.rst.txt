@@ -1,7 +1,0 @@
-.. _test_surficial_neighborhood:
-
-test surficial neighborhood
-===========================
-
-.. include :: test_surficial_neighborhood.txt
-

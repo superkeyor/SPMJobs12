@@ -1,7 +1,0 @@
-.. _run_classify_svm_skl:
-
-run classify svm skl
-====================
-
-.. include :: run_classify_svm_skl.txt
-

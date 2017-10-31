@@ -1,7 +1,0 @@
-.. _cosmo_synthetic_dataset_hdr:
-
-cosmo synthetic dataset hdr
-===========================
-
-.. include :: cosmo_synthetic_dataset_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_warning_hdr:
-
-cosmo warning hdr
-=================
-
-.. include :: cosmo_warning_hdr.txt
-

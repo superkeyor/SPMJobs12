@@ -1,7 +1,0 @@
-.. _cosmo_map2fmri_hdr:
-
-cosmo map2fmri hdr
-==================
-
-.. include :: cosmo_map2fmri_hdr.txt
-

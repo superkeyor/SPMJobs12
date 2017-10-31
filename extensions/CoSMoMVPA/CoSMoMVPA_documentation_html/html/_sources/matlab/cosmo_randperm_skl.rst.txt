@@ -1,7 +1,0 @@
-.. _cosmo_randperm_skl:
-
-cosmo randperm skl
-==================
-
-.. include :: cosmo_randperm_skl.txt
-

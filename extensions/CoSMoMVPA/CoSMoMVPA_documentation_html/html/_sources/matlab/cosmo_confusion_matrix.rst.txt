@@ -1,7 +1,0 @@
-.. _cosmo_confusion_matrix:
-
-cosmo confusion matrix
-======================
-
-.. include :: cosmo_confusion_matrix.txt
-

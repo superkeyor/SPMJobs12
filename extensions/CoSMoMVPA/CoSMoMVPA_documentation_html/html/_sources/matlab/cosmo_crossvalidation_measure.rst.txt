@@ -1,7 +1,0 @@
-.. _cosmo_crossvalidation_measure:
-
-cosmo crossvalidation measure
-=============================
-
-.. include :: cosmo_crossvalidation_measure.txt
-

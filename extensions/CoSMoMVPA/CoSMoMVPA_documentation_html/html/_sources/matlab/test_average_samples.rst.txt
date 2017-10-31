@@ -1,7 +1,0 @@
-.. _test_average_samples:
-
-test average samples
-====================
-
-.. include :: test_average_samples.txt
-

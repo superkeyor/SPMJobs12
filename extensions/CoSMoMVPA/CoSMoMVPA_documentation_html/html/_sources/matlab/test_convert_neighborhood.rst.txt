@@ -1,7 +1,0 @@
-.. _test_convert_neighborhood:
-
-test convert neighborhood
-=========================
-
-.. include :: test_convert_neighborhood.txt
-

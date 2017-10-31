@@ -1,7 +1,0 @@
-.. _test_dissimilarity_matrix_measure:
-
-test dissimilarity matrix measure
-=================================
-
-.. include :: test_dissimilarity_matrix_measure.txt
-

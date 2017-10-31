@@ -1,7 +1,0 @@
-.. _run_meeg_time_generalization_skl:
-
-run meeg time generalization skl
-================================
-
-.. include :: run_meeg_time_generalization_skl.txt
-

@@ -1,7 +1,0 @@
-.. _test_neighborhood_split:
-
-test neighborhood split
-=======================
-
-.. include :: test_neighborhood_split.txt
-

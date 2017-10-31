@@ -1,7 +1,0 @@
-.. _test_isequaln:
-
-test isequaln
-=============
-
-.. include :: test_isequaln.txt
-

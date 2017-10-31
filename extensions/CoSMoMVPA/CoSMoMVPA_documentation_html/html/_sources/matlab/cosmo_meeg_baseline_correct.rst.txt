@@ -1,7 +1,0 @@
-.. _cosmo_meeg_baseline_correct:
-
-cosmo meeg baseline correct
-===========================
-
-.. include :: cosmo_meeg_baseline_correct.txt
-

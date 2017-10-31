@@ -1,7 +1,0 @@
-.. _test_external_neuroelf:
-
-test external neuroelf
-======================
-
-.. include :: test_external_neuroelf.txt
-

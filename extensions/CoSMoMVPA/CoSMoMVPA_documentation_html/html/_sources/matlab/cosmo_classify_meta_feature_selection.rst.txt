@@ -1,7 +1,0 @@
-.. _cosmo_classify_meta_feature_selection:
-
-cosmo classify meta feature selection
-=====================================
-
-.. include :: cosmo_classify_meta_feature_selection.txt
-

@@ -1,9 +1,0 @@
-.. _demo_meeg_dataset_operations:
-
-demo meeg dataset operations
-============================
-
-:demo_up:`demo_meeg_dataset_operations`
-
-.. include :: demo_meeg_dataset_operations.txt
-

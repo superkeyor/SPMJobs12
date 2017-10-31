@@ -1,9 +1,0 @@
-.. _demo_fmri_rois:
-
-demo fmri rois
-==============
-
-:demo_up:`demo_fmri_rois`
-
-.. include :: demo_fmri_rois.txt
-

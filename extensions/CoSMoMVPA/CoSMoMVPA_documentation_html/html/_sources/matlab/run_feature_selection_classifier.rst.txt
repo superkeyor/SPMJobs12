@@ -1,9 +1,0 @@
-.. _run_feature_selection_classifier:
-
-run feature selection classifier
-================================
-
-:run_up:`run_feature_selection_classifier`
-
-.. include :: run_feature_selection_classifier.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_classify_svm_skl:
-
-cosmo classify svm skl
-======================
-
-.. include :: cosmo_classify_svm_skl.txt
-

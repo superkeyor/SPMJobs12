@@ -1,7 +1,0 @@
-.. _cosmo_check_external:
-
-cosmo check external
-====================
-
-.. include :: cosmo_check_external.txt
-

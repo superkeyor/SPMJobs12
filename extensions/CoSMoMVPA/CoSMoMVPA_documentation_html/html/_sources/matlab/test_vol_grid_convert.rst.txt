@@ -1,7 +1,0 @@
-.. _test_vol_grid_convert:
-
-test vol grid convert
-=====================
-
-.. include :: test_vol_grid_convert.txt
-

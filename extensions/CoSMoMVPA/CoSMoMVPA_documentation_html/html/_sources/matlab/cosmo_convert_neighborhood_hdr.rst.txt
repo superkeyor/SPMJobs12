@@ -1,7 +1,0 @@
-.. _cosmo_convert_neighborhood_hdr:
-
-cosmo convert neighborhood hdr
-==============================
-
-.. include :: cosmo_convert_neighborhood_hdr.txt
-

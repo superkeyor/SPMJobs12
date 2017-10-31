@@ -1,7 +1,0 @@
-.. _test_dim_generalization_measure:
-
-test dim generalization measure
-===============================
-
-.. include :: test_dim_generalization_measure.txt
-

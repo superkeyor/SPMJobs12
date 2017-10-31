@@ -1,7 +1,0 @@
-.. _cosmo_type:
-
-cosmo type
-==========
-
-.. include :: cosmo_type.txt
-

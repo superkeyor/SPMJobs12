@@ -1,7 +1,0 @@
-.. _test_fmri_deoblique:
-
-test fmri deoblique
-===================
-
-.. include :: test_fmri_deoblique.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_fmri_orientation:
-
-cosmo fmri orientation
-======================
-
-.. include :: cosmo_fmri_orientation.txt
-

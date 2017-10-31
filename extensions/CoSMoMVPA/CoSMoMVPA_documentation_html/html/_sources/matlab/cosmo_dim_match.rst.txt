@@ -1,7 +1,0 @@
-.. _cosmo_dim_match:
-
-cosmo dim match
-===============
-
-.. include :: cosmo_dim_match.txt
-

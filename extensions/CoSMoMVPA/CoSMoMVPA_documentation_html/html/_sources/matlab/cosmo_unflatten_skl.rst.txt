@@ -1,7 +1,0 @@
-.. _cosmo_unflatten_skl:
-
-cosmo unflatten skl
-===================
-
-.. include :: cosmo_unflatten_skl.txt
-

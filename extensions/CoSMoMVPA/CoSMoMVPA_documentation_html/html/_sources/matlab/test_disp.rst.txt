@@ -1,7 +1,0 @@
-.. _test_disp:
-
-test disp
-=========
-
-.. include :: test_disp.txt
-

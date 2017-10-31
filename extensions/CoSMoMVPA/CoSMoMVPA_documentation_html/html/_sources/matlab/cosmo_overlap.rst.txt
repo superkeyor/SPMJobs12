@@ -1,7 +1,0 @@
-.. _cosmo_overlap:
-
-cosmo overlap
-=============
-
-.. include :: cosmo_overlap.txt
-

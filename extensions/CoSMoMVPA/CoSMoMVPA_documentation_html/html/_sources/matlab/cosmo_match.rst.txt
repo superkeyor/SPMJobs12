@@ -1,7 +1,0 @@
-.. _cosmo_match:
-
-cosmo match
-===========
-
-.. include :: cosmo_match.txt
-

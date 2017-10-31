@@ -1,7 +1,0 @@
-.. _test_randperm:
-
-test randperm
-=============
-
-.. include :: test_randperm.txt
-

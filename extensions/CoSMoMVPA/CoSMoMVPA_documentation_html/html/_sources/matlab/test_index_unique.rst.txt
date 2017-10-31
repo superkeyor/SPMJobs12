@@ -1,7 +1,0 @@
-.. _test_index_unique:
-
-test index unique
-=================
-
-.. include :: test_index_unique.txt
-

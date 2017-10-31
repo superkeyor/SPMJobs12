@@ -1,7 +1,0 @@
-.. _test_fx:
-
-test fx
-=======
-
-.. include :: test_fx.txt
-

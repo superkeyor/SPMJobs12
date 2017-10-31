@@ -1,7 +1,0 @@
-.. _test_independent_samples_partitioner:
-
-test independent samples partitioner
-====================================
-
-.. include :: test_independent_samples_partitioner.txt
-

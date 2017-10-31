@@ -1,7 +1,0 @@
-.. _cosmo_isfield:
-
-cosmo isfield
-=============
-
-.. include :: cosmo_isfield.txt
-

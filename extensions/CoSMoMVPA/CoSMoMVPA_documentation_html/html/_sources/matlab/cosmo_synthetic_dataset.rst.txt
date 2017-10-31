@@ -1,7 +1,0 @@
-.. _cosmo_synthetic_dataset:
-
-cosmo synthetic dataset
-=======================
-
-.. include :: cosmo_synthetic_dataset.txt
-

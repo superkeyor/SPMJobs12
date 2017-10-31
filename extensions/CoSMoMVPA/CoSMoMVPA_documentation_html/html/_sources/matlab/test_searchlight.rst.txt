@@ -1,7 +1,0 @@
-.. _test_searchlight:
-
-test searchlight
-================
-
-.. include :: test_searchlight.txt
-

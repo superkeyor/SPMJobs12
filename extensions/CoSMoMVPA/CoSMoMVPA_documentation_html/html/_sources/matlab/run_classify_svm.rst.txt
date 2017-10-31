@@ -1,9 +1,0 @@
-.. _run_classify_svm:
-
-run classify svm
-================
-
-:run_up:`run_classify_svm`
-
-.. include :: run_classify_svm.txt
-

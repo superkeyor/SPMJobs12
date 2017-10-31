@@ -1,7 +1,0 @@
-.. _cosmo_searchlight:
-
-cosmo searchlight
-=================
-
-.. include :: cosmo_searchlight.txt
-

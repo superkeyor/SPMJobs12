@@ -1,7 +1,0 @@
-.. _cosmo_meeg_chantype_hdr:
-
-cosmo meeg chantype hdr
-=======================
-
-.. include :: cosmo_meeg_chantype_hdr.txt
-

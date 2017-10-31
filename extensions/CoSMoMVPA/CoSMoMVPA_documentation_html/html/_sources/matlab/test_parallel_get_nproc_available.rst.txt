@@ -1,7 +1,0 @@
-.. _test_parallel_get_nproc_available:
-
-test parallel get nproc available
-=================================
-
-.. include :: test_parallel_get_nproc_available.txt
-

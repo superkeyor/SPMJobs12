@@ -1,7 +1,0 @@
-.. _cosmo_nfold_partitioner_hdr:
-
-cosmo nfold partitioner hdr
-===========================
-
-.. include :: cosmo_nfold_partitioner_hdr.txt
-

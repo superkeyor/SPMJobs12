@@ -1,9 +1,0 @@
-.. _demo_fmri_distatis:
-
-demo fmri distatis
-==================
-
-:demo_up:`demo_fmri_distatis`
-
-.. include :: demo_fmri_distatis.txt
-

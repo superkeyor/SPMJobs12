@@ -1,7 +1,0 @@
-.. _cosmo_parcellfun_hdr:
-
-cosmo parcellfun hdr
-====================
-
-.. include :: cosmo_parcellfun_hdr.txt
-

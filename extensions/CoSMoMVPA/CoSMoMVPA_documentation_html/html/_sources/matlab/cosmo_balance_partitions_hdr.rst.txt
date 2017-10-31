@@ -1,7 +1,0 @@
-.. _cosmo_balance_partitions_hdr:
-
-cosmo balance partitions hdr
-============================
-
-.. include :: cosmo_balance_partitions_hdr.txt
-

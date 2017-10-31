@@ -1,7 +1,0 @@
-.. _cosmo_stat_skl:
-
-cosmo stat skl
-==============
-
-.. include :: cosmo_stat_skl.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_cross_neighborhood:
-
-cosmo cross neighborhood
-========================
-
-.. include :: cosmo_cross_neighborhood.txt
-

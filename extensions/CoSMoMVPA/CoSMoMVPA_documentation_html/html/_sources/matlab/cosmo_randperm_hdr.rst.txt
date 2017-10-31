@@ -1,7 +1,0 @@
-.. _cosmo_randperm_hdr:
-
-cosmo randperm hdr
-==================
-
-.. include :: cosmo_randperm_hdr.txt
-

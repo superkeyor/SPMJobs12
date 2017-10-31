@@ -1,9 +1,0 @@
-.. _run_nifti_basics:
-
-run nifti basics
-================
-
-:run_up:`run_nifti_basics`
-
-.. include :: run_nifti_basics.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_independent_samples_partitioner:
-
-cosmo independent samples partitioner
-=====================================
-
-.. include :: cosmo_independent_samples_partitioner.txt
-

@@ -1,7 +1,0 @@
-.. _test_warning:
-
-test warning
-============
-
-.. include :: test_warning.txt
-

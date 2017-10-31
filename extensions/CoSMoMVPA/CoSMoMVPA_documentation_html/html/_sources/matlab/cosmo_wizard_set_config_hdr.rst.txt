@@ -1,7 +1,0 @@
-.. _cosmo_wizard_set_config_hdr:
-
-cosmo wizard set config hdr
-===========================
-
-.. include :: cosmo_wizard_set_config_hdr.txt
-

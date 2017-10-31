@@ -1,7 +1,0 @@
-.. _cosmo_split_hdr:
-
-cosmo split hdr
-===============
-
-.. include :: cosmo_split_hdr.txt
-

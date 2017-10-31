@@ -1,7 +1,0 @@
-.. _test_classify:
-
-test classify
-=============
-
-.. include :: test_classify.txt
-

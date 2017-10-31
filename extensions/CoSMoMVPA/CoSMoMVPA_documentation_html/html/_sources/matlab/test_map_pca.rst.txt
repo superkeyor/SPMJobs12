@@ -1,7 +1,0 @@
-.. _test_map_pca:
-
-test map pca
-============
-
-.. include :: test_map_pca.txt
-

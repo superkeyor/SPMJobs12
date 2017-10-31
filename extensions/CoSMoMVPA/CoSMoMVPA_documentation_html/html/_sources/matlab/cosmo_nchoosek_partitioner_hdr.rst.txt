@@ -1,7 +1,0 @@
-.. _cosmo_nchoosek_partitioner_hdr:
-
-cosmo nchoosek partitioner hdr
-==============================
-
-.. include :: cosmo_nchoosek_partitioner_hdr.txt
-

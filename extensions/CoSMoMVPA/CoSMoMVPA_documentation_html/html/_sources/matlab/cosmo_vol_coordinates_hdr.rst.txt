@@ -1,7 +1,0 @@
-.. _cosmo_vol_coordinates_hdr:
-
-cosmo vol coordinates hdr
-=========================
-
-.. include :: cosmo_vol_coordinates_hdr.txt
-

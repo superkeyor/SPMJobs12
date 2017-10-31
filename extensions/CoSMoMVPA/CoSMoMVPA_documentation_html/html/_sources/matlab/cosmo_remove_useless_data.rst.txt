@@ -1,7 +1,0 @@
-.. _cosmo_remove_useless_data:
-
-cosmo remove useless data
-=========================
-
-.. include :: cosmo_remove_useless_data.txt
-

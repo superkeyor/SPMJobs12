@@ -1,7 +1,0 @@
-.. _run_load_datasets_skl:
-
-run load datasets skl
-=====================
-
-.. include :: run_load_datasets_skl.txt
-

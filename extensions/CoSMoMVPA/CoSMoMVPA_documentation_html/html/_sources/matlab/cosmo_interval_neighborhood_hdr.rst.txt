@@ -1,7 +1,0 @@
-.. _cosmo_interval_neighborhood_hdr:
-
-cosmo interval neighborhood hdr
-===============================
-
-.. include :: cosmo_interval_neighborhood_hdr.txt
-

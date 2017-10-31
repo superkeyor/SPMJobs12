@@ -1,7 +1,0 @@
-.. _cosmo_map2surface_skl:
-
-cosmo map2surface skl
-=====================
-
-.. include :: cosmo_map2surface_skl.txt
-

@@ -1,9 +1,0 @@
-.. _run_nfold_crossvalidate:
-
-run nfold crossvalidate
-=======================
-
-:run_up:`run_nfold_crossvalidate`
-
-.. include :: run_nfold_crossvalidate.txt
-

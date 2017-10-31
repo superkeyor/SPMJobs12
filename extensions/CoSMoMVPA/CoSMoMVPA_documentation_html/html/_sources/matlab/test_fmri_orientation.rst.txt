@@ -1,7 +1,0 @@
-.. _test_fmri_orientation:
-
-test fmri orientation
-=====================
-
-.. include :: test_fmri_orientation.txt
-

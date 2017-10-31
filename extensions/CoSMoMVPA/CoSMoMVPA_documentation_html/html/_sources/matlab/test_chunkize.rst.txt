@@ -1,7 +1,0 @@
-.. _test_chunkize:
-
-test chunkize
-=============
-
-.. include :: test_chunkize.txt
-

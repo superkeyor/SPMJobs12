@@ -1,9 +1,0 @@
-.. _run_splithalf_correlations_searchlight:
-
-run splithalf correlations searchlight
-======================================
-
-:run_up:`run_splithalf_correlations_searchlight`
-
-.. include :: run_splithalf_correlations_searchlight.txt
-

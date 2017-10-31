@@ -1,7 +1,0 @@
-.. _cosmo_check_dataset_hdr:
-
-cosmo check dataset hdr
-=======================
-
-.. include :: cosmo_check_dataset_hdr.txt
-

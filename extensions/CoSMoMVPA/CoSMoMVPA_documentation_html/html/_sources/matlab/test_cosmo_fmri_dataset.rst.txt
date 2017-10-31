@@ -1,7 +1,0 @@
-.. _test_cosmo_fmri_dataset:
-
-test cosmo fmri dataset
-=======================
-
-.. include :: test_cosmo_fmri_dataset.txt
-

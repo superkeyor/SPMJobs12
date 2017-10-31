@@ -1,7 +1,0 @@
-.. _cosmo_find_local_extrema_hdr:
-
-cosmo find local extrema hdr
-============================
-
-.. include :: cosmo_find_local_extrema_hdr.txt
-

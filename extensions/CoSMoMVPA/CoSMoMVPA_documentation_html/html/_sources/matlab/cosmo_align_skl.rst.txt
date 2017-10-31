@@ -1,7 +1,0 @@
-.. _cosmo_align_skl:
-
-cosmo align skl
-===============
-
-.. include :: cosmo_align_skl.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_dir_skl:
-
-cosmo dir skl
-=============
-
-.. include :: cosmo_dir_skl.txt
-

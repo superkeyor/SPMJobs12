@@ -1,7 +1,0 @@
-.. _cosmo_dim_rename_hdr:
-
-cosmo dim rename hdr
-====================
-
-.. include :: cosmo_dim_rename_hdr.txt
-

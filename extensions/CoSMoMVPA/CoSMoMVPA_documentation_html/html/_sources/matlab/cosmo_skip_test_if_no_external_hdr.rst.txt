@@ -1,7 +1,0 @@
-.. _cosmo_skip_test_if_no_external_hdr:
-
-cosmo skip test if no external hdr
-==================================
-
-.. include :: cosmo_skip_test_if_no_external_hdr.txt
-

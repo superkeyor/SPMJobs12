@@ -1,7 +1,0 @@
-.. _cosmo_config:
-
-cosmo config
-============
-
-.. include :: cosmo_config.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_remove_useless_data_skl:
-
-cosmo remove useless data skl
-=============================
-
-.. include :: cosmo_remove_useless_data_skl.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_tail_hdr:
-
-cosmo tail hdr
-==============
-
-.. include :: cosmo_tail_hdr.txt
-

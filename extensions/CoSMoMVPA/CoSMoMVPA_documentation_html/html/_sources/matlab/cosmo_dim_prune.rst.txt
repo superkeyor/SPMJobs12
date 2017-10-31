@@ -1,7 +1,0 @@
-.. _cosmo_dim_prune:
-
-cosmo dim prune
-===============
-
-.. include :: cosmo_dim_prune.txt
-

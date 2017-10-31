@@ -1,9 +1,0 @@
-.. _run_setting_sample_attr:
-
-run setting sample attr
-=======================
-
-:run_up:`run_setting_sample_attr`
-
-.. include :: run_setting_sample_attr.txt
-

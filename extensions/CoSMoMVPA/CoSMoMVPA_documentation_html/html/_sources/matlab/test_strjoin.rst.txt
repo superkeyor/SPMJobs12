@@ -1,7 +1,0 @@
-.. _test_strjoin:
-
-test strjoin
-============
-
-.. include :: test_strjoin.txt
-

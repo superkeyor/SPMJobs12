@@ -1,7 +1,0 @@
-.. _run_permutation_test_skl:
-
-run permutation test skl
-========================
-
-.. include :: run_permutation_test_skl.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_correlation_measure_hdr:
-
-cosmo correlation measure hdr
-=============================
-
-.. include :: cosmo_correlation_measure_hdr.txt
-

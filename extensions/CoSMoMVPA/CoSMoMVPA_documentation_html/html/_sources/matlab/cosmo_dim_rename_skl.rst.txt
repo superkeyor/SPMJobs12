@@ -1,7 +1,0 @@
-.. _cosmo_dim_rename_skl:
-
-cosmo dim rename skl
-====================
-
-.. include :: cosmo_dim_rename_skl.txt
-

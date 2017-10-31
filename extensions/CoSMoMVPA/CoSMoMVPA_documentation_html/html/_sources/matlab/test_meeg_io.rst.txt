@@ -1,7 +1,0 @@
-.. _test_meeg_io:
-
-test meeg io
-============
-
-.. include :: test_meeg_io.txt
-

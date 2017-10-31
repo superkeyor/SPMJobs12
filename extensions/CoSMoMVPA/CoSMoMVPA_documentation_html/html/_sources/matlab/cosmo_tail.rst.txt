@@ -1,7 +1,0 @@
-.. _cosmo_tail:
-
-cosmo tail
-==========
-
-.. include :: cosmo_tail.txt
-

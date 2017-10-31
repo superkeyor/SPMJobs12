@@ -1,7 +1,0 @@
-.. _cosmo_average_samples:
-
-cosmo average samples
-=====================
-
-.. include :: cosmo_average_samples.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_meeg_chantype_skl:
-
-cosmo meeg chantype skl
-=======================
-
-.. include :: cosmo_meeg_chantype_skl.txt
-

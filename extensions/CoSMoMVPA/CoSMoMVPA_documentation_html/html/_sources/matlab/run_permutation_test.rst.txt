@@ -1,9 +1,0 @@
-.. _run_permutation_test:
-
-run permutation test
-====================
-
-:run_up:`run_permutation_test`
-
-.. include :: run_permutation_test.txt
-

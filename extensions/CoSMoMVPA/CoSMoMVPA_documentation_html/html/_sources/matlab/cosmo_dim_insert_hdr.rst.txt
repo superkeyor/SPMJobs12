@@ -1,7 +1,0 @@
-.. _cosmo_dim_insert_hdr:
-
-cosmo dim insert hdr
-====================
-
-.. include :: cosmo_dim_insert_hdr.txt
-

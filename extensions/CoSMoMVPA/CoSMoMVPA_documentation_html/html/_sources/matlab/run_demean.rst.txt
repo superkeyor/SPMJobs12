@@ -1,9 +1,0 @@
-.. _run_demean:
-
-run demean
-==========
-
-:run_up:`run_demean`
-
-.. include :: run_demean.txt
-

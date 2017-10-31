@@ -1,9 +1,0 @@
-.. _demo_fmri_searchlight_naive_bayes:
-
-demo fmri searchlight naive bayes
-=================================
-
-:demo_up:`demo_fmri_searchlight_naive_bayes`
-
-.. include :: demo_fmri_searchlight_naive_bayes.txt
-

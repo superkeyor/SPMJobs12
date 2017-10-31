@@ -1,7 +1,0 @@
-.. _test_anova_feature_selector:
-
-test anova feature selector
-===========================
-
-.. include :: test_anova_feature_selector.txt
-

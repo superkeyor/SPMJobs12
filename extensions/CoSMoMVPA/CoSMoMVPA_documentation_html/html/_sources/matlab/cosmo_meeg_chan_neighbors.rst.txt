@@ -1,7 +1,0 @@
-.. _cosmo_meeg_chan_neighbors:
-
-cosmo meeg chan neighbors
-=========================
-
-.. include :: cosmo_meeg_chan_neighbors.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_run_tests_hdr:
-
-cosmo run tests hdr
-===================
-
-.. include :: cosmo_run_tests_hdr.txt
-

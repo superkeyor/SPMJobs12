@@ -1,7 +1,0 @@
-.. _cosmo_average_samples_hdr:
-
-cosmo average samples hdr
-=========================
-
-.. include :: cosmo_average_samples_hdr.txt
-

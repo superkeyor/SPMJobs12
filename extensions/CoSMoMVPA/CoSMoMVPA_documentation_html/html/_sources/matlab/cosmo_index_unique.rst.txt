@@ -1,7 +1,0 @@
-.. _cosmo_index_unique:
-
-cosmo index unique
-==================
-
-.. include :: cosmo_index_unique.txt
-

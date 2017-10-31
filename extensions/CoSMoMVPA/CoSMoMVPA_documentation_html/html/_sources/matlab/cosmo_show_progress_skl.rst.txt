@@ -1,7 +1,0 @@
-.. _cosmo_show_progress_skl:
-
-cosmo show progress skl
-=======================
-
-.. include :: cosmo_show_progress_skl.txt
-

@@ -1,7 +1,0 @@
-.. _test_external_surfing:
-
-test external surfing
-=====================
-
-.. include :: test_external_surfing.txt
-

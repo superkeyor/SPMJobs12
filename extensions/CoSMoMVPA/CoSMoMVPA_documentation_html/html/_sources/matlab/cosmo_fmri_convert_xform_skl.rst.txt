@@ -1,7 +1,0 @@
-.. _cosmo_fmri_convert_xform_skl:
-
-cosmo fmri convert xform skl
-============================
-
-.. include :: cosmo_fmri_convert_xform_skl.txt
-

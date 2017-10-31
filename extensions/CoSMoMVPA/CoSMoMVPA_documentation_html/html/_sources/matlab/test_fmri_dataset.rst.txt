@@ -1,7 +1,0 @@
-.. _test_fmri_dataset:
-
-test fmri dataset
-=================
-
-.. include :: test_fmri_dataset.txt
-

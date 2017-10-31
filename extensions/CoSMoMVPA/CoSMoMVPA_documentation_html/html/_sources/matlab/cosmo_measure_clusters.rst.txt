@@ -1,7 +1,0 @@
-.. _cosmo_measure_clusters:
-
-cosmo measure clusters
-======================
-
-.. include :: cosmo_measure_clusters.txt
-

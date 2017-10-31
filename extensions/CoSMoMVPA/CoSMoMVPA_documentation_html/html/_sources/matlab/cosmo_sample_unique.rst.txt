@@ -1,7 +1,0 @@
-.. _cosmo_sample_unique:
-
-cosmo sample unique
-===================
-
-.. include :: cosmo_sample_unique.txt
-

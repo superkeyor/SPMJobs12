@@ -1,7 +1,0 @@
-.. _cosmo_distatis_hdr:
-
-cosmo distatis hdr
-==================
-
-.. include :: cosmo_distatis_hdr.txt
-

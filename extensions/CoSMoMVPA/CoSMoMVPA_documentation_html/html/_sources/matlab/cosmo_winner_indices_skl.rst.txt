@@ -1,7 +1,0 @@
-.. _cosmo_winner_indices_skl:
-
-cosmo winner indices skl
-========================
-
-.. include :: cosmo_winner_indices_skl.txt
-

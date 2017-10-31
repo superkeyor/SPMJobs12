@@ -1,7 +1,0 @@
-.. _cosmo_confusion_matrix_hdr:
-
-cosmo confusion matrix hdr
-==========================
-
-.. include :: cosmo_confusion_matrix_hdr.txt
-

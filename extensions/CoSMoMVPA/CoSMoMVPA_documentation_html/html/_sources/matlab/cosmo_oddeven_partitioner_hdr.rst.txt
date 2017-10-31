@@ -1,7 +1,0 @@
-.. _cosmo_oddeven_partitioner_hdr:
-
-cosmo oddeven partitioner hdr
-=============================
-
-.. include :: cosmo_oddeven_partitioner_hdr.txt
-

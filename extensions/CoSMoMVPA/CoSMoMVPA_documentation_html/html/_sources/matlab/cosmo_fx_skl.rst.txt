@@ -1,7 +1,0 @@
-.. _cosmo_fx_skl:
-
-cosmo fx skl
-============
-
-.. include :: cosmo_fx_skl.txt
-

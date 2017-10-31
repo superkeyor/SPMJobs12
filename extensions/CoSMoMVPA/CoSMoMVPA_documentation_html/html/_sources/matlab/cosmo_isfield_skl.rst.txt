@@ -1,7 +1,0 @@
-.. _cosmo_isfield_skl:
-
-cosmo isfield skl
-=================
-
-.. include :: cosmo_isfield_skl.txt
-

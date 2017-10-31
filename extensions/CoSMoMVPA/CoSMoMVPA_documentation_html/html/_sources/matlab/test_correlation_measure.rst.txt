@@ -1,7 +1,0 @@
-.. _test_correlation_measure:
-
-test correlation measure
-========================
-
-.. include :: test_correlation_measure.txt
-

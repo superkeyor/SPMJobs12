@@ -1,7 +1,0 @@
-.. _cosmo_config_hdr:
-
-cosmo config hdr
-================
-
-.. include :: cosmo_config_hdr.txt
-

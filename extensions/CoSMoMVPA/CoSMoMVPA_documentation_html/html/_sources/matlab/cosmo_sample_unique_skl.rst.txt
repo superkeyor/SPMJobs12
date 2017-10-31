@@ -1,7 +1,0 @@
-.. _cosmo_sample_unique_skl:
-
-cosmo sample unique skl
-=======================
-
-.. include :: cosmo_sample_unique_skl.txt
-

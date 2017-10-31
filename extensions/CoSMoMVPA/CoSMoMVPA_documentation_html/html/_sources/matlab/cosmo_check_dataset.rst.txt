@@ -1,7 +1,0 @@
-.. _cosmo_check_dataset:
-
-cosmo check dataset
-===================
-
-.. include :: cosmo_check_dataset.txt
-

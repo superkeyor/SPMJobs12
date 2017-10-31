@@ -1,7 +1,0 @@
-.. _test_config:
-
-test config
-===========
-
-.. include :: test_config.txt
-

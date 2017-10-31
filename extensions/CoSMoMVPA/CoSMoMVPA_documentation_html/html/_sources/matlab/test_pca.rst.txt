@@ -1,7 +1,0 @@
-.. _test_pca:
-
-test pca
-========
-
-.. include :: test_pca.txt
-

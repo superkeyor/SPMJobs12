@@ -1,7 +1,0 @@
-.. _cosmo_classify_knn_hdr:
-
-cosmo classify knn hdr
-======================
-
-.. include :: cosmo_classify_knn_hdr.txt
-

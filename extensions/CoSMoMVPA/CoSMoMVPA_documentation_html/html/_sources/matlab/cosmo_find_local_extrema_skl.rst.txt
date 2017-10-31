@@ -1,7 +1,0 @@
-.. _cosmo_find_local_extrema_skl:
-
-cosmo find local extrema skl
-============================
-
-.. include :: cosmo_find_local_extrema_skl.txt
-

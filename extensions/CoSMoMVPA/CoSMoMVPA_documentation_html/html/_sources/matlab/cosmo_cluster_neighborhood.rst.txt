@@ -1,7 +1,0 @@
-.. _cosmo_cluster_neighborhood:
-
-cosmo cluster neighborhood
-==========================
-
-.. include :: cosmo_cluster_neighborhood.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_check_partitions:
-
-cosmo check partitions
-======================
-
-.. include :: cosmo_check_partitions.txt
-

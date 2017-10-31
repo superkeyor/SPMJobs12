@@ -1,7 +1,0 @@
-.. _cosmo_measure_clusters_hdr:
-
-cosmo measure clusters hdr
-==========================
-
-.. include :: cosmo_measure_clusters_hdr.txt
-

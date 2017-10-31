@@ -1,7 +1,0 @@
-.. _cosmo_dataset_slice_fa:
-
-cosmo dataset slice fa
-======================
-
-.. include :: cosmo_dataset_slice_fa.txt
-

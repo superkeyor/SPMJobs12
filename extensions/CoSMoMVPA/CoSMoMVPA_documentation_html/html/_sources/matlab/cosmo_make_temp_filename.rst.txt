@@ -1,7 +1,0 @@
-.. _cosmo_make_temp_filename:
-
-cosmo make temp filename
-========================
-
-.. include :: cosmo_make_temp_filename.txt
-

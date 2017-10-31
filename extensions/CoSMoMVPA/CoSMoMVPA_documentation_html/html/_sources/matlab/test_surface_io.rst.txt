@@ -1,7 +1,0 @@
-.. _test_surface_io:
-
-test surface io
-===============
-
-.. include :: test_surface_io.txt
-

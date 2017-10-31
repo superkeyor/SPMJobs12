@@ -1,7 +1,0 @@
-.. _test_match:
-
-test match
-==========
-
-.. include :: test_match.txt
-

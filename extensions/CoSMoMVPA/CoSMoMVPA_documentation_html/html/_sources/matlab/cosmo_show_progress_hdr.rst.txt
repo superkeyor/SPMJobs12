@@ -1,7 +1,0 @@
-.. _cosmo_show_progress_hdr:
-
-cosmo show progress hdr
-=======================
-
-.. include :: cosmo_show_progress_hdr.txt
-

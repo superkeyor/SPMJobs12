@@ -1,7 +1,0 @@
-.. _cosmo_interval_neighborhood:
-
-cosmo interval neighborhood
-===========================
-
-.. include :: cosmo_interval_neighborhood.txt
-

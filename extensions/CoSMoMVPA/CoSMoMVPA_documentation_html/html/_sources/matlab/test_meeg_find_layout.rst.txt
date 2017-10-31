@@ -1,7 +1,0 @@
-.. _test_meeg_find_layout:
-
-test meeg find layout
-=====================
-
-.. include :: test_meeg_find_layout.txt
-

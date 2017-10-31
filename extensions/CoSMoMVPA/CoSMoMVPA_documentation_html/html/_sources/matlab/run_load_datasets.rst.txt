@@ -1,9 +1,0 @@
-.. _run_load_datasets:
-
-run load datasets
-=================
-
-:run_up:`run_load_datasets`
-
-.. include :: run_load_datasets.txt
-

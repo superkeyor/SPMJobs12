@@ -1,7 +1,0 @@
-.. _test_align:
-
-test align
-==========
-
-.. include :: test_align.txt
-

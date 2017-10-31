@@ -1,7 +1,0 @@
-.. _cosmo_winner_indices:
-
-cosmo winner indices
-====================
-
-.. include :: cosmo_winner_indices.txt
-

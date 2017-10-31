@@ -1,7 +1,0 @@
-.. _cosmo_check_external_hdr:
-
-cosmo check external hdr
-========================
-
-.. include :: cosmo_check_external_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _test_randomize_targets:
-
-test randomize targets
-======================
-
-.. include :: test_randomize_targets.txt
-

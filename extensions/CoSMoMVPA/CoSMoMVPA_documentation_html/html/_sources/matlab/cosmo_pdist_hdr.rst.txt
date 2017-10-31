@@ -1,7 +1,0 @@
-.. _cosmo_pdist_hdr:
-
-cosmo pdist hdr
-===============
-
-.. include :: cosmo_pdist_hdr.txt
-

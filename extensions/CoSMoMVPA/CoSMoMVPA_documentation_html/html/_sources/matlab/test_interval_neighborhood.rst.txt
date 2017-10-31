@@ -1,7 +1,0 @@
-.. _test_interval_neighborhood:
-
-test interval neighborhood
-==========================
-
-.. include :: test_interval_neighborhood.txt
-

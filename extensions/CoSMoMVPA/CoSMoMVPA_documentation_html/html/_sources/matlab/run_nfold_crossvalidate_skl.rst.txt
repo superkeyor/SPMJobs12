@@ -1,7 +1,0 @@
-.. _run_nfold_crossvalidate_skl:
-
-run nfold crossvalidate skl
-===========================
-
-.. include :: run_nfold_crossvalidate_skl.txt
-

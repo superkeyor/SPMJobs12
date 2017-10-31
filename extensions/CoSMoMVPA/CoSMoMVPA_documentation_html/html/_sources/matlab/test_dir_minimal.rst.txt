@@ -1,7 +1,0 @@
-.. _test_dir_minimal:
-
-test dir minimal
-================
-
-.. include :: test_dir_minimal.txt
-

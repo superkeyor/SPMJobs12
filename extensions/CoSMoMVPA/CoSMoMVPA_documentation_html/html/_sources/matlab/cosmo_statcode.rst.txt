@@ -1,7 +1,0 @@
-.. _cosmo_statcode:
-
-cosmo statcode
-==============
-
-.. include :: cosmo_statcode.txt
-

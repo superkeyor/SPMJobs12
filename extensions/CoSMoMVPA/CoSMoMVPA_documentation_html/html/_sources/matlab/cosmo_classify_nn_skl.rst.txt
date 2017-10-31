@@ -1,7 +1,0 @@
-.. _cosmo_classify_nn_skl:
-
-cosmo classify nn skl
-=====================
-
-.. include :: cosmo_classify_nn_skl.txt
-

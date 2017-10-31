@@ -1,7 +1,0 @@
-.. _cosmo_stack:
-
-cosmo stack
-===========
-
-.. include :: cosmo_stack.txt
-

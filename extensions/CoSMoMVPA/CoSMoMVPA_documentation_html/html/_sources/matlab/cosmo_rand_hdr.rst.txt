@@ -1,7 +1,0 @@
-.. _cosmo_rand_hdr:
-
-cosmo rand hdr
-==============
-
-.. include :: cosmo_rand_hdr.txt
-

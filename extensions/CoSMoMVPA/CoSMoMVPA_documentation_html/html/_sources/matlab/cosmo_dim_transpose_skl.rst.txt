@@ -1,7 +1,0 @@
-.. _cosmo_dim_transpose_skl:
-
-cosmo dim transpose skl
-=======================
-
-.. include :: cosmo_dim_transpose_skl.txt
-

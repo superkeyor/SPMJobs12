@@ -1,7 +1,0 @@
-.. _cosmo_meeg_baseline_correct_hdr:
-
-cosmo meeg baseline correct hdr
-===============================
-
-.. include :: cosmo_meeg_baseline_correct_hdr.txt
-

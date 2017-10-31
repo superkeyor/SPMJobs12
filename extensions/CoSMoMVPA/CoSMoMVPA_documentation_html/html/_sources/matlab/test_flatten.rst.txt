@@ -1,7 +1,0 @@
-.. _test_flatten:
-
-test flatten
-============
-
-.. include :: test_flatten.txt
-

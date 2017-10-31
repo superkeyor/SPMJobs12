@@ -1,7 +1,0 @@
-.. _test_oddeven_partitioner:
-
-test oddeven partitioner
-========================
-
-.. include :: test_oddeven_partitioner.txt
-

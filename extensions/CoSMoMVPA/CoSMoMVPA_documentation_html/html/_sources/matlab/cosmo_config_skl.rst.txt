@@ -1,7 +1,0 @@
-.. _cosmo_config_skl:
-
-cosmo config skl
-================
-
-.. include :: cosmo_config_skl.txt
-

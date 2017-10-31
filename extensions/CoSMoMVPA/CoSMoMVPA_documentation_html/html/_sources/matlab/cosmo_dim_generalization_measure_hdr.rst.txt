@@ -1,7 +1,0 @@
-.. _cosmo_dim_generalization_measure_hdr:
-
-cosmo dim generalization measure hdr
-====================================
-
-.. include :: cosmo_dim_generalization_measure_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_clusterize:
-
-cosmo clusterize
-================
-
-.. include :: cosmo_clusterize.txt
-

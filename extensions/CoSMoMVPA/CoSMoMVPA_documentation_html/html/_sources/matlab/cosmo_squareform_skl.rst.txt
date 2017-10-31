@@ -1,7 +1,0 @@
-.. _cosmo_squareform_skl:
-
-cosmo squareform skl
-====================
-
-.. include :: cosmo_squareform_skl.txt
-

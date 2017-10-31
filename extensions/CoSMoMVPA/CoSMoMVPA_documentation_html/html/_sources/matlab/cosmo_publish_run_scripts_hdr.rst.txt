@@ -1,7 +1,0 @@
-.. _cosmo_publish_run_scripts_hdr:
-
-cosmo publish run scripts hdr
-=============================
-
-.. include :: cosmo_publish_run_scripts_hdr.txt
-

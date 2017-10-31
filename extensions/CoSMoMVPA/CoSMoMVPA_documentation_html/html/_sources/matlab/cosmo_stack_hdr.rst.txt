@@ -1,7 +1,0 @@
-.. _cosmo_stack_hdr:
-
-cosmo stack hdr
-===============
-
-.. include :: cosmo_stack_hdr.txt
-

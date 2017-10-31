@@ -1,7 +1,0 @@
-.. _test_vol_coordinates:
-
-test vol coordinates
-====================
-
-.. include :: test_vol_coordinates.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_meeg_read_layout_hdr:
-
-cosmo meeg read layout hdr
-==========================
-
-.. include :: cosmo_meeg_read_layout_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_winner_indices_hdr:
-
-cosmo winner indices hdr
-========================
-
-.. include :: cosmo_winner_indices_hdr.txt
-

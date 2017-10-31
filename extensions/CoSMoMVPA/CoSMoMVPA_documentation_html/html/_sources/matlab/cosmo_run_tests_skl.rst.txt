@@ -1,7 +1,0 @@
-.. _cosmo_run_tests_skl:
-
-cosmo run tests skl
-===================
-
-.. include :: cosmo_run_tests_skl.txt
-

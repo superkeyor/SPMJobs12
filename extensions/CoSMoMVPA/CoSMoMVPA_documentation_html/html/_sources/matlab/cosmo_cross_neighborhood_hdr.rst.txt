@@ -1,7 +1,0 @@
-.. _cosmo_cross_neighborhood_hdr:
-
-cosmo cross neighborhood hdr
-============================
-
-.. include :: cosmo_cross_neighborhood_hdr.txt
-

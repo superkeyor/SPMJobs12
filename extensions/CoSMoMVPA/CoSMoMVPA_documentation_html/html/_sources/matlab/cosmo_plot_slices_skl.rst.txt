@@ -1,7 +1,0 @@
-.. _cosmo_plot_slices_skl:
-
-cosmo plot slices skl
-=====================
-
-.. include :: cosmo_plot_slices_skl.txt
-

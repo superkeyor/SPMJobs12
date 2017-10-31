@@ -1,7 +1,0 @@
-.. _cosmo_check_partitions_hdr:
-
-cosmo check partitions hdr
-==========================
-
-.. include :: cosmo_check_partitions_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_check_neighborhood_hdr:
-
-cosmo check neighborhood hdr
-============================
-
-.. include :: cosmo_check_neighborhood_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _test_dim_prune:
-
-test dim prune
-==============
-
-.. include :: test_dim_prune.txt
-

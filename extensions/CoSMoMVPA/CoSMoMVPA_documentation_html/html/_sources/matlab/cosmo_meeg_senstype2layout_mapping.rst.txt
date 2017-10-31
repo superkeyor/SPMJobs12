@@ -1,7 +1,0 @@
-.. _cosmo_meeg_senstype2layout_mapping:
-
-cosmo meeg senstype2layout mapping
-==================================
-
-.. include :: cosmo_meeg_senstype2layout_mapping.txt
-

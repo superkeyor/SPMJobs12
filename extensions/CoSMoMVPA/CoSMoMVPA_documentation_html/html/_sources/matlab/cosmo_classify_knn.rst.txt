@@ -1,7 +1,0 @@
-.. _cosmo_classify_knn:
-
-cosmo classify knn
-==================
-
-.. include :: cosmo_classify_knn.txt
-

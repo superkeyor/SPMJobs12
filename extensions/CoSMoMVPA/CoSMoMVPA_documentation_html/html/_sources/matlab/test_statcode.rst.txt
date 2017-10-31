@@ -1,7 +1,0 @@
-.. _test_statcode:
-
-test statcode
-=============
-
-.. include :: test_statcode.txt
-

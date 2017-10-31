@@ -1,7 +1,0 @@
-.. _cosmo_cross_neighborhood_skl:
-
-cosmo cross neighborhood skl
-============================
-
-.. include :: cosmo_cross_neighborhood_skl.txt
-

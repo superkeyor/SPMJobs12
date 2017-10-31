@@ -1,7 +1,0 @@
-.. _cosmo_meeg_chan_neighborhood_hdr:
-
-cosmo meeg chan neighborhood hdr
-================================
-
-.. include :: cosmo_meeg_chan_neighborhood_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_mask_dim_intersect:
-
-cosmo mask dim intersect
-========================
-
-.. include :: cosmo_mask_dim_intersect.txt
-

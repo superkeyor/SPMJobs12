@@ -1,7 +1,0 @@
-.. _test_meeg_baseline_correct:
-
-test meeg baseline correct
-==========================
-
-.. include :: test_meeg_baseline_correct.txt
-

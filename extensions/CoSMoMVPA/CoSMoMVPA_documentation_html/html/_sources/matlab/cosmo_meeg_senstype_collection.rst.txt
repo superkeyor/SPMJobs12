@@ -1,7 +1,0 @@
-.. _cosmo_meeg_senstype_collection:
-
-cosmo meeg senstype collection
-==============================
-
-.. include :: cosmo_meeg_senstype_collection.txt
-

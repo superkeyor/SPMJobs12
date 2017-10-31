@@ -1,7 +1,0 @@
-.. _test_wtf:
-
-test wtf
-========
-
-.. include :: test_wtf.txt
-

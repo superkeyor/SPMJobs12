@@ -1,9 +1,0 @@
-.. _run_cfy:
-
-run cfy
-=======
-
-:run_up:`run_cfy`
-
-.. include :: run_cfy.txt
-

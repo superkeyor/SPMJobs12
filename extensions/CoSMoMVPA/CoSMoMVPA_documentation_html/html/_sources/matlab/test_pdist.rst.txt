@@ -1,7 +1,0 @@
-.. _test_pdist:
-
-test pdist
-==========
-
-.. include :: test_pdist.txt
-

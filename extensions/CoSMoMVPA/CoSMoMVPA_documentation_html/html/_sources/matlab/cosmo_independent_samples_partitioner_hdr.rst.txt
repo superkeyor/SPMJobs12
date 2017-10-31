@@ -1,7 +1,0 @@
-.. _cosmo_independent_samples_partitioner_hdr:
-
-cosmo independent samples partitioner hdr
-=========================================
-
-.. include :: cosmo_independent_samples_partitioner_hdr.txt
-

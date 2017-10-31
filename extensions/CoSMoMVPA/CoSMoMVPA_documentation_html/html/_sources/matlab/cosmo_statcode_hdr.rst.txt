@@ -1,7 +1,0 @@
-.. _cosmo_statcode_hdr:
-
-cosmo statcode hdr
-==================
-
-.. include :: cosmo_statcode_hdr.txt
-

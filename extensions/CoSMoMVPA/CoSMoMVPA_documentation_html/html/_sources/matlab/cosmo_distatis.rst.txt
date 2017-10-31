@@ -1,7 +1,0 @@
-.. _cosmo_distatis:
-
-cosmo distatis
-==============
-
-.. include :: cosmo_distatis.txt
-

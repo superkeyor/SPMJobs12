@@ -1,9 +1,0 @@
-.. _run_crossvalidation_searchlight:
-
-run crossvalidation searchlight
-===============================
-
-:run_up:`run_crossvalidation_searchlight`
-
-.. include :: run_crossvalidation_searchlight.txt
-

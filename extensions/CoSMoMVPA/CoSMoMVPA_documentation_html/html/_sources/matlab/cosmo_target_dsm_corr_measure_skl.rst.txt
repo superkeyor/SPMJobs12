@@ -1,7 +1,0 @@
-.. _cosmo_target_dsm_corr_measure_skl:
-
-cosmo target dsm corr measure skl
-=================================
-
-.. include :: cosmo_target_dsm_corr_measure_skl.txt
-

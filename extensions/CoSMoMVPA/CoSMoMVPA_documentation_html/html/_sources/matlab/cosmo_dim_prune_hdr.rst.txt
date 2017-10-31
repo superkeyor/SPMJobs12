@@ -1,7 +1,0 @@
-.. _cosmo_dim_prune_hdr:
-
-cosmo dim prune hdr
-===================
-
-.. include :: cosmo_dim_prune_hdr.txt
-

@@ -1,7 +1,0 @@
-.. _test_dim_find:
-
-test dim find
-=============
-
-.. include :: test_dim_find.txt
-

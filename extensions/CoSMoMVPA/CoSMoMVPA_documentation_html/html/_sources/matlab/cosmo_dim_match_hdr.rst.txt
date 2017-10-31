@@ -1,7 +1,0 @@
-.. _cosmo_dim_match_hdr:
-
-cosmo dim match hdr
-===================
-
-.. include :: cosmo_dim_match_hdr.txt
-

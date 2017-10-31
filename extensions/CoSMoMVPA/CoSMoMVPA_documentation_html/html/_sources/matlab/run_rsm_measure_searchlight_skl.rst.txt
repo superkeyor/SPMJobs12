@@ -1,7 +1,0 @@
-.. _run_rsm_measure_searchlight_skl:
-
-run rsm measure searchlight skl
-===============================
-
-.. include :: run_rsm_measure_searchlight_skl.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_disp_hdr:
-
-cosmo disp hdr
-==============
-
-.. include :: cosmo_disp_hdr.txt
-

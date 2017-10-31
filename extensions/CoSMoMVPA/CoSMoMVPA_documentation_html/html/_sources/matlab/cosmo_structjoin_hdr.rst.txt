@@ -1,7 +1,0 @@
-.. _cosmo_structjoin_hdr:
-
-cosmo structjoin hdr
-====================
-
-.. include :: cosmo_structjoin_hdr.txt
-

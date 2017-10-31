@@ -1,9 +1,0 @@
-.. _run_classify_naive_bayes:
-
-run classify naive bayes
-========================
-
-:run_up:`run_classify_naive_bayes`
-
-.. include :: run_classify_naive_bayes.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_strjoin:
-
-cosmo strjoin
-=============
-
-.. include :: cosmo_strjoin.txt
-

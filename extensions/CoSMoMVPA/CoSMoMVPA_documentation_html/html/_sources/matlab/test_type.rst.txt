@@ -1,7 +1,0 @@
-.. _test_type:
-
-test type
-=========
-
-.. include :: test_type.txt
-

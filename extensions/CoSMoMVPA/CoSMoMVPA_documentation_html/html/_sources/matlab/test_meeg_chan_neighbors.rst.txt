@@ -1,7 +1,0 @@
-.. _test_meeg_chan_neighbors:
-
-test meeg chan neighbors
-========================
-
-.. include :: test_meeg_chan_neighbors.txt
-

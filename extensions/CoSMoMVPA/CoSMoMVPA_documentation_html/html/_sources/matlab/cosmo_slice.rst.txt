@@ -1,7 +1,0 @@
-.. _cosmo_slice:
-
-cosmo slice
-===========
-
-.. include :: cosmo_slice.txt
-

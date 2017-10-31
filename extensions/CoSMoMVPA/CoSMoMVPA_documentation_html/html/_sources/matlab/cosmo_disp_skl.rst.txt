@@ -1,7 +1,0 @@
-.. _cosmo_disp_skl:
-
-cosmo disp skl
-==============
-
-.. include :: cosmo_disp_skl.txt
-

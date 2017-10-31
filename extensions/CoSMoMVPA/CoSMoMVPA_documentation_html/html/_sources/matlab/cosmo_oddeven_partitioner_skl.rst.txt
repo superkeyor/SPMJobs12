@@ -1,7 +1,0 @@
-.. _cosmo_oddeven_partitioner_skl:
-
-cosmo oddeven partitioner skl
-=============================
-
-.. include :: cosmo_oddeven_partitioner_skl.txt
-

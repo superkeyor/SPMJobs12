@@ -1,7 +1,0 @@
-.. _run_sphere_offsets_skl:
-
-run sphere offsets skl
-======================
-
-.. include :: run_sphere_offsets_skl.txt
-

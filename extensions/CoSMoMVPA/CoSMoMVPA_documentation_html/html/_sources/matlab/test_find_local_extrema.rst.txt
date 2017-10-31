@@ -1,7 +1,0 @@
-.. _test_find_local_extrema:
-
-test find local extrema
-=======================
-
-.. include :: test_find_local_extrema.txt
-

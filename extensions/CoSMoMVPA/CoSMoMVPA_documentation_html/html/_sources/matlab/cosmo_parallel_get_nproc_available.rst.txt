@@ -1,7 +1,0 @@
-.. _cosmo_parallel_get_nproc_available:
-
-cosmo parallel get nproc available
-==================================
-
-.. include :: cosmo_parallel_get_nproc_available.txt
-

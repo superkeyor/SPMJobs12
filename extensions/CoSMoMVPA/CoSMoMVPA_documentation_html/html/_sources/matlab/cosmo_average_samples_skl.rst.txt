@@ -1,7 +1,0 @@
-.. _cosmo_average_samples_skl:
-
-cosmo average samples skl
-=========================
-
-.. include :: cosmo_average_samples_skl.txt
-

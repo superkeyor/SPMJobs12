@@ -1,7 +1,0 @@
-.. _test_cosmo_dataset_operations:
-
-test cosmo dataset operations
-=============================
-
-.. include :: test_cosmo_dataset_operations.txt
-

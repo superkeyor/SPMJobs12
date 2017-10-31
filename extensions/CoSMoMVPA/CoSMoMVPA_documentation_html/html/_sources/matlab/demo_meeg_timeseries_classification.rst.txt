@@ -1,9 +1,0 @@
-.. _demo_meeg_timeseries_classification:
-
-demo meeg timeseries classification
-===================================
-
-:demo_up:`demo_meeg_timeseries_classification`
-
-.. include :: demo_meeg_timeseries_classification.txt
-

@@ -1,7 +1,0 @@
-.. _cosmo_vol_coordinates:
-
-cosmo vol coordinates
-=====================
-
-.. include :: cosmo_vol_coordinates.txt
-

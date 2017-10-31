@@ -1,7 +1,0 @@
-.. _test_rand:
-
-test rand
-=========
-
-.. include :: test_rand.txt
-

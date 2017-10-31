@@ -1,7 +1,0 @@
-.. _test_fmri_convert_xform:
-
-test fmri convert xform
-=======================
-
-.. include :: test_fmri_convert_xform.txt
-

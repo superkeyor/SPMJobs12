@@ -1,7 +1,0 @@
-.. _cosmo_set_path_skl:
-
-cosmo set path skl
-==================
-
-.. include :: cosmo_set_path_skl.txt
-

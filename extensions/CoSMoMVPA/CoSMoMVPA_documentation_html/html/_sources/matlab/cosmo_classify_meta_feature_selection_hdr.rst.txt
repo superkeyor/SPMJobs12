@@ -1,7 +1,0 @@
-.. _cosmo_classify_meta_feature_selection_hdr:
-
-cosmo classify meta feature selection hdr
-=========================================
-
-.. include :: cosmo_classify_meta_feature_selection_hdr.txt
-
