@@ -580,7 +580,8 @@ try
 %          pause(0.1);
 %        end % switch
     end
-	s = urlread([XJVIEWURL '/toUser.txt']);
+	% s = urlread([XJVIEWURL '/toUser.txt']);
+    s = ['xjView Ver: ' VERSION_];
     set(handles.infoTextBox, 'String', s);
 end
 
