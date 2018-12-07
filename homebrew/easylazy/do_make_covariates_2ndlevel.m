@@ -6,6 +6,13 @@ function varargout = main(df, idcol, ids, covars, matname)
     % ids: a cell array containing ids in certain order
     % covars: a cell array containing col names as covariates (not include idcol)
     % matname: path to covariate mat, default covar2ndlvl.mat in pwd
+    % 
+    % example, typical usage: 
+    % CN = nbk(strcmp(nbk.dx,'CN'),:);
+    % SCD = nbk(strcmp(nbk.dx,'SCD'),:);
+    % MCI = nbk(strcmp(nbk.dx,'MCI'),:);
+    % ids = [CN.linkid; SCD.linkid; MCI.linkid];
+    % do_make_covariates_2ndlevel(nbk,'linkid',ids,{'ageMRI','sex','educ'});
 
     if nargin==4, matname='covar2ndlvl.mat'; end
 
@@ -14,6 +21,6 @@ function varargout = main(df, idcol, ids, covars, matname)
     R = df(idx,covars);
     R = table2array(R);
     names = covars;
-    save(matname,'R','names')
+    save(matname,'R','names');
 end
 
