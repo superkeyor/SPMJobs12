@@ -1,10 +1,10 @@
 function varargout = main(job)
     % load job into Batch GUI
     % job: 
-    % 1) main(), search base workspace matlabbatch (spm8/12) > jobs (spm5)
-    % 2) main()  when search fails, pop up Batch Editor
-    % 3) main('jobs'/'matlabbatch') to explicitly search base workspace
-    % 4) main('path/to/job.mat') 
+    % 1) (), search base workspace 'matlabbatch' (spm8/12) > 'jobs' (spm5)
+    % 2) ()  when search fails, pop up Batch Editor
+    % 3) ('jobs') ('matlabbatch') to explicitly search base workspace
+    % 4) ('path/to/job.mat') 
 
     if nargin<1
         try
