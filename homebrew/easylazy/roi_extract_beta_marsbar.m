@@ -4,10 +4,10 @@ function result = main(SPMPath, clusterPath, stat, folder)
 %       clusterPath: path to cluster image(s), str or cell of str
 %                    recommendated ClusterName format is: ClusterName_x_y_z_roi.mat
 %       stat: method to summarize values across all voxels within a cluster, 'mean'(default), 'median', 'eigen1', 'wtmean' (weighted mean)
-%       folder, path to folder where extracted betas (csv) will be saved , default pwd, if not exist, auto create the folder
+%       folder, path to folder where extracted betas (xlsx) will be saved , default pwd, if not exist, auto create the folder
 % Output:
-%       csv file with extracted betas (betas_extracted.csv, file name hard-coded)
-%       returns a cell representing the csv result
+%       xlsx file with extracted betas (betas_extracted.xlsx, file name hard-coded)
+%       returns a cell representing the xlsx result
 % Note:
 %       Uses marsbar functions to extract
 %       If marsbar path not in searchpath, auto add them internally first.
@@ -67,7 +67,9 @@ for i = 1:length(clusterPath)
 end % end for
 result = [header;num2cell(result)];
 load(SPMPath); P = SPM.xY.P; P = strrep(P,',','_');
-result = [['SUBJID';P] result];
-ez.cell2csv(fullfile(folder,'betas_extracted.csv'),result);
+result = [['ID';P] result];
+T = cell2table(result(2:end,:));
+T.Properties.VariableNames = result(1,:);
+ez.savex(T, fullfile(folder,'betas_extracted.xlsx'));
 
 end % end function
