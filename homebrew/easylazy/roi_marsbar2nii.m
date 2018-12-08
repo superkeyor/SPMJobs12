@@ -6,12 +6,12 @@ function result = main(matPath,space,verbose,folder)
 %              2) from image (by passing a path of an image file), eg. './beta_0001.nii,1'
 %                 recommended! voxel size/dim could be diff, eg 2x2x2 [79 95 68]
 %              3) 'roi' whatever the mat roi's space, the so-called "native"
-%       verbose = 0/1, if true, print out roi info and display roi, default true
+%       verbose = 0/1, if true, print out roi info and generate xlsx summary, default true
 %       folder, path to folder where ROI files will be saved, default pwd
 % Output:
 %       .nii files
 %       the full path to the generated ROI nii file(s), if more than one file, a cell; otherwise a str
-%       a csv file with all ROI names and non-zero voxel numbers in folder
+%       an xlsx file (if verbose=1) with all ROI names and non-zero voxel numbers in folder
 % Note:
 %       Uses marsbar functions to export .mat ROI into nii formats
 %       If marsbar path not in searchpath, auto add them internally first.
@@ -48,6 +48,7 @@ switch char(space)
         sp = mars_space(space);
 end
 
+xlsx = ez.header({'roi','non_zero_voxels'});
 for i = 1:length(matPath)
     roi = matPath{i};
     [pn fn ext] = fileparts(roi);
@@ -89,7 +90,7 @@ for i = 1:length(matPath)
         fprintf('Dimension: %s\n',mat2str(dim_out));
         fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
         fprintf('Description: %s\n',description_out);
-        ez.writeline([fn,',',num2str(n_out)],ez.joinpath(folder,'ROIs.csv'));
+        xlsx = ez.append(xlsx, {fn, n_out});
         fprintf('---------------------------------------------------------\n');
     end % end if
 
@@ -98,4 +99,5 @@ for i = 1:length(matPath)
 end % end for
 
 if length(result)==1, result=result{1}; end
+if height(xlsx)>0, ez.savex(xlsx,ez.joinpath(folder,'ROI_Summary.xlsx'))
 end % end func
