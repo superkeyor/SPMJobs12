@@ -3,7 +3,7 @@ function result = main(matPath,space,verbose,folder)
 %       matPath: path to marbar .mat ROIs, str or cell of str
 %       space: exported nii space, three choices
 %              1) 'mni', default, the so-called "base space"
-%              2) from image... by passing a path of an image file, eg. './beta_0001.nii,1'
+%              2) from image (by passing a path of an image file), eg. './beta_0001.nii,1'
 %                 recommended! voxel size/dim could be diff, eg 2x2x2 [79 95 68]
 %              3) 'roi' whatever the mat roi's space, the so-called "native"
 %       verbose = 0/1, if true, print out roi info and display roi, default true
@@ -11,7 +11,7 @@ function result = main(matPath,space,verbose,folder)
 % Output:
 %       .nii files
 %       the full path to the generated ROI nii file(s), if more than one file, a cell; otherwise a str
-%       a csv file with all ROI names and non-zero voxels in folder
+%       a csv file with all ROI names and non-zero voxel numbers in folder
 % Note:
 %       Uses marsbar functions to export .mat ROI into nii formats
 %       If marsbar path not in searchpath, auto add them internally first.
@@ -89,7 +89,7 @@ for i = 1:length(matPath)
         fprintf('Dimension: %s\n',mat2str(dim_out));
         fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
         fprintf('Description: %s\n',description_out);
-        ez.log([fn,',',num2str(n_out)],ez.joinpath(folder,'ROIs.csv'));
+        ez.writeline([fn,',',num2str(n_out)],ez.joinpath(folder,'ROIs.csv'));
         fprintf('---------------------------------------------------------\n');
     end % end if
 
