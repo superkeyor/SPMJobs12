@@ -16,7 +16,7 @@ function result = main(SPMPath, roiMatPath, stat, folder)
 %       stat: method to summarize values across all voxels within a roi, 'mean'(default), 'median', 'eigen1', 'wtmean' (weighted mean)
 %       folder, path to folder where extracted betas (xlsx) will be saved , default pwd, if not exist, auto create the folder
 % Output:
-%       xlsx file with extracted betas (betas_extracted.xlsx, file name hard-coded)
+%       xlsx file with extracted betas (betas_extracted_marsbar.xlsx, file name hard-coded)
 %       returns a cell representing the xlsx result
 
 if (isempty(which('marsbar'))||isempty(which('spm_get')))
@@ -71,6 +71,6 @@ result = [['ID';P] result];
 T = cell2table(result(2:end,:));
 T.Properties.VariableNames = result(1,:);
 result = T;
-ez.savex(T, fullfile(folder,'betas_extracted.xlsx'));
+ez.savex(T, fullfile(folder,'betas_extracted_marsbar.xlsx'));
 
 end % end function

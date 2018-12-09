@@ -1,4 +1,5 @@
 function result = main(roiNiiRegex)
+% seems to be different from marsbar, kept for reference purpose
 % Description:
 %       Uses afni functions to extract (roi nii --> --> xlsx, assuming everything needed in the pwd and extract mean betas)
 %       The result should be equal to right-click->extract data->raw y in SPM map
@@ -12,7 +13,7 @@ function result = main(roiNiiRegex)
 % Input:
 %       roiNiiRegex: regex for roi nii files (default, '^ROI.*nii$')
 % Output:
-%       xlsx file with extracted betas (betas_extracted.xlsx, file name hard-coded)
+%       xlsx file with extracted betas (betas_extracted_afni.xlsx, file name hard-coded)
 %       returns a cell representing the xlsx result
 
 if nargin<1, roiNiiRegex = '^ROI.*nii$'; end
@@ -56,6 +57,6 @@ result = [['ID';P] result];
 T = cell2table(result(2:end,:));
 T.Properties.VariableNames = result(1,:);
 result = T;
-ez.savex(T, fullfile(folder,'betas_extracted.xlsx'));
+ez.savex(T, fullfile(folder,'betas_extracted_afni.xlsx'));
 
 end % end function
