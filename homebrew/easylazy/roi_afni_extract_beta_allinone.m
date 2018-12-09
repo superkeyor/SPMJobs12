@@ -24,7 +24,7 @@ folder = pwd;
 
 header = cell(1,length(roiNiiPath));
 result = [];
-load(SPMPath); P = SPM.xY.P; P = cellfun(@(e) e(1:end-2), P, 'uniform', false);
+load(SPMPath); P = SPM.xY.P; P = cellfun(@(e) [e(1:end-6), '.hdr'], P, 'uniform', false);
 for i = 1:length(roiNiiPath)
     roi = roiNiiPath{i};
     
@@ -33,7 +33,7 @@ for i = 1:length(roiNiiPath)
     
     beta = [];  % a column
     for j = 1:length(P)
-        cmd = ['3dmaskave -mask "', P{j}, '" -quiet "', roi, '"'];
+        cmd = ['3dmaskave -mask "', roi, '" -quiet "', P{j}, '"'];
         [sta, res] = system(cmd,'-echo');
         res = strsplit(res,'\n');
         res = str2num(res{3});
