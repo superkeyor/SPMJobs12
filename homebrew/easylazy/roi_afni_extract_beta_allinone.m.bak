@@ -1,5 +1,5 @@
 function result = main(roiNiiRegex)
-% seems to be different from marsbar, kept for reference purpose
+% seems to be different from marsbar (well, todo: still need to be re-validated, re-tested, re-compared), kept for reference purpose
 % Description:
 %       Uses afni functions to extract (roi nii --> --> xlsx, assuming everything needed in the pwd and extract mean betas)
 %       The result should be equal to right-click->extract data->raw y in SPM map
