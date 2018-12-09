@@ -16,18 +16,17 @@ function result = main(roiNiiRegex)
 %       returns a cell representing the xlsx result
 
 if nargin<1, roiNiiRegex = '^ROI.*nii$'; end
-roiMatPath = ez.ls(pwd, roiNiiRegex);
-roiMatPath = roi_marsbar_create_cluster(roiMatPath,1,pwd);
+roiNiiPath = ez.ls(pwd, roiNiiRegex);
 
-if ischar(roiMatPath), roiMatPath = cellstr(roiMatPath); end
+if ischar(roiNiiPath), roiNiiPath = cellstr(roiNiiPath); end
 SPMPath = 'SPM.mat';
 folder = pwd;
 
-header = cell(1,length(roiMatPath));
+header = cell(1,length(roiNiiPath));
 result = [];
 load(SPMPath); P = SPM.xY.P; P = cellfun(@(e) e(1:end-2), P, 'uniform', false);
-for i = 1:length(roiMatPath)
-    roi = roiMatPath{i};
+for i = 1:length(roiNiiPath)
+    roi = roiNiiPath{i};
     
     [~,roiName] = ez.splitpath(roi);
     header{1,i} = roiName;
