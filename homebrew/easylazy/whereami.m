@@ -110,8 +110,8 @@ function main(varargin)
             newheaderind = cellfun(@(x) find(strcmp(header,x)), newheader, 'UniformOutput', false);
             result = result(:,cell2mat(newheaderind));
             
-            resultFile = sprintf('TabDat_%s.csv',evalin('base','xSPM.title'));
-            ez.cell2csv(resultFile,result);
+            resultFile = sprintf('TabDat_%s.xlsx',evalin('base','xSPM.title'));
+            ez.savex(ez.c2t(result),resultFile)
             ez.pprint(['Done! Check ' resultFile '. Sort by Lobe/BA/Hemisphere. BA refers to BA of nearest grey matter if not found.']);
             ez.pprint('AAL/Anatomy_GreyMatter labeling should be less weighted(?). One should also look at the activation map to see where the cluster is.');
             return
