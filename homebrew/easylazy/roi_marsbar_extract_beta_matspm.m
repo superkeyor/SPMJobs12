@@ -70,6 +70,7 @@ load(SPMPath); P = SPM.xY.P; P = strrep(P,',','_');
 result = [['ID';P] result];
 T = cell2table(result(2:end,:));
 T.Properties.VariableNames = result(1,:);
+result = T;
 ez.savex(T, fullfile(folder,'betas_extracted.xlsx'));
 
 end % end function
