@@ -1,16 +1,16 @@
-function result = main(clusterPath,verbose,folder)
+function result = main(roiNiiPath,verbose,folder)
+% Description:
+%       Uses marsbar functions to generate .mat ROI
+%       If marsbar path not in searchpath, auto add them internally first.    
 % Input:
-%       clusterPath: path to cluster image(s), str or cell of str
-%             recommendated ClusterName format is: Cluster_label_x_y_z.nii
+%       roiNiiPath: path to roi image(s), str or cell of str
+%                   recommendated ROIName format is: ROI_label_x_y_z.nii
 %       verbose = 0/1, if true, print out roi info and display roi, default true
 %       folder, path to folder where ROI files will be saved, default pwd
 % Output:
-%       ClusterName_x_y_z_roi.mat (ClusterName is the same as cluster's filename, xyz is added automatically)
-%             recommendated ClusterName format is: Cluster_label_x_y_z.nii
+%       ROIName_x_y_z_roi.mat (ROIName is the same as roi's filename, xyz is added automatically)
+%                              recommendated ROIName format is: ROI_label_x_y_z.nii
 %       the full path to the generated ROI mat file(s), if more than one file, a cell; otherwise a str
-% Note:
-%       Uses marsbar functions to generate .mat ROI
-%       If marsbar path not in searchpath, auto add them internally first.
 
 if (isempty(which('marsbar'))||isempty(which('spm_get')))
     ez.print('addpath marsbar...')
@@ -22,25 +22,25 @@ if (isempty(which('marsbar'))||isempty(which('spm_get')))
     addpath(ez.joinpath(thePath,'spm5'),'-end');
 end
 
-if ischar(clusterPath), clusterPath = cellstr(clusterPath); end
+if ischar(roiNiiPath), roiNiiPath = cellstr(roiNiiPath); end
 if nargin<2, verbose = 1; end
 if nargin<3, folder = pwd; else ez.mkdir(folder); end
 
 % flags is cluster
 flags = 'c';
-result = cell(length(clusterPath),1);
+result = cell(length(roiNiiPath),1);
 
-for i = 1:length(clusterPath)
-    cluster = clusterPath{i};
-    [~, prefix] = ez.splitpath(cluster);
-    mars_img2rois(cluster, folder, prefix, flags);
+for i = 1:length(roiNiiPath)
+    roi = roiNiiPath{i};
+    [~, prefix] = ez.splitpath(roi);
+    mars_img2rois(roi, folder, prefix, flags);
 
 
     if verbose
-    % output some useful info of the input cluster image
+    % output some useful info of the input roi image
     
-    fprintf('\nInput cluster image info:\n');
-    hdr_out = spm_vol(cluster);
+    fprintf('\nInput ROI image info:\n');
+    hdr_out = spm_vol(roi);
     type_out = spm_type(hdr_out.dt(1));
     values_out = spm_read_vols(hdr_out);
     n_out = length(find(values_out ~= 0)); % how many non-zero voxels, ie the masked voxels of the ROI
@@ -84,7 +84,7 @@ end % end if
 
 % output a text list of generated rois
 ROIs = cellstr(spm_select('List',folder,['_-?\d{1,2}_-?\d{1,2}_-?\d{1,2}_roi\.mat$']));
-ROIs = strrep(ROIs,'Cluster_','');
+ROIs = strrep(ROIs,'ROI_','');
 ROIs = regexprep(ROIs,'_-?\d{1,2}_-?\d{1,2}_-?\d{1,2}_roi\.mat$','');
 ROIs = regexprep(ROIs,'_-?\d{1,2}_-?\d{1,2}_-?\d{1,2}','');
 ez.cell2csv(fullfile(folder,'ALLROINAMES.txt'),ROIs);

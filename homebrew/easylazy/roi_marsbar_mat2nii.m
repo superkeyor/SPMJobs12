@@ -1,6 +1,9 @@
-function result = main(matPath,space,verbose,folder)
+function result = main(roiMatPath,space,verbose,folder)
+% Description:
+%       Uses marsbar functions to export .mat ROI into nii formats
+%       If marsbar path not in searchpath, auto add them internally first.
 % Input:
-%       matPath: path to marbar .mat ROIs, str or cell of str
+%       roiMatPath: path to marbar .mat ROIs, str or cell of str
 %       space: exported nii space, three choices
 %              1) 'mni', default, the so-called "base space"
 %              2) from image (by passing a path of an image file), eg. './beta_0001.nii,1'
@@ -12,9 +15,6 @@ function result = main(matPath,space,verbose,folder)
 %       .nii files
 %       the full path to the generated ROI nii file(s), if more than one file, a cell; otherwise a str
 %       an xlsx file (if verbose=1) with all ROI names and non-zero voxel numbers in folder
-% Note:
-%       Uses marsbar functions to export .mat ROI into nii formats
-%       If marsbar path not in searchpath, auto add them internally first.
 
 if (isempty(which('marsbar'))||isempty(which('spm_get')))
     ez.print('addpath marsbar...')
@@ -26,12 +26,12 @@ if (isempty(which('marsbar'))||isempty(which('spm_get')))
     addpath(ez.joinpath(thePath,'spm5'),'-end');
 end
 
-if ischar(matPath), matPath = cellstr(matPath); end
+if ischar(roiMatPath), roiMatPath = cellstr(roiMatPath); end
 if nargin<2, space = 'mni'; end
 if nargin<3, verbose = 1; end
 if nargin<4, folder = pwd; else ez.mkdir(folder); end
 
-result = cell(length(matPath),1);
+result = cell(length(roiMatPath),1);
 
 % code modified from marsbar.m around line 676
 %=======================================================================
@@ -49,8 +49,8 @@ switch char(space)
 end
 
 xlsx = ez.header({'roi','non_zero_voxels'});
-for i = 1:length(matPath)
-    roi = matPath{i};
+for i = 1:length(roiMatPath)
+    roi = roiMatPath{i};
     [pn fn ext] = fileparts(roi);
     roi = maroi('load', roi); 
 
