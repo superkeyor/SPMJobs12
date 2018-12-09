@@ -44,7 +44,7 @@ for i = 1:length(roiNiiPath)
         cmd = ['3dmaskave -mask "', roi, '" -quiet "', P{j}, '"'];
         [sta, res] = system(cmd,'-echo');
         res = strsplit(res,'\n');
-        res = str2num(res{3});
+        res = str2num(res{end-1});
         beta = [beta; res];
     end
     result = [result,beta];
