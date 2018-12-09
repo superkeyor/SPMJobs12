@@ -33,6 +33,14 @@ for i = 1:length(roiNiiPath)
     
     beta = [];  % a column
     for j = 1:length(P)
+        % https://afni.nimh.nih.gov/afni/community/board/read.php?1,137959,137960#msg-137960
+            % SPM uses NAN (not a number) within a dataset, 
+            % maybe for masking and such, I'm not sure. But 
+            % those "values" have no numerical representation, 
+            % and that is probably what 3dcopy is complaining 
+            % about. 
+            % In short, it should be fine. 
+        % ignore 'correct float error'
         cmd = ['3dmaskave -mask "', roi, '" -quiet "', P{j}, '"'];
         [sta, res] = system(cmd,'-echo');
         res = strsplit(res,'\n');
