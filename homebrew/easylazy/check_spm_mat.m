@@ -1,9 +1,11 @@
-function varargout = main(arg)
+function varargout = main(arg,showMatrix)
     % % check design matrix
     % SPM:
     % 1) main() search base workspace for SPM
     % 2) main() when search fails, pop up window to select
     % 3) main('path/to/SPM.mat')
+    % 
+    % showMatrix: 0(default)/1, show design matrix
 
     if nargin<1
         try
@@ -21,9 +23,13 @@ function varargout = main(arg)
             load(arg);
         end
     end
+
+    if nargin<2, showMatrix=false; end
+    if showMatrix
     spm_DesRep('DesRepUI',SPM);
     filenames = reshape(cellstr(SPM.xY.P),size(SPM.xY.VY));
     spm_DesRep('DesMtx',SPM.xX,filenames,SPM.xsDes);
+    end
 
     ez.print(sprintf('Regressors:'));
     nregr = length(SPM.xX.name);
