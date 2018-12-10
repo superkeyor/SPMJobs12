@@ -161,11 +161,11 @@ clusterSizeThreshold = 5;
 
 
 % Appearance Settings
-figurePosition =                    [0.100,   0.050,    0.550,    0.880];
+figurePosition =                    [0.400,   0.050,    0.550,    0.880];
 sectionViewPosition =               [0.463,0.61,0.45,0.45];
 glassViewAxesPosition =             [-0.005,   0.600,    0.464,    0.400];
 if screenResolution(3) <= 1024
-    figurePosition =                    [0.100,   0.050,    0.700,    0.900];
+    figurePosition =                    [0.400,   0.050,    0.700,    0.900];
     sectionViewPosition =               [0.463,       0.61,   0.45,   0.46];
     glassViewAxesPosition =             [-0.005,   0.600,    0.464,    0.400];    
 end
