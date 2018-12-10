@@ -730,7 +730,7 @@ handles.pValue = pValue;
 handles.intensityThreshold = intensityThreshold;
 handles.clusterSizeThreshold = clusterSizeThreshold;
 handles.sectionViewPosition = sectionViewPosition;
-handles.sectionViewTargetFile = getSectionViewTargetFile(spmdir, 'avg152T1');
+handles.sectionViewTargetFile = getSectionViewTargetFile(spmdir, 'single T1');
 
 guidata(f, handles);
 
