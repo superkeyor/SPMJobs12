@@ -1,4 +1,4 @@
-function varargout = main(df, idcol, ids, covars, matname)
+function [names, R] = main(df, idcol, ids, covars, matname)
     % make covariates mat file for 2nd level
     % (df, idcol, ids, covars, matname)
     % df: table, like df in R
@@ -24,6 +24,6 @@ function varargout = main(df, idcol, ids, covars, matname)
     R = df(idx,covars);
     R = table2array(R);
     names = covars;
-    save(matname,'R','names');
+    save(matname,'names','R');
 end
 
