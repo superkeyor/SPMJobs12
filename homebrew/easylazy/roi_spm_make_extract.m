@@ -1,6 +1,6 @@
 function result = main(y,SPM)
 % Description:
-%       merge ids and extracted betas into an xlsx file
+%       merge ids and extracted betas (single voxel or cluster) into an xlsx file
 % Input:
 %       y extracted values with SPM GUI in base workspace
 %       SPM SPM data structure loaded into base workspace from SPM.mat
@@ -16,8 +16,10 @@ elseif nargin<2
 
 P = SPM.xY.P;
 [~,file]=ez.splitpath(P);
-result = [file, y];
-result = cell2table(result,'VariableNames',{'ID','Y'});
+meanY = mean(y,2);
+medianY = median(y,2);
+result = [file, meanY, medianY, y];
+result = cell2table(result, 'VariableNames', [ {'ID', 'meanY', 'medianY'}, cellstr(string('Y')+(1:size(y,2))) ]);
 ez.savex(result, fullfile('betas_extracted_spm.xlsx'));
 
 end % end function
