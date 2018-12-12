@@ -15,6 +15,7 @@ elseif nargin<2
     SPM = evalin('base', 'SPM');
 end
 
+
 P = SPM.xY.P;
 [~,file]=ez.splitpath(P);
 meanY = mean(y,2);
