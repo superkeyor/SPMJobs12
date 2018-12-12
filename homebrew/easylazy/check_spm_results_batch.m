@@ -25,7 +25,6 @@ function varargout = main(maps)
             if strcmp(w.Visible,'on'), ez.WinTop(w); end
         end
         
-        pause(1.5);
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
 end
