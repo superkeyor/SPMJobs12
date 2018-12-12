@@ -13,6 +13,7 @@ if nargin<1
     SPM = evalin('base', 'SPM');
 elseif nargin<2
     SPM = evalin('base', 'SPM');
+end
 
 P = SPM.xY.P;
 [~,file]=ez.splitpath(P);
