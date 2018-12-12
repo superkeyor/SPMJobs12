@@ -19,7 +19,7 @@ P = SPM.xY.P;
 [~,file]=ez.splitpath(P);
 meanY = mean(y,2);
 medianY = median(y,2);
-result = [file, meanY, medianY, y];
+result = [file, num2cell([meanY, medianY, y])];
 result = cell2table(result, 'VariableNames', [ {'ID', 'meanY', 'medianY'}, cellstr(string('Y')+(1:size(y,2))) ]);
 ez.savex(result, fullfile('betas_extracted_spm.xlsx'));
 
