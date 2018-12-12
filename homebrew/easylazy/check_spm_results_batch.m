@@ -18,6 +18,13 @@ function varargout = main(maps)
         % close all warning dialog
         warnings = findall(0,'type','figure','name','Warning Dialog');
         close(warnings);
+
+        xjWins = findall(0,'type','figure','-regexp','name','^xjView');
+        for j = 1:numel(xjWins)
+            w = xjWins(j);
+            if strcmp(w.Visible,'on'), ez.WinTop(w); end
+        end
+        
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
 end
