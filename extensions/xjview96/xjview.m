@@ -626,8 +626,7 @@ handles.getCurrentPosition = uicontrol(handles.figure, 'style','push',...
 %         'callback','web(''http://www.alivelearn.net/xjview8/feed.php'')');    
 % end
 
-% handles.glassViewAxes = axes('unit','normalized','position',glassViewAxesPosition,'XTick',[],'YTick',[],'visible','off');
-handles.glassViewAxes = axes('unit','normalized','position',glassViewAxesPosition,'XTick',[],'YTick',[],'visible','off', 'tag', 'Interactive');
+handles.glassViewAxes = axes('unit','normalized','position',glassViewAxesPosition,'XTick',[],'YTick',[],'visible','off');
 
 
 handles.testEdit = uicontrol(handles.figure,'style','edit',...
