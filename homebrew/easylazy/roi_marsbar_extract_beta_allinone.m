@@ -68,8 +68,8 @@ for i = 1:length(roiMatPath)
 
 end % end for
 result = [header;num2cell(result)];
-load(SPMPath); P = SPM.xY.P; P = strrep(P,',','_');
-result = [['ID';P] result];
+load(SPMPath); P = SPM.xY.P; [~,file]=ez.splitpath(P); P = strrep(P,',','_');
+result = [['ID';P] ['file';file] result];
 T = cell2table(result(2:end,:));
 T.Properties.VariableNames = result(1,:);
 result = T;
