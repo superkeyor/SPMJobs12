@@ -3,14 +3,7 @@
 function varargout = main(maps)
     % ez.clean();
     % close previous xjview windows
-    figs = sort(findobj(0,'type','figure'));
-    for iii = 1:ez.len(figs);
-        fig = figs(iii);
-        if strfind(fig.Name,'xjView')
-            ez.print(['closing previous ' fig.Name ' ...']);
-            close(fig); 
-        end
-    end
+    ez.winclose('xjView');
     
     for i = 1:numel(maps)
         map = maps{i};
@@ -22,10 +15,13 @@ function varargout = main(maps)
         xjWins = findall(0,'type','figure','-regexp','name','^xjView');
         for j = 1:numel(xjWins)
             w = xjWins(j);
-            if strcmp(w.Visible,'on'), ez.WinTop(w); end
+            if strcmp(w.Visible,'on'), ez.wintop(w); end
         end
         
         ez.pprint(map);
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
+
+    % close again
+    ez.winclose('xjView');
 end
