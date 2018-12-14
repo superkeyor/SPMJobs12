@@ -18,7 +18,9 @@ function varargout = main(maps)
             if strcmp(w.Visible,'on'), ez.wintop(w); end
         end
         
-        ez.pprint(map);
+        [pth,name, ext]=ez.splitpath(ez.abspath(map));
+        [dummy,folder]=ez.splitpath(pth);
+        ez.pprint(ez.joinpath(folder,[name '.' ext]));
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
 
