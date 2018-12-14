@@ -20,7 +20,8 @@ function varargout = main(maps)
         
         [pth,name, ext]=ez.splitpath(ez.abspath(map));
         [dummy,folder]=ez.splitpath(pth);
-        ez.pprint(ez.joinpath(folder,[name '.' ext]));
+        ez.pprint(folder);
+        ez.pprint([name ext]);
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
 
