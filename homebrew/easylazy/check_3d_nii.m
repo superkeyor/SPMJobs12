@@ -1,5 +1,5 @@
 function main(nii)
-% Print some useful information about an nii image
+% Print some useful information about an nii image and display
 % USAGE: (nii) 1nii = 1 volume, not 4D
 
 outname = nii;
