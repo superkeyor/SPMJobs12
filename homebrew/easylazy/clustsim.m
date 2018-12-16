@@ -8,6 +8,7 @@ function main(ResMSPath,mode)
 % INPUT:
 %     ResMSPath: default={'ResMS.nii'}, cell str of paths
 %     mode: default=0, 0=run & read or read, 1=only try to read, never run, 2=force to run & read
+%           by read, I mean read 3dClustSim.NN2_2sided.1D
 %
 % OUTPUT:
 %     put generated files in auto-created folder clustsim
@@ -67,7 +68,9 @@ function main(ResMSPath,mode)
                 ez.savex(T,'FWHMx.xlsx');
                 cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',mean(as), mean(bs), mean(cs));
                 ez.execute(cmd);
-        else         
+        end 
+        
+        if ez.exists('3dClustSim.NN2_2sided.1D')
             lines = ez.readlines('3dClustSim.NN2_2sided.1D');
             line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
             ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
