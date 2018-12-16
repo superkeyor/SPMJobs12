@@ -1,1 +1,2 @@
-functions here are not maintained, and/or not used, and not in matlab path
+functions here are not maintained, and/or not used
+change ext to avoid to appear in matlab prompt
