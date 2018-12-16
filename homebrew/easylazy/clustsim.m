@@ -31,7 +31,7 @@ function main(ResMSPath)
             result = ez.trim(result); result = strsplit(result,' ');
             ez.print(sprintf('3dFWHMx: %s',strjoin(result)));
             cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %s %s %s -iter 10000 -nodec -prefix 3dClustSim',result{1},result{2},result{3});
-            ez.execute(cmd,0);
+            ez.execute(cmd);
         end 
         
         lines = ez.readlines('3dClustSim.NN3_2sided.1D');
