@@ -1,4 +1,4 @@
-function main(ResMSPath,force)
+function main(ResMSPath,mode)
 %DESCRIPTION:
 %    3dFWHMx + 3dClustSim
 %
@@ -7,7 +7,7 @@ function main(ResMSPath,force)
 %
 % INPUT:
 %     ResMSPath: default={'ResMS.nii'}, cell str of paths
-%     force: remove previous folder and rerun
+%     mode: default=0, 0=run & read or read, 1=only try to read, never run, 2=force to run & read
 %
 % OUTPUT:
 %     put generated files in auto-created folder clustsim
@@ -24,18 +24,18 @@ function main(ResMSPath,force)
 %     exists, otherwise fall back to square root approach.
     try, if strcmp(ResMSPath,'-h'), ez.showhelp(); return; end; end
     ez.setdefault({'ResMSPath', {'ResMS.nii'}
-                   'force', false});
+                   'mode', false});
     oldpwd = pwd;
     for i = 1:numel(ResMSPath)
         residual = ResMSPath{i};
         ez.cd(ez.splitpath(ez.abspath(residual))); 
-        if force, ez.rm('clustsim'); end
+        if mode==2, ez.rm('clustsim'); end
         ez.mkdir('clustsim',0);
         ez.cd('clustsim');
 
         % spm by default uses 18 (edge) for clustering, see help spm_clusters and help spm_bwlabel
         % this corresponding to NN2 in afni
-        if ~ez.exists('3dClustSim.NN2_2sided.1D')
+        if (~ez.exists('3dClustSim.NN2_2sided.1D')) && mode~=1
             if ~ez.exists('../Res_0001.nii')
                 % square root approach. the values might be larger 
                 cmd = '3dcalc -a ../ResMS.nii -expr ''sqrt(a)'' -prefix sqrt_ResMS.nii';
@@ -67,11 +67,11 @@ function main(ResMSPath,force)
                 ez.savex(T,'FWHMx.xlsx');
                 cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',mean(as), mean(bs), mean(cs));
                 ez.execute(cmd);
+        else         
+            lines = ez.readlines('3dClustSim.NN2_2sided.1D');
+            line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
+            ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
         end 
-        
-        lines = ez.readlines('3dClustSim.NN2_2sided.1D');
-        line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
-        ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
     end
     ez.cd(oldpwd);
 end
