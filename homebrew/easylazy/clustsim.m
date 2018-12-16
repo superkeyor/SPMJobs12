@@ -18,7 +18,7 @@ function main(ResMSPath)
     for i = 1:numel(ResMSPath)
         residual = ResMSPath{i};
         ez.cd(ez.splitpath(ez.abspath(residual))); 
-        ez.mkdir('clustsim');
+        ez.mkdir('clustsim',0);
         ez.cd('clustsim');
 
         if ~ez.exists('3dClustSim.NN3_2sided.1D')
