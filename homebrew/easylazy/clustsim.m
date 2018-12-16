@@ -13,7 +13,7 @@ function main(ResMSPath)
 %     printout results NN3_2-sided
 %     if NN3_2-sided result exists in the folder, only printout
     if strcmp(ResMSPath,'-h'), ez.showhelp(); return; end
-    ez.setdefault({'ResMSPath', {'ResMS.nii'});
+    ez.setdefault({'ResMSPath', {'ResMS.nii'}});
     oldpwd = pwd;
     for i = 1:numel(ResMSPath)
         residual = ResMSPath{i};
