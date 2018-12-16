@@ -36,7 +36,7 @@ function main(ResMSPath,force)
         % spm by default uses 18 (edge) for clustering, see help spm_clusters and help spm_bwlabel
         % this corresponding to NN2 in afni
         if ~ez.exists('3dClustSim.NN2_2sided.1D')
-            if ~ez.exists('Res_0001.nii')
+            if ~ez.exists('../Res_0001.nii')
                 % square root approach. the values might be larger 
                 cmd = '3dcalc -a ../ResMS.nii -expr ''sqrt(a)'' -prefix sqrt_ResMS.nii';
                 ez.execute(cmd,0);
@@ -61,7 +61,7 @@ function main(ResMSPath,force)
                     result = ez.trim(result); result = strsplit(result,' ');
                     as=[as, str2num(result{1})]; bs=[bs, str2num(result{2})]; cs=[cs, str2num(result{3})]; FWHMxs=[FWHMxs, str2num(result{4})];
                 end
-                ez.print(sprintf('3dFWHMx (averaged): %s',mat2str([mean(as), mean(bs), mean(cs), mean(FWHMxs)]));
+                ez.print(sprintf('3dFWHMx (averaged): %s',mat2str([mean(as), mean(bs), mean(cs), mean(FWHMxs)])));
                 cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',mean(as), mean(bs), mean(cs));
                 ez.execute(cmd);
         end 
