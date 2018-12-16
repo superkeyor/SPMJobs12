@@ -6,7 +6,7 @@ function main(seclvlPath,mode)
 %    (seclvlPath)
 %
 % INPUT:
-%     seclvlPath: default={pwd}, cell str of paths to second level results folder (containing mask.nii, ResMS.nii)
+%     seclvlPath: default={pwd}, cell str of paths to second level results folder (containing mask.nii, ResMS.nii, Res_0001.nii)
 %     mode: default=0, 0=run & read or read, 1=only try to read, never run, 2=force to run & read
 %           by read, I mean read 3dClustSim.NN2_2sided.1D
 %
@@ -76,6 +76,6 @@ function main(seclvlPath,mode)
             line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
             ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
         end 
-    end
+    end % end for
     ez.cd(oldpwd);
 end
