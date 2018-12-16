@@ -1,12 +1,12 @@
-function main(ResMSPath,mode)
+function main(seclvlPath,mode)
 %DESCRIPTION:
 %    3dFWHMx + 3dClustSim
 %
 % USAGE:
-%    (ResMSPath)
+%    (seclvlPath)
 %
 % INPUT:
-%     ResMSPath: default={'ResMS.nii'}, cell str of paths
+%     seclvlPath: default={pwd}, cell str of paths to second level results folder (containing mask.nii, ResMS.nii)
 %     mode: default=0, 0=run & read or read, 1=only try to read, never run, 2=force to run & read
 %           by read, I mean read 3dClustSim.NN2_2sided.1D
 %
@@ -23,12 +23,13 @@ function main(ResMSPath,mode)
 %     this way are very close to those from values if the analysis was done in
 %     AFNI directly. This function first try invidual approach if Res_000x.nii
 %     exists, otherwise fall back to square root approach.
-    try, if strcmp(ResMSPath,'-h'), ez.showhelp(); return; end; end
-    ez.setdefault({'ResMSPath', {'ResMS.nii'}
+    try, if strcmp(seclvlPath,'-h'), ez.showhelp(); return; end; end
+    ez.setdefault({'seclvlPath', {pwd}
                    'mode', false});
     oldpwd = pwd;
-    for i = 1:numel(ResMSPath)
-        residual = ResMSPath{i};
+    for i = 1:numel(seclvlPath)
+        residual = ez.jp(seclvlPath{i},'ResMS.nii');
+        if ~ez.exists(residual), break; end
         ez.cd(ez.splitpath(ez.abspath(residual))); 
         if mode==2, ez.rm('clustsim'); end
         ez.mkdir('clustsim',0);
