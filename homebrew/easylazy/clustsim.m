@@ -37,4 +37,6 @@ function main(ResMSPath)
         lines = ez.readlines('3dClustSim.NN3_2sided.1D');
         line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
         ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
+    end
+    ez.cd(oldpwd);
 end
