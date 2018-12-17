@@ -31,6 +31,7 @@ function main(seclvlPath,mode)
     if ~iscell(seclvlPath), seclvlPath = {seclvlPath}; end
     oldpwd = pwd;
     for i = 1:numel(seclvlPath)
+        ez.print(sprintf('\nProcessing %d of %d ...', i, numel(seclvlPath)));
         residual = ez.jp(seclvlPath{i},'ResMS.nii');
         if ~ez.exists(residual), break; end
         ez.cd(ez.splitpath(ez.abspath(residual))); 
