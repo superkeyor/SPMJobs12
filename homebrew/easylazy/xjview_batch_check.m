@@ -5,6 +5,7 @@ function varargout = main(maps)
     % close previous xjview windows
     ez.winclose('xjView');
     
+    if ~iscell(maps), maps = {maps}; end
     for i = 1:numel(maps)
         map = maps{i};
         xjview(map);
@@ -22,7 +23,6 @@ function varargout = main(maps)
         [dummy,folder]=ez.splitpath(pth);
         ez.pprint(folder,'Magenta');
         ez.pprint([name ext],'Cyan');
-        clustsim(pth,1);
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
 

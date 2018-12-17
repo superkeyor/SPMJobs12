@@ -7,6 +7,7 @@ function main(seclvlPath,mode)
 %
 % INPUT:
 %     seclvlPath: default={pwd}, cell str of paths to second level results folder (containing mask.nii, ResMS.nii, Res_0001.nii)
+%                 or, a single path 'path/to/sth' (internally convert to {'path/to/sth'})
 %     mode: default=0, 0=run & read or read, 1=only try to read, never run, 2=force to run & read
 %           by read, I mean read 3dClustSim.NN2_2sided.1D
 %
@@ -26,6 +27,8 @@ function main(seclvlPath,mode)
     try, if strcmp(seclvlPath,'-h'), ez.showhelp(); return; end; end
     ez.setdefault({'seclvlPath', {pwd}
                    'mode', false});
+
+    if ~iscell(seclvlPath), seclvlPath = {seclvlPath}; end
     oldpwd = pwd;
     for i = 1:numel(seclvlPath)
         residual = ez.jp(seclvlPath{i},'ResMS.nii');

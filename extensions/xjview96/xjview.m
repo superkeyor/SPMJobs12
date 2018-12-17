@@ -66,6 +66,7 @@ function xjview(varargin)
 
 % spm would mess up xjview, try quit first
 try, spm('quit'); end
+if numel(varargin)>0, clustsim(ez.splitpath(ez.abspath(varargin{1})), 1); end
     
 global VERSION_;
 VERSION_ = '9.6';
