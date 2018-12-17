@@ -46,7 +46,9 @@ function main(seclvlPath,mode)
                 % square root approach. the values might be larger 
                 cmd = '3dcalc -a ../ResMS.nii -expr ''sqrt(a)'' -prefix sqrt_ResMS.nii';
                 ez.execute(cmd,0);
-                cmd = '3dFWHMx -mask ../mask.nii -input sqrt_ResMS.nii';
+                % or 3dFWHMx -mask ../mask.nii -input sqrt_ResMS.nii -overwrite
+                % but it will affect the parsing of ez.execute() echo result 
+                cmd = '3dFWHMx -mask ../mask.nii -input sqrt_ResMS.nii -acf NULL';
                 [status,result] = ez.execute(cmd,0);
                 result = strsplit(result,'\n');
                 result = result{end-1};
