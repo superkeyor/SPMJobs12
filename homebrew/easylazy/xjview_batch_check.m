@@ -22,7 +22,7 @@ function varargout = main(maps)
         [dummy,folder]=ez.splitpath(pth);
         ez.pprint(folder,'Magenta');
         ez.pprint([name ext],'Cyan');
-        clustsim(pth);
+        clustsim(pth,1);
         input(sprintf('%d of %d -- Press Enter key to move on.', i, numel(maps)));
     end
 
