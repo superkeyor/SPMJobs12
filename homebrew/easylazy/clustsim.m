@@ -69,7 +69,8 @@ function main(seclvlPath,mode)
                 ez.savex(T,'FWHMx.xlsx');
                 cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',mean(as), mean(bs), mean(cs));
                 ez.execute(cmd);
-        end 
+            end 
+        end % end 3dClustSim
         
         if ez.exists('3dClustSim.NN2_2sided.1D')
             lines = ez.readlines('3dClustSim.NN2_2sided.1D');
