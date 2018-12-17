@@ -33,7 +33,7 @@ function main(seclvlPath,mode)
     for i = 1:numel(seclvlPath)
         ez.print(sprintf('\nProcessing %d of %d ...', i, numel(seclvlPath)));
         residual = ez.jp(seclvlPath{i},'ResMS.nii');
-        if ~ez.exists(residual), break; end
+        if ~ez.exists(residual), continue; end
         ez.cd(ez.splitpath(ez.abspath(residual))); 
         if mode==2, ez.rm('clustsim'); end
         ez.mkdir('clustsim',0);
@@ -81,7 +81,8 @@ function main(seclvlPath,mode)
             line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
             ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
         end 
+        
+        ez.cd(oldpwd);
     end % end for
-    ez.cd(oldpwd);
     ez.print('Done!');
 end
