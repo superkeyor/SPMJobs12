@@ -83,4 +83,5 @@ function main(seclvlPath,mode)
         end 
     end % end for
     ez.cd(oldpwd);
+    ez.print('Done!');
 end
