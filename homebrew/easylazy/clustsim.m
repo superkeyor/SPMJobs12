@@ -49,7 +49,7 @@ function main(seclvlPath,mode)
                 cmd = '3dFWHMx -mask ../mask.nii -input sqrt_ResMS.nii';
                 [status,result] = ez.execute(cmd,0);
                 result = strsplit(result,'\n');
-                result = result{7};
+                result = result{end-1};
                 result = ez.trim(result); result = strsplit(result,' ');
                 ez.print(sprintf('3dFWHMx (sqrt root): %s',strjoin(result)));
                 cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %s %s %s -iter 10000 -nodec -prefix 3dClustSim',result{1},result{2},result{3});
@@ -60,10 +60,10 @@ function main(seclvlPath,mode)
                 as=[];bs=[];cs=[];FWHMxs=[];
                 for j = 1:numel(resniis)
                     resnii = resniis{j};
-                    cmd = sprintf('3dFWHMx -mask ../mask.nii -input %s -overwrite', resnii);
+                    cmd = sprintf('3dFWHMx -mask ../mask.nii -input %s -acf NULL', resnii);
                     [status,result] = ez.execute(cmd,0);
                     result = strsplit(result,'\n');
-                    result = result{10};
+                    result = result{end-1};
                     result = ez.trim(result); result = strsplit(result,' ');
                     as=[as, str2num(result{1})]; bs=[bs, str2num(result{2})]; cs=[cs, str2num(result{3})]; FWHMxs=[FWHMxs, str2num(result{4})];
                 end
@@ -81,7 +81,7 @@ function main(seclvlPath,mode)
             line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
             ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
         end 
-        
+
         ez.cd(oldpwd);
     end % end for
     ez.print('Done!');
