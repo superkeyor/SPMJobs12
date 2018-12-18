@@ -18,7 +18,7 @@ P = SPM.xY.P;
 P = strrep(P,',','_');
 meanY = mean(y,2);
 medianY = median(y,2);
-result = [file, id, num2cell([meanY, medianY, y])];
+result = [P, id, num2cell([meanY, medianY, y])];
 result = cell2table(result, 'VariableNames', [ {'file', 'id', 'meanY', 'medianY'}, cellstr(string('Y')+(1:size(y,2))) ]);
 ez.savex(result, xlsxPath);
 
