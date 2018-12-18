@@ -71,7 +71,7 @@ result = [header;num2cell(result)];
 load(SPMMatPath); P = SPM.xY.P; [~,id]=ez.splitpath(P); P = strrep(P,',','_');
 result = [['file';P] ['id';id] result];
 T = cell2table(result(2:end,:));
-T.Properties.VariableNames = result(1,:);
+T.Properties.VariableNames = matlab.lang.makeValidName(result(1,:));
 result = T;
 ez.savex(T, fullfile(folder,'betas_extracted_marsbar.xlsx'));
 
