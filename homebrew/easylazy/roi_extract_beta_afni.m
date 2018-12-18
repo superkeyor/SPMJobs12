@@ -33,7 +33,7 @@ for i = 1:length(roiNiiPath)
     roi = roiNiiPath{i};
     
     [~,roiName] = ez.splitpath(roi);
-    roiName = regexprep(roiName,'^ROI_*','','ignorecase');
+    % roiName = regexprep(roiName,'^ROI_*','','ignorecase');
     header{1,i} = roiName;
     
     beta = [];  % a column
