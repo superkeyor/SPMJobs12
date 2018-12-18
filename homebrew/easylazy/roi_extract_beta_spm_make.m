@@ -13,12 +13,13 @@ ez.setdefault({'xlsxPath','betas_extracted_spm.xlsx'});
 
 y = evalin('base', 'y');
 SPM = evalin('base', 'SPM');
-P = SPM.xY.P;
-[~,file]=ez.splitpath(P);
+P = SPM.xY.P; 
+[~,id]=ez.splitpath(P); 
+P = strrep(P,',','_');
 meanY = mean(y,2);
 medianY = median(y,2);
-result = [file, num2cell([meanY, medianY, y])];
-result = cell2table(result, 'VariableNames', [ {'ID', 'meanY', 'medianY'}, cellstr(string('Y')+(1:size(y,2))) ]);
+result = [file, id, num2cell([meanY, medianY, y])];
+result = cell2table(result, 'VariableNames', [ {'file', 'id', 'meanY', 'medianY'}, cellstr(string('Y')+(1:size(y,2))) ]);
 ez.savex(result, xlsxPath);
 
 end % end function
