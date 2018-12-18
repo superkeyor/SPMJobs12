@@ -69,11 +69,11 @@ function main(seclvlPath,mode)
                     result = ez.trim(result); result = strsplit(result,' ');
                     as=[as, str2num(result{1})]; bs=[bs, str2num(result{2})]; cs=[cs, str2num(result{3})]; FWHMxs=[FWHMxs, str2num(result{4})];
                 end
-                ez.print(sprintf('3dFWHMx (averaged): %s',mat2str([mean(as), mean(bs), mean(cs), mean(FWHMxs)])));
-                T = [mean(as), mean(bs), mean(cs), mean(FWHMxs); NaN, NaN, NaN, NaN; as', bs', cs', FWHMxs']; 
+                ez.print(sprintf('3dFWHMx (averaged): %s',mat2str([nanmean(as), nanmean(bs), nanmean(cs), nanmean(FWHMxs)])));
+                T = [nanmean(as), nanmean(bs), nanmean(cs), nanmean(FWHMxs); NaN, NaN, NaN, NaN; as', bs', cs', FWHMxs']; 
                 T = array2table(T, 'VariableNames', {'a', 'b', 'c', 'FWHMx'});
                 ez.savex(T,'FWHMx.xlsx');
-                cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',mean(as), mean(bs), mean(cs));
+                cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',nanmean(as), nanmean(bs), nanmean(cs));
                 ez.execute(cmd);
             end 
         end % end 3dClustSim
