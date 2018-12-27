@@ -13,7 +13,7 @@ function main(v)
     close all;   % close all figures
     
     % prevent warning issue in new version of matlab when spm('quit')
-    S = warning('off','MATLAB:lang:cannotClearExecutingFunction')
+    S = warning('off','MATLAB:lang:cannotClearExecutingFunction');
 
     % these following toolboxes are harmless to the path, add them when calling/adding spm path
     if isempty(which('mricrondummy'))
