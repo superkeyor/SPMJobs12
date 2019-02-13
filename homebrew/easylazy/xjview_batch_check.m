@@ -16,8 +16,8 @@ function varargout = main(maps,pValue,clusterSizeThreshold)
     ez.winclose('xjView');
     
     if ~iscell(maps), maps = {maps}; end
-    if ~iscell(pValue), pValue = repmat(pValue, size(maps,1), 1); end
-    if ~iscell(clusterSizeThreshold), clusterSizeThreshold = repmat(clusterSizeThreshold, size(maps,1), 1); end
+    if ~iscell(pValue), pValue = repmat({pValue}, size(maps,1), 1); end
+    if ~iscell(clusterSizeThreshold), clusterSizeThreshold = repmat({clusterSizeThreshold}, size(maps,1), 1); end
     for i = 1:numel(maps)
         map = maps{i};
         if isnan(pValue{i})
