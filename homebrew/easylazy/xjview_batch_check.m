@@ -1,6 +1,8 @@
 % use xjview to open specified stats map one by one
 
-function varargout = main(maps)
+function varargout = main(maps,pValue,clusterSizeThreshold)
+    ez.setdefault({'pValue', 0.001
+                   'clusterSizeThreshold', 5});
     % ez.clean();
     % close previous xjview windows
     ez.winclose('xjView');
@@ -8,7 +10,7 @@ function varargout = main(maps)
     if ~iscell(maps), maps = {maps}; end
     for i = 1:numel(maps)
         map = maps{i};
-        xjview(map);
+        xjview(map,pValue,clusterSizeThreshold);
         % close all warning dialog
         warnings = findall(0,'type','figure','name','Warning Dialog');
         close(warnings);

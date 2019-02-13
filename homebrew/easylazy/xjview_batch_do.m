@@ -2,7 +2,9 @@
 % pdfpath: file path to pdf. if exisit, would append with bookmark; otherwise new pdf file
 % (maps,pdfpath)
 
-function varargout = main(maps,pdfpath)
+function varargout = main(maps,pdfpath,pValue,clusterSizeThreshold)
+    ez.setdefault({'pValue', 0.001
+                   'clusterSizeThreshold', 5});
     % ez.clean();
     % close previous xjview windows
     figs = sort(findobj(0,'type','figure'));
@@ -14,9 +16,10 @@ function varargout = main(maps,pdfpath)
         end
     end
     
+    if ~iscell(maps), maps = {maps}; end
     for i = 1:numel(maps)
         map = maps{i};
-        xjview(map);
+        xjview(map,pValue,clusterSizeThreshold);
         warningdlgs = findall(0,'type','figure','name','Warning Dialog');
         close(warningdlgs);
         errordlgs = findall(0,'type','figure','name','error');

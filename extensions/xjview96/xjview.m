@@ -10,6 +10,15 @@ function xjview(varargin)
 %           Example: xjView spmT_0002.img
 %                    xjView('spmT_0002.img')
 %                    xjView mymask.img
+%
+% hacked usage 3 (do not use default usage 3 and 4, hacked at around line 160):
+%           both pValue and clusterSizeThreshold should be specified
+%           if clustim result exist and pValue and clusterSizeThreshold not specified
+%           auto change pValue=.001, clusterSizeThreshold=k
+%           case 1: xjview(imagefilename, 0.005, 50)
+%           case 2: xjview(imagefilename) will try to retrieve clustim result first, if not exists, 
+%                   xjview(imagefilename, 0.001, 5)
+%
 % usage 3: xjview(imagefilename1, imagefilename2, ...)
 %           for displaying the result img files and changing p-value or
 %           t/f-value
@@ -66,7 +75,6 @@ function xjview(varargin)
 
 % spm would mess up xjview, try quit first
 try, spm('quit'); end
-if numel(varargin)>0, clustsim(ez.splitpath(ez.abspath(varargin{1})), 1); end
     
 global VERSION_;
 VERSION_ = '9.6';
@@ -156,10 +164,28 @@ systemInfo_ = regexprep(systemInfo_,' ','%20');
 xjviewpath = fileparts(which('xjview'));
 
 % pre-set values
-pValue = 0.001;
-intensityThreshold = 0;
-clusterSizeThreshold = 5;
-
+if numel(varargin)>1
+    pValue = varargin{2};
+    intensityThreshold = 0;
+    clusterSizeThreshold = varargin{3};
+    varargin = varargin(1:end-2);
+    clustsim(ez.splitpath(ez.abspath(varargin{1})), 1);
+elseif numel(varargin)>0
+    pValue = 0.001;
+    intensityThreshold = 0;
+    if ez.exists(ez.jp(ez.splitpath(ez.abspath(varargin{1})), '3dClustSim.NN2_2sided.1D'))
+        lines = ez.readlines(ez.jp(ez.splitpath(ez.abspath(varargin{1})), '3dClustSim.NN2_2sided.1D'));
+        line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
+        clusterSizeThreshold = str2num(line{3});
+    else
+        clusterSizeThreshold = 5;
+    end
+    clustsim(ez.splitpath(ez.abspath(varargin{1})), 1);
+else
+    pValue = 0.001;
+    intensityThreshold = 0;
+    clusterSizeThreshold = 5;
+end
 
 % Appearance Settings
 figurePosition =                    [0.400,   0.050,    0.550,    0.880];
