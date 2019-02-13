@@ -37,7 +37,7 @@ function varargout = main(maps,pdfpath,pValue,clusterSizeThreshold)
         warningdlgs = findall(0,'type','figure','name','Warning Dialog');
         close(warningdlgs);
         errordlgs = findall(0,'type','figure','name','error');
-        close(warningdlgs);
+        close(errordlgs);
         ez.export(pdfpath,'nocrop','bookmark','append');
         close all;
     end
