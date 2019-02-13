@@ -1,5 +1,5 @@
 % call xjview to show an activation map (eg, spmT, spmF map) or maps, append the map to a pdf file
-% pdfpath: file path to pdf. if exisit, would append with bookmark; otherwise new pdf file
+% pdfpath: file path to pdf (single str or cell of str). if exisit, would append with bookmark; otherwise new pdf file
 % pValue, clusterSizeThreshold: both specified, or not specified
 %                               could be either both single value, or both cell of number of same length as maps
 %                               or one single value, the other is cell of number
@@ -25,6 +25,7 @@ function varargout = main(maps,pdfpath,pValue,clusterSizeThreshold)
     end
     
     if ~iscell(maps), maps = {maps}; end
+    if size(pdfpath,1)==1, pdfpath = repmat(pdfpath, size(maps,1), 1); end        
     if size(pValue,1)==1, pValue = repmat(pValue, size(maps,1), 1); end
     if size(clusterSizeThreshold,1)==1, clusterSizeThreshold = repmat(clusterSizeThreshold, size(maps,1), 1); end
     for i = 1:numel(maps)
@@ -38,7 +39,7 @@ function varargout = main(maps,pdfpath,pValue,clusterSizeThreshold)
         close(warningdlgs);
         errordlgs = findall(0,'type','figure','name','error');
         close(errordlgs);
-        ez.export(pdfpath,'nocrop','bookmark','append');
+        ez.export(pdfpath{i},'nocrop','bookmark','append');
         close all;
     end
 end
