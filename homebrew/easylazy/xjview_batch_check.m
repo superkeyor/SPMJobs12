@@ -1,16 +1,30 @@
 % use xjview to open specified stats map one by one
+% pValue, clusterSizeThreshold: both specified, or not specified
+%                               could be either both single value, or both cell of number of same length as maps
+%                               or one single value, the other is cell of number
+%                               if not specified, try clustsim result first; otherwise xjview default
+% example: 
+% ({'img1';'img2'},pdfpath)
+% ({'img1';'img2'},0.001,50)
+% ({'img1';'img2'},0.001,{50;25})
 
 function varargout = main(maps,pValue,clusterSizeThreshold)
-    ez.setdefault({'pValue', 0.001
-                   'clusterSizeThreshold', 5});
+    ez.setdefault({'pValue', NaN
+                   'clusterSizeThreshold', NaN});
     % ez.clean();
     % close previous xjview windows
     ez.winclose('xjView');
     
     if ~iscell(maps), maps = {maps}; end
+    if size(pValue,1)==1, pValue = repmat(pValue, size(maps,1), 1); end
+    if size(clusterSizeThreshold,1)==1, clusterSizeThreshold = repmat(clusterSizeThreshold, size(maps,1), 1); end
     for i = 1:numel(maps)
         map = maps{i};
-        xjview(map,pValue,clusterSizeThreshold);
+        if isnan(pValue{i})
+            xjview(map);
+        else
+            xjview(map,pValue{i},clusterSizeThreshold{i});
+        end
         % close all warning dialog
         warnings = findall(0,'type','figure','name','Warning Dialog');
         close(warnings);

@@ -16,8 +16,8 @@ function xjview(varargin)
 %           if clustim result exist and pValue and clusterSizeThreshold not specified
 %           auto change pValue=.001, clusterSizeThreshold=k
 %           case 1: xjview(imagefilename, 0.005, 50)
-%           case 2: xjview(imagefilename) will try to retrieve clustim result first, if not exists, 
-%                   xjview(imagefilename, 0.001, 5)
+%           case 2: xjview(imagefilename) will try to retrieve clustsim result first 
+%                   if no clustsim, xjview(imagefilename, 0.001, 5)
 %
 % usage 3: xjview(imagefilename1, imagefilename2, ...)
 %           for displaying the result img files and changing p-value or
