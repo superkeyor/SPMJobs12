@@ -173,8 +173,8 @@ if numel(varargin)>1
 elseif numel(varargin)>0
     pValue = 0.001;
     intensityThreshold = 0;
-    if ez.exists(ez.jp(ez.splitpath(ez.abspath(varargin{1})), '3dClustSim.NN2_2sided.1D'))
-        lines = ez.readlines(ez.jp(ez.splitpath(ez.abspath(varargin{1})), '3dClustSim.NN2_2sided.1D'));
+    if ez.exists(ez.jp(ez.splitpath(ez.abspath(varargin{1})), 'clustsim', '3dClustSim.NN2_2sided.1D'))
+        lines = ez.readlines(ez.jp(ez.splitpath(ez.abspath(varargin{1})), 'clustsim', '3dClustSim.NN2_2sided.1D'));
         line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
         clusterSizeThreshold = str2num(line{3});
     else
