@@ -36,8 +36,8 @@ function main(seclvlPath,mode)
         if ~ez.exists(residual), continue; end
         ez.cd(ez.splitpath(ez.abspath(residual))); 
         if mode==2, ez.rm('clustsim'); end
-        ez.mkdir('clustsim',0);
-        ez.cd('clustsim');
+        if mode~=1, ez.mkdir('clustsim',0); end
+        if exist('clustsim','folder'), ez.cd('clustsim'); end
 
         % spm by default uses 18 (edge) for clustering, see help spm_clusters and help spm_bwlabel
         % this corresponding to NN2 in afni
