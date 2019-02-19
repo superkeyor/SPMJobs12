@@ -26,7 +26,7 @@ function main(seclvlPath,mode)
 %     exists, otherwise fall back to square root approach.
     try, if strcmp(seclvlPath,'-h'), ez.showhelp(); return; end; end
     ez.setdefault({'seclvlPath', {pwd}
-                   'mode', false});
+                   'mode', 0});
 
     if ~iscell(seclvlPath), seclvlPath = {seclvlPath}; end
     oldpwd = pwd;
