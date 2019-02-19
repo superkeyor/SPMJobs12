@@ -24,6 +24,13 @@ function main(seclvlPath,mode)
 %     this way are very close to those from values if the analysis was done in
 %     AFNI directly. This function first try invidual approach if Res_000x.nii
 %     exists, otherwise fall back to square root approach.
+%     
+%     Also according to Bob https://afni.nimh.nih.gov/afni/community/board/read.php?1,152281,152319#msg-152319
+%     If you analyze the statistics sub-brick(s), the ACF will be biased by the presence -- you hope! --
+%     of activations. One option would be to compute the 3 ACF parameters for each subject's residuals
+%     (errts) time series dataset, then take the mean or median of each of these, and use those 3 values
+%     in the 3dClustSim -acf run.
+
     try, if strcmp(seclvlPath,'-h'), ez.showhelp(); return; end; end
     ez.setdefault({'seclvlPath', {pwd}
                    'mode', 0});
@@ -69,11 +76,12 @@ function main(seclvlPath,mode)
                     result = ez.trim(result); result = strsplit(result,' ');
                     as=[as, str2num(result{1})]; bs=[bs, str2num(result{2})]; cs=[cs, str2num(result{3})]; FWHMxs=[FWHMxs, str2num(result{4})];
                 end
-                ez.print(sprintf('3dFWHMx (averaged): %s',mat2str([nanmean(as), nanmean(bs), nanmean(cs), nanmean(FWHMxs)])));
-                T = [nanmean(as), nanmean(bs), nanmean(cs), nanmean(FWHMxs); NaN, NaN, NaN, NaN; as', bs', cs', FWHMxs']; 
+                % nanmedian is a bit smaller than nanmean in some cases, so use median
+                ez.print(sprintf('3dFWHMx (averaged): %s',mat2str([nanmedian(as), nanmedian(bs), nanmedian(cs), nanmedian(FWHMxs)])));
+                T = [nanmedian(as), nanmedian(bs), nanmedian(cs), nanmedian(FWHMxs); NaN, NaN, NaN, NaN; as', bs', cs', FWHMxs']; 
                 T = array2table(T, 'VariableNames', {'a', 'b', 'c', 'FWHMx'});
                 ez.savex(T,'FWHMx.xlsx');
-                cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',nanmean(as), nanmean(bs), nanmean(cs));
+                cmd = sprintf('3dClustSim -mask ../mask.nii  -acf %f %f %f -iter 10000 -nodec -prefix 3dClustSim',nanmedian(as), nanmedian(bs), nanmedian(cs));
                 ez.execute(cmd);
             end 
         end % end 3dClustSim
