@@ -1,5 +1,8 @@
 function outpoints = tal2icbm_spm(inpoints)
 %
+% jerry: convert Talairach results to MNI using the Lancaster et al (2007) transform.
+% download from: http://www.brainmap.org/icbm2tal/
+% 
 % This function converts coordinates from Talairach space to MNI
 % space (normalized using the SPM software package) using the 
 % tal2icbm transform developed and validated by Jack Lancaster 
