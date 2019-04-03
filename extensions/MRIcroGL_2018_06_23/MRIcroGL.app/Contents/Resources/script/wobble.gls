@@ -1,0 +1,24 @@
+const
+	kloops=400;
+	ktime= 15;
+	kelevspeed= 33;
+	kclipspeed= 51;
+	kclipspeedf= 1.0 /kclipspeed;
+	kazispeed=37;
+var
+	a,e,depth: single;
+	i: integer;
+begin
+	resetdefaults;
+	loadimage('mni152_2009bet');
+	colorname('bone');
+	for i := 0 to kloops do begin
+		azimuth(-1);
+		inc(i);
+		a := abs(0.5- (i mod kazispeed)/kazispeed)* 90+160;
+		e := abs(0.5- (i mod kelevspeed)/kelevspeed) * 180+90;
+		depth :=  abs(0.5-(i mod kclipspeed) * kclipspeedf);
+		clipazimuthelevation(depth, a, e);
+		wait(ktime);
+	end;
+end.

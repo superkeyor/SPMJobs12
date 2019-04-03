@@ -1,0 +1,12 @@
+begin
+	resetdefaults;
+	loadimage('mni152_2009bet');
+	overlayloadsmooth(true);
+	overlayload('motor');
+	overlayminmax(1, 2.5, 2.5);
+	backcolor(255, 255,255);
+	shadername('overlay_glass');
+	shaderadjust('edgethresh', 0.6);
+	shaderadjust('edgeboundmix', 0.72);
+	contrastminmax(30, 80);
+end.

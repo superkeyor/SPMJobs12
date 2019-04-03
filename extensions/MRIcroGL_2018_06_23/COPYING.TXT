@@ -1,0 +1,20 @@
+Here are details on the included images
+
+• The CT_Philips image is provided by Philips Medical and distributed with permission. The image was downsampled from a resolution of 0.49x0.49x0.45mm to an isotropic 0.95mm to allow faster downloads and interactive frame rate with a broader range of graphics cards. You can get a higher quality NIfTI format image at https://www.nitrc.org/plugins/mwiki/index.php/mricrogl:MainPage#Special_Images, or you can get the raw DICOM data from https://www.nitrc.org/plugins/mwiki/index.php/dcm2nii:MainPage#Computed_Tomography_.28CT.2C_CAT.29
+• The INIA19 Atlas was described in http://www.ncbi.nlm.nih.gov/pubmed/23230398
+• The Oxford atlas are described at http://fsl.fmrib.ox.ac.uk/fsl/fslwiki/Atlases
+• The AAL atlas was described in http://www.ncbi.nlm.nih.gov/pubmed/11771995
+
+
+The image 'mni152_2009bet' is based on the ICBM 2009b Nonlinear Asymmetric 0.5mm T1 template image from Fonov et al. (2009) NeuroImage 47: S102
+  http://www.bic.mni.mcgill.ca/ServicesAtlases/ICBM152NLin2009
+Note that the normal human brain is slightly smaller than the MNI image. Some normalization tools compensate for this by enlarging each individual's brain to match MNI space. However, tools like SPM use typically sized templates and therefore the resulting normalized images do not quite match the MNI template. A version of the MNI template that has been warped to match SPM's output is available at https://www.nitrc.org/plugins/mwiki/index.php/mricrogl:MainPage#Special_Images
+
+
+Chris Rorden rescaled the provided 1mm brain mask to the 0.5mm image, and then applied a 2mm Gaussian smooth. This mask was used to modulate the T1 template (with the smoothing feathering the edges).
+
+This image is based on the participants from the popular MNI152 template, but images were aligned using nonlinear transforms, whereas the MNI152 images used with FSL, SPM and AFNI are based on linear alignment.
+
+Image pre-processing included non-uniform intensity correction (Sled, 1998) and intensity normalization to a range of 0-100. All T1w MRI data was then transformed into the Talairach-like MNI stereotaxic space using minctracc (Collins, Neelin et al. 1994). Brain masking was performed using BET (Smith, 2002). Age-based subgroups of subjects were created, and all scans within each group were then automatically re-registered to the stereotaxic space using the appropriate template. For each group, an iterative nonlinear co-registration algorithm (Grabner, Janke et al. 2006, Fonov, 2010 under review), was applied to obtain the group averages. The T1-based transformation was then applied to the T2, PD and tissue classified volumes to generate average atlases for these data. Methodological details can be found in (Fonov, 2010 under review).
+
+Copyright (C) 1993-2004 Louis Collins, McConnell Brain Imaging Centre, Montreal Neurological Institute, McGill University. Permission to use, copy, modify, and distribute this software and its documentation for any purpose and without fee is hereby granted, provided that the above copyright notice appear in all copies.  The authors and McGill University make no representations about the suitability of this software for any purpose.  It is provided "as is" without express or implied warranty.  The authors are not responsible for any data loss, equipment damage, property loss, or injury to subjects or patients resulting from the use or misuse of this software package.
