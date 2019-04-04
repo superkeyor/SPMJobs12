@@ -1,0 +1,13 @@
+begin
+	resetdefaults;
+	loadimage('mni152_2009_256');
+	overlayload('motor');
+	overlayminmax(1, 1.6, 4);
+	overlaycolorname(1, '5redyell');
+	overlayload('motor');
+	overlayminmax(2, -2.6, -4);
+	overlaycolorname(2, '2winter');
+	shadername('overlay_surface');
+	cutout(0.0, 0.5, 0.5, 0.5, 1.0, 1.0);
+	backcolor(255, 255, 255);
+end.
