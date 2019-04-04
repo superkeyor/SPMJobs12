@@ -16,9 +16,17 @@ function main(v)
     S = warning('off','MATLAB:lang:cannotClearExecutingFunction');
 
     % these following toolboxes are harmless to the path, add them when calling/adding spm path
-    if isempty(which('mricrondummy'))
+    if isempty(which('mricronhelp'))
         extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
         thePath = ez.lsd(extsPath,'^mricron');
+        thePath = ez.joinpath(extsPath,thePath{1});
+        addpath(thePath);
+        clear extsPath thePath;
+    end
+
+    if isempty(which('mricroglhelp'))
+        extsPath = ez.joinpath(ez.parentdir(ez.parentdir(ez.csd())), 'extensions');
+        thePath = ez.lsd(extsPath,'^MRIcroGL');
         thePath = ez.joinpath(extsPath,thePath{1});
         addpath(thePath);
         clear extsPath thePath;
