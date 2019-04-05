@@ -28,6 +28,11 @@ end
 fprintf('Min value: %s\n',num2str(min(unique_values_out)));
 fprintf('Max value: %s\n',num2str(max(unique_values_out)));
 
+[row,col,value] = find(values_out ~= 0);
+[n, bins] = hist(value);
+[v,i] = max(n);
+fprintf('Most value: %s\n', bins(i));
+
 fprintf('Non-zero voxels #: %d\n', n_out);
 fprintf('Dimension (product contains voxels outside brain): %s\n',mat2str(dim_out));
 fprintf('Voxel size: %s\n',mat2str(abs(voxsize)));
