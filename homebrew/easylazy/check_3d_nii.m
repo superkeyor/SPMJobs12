@@ -28,8 +28,7 @@ end
 fprintf('Min value: %s\n',num2str(min(unique_values_out)));
 fprintf('Max value: %s\n',num2str(max(unique_values_out)));
 
-[row,col,value] = find(values_out ~= 0);
-[n, bins] = hist(value);
+[n, bins] = hist(values_out(find(values_out)));
 [v,i] = max(n);
 fprintf('Most value: %s\n', num2str(bins(i)));
 
