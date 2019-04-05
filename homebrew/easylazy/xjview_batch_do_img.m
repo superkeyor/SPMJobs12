@@ -45,7 +45,7 @@ function varargout = main(maps,pValue,clusterSizeThreshold)
         p = sprintf('%f',fig.pValue); k = num2str(fig.clusterSizeThreshold);
         [pth,name,ext] = ez.splitpath(imageFileName);
         name = [name,'_',p,'_',k];
-        imgpath = ez.jp(pth,[name,ext]);
+        imgpath = ez.jp(pth,['thresholded_',name,ext]);
         fig.saveImagePush.Callback(gcf,'',imgpath,0)
         close all;
     end
