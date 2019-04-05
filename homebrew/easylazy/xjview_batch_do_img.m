@@ -43,10 +43,10 @@ function varargout = main(maps,pValue,clusterSizeThreshold)
         % from xjview: CallBack_saveImagePush(hObject, eventdata, thisfilename, isMask)
         % in case 'filename.nii,1' --> 'filename.nii'
         imageFileName = fig.imageFileName{1}; imageFileName = regexprep(imageFileName,',\d+','');
-        p = sprintf('%f',fig.pValue); k = num2str(fig.clusterSizeThreshold);
+        p = sprintf('%g',fig.pValue); p = regexprep(p,'^0\.',''); k = num2str(fig.clusterSizeThreshold);
         [pth,name,ext] = ez.splitpath(imageFileName);
-        name = [name,'_',p,'_',k];
-        imgpath = ez.jp(pth,['thresholded_',name,ext]);
+        name = ['thresholded_',name,'_p',p,'_k',k];
+        imgpath = ez.jp(pth,[name,ext]);
         fig.saveImagePush.Callback(gcf,'',imgpath,0)
         close all;
     end
