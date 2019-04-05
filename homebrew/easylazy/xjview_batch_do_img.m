@@ -41,7 +41,8 @@ function varargout = main(maps,pValue,clusterSizeThreshold)
 
         fig = guidata(gcf); 
         % from xjview: CallBack_saveImagePush(hObject, eventdata, thisfilename, isMask)
-        imageFileName = fig.imageFileName{1}; imageFileName = imageFileName(1:end-2);
+        % in case 'filename.nii,1' --> 'filename.nii'
+        imageFileName = fig.imageFileName{1}; imageFileName = regexprep(imageFileName,',\d+','');
         p = sprintf('%f',fig.pValue); k = num2str(fig.clusterSizeThreshold);
         [pth,name,ext] = ez.splitpath(imageFileName);
         name = [name,'_',p,'_',k];
