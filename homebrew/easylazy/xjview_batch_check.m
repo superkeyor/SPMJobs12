@@ -4,7 +4,6 @@
 %                               or one single value, the other is cell of number
 %                               if not specified, try clustsim result first; otherwise xjview default
 % example: 
-% ({'img1';'img2'},pdfpath)
 % ({'img1';'img2'},0.001,50)
 % ({'img1';'img2'},0.001,{50;25})
 
