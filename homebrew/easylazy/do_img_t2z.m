@@ -1,6 +1,11 @@
 function do_img_t2z(folders)
+    % input a folder or folders, look for spmT_xxx.nii
+    % read for df from the T image decription
+    % call built-in spm_t2z to convert from T to Z image
+
     % https://www.jiscmail.ac.uk/cgi-bin/webadmin?A2=spm;612452f0.02
     % spm_select(1,'spmT.*\.nii')
+    if ~iscell(folders), folders = {folders}; end
     for j = 1:length(folders)
         folder = folders{j};
         timgs = ez.ls(folder,'^spmT_\d+\.nii$',1);
