@@ -3,6 +3,7 @@ function do_img_t2z(folders)
     % read for df from the T image decription
     % call built-in spm_t2z to convert from T to Z image
     % save in the same folder (overwrite existing Z images without prompt)
+    % the results are the same as the ones calculated from do_imcalc_custom('zscore'), as Jerry tested.
 
     % https://www.jiscmail.ac.uk/cgi-bin/webadmin?A2=spm;612452f0.02
     % spm_select(1,'spmT.*\.nii')
@@ -24,7 +25,7 @@ function do_img_t2z(folders)
             oP = spm_create_vol(oP);
             spm_write_vol(oP,z);
         end %i timgs
-        ez.print([int2str(length(P)), ' T images converted to Z.')]);
+        ez.print([int2str(length(P)), ' T images converted to Z.']);
     end %j folders
 end
 
