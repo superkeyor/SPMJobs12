@@ -24,7 +24,7 @@ function do_img_t2z(folders)
             oP = spm_create_vol(oP);
             spm_write_vol(oP,z);
         end %i timgs
-        ez.print([int2str(length(P), ' T images converted to Z.')]);
+        ez.print([int2str(length(P)), ' T images converted to Z.')]);
     end %j folders
 end
 
