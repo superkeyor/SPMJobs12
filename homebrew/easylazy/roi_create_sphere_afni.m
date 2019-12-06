@@ -1,4 +1,4 @@
-function result = main(mniCoordinate, radius, masterNiiPath)
+function varargout = main(mniCoordinate, radius, masterNiiPath)
 % (masterNiiPath,radius,mniCoordinate)
 % Description:
 %       Uses afni 3dUndump to create roi
@@ -50,5 +50,11 @@ for i = 1:size(coords,1)
 end % end for
 
 disp(result);
+% https://stackoverflow.com/questions/14189938/suppress-function-output
+% https://www.mathworks.com/matlabcentral/answers/72658-how-can-i-suppress-the-ans-output
+%# only assign aOut if any output is requested
+if nargout > 0
+   varargout{1} = result;
+end
 
 end % end function
