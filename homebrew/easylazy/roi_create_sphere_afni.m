@@ -47,6 +47,7 @@ for i = 1:size(coords,1)
     result{i} = fileName;
 
 end % end for
-result;
+
+disp(result);
 
 end % end function
