@@ -5,7 +5,7 @@ function varargout = main(mniCoordinate, radius, masterNiiPath)
 %       https://afni.nimh.nih.gov/pub/dist/doc/program_help/3dUndump.html
 % Input:
 %       mniCoordinate: [x, y, z], [1,2,3; 3,4,5]
-%           or a txt file with one mni per line (special input: 'atlas_power264.txt')
+%           or a txt file with one mni per line (special input: 'atlas_power264.m')
 %       radius: radius in mm, eg, 5mm
 %       masterNiiPath: nii file to get voxel size, dimention, coordination, etc from
 %           if not provided, use mask.nii in pwd
