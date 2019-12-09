@@ -7,8 +7,8 @@ function do_img_f2z(folders)
     if ~iscell(folders), folders = {folders}; end
     for j = 1:length(folders)
         folder = folders{j};
-        timgs = ez.ls(folder,'^spmF_\d+\.nii$',1);
-        P = spm_vol(timgs);
+        fimgs = ez.ls(folder,'^spmF_\d+\.nii$',1);
+        P = spm_vol(fimgs);
         for i = 1:length(P)
             oP = P{i};
             oP.fname = strrep(oP.fname, 'spmF_', 'spmF2Z_');
@@ -22,7 +22,7 @@ function do_img_f2z(folders)
             z = f2z(fvalue,df1, df2);
             oP = spm_create_vol(oP);
             spm_write_vol(oP,z);
-        end %i timgs
+        end %i fimgs
         ez.print([int2str(length(P)), ' F images converted to Z.']);
     end %j folders
 end
