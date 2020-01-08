@@ -52,7 +52,7 @@ end % end for
 disp(result);
 % https://stackoverflow.com/questions/14189938/suppress-function-output
 % https://www.mathworks.com/matlabcentral/answers/72658-how-can-i-suppress-the-ans-output
-%# only assign if any output is requested
+% only assign if any output is requested
 if nargout > 0
    varargout{1} = result;
 end

@@ -1,4 +1,4 @@
-function main(seclvlPath,mode)
+function varargout=main(seclvlPath,mode)
 %DESCRIPTION:
 %    3dFWHMx + 3dClustSim
 %
@@ -30,11 +30,10 @@ function main(seclvlPath,mode)
 %     of activations. One option would be to compute the 3 ACF parameters for each subject's residuals
 %     (errts) time series dataset, then take the mean or median of each of these, and use those 3 values
 %     in the 3dClustSim -acf run.
-
+    k=NaN;
     try, if strcmp(seclvlPath,'-h'), ez.showhelp(); return; end; end
     ez.setdefault({'seclvlPath', {pwd}
                    'mode', 0});
-
     if ~iscell(seclvlPath), seclvlPath = {seclvlPath}; end
     oldpwd = pwd;
     for i = 1:numel(seclvlPath)
@@ -90,9 +89,13 @@ function main(seclvlPath,mode)
             lines = ez.readlines('3dClustSim.NN2_2sided.1D');
             line = lines{end-3}; line = ez.trim(line); line = strsplit(line,' ');
             ez.pprint(sprintf('0.05 <-- pthr = %s, k = %s', regexprep(line{1},'0*$',''), line{3}));
+            k=line{3};
         end 
 
         ez.cd(oldpwd);
     end % end for
     if mode~=1, ez.print('Done!'); end
+    if nargout>0
+        varargout{1} = k;
+    end
 end
