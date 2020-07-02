@@ -10,7 +10,9 @@ function do_img_t2z(folders)
     if ~iscell(folders), folders = {folders}; end
     for j = 1:length(folders)
         folder = folders{j};
-        timgs = ez.ls(folder,'^spmT_\d+\.nii$',1);
+        % timgs = ez.ls(folder,'^spmT_\d+\.nii$',1);
+        % thresholded_spmT_0001_p001_k80.nii
+        timgs = ez.ls(folder,'spmT_\d+.*nii$',1);
         if length(timgs)<1, break; end
         P = spm_vol(timgs);
         for i = 1:length(P)

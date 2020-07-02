@@ -7,7 +7,9 @@ function do_img_f2z(folders)
     if ~iscell(folders), folders = {folders}; end
     for j = 1:length(folders)
         folder = folders{j};
-        fimgs = ez.ls(folder,'^spmF_\d+\.nii$',1);
+        % fimgs = ez.ls(folder,'^spmF_\d+\.nii$',1);
+        % thresholded_spmT_0001_p001_k80.nii
+        fimgs = ez.ls(folder,'spmF_\d+.*nii$',1);
         if length(fimgs)<1, break; end
         P = spm_vol(fimgs);
         for i = 1:length(P)
